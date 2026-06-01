@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h3>Deshabilitar cliente</h3>
+                </div>
+                <div class="card-body">
+                    <p>¿Está seguro que desea deshabilitar al cliente <strong th:text="${cliente.nombreRazonSocial}"></strong>?</p>
+                    <p>Un cliente deshabilitado no podrá generar nuevas cotizaciones ni proyectos, pero se conservará su historial.</p>
+                    <form th:action="@{/internal/clientes/deshabilitar/{id}(id=${cliente.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Sí, deshabilitar</button>
+                        <a th:href="@{/internal/clientes/detalle/{id}(id=${cliente.id})}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+</body>
+</html>

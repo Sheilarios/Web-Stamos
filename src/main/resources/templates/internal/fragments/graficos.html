@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Fragmentos para gráficos. Requiere Chart.js cargado -->
+<!-- Uso: <div th:replace="~{internal/fragments/graficos :: lineChart(id, 'Ingresos mensuales', labels, values)}"></div> -->
+
+<div th:fragment="lineChart(id, titulo, labels, values)">
+    <div class="card mb-4">
+        <div class="card-header" th:text="${titulo}">Gráfico de líneas</div>
+        <div class="card-body">
+            <canvas th:id="${id}" style="height:300px; width:100%;"></canvas>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const labels_${id} = /*[[${labels}]]*/ ['Ene', 'Feb', 'Mar'];
+        const values_${id} = /*[[${values}]]*/ [10, 20, 30];
+        const ctx_${id} = document.getElementById('${id}').getContext('2d');
+        new Chart(ctx_${id}, {
+            type: 'line',
+            data: { labels: labels_${id}, datasets: [{ label: 'Valor', data: values_${id}, borderColor: '#1abc9c', fill: false }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+        /*]]>*/
+    </script>
+</div>
+
+<div th:fragment="barChart(id, titulo, labels, values, colores)">
+    <div class="card mb-4">
+        <div class="card-header" th:text="${titulo}">Gráfico de barras</div>
+        <div class="card-body">
+            <canvas th:id="${id}" style="height:300px; width:100%;"></canvas>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const labelsBar_${id} = /*[[${labels}]]*/ ['A', 'B', 'C'];
+        const valuesBar_${id} = /*[[${values}]]*/ [5, 10, 15];
+        const coloresBar_${id} = /*[[${colores}]]*/ null;
+        new Chart(document.getElementById('${id}').getContext('2d'), {
+            type: 'bar',
+            data: { labels: labelsBar_${id}, datasets: [{ label: 'Cantidad', data: valuesBar_${id}, backgroundColor: coloresBar_${id} || '#3498db' }] },
+            options: { responsive: true }
+        });
+        /*]]>*/
+    </script>
+</div>
+
+<div th:fragment="pieChart(id, titulo, labels, values, colores)">
+    <div class="card mb-4">
+        <div class="card-header" th:text="${titulo}">Gráfico circular</div>
+        <div class="card-body">
+            <canvas th:id="${id}" style="height:300px; width:100%;"></canvas>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        new Chart(document.getElementById('${id}').getContext('2d'), {
+            type: 'pie',
+            data: { labels: /*[[${labels}]]*/ ['Rojo', 'Azul', 'Verde'], datasets: [{ data: /*[[${values}]]*/ [30, 50, 20], backgroundColor: /*[[${colores}]]*/ ['#e74c3c', '#3498db', '#2ecc71'] }] },
+            options: { responsive: true }
+        });
+        /*]]>*/
+    </script>
+</div>
+
+<div th:fragment="doughnutChart(id, titulo, labels, values)">
+    <div class="card mb-4">
+        <div class="card-header" th:text="${titulo}">Gráfico de anillo</div>
+        <div class="card-body">
+            <canvas th:id="${id}" style="height:300px; width:100%;"></canvas>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        new Chart(document.getElementById('${id}').getContext('2d'), {
+            type: 'doughnut',
+            data: { labels: /*[[${labels}]]*/ ['Aprobados', 'Pendientes', 'Rechazados'], datasets: [{ data: /*[[${values}]]*/ [60, 30, 10], backgroundColor: ['#27ae60', '#f39c12', '#e74c3c'] }] },
+            options: { responsive: true }
+        });
+        /*]]>*/
+    </script>
+</div>
+</html>

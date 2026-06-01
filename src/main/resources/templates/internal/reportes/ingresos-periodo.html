@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <h1 class="mb-4">Ingresos por período</h1>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Filtros</h4>
+                </div>
+                <div class="card-body">
+                    <form id="formIngresos" method="get" th:action="@{/internal/reportes/ingresos/generar}" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label for="tipoPeriodo" class="form-label">Tipo de período</label>
+                            <select id="tipoPeriodo" name="tipoPeriodo" class="form-select">
+                                <option value="MENSUAL">Mensual</option>
+                                <option value="TRIMESTRAL">Trimestral</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="anio" class="form-label">Año</label>
+                            <select id="anio" name="anio" class="form-select">
+                                <option th:each="y : ${#numbers.sequence(2020, 2030)}" th:value="${y}" th:text="${y}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="grupoMes">
+                            <label for="mes" class="form-label">Mes</label>
+                            <select id="mes" name="mes" class="form-select">
+                                <option value="1">Enero</option>
+                                <option value="2">Febrero</option>
+                                <option value="3">Marzo</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Mayo</option>
+                                <option value="6">Junio</option>
+                                <option value="7">Julio</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="grupoTrimestre" style="display:none;">
+                            <label for="trimestre" class="form-label">Trimestre</label>
+                            <select id="trimestre" name="trimestre" class="form-select">
+                                <option value="1">1er trimestre (Ene-Mar)</option>
+                                <option value="2">2do trimestre (Abr-Jun)</option>
+                                <option value="3">3er trimestre (Jul-Sep)</option>
+                                <option value="4">4to trimestre (Oct-Dic)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">Generar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="ingresosResultado" th:if="${resultado != null}">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Resultados para <span th:text="${periodo}"></span></h4>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="text-success">Total ingresos: S/ <span th:text="${#numbers.formatDecimal(resultado.ingresos, 1, 2)}"></span></h5>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-sm" id="detalleIngresos">
+                                <thead>
+                                    <tr><th>Fecha</th><th>Proyecto ID</th><th>Cliente</th><th>Monto (S/)</th><th>Medio de Pago</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="pago : ${resultado.detalle}">
+                                        <td th:text="${#dates.format(pago.fecha, 'dd/MM/yyyy')}"></td>
+                                        <td th:text="${pago.proyecto.id}"></td>
+                                        <td th:text="${pago.proyecto.cliente.nombreRazonSocial}"></td>
+                                        <td th:text="${#numbers.formatDecimal(pago.monto, 1, 2)}"></td>
+                                        <td th:text="${pago.medioPago}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3">
+                            <a th:href="@{/internal/reportes/ingresos/export/excel(tipoPeriodo=${tipoPeriodo}, anio=${anio}, mes=${mes}, trimestre=${trimestre})}" class="btn btn-success">Exportar Excel</a>
+                            <a th:href="@{/internal/reportes/ingresos/export/pdf(tipoPeriodo=${tipoPeriodo}, anio=${anio}, mes=${mes}, trimestre=${trimestre})}" class="btn btn-danger">Exportar PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script>
+        $(document).ready(function() {
+            $('#detalleIngresos').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                pageLength: 5,
+                responsive: true
+            });
+            // Mostrar/ocultar campos según tipo de período
+            $('#tipoPeriodo').on('change', function() {
+                if ($(this).val() === 'MENSUAL') {
+                    $('#grupoMes').show();
+                    $('#grupoTrimestre').hide();
+                } else {
+                    $('#grupoMes').hide();
+                    $('#grupoTrimestre').show();
+                }
+            }).trigger('change');
+        });
+    </script>
+</body>
+</html>

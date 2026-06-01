@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de proyecto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+</head>
+<body>
+<div style="max-width:1000px; margin:0 auto; padding:24px;">
+    <h2 th:text="${proyecto.nombre}"></h2>
+    <p>Estado actual: <strong th:text="${proyecto.estado}"></strong></p>
+    <p>Fecha entrega estimada: <span th:text="${proyecto.fechaEntregaEstimada}"></span></p>
+    <div>
+        <h3>Archivos</h3>
+        <ul>
+            <li th:each="arch : ${archivos}"><a th:href="@{/uploads/archivos/} + ${arch.id}" th:text="${arch.nombreArchivo}"></a></li>
+        </ul>
+    </div>
+    <div>
+        <h3>Pagos</h3>
+        <table>
+            <tr><th>Monto</th><th>Fecha</th><th>Comprobante</th></tr>
+            <tr th:each="p : ${proyecto.pagos}">
+                <td th:text="${p.monto}"></td>
+                <td th:text="${p.fecha}"></td>
+                <td><a th:href="@{/uploads/comprobantes/} + ${p.comprobanteNumero}" target="_blank">Ver</a></td>
+            </tr>
+        </table>
+        <div th:if="${saldoPendiente > 0}">
+            <p>Saldo pendiente: S/ <span th:text="${saldoPendiente}"></span></p>
+            <form th:action="@{'/public/cliente/subir-comprobante/' + ${proyecto.id}}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept="image/*,application/pdf">
+                <input type="number" name="monto" placeholder="Monto">
+                <input type="date" name="fecha">
+                <button type="submit">Subir comprobante de pago</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

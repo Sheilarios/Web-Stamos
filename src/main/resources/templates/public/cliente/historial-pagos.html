@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de pagos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+</head>
+<body>
+<div class="container" style="max-width:800px; margin:20px auto;">
+    <h2>Historial de pagos</h2>
+    <table style="width:100%; border-collapse:collapse;">
+        <tr style="border-bottom:0.5px solid #1e2535;">
+            <th>Proyecto</th><th>Fecha</th><th>Monto</th><th>Medio</th><th>Estado</th>
+        </tr>
+        <tr th:each="pago : ${pagos}">
+            <td th:text="${pago.proyecto.nombre}"></td>
+            <td th:text="${pago.fecha}"></td>
+            <td th:text="${pago.monto}"></td>
+            <td th:text="${pago.medioPago}"></td>
+            <td th:text="${pago.estado}"></td>
+        </tr>
+    </table>
+    <a th:href="@{/public/cliente/dashboard}">← Volver</a>
+</div>
+</body>
+</html>

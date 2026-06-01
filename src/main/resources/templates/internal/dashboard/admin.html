@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <h1 class="mb-4">Panel de Administración</h1>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Clientes</h5>
+                            <p class="card-text display-6" id="totalClientes">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Proyectos Activos</h5>
+                            <p class="card-text display-6" id="totalProyectosActivos">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Pendiente de Cobro</h5>
+                            <p class="card-text display-6" id="totalPendientes">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-danger mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Proyectos Atrasados</h5>
+                            <p class="card-text display-6" id="totalAtrasados">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">Ingresos mensuales (últimos 6 meses)</div>
+                        <div class="card-body">
+                            <canvas id="ingresosChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">Distribución de proyectos por estado</div>
+                        <div class="card-body">
+                            <canvas id="proyectosEstadoChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-4">
+                        <div class="card-header">Proyectos recientes</div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-sm" id="proyectosRecientes">
+                                <thead>
+                                    <tr><th>ID</th><th>Cliente</th><th>Estado</th><th>Fecha creación</th></tr>
+                                </thead>
+                                <tbody><tr><td colspan="4" class="text-center">Cargando...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">Alertas de vencimiento</div>
+                        <div class="card-body" id="alertasContainer">
+                            <div class="alert alert-info">Cargando alertas...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script th:src="@{/internal/js/dashboard.js}"></script>
+</body>
+</html>

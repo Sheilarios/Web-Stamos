@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard · Cliente STAMOS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <style>
+        /* Estilos extraídos de portal del cliente.html */
+        body{background:#0e1117;font-family:'DM Sans',sans-serif;color:#e2e8f0;margin:0}
+        .app{display:flex;min-height:100vh}
+        .sidebar{width:220px;background:#13161f;border-right:0.5px solid #1e2535}
+        .brand{padding:24px 20px;border-bottom:0.5px solid #1e2535}
+        .main{flex:1;padding:24px 28px}
+        .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+        .metric{background:#13161f;border-radius:10px;padding:16px}
+        .project-row{display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #1e2535;padding:12px 0}
+        .status-pill{padding:3px 9px;border-radius:12px;font-size:10px}
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar">
+        <div class="brand">STAMOS<span>.</span><div style="font-size:10px;">Portal del Cliente</div></div>
+    </div>
+    <div class="main">
+        <h2>Bienvenido, <span th:text="${cliente.nombreRazonSocial}"></span></h2>
+        <div class="metrics">
+            <div class="metric">Proyectos activos: <span th:text="${proyectosActivos}">0</span></div>
+            <div class="metric">Total cotizado: S/ <span th:text="${totalCotizado}"></span></div>
+            <div class="metric">Pagado: S/ <span th:text="${totalPagado}"></span></div>
+            <div class="metric">Saldo pendiente: S/ <span th:text="${saldoPendiente}"></span></div>
+        </div>
+        <h3>Mis proyectos</h3>
+        <div th:each="p : ${proyectos}" class="project-row">
+            <span th:text="${p.nombre}"></span>
+            <span class="status-pill" th:text="${p.estado}"></span>
+            <a th:href="@{'/public/cliente/proyecto/' + ${p.id}}">Ver detalle</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

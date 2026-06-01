@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Pagos registrados</h1>
+                <a th:href="@{/internal/pagos/nuevo}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nuevo pago
+                </a>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label>Filtrar por proyecto</label>
+                            <select id="filtroProyecto" class="form-select">
+                                <option value="">Todos los proyectos</option>
+                                <option th:each="proj : ${proyectos}" th:value="${proj.id}" th:text="${proj.id + ' - ' + proj.cliente.nombreRazonSocial}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tablaPagos" class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Proyecto ID</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Monto (S/)</th>
+                                    <th>Medio de pago</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="pago : ${pagos}">
+                                    <td th:text="${pago.id}"></td>
+                                    <td th:text="${pago.proyecto.id}"></td>
+                                    <td th:text="${pago.proyecto.cliente.nombreRazonSocial}"></td>
+                                    <td th:text="${#dates.format(pago.fecha, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${#numbers.formatDecimal(pago.monto, 1, 2)}"></td>
+                                    <td th:text="${pago.medioPago}"></td>
+                                    <td>
+                                        <span th:if="${pago.estado == 'REGISTRADO'}" class="badge bg-success">Registrado</span>
+                                        <span th:if="${pago.estado == 'ANULADO'}" class="badge bg-danger">Anulado</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a th:href="@{/internal/pagos/detalle/{id}(id=${pago.id})}" class="btn btn-sm btn-info" title="Ver detalle">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a th:if="${pago.estado != 'ANULADO'}" th:href="@{/internal/pagos/anular/{id}(id=${pago.id})}" class="btn btn-sm btn-danger" title="Anular">
+                                                <i class="bi bi-x-circle"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script th:src="@{/internal/js/pagos.js}"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Modales comunes. Uso: <div th:replace="~{internal/fragments/modales :: confirmModal(id, titulo, mensaje, actionUrl)}"></div> -->
+
+<div th:fragment="confirmModal(id, titulo, mensaje, actionUrl)">
+    <div class="modal fade" th:id="${id}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="${titulo}">Confirmar acción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" th:text="${mensaje}">¿Está seguro de realizar esta acción?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form th:action="${actionUrl}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de información genérico -->
+<div th:fragment="infoModal(id, titulo, mensaje)">
+    <div class="modal fade" th:id="${id}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="${titulo}">Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" th:text="${mensaje}">Contenido del mensaje</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cargar contenido dinámico vía AJAX (cuerpo vacío) -->
+<div th:fragment="dynamicModal(id, titulo, size)">
+    <div class="modal fade" th:id="${id}" tabindex="-1">
+        <div class="modal-dialog" th:classappend="${size == 'lg' ? 'modal-lg' : (size == 'sm' ? 'modal-sm' : '')}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="${titulo}">Título</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center"><div class="spinner-border" role="status"></div></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary dynamic-save">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cambio de estado de proyectos (ejemplo) -->
+<div th:fragment="cambiarEstadoModal">
+    <div class="modal fade" id="modalCambiarEstado" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar estado del proyecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formCambiarEstado" method="post">
+                    <div class="modal-body">
+                        <label>Nuevo estado</label>
+                        <select name="nuevoEstado" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="APROBADO">Aprobado</option>
+                            <option value="EN_DISEÑO">En diseño</option>
+                            <option value="EN_PRODUCCION">En producción</option>
+                            <option value="INSTALACION_MONTAJE">Instalación/Montaje</option>
+                            <option value="ENTREGADO">Entregado</option>
+                            <option value="ANULADO">Anulado</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerta de confirmación simple (usando SweetAlert, opcional) -->
+<div th:fragment="swalConfirm">
+    <script>
+        function confirmAction(url, message) {
+            if (confirm(message)) {
+                window.location.href = url;
+            }
+        }
+    </script>
+</div>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Mi actividad reciente</h1>
+                <a th:href="@{/internal/usuarios/perfil}" class="btn btn-secondary">Volver al perfil</a>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tablaActividad" class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Fecha y hora</th>
+                                    <th>Acción</th>
+                                    <th>Entidad</th>
+                                    <th>ID de entidad</th>
+                                    <th>Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="log : ${logs}">
+                                    <td th:text="${#dates.format(log.fechaHora, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                                    <td th:text="${log.accion}"></td>
+                                    <td th:text="${log.entidad}"></td>
+                                    <td th:text="${log.entidadId}"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalleModal" 
+                                                th:data-anterior="${log.valorAnterior}" th:data-nuevo="${log.valorNuevo}">
+                                            Ver detalles
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para mostrar valores anteriores/nuevos -->
+    <div class="modal fade" id="detalleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalles del cambio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Valor anterior:</strong></p>
+                    <pre id="valorAnterior" class="bg-light p-2"></pre>
+                    <p><strong>Valor nuevo:</strong></p>
+                    <pre id="valorNuevo" class="bg-light p-2"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script>
+        $(document).ready(function() {
+            $('#tablaActividad').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                order: [[0, 'desc']],
+                pageLength: 10,
+                responsive: true
+            });
+
+            // Pasar datos al modal
+            $('#detalleModal').on('show.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const anterior = button.data('anterior') || 'No registrado';
+                const nuevo = button.data('nuevo') || 'No registrado';
+                $('#valorAnterior').text(anterior);
+                $('#valorNuevo').text(nuevo);
+            });
+        });
+    </script>
+</body>
+</html>

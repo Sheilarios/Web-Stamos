@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Contacto y cotizaciones</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #080b11;
+            color: #d4dbe8;
+        }
+        
+        .nav {
+            display: flex;
+            align-items: center;
+            padding: 0 60px;
+            height: 70px;
+            background: rgba(8, 11, 17, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 0.5px solid #14192a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #f0f4ff;
+        }
+        
+        .nav-brand span { color: #3d72d4; }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            margin-left: 60px;
+        }
+        
+        .nav-link {
+            font-size: 14px;
+            color: #4a5a72;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #c4cfe8;
+        }
+        
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-login {
+            background: none;
+            border: 0.5px solid #1e2a3e;
+            color: #5a6a82;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        
+        .btn-login:hover {
+            border-color: #2a3a58;
+            color: #b4c4d8;
+        }
+        
+        .btn-cta {
+            background: #1a2e54;
+            border: 0.5px solid #2a4878;
+            color: #6b9cf4;
+            padding: 8px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        
+        .btn-cta:hover {
+            background: #1f3664;
+            color: #8ab4f8;
+        }
+        
+        .contact-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+        
+        .contact-grid {
+            display: flex;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-info {
+            flex: 1;
+            min-width: 280px;
+        }
+        
+        .contact-form {
+            flex: 1.4;
+            min-width: 320px;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0d1828;
+            border: 0.5px solid #1a2e48;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: #4a72a4;
+            margin-bottom: 24px;
+        }
+        
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            color: #f0f4ff;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        
+        .hero-title span { color: #3d72d4; }
+        
+        .contact-desc {
+            font-size: 15px;
+            color: #4a5a72;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+        
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #0f1219;
+            border: 0.5px solid #1a2030;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 14px;
+        }
+        
+        .chip-icon {
+            width: 44px;
+            height: 44px;
+            background: #0e1828;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chip-icon i {
+            font-size: 20px;
+            color: #3d72d4;
+        }
+        
+        .chip-label {
+            font-size: 11px;
+            color: #3a4a60;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+        
+        .chip-val {
+            font-size: 14px;
+            color: #c4cfe8;
+            font-weight: 500;
+        }
+        
+        .form-card {
+            background: #0f1219;
+            border: 0.5px solid #1a2535;
+            border-radius: 20px;
+            padding: 32px;
+        }
+        
+        .form-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .form-sub {
+            font-size: 13px;
+            color: #4a5a72;
+            margin-bottom: 28px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 140px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .label {
+            font-size: 11px;
+            color: #3a4a60;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+        
+        .input {
+            background: #0d1220;
+            border: 0.5px solid #1a2030;
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #c4cfe8;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            width: 100%;
+        }
+        
+        .input:focus {
+            border-color: #2a4878;
+        }
+        
+        textarea.input {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .service-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 8px 0 4px;
+        }
+        
+        .svc-tag {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            background: #0e1220;
+            border: 0.5px solid #1a2030;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .svc-tag.selected {
+            background: #0d1e38;
+            border-color: #2a4878;
+            color: #6b9cf4;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: #1a2e54;
+            border: 0.5px solid #2a4878;
+            color: #6b9cf4;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .map-card {
+            margin-top: 48px;
+            background: #0f1219;
+            border: 0.5px solid #1a2535;
+            border-radius: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            overflow: hidden;
+        }
+        
+        .map-placeholder {
+            flex: 2;
+            min-height: 240px;
+            background: #0a1020;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .map-info {
+            flex: 1;
+            border-left: 0.5px solid #1a2030;
+            padding: 24px;
+        }
+        
+        .hour-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 13px;
+            border-bottom: 0.5px solid #141922;
+        }
+        
+        .footer {
+            background: #0b0e15;
+            border-top: 0.5px solid #14192a;
+            padding: 48px 60px 32px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #f0f4ff;
+            margin-bottom: 12px;
+        }
+        
+        .footer-brand span { color: #3d72d4; }
+        
+        .footer-desc {
+            font-size: 13px;
+            color: #3a4a60;
+            line-height: 1.6;
+        }
+        
+        .footer-title {
+            font-size: 12px;
+            color: #2a3448;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 18px;
+        }
+        
+        .footer-link {
+            display: block;
+            font-size: 13px;
+            color: #3a4a60;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+        
+        .footer-bottom {
+            border-top: 0.5px solid #14192a;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .footer-copy, .footer-ruc {
+            font-size: 11px;
+            color: #1e2838;
+        }
+        
+        @media (max-width: 900px) {
+            .nav { padding: 0 24px; }
+            .nav-links { display: none; }
+            .hero-title { font-size: 32px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR PÚBLICO -->
+<nav class="nav">
+    <div class="nav-brand">STAMOS<span>.</span></div>
+    <div class="nav-links">
+        <a class="nav-link" th:href="@{/}">Inicio</a>
+        <a class="nav-link" th:href="@{/servicios}">Servicios</a>
+        <a class="nav-link" th:href="@{/galeria}">Galería</a>
+        <a class="nav-link active" th:href="@{/contacto}">Contacto</a>
+    </div>
+    <div class="nav-right">
+        <a th:href="@{/login}" class="btn-login"><i class="ti ti-lock"></i> Iniciar sesión</a>
+        <a th:href="@{/contacto}" class="btn-cta"><i class="ti ti-send"></i> Cotizar ahora</a>
+    </div>
+</nav>
+
+<!-- CONTACTO -->
+<section class="contact-section">
+    <div class="contact-grid">
+        <div class="contact-info">
+            <div class="hero-badge"><i class="ti ti-mail"></i> Contáctanos</div>
+            <h1 class="hero-title">Hagamos realidad<br>tu próximo <span>stand</span></h1>
+            <p class="contact-desc">Cuéntanos sobre tu evento y te enviamos una cotización formal en menos de 24 horas. Más de 10 años diseñando experiencias para ferias y eventos corporativos en Lima.</p>
+            
+            <div class="chip">
+                <div class="chip-icon"><i class="ti ti-phone"></i></div>
+                <div><div class="chip-label">Teléfonos</div><div class="chip-val">01 704-6345 · 987 819 456 · 987 181 168</div></div>
+            </div>
+            <div class="chip">
+                <div class="chip-icon"><i class="ti ti-mail"></i></div>
+                <div><div class="chip-label">Correo</div><div class="chip-val">info@stamosl.com</div></div>
+            </div>
+            <div class="chip">
+                <div class="chip-icon"><i class="ti ti-map-pin"></i></div>
+                <div><div class="chip-label">Dirección</div><div class="chip-val">Jr. Antisuyo 438, Zárate – San Juan de Lurigancho, Lima</div></div>
+            </div>
+        </div>
+
+        <div class="contact-form">
+            <div class="form-card">
+                <div class="form-title">Solicita tu cotización</div>
+                <div class="form-sub">Completa el formulario y un especialista te contactará.</div>
+                
+                <form th:action="@{/contacto/enviar}" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="label">Nombre / Empresa</label>
+                            <input type="text" class="input" name="nombre" placeholder="Ej. Grupo Farmacias SAC" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="label">RUC (opcional)</label>
+                            <input type="text" class="input" name="ruc" placeholder="20xxxxxxxxx">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="label">Teléfono / WhatsApp</label>
+                            <input type="text" class="input" name="telefono" placeholder="+51 9xx xxx xxx" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Correo electrónico</label>
+                            <input type="email" class="input" name="email" placeholder="tu@empresa.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Servicios de interés</label>
+                        <div class="service-tags" id="serviciosTags">
+                            <span data-servicio="stand" class="svc-tag selected">Stand publicitario</span>
+                            <span data-servicio="escenografia" class="svc-tag">Escenografía</span>
+                            <span data-servicio="video" class="svc-tag">Video wall</span>
+                            <span data-servicio="mobiliario" class="svc-tag">Mobiliario ferial</span>
+                            <span data-servicio="touch" class="svc-tag">Pantallas táctiles</span>
+                            <span data-servicio="diseno" class="svc-tag">Diseño 3D</span>
+                        </div>
+                        <input type="hidden" name="servicios" id="serviciosInput">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="label">Fecha del evento</label>
+                            <input type="date" class="input" name="fechaEvento">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Presupuesto estimado</label>
+                            <select class="input" name="presupuesto">
+                                <option value="">Seleccionar rango</option>
+                                <option>Menos de S/ 3,000</option>
+                                <option>S/ 3,000 – S/ 8,000</option>
+                                <option>S/ 8,000 – S/ 20,000</option>
+                                <option>Más de S/ 20,000</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Descripción del proyecto</label>
+                        <textarea class="input" name="descripcion" rows="3" placeholder="Dimensiones, requerimientos especiales..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn"><i class="ti ti-send"></i> Enviar solicitud</button>
+                    <p class="form-sub" style="font-size: 11px; text-align: center; margin-top: 16px;">Tus datos son confidenciales. Solo los usamos para preparar tu cotización.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAPA -->
+    <div class="map-card">
+        <div class="map-placeholder">
+            <iframe width="100%" height="240" style="border:0;" loading="lazy" allowfullscreen src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Jr.+Antisuyo+438+Zárate+Lima"></iframe>
+        </div>
+        <div class="map-info">
+            <div class="chip-val" style="margin-bottom: 16px;">Horario de atención</div>
+            <div class="hour-row"><span>Lunes – Viernes</span><span>9:00 – 18:00</span></div>
+            <div class="hour-row"><span>Sábado</span><span>9:00 – 13:00</span></div>
+            <div class="hour-row"><span>Domingo</span><span style="color: #2a3448;">Cerrado</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand">STAMOS<span>.</span></div>
+            <div class="footer-desc">Diseño, producción y alquiler de stands publicitarios, mobiliario ferial y soluciones interactivas para eventos corporativos en Lima, Perú.</div>
+        </div>
+        <div>
+            <div class="footer-title">Servicios</div>
+            <a class="footer-link" th:href="@{/servicios}">Stands publicitarios</a>
+            <a class="footer-link" th:href="@{/servicios}">Video walls</a>
+            <a class="footer-link" th:href="@{/servicios}">Mobiliario ferial</a>
+            <a class="footer-link" th:href="@{/servicios}">Diseño 3D</a>
+        </div>
+        <div>
+            <div class="footer-title">Empresa</div>
+            <a class="footer-link" th:href="@{/}">Inicio</a>
+            <a class="footer-link" th:href="@{/galeria}">Galería</a>
+            <a class="footer-link" th:href="@{/contacto}">Contacto</a>
+            <a class="footer-link" th:href="@{/login}">Portal del cliente</a>
+        </div>
+        <div>
+            <div class="footer-title">Contacto</div>
+            <div class="footer-desc">Jr. Antisuyo 438, Zárate — SJL, Lima</div>
+            <div class="footer-desc">01 704-6345 · 987 819 456</div>
+            <div class="footer-desc">info@stamosl.com</div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-copy">© 2026 STAMOS LINARES S.R.L. · Todos los derechos reservados</div>
+        <div class="footer-ruc">RUC 20549500715</div>
+    </div>
+</footer>
+
+<script>
+    const tags = document.querySelectorAll('.svc-tag');
+    const inputServicios = document.getElementById('serviciosInput');
+    
+    function updateHidden() {
+        const selected = Array.from(document.querySelectorAll('.svc-tag.selected'))
+            .map(el => el.getAttribute('data-servicio') || el.innerText);
+        if (inputServicios) inputServicios.value = selected.join(', ');
+    }
+    
+    tags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            this.classList.toggle('selected');
+            updateHidden();
+        });
+    });
+    
+    updateHidden();
+</script>
+
+</body>
+</html>

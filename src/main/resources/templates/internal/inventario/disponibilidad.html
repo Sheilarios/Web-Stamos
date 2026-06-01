@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <h1 class="mb-4">Consulta de disponibilidad de equipos</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Filtros de consulta</h4>
+                </div>
+                <div class="card-body">
+                    <form id="formDisponibilidad" method="get" th:action="@{/internal/inventario/disponibilidad/consultar}" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="fechaInicio" class="form-label">Fecha de inicio *</label>
+                            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" th:value="${param.fechaInicio}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fechaFin" class="form-label">Fecha de fin *</label>
+                            <input type="date" id="fechaFin" name="fechaFin" class="form-control" th:value="${param.fechaFin}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">Consultar disponibilidad</button>
+                        </div>
+                    </form>
+                    <div id="errorFecha" class="text-danger mt-2" style="display:none;">La fecha de inicio debe ser anterior a la fecha de fin.</div>
+                </div>
+            </div>
+
+            <div th:if="${disponibilidad != null}" class="card mt-4">
+                <div class="card-header">
+                    <h4>Resultados del <span th:text="${#dates.format(fechaInicio, 'dd/MM/yyyy')}"></span> al <span th:text="${#dates.format(fechaFin, 'dd/MM/yyyy')}"></span></h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tablaDisponibilidad" class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Equipo</th>
+                                    <th>Ubicación</th>
+                                    <th>Stock total</th>
+                                    <th>Reservado en período</th>
+                                    <th>Disponible</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="entry : ${disponibilidad}">
+                                    <td th:text="${entry.key.id}"></td>
+                                    <td th:text="${entry.key.nombre}"></td>
+                                    <td th:text="${entry.key.ubicacion}"></td>
+                                    <td class="text-center" th:text="${entry.key.cantidadTotal}"></td>
+                                    <!-- Calcular reservado dinámicamente: stock total - disponible -->
+                                    <td class="text-center" th:text="${entry.key.cantidadTotal - entry.value}"></td>
+                                    <td class="text-center" th:classappend="${entry.value == 0 ? 'text-danger' : (entry.value < entry.key.cantidadTotal ? 'text-warning' : 'text-success')}" th:text="${entry.value}"></td>
+                                    <td class="text-center">
+                                        <span th:if="${entry.value == 0}" class="badge bg-danger">Sin stock</span>
+                                        <span th:if="${entry.value > 0 and entry.value < entry.key.cantidadTotal}" class="badge bg-warning text-dark">Disponibilidad parcial</span>
+                                        <span th:if="${entry.value == entry.key.cantidadTotal}" class="badge bg-success">Completa</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${error != null}" class="alert alert-danger mt-4" role="alert" th:text="${error}"></div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script th:src="@{/internal/js/inventario.js}"></script>
+    <script>
+        $(document).ready(function() {
+            // Validación de fechas antes de enviar el formulario
+            $('#formDisponibilidad').on('submit', function(e) {
+                const fechaInicio = $('#fechaInicio').val();
+                const fechaFin = $('#fechaFin').val();
+                if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
+                    e.preventDefault();
+                    $('#errorFecha').show();
+                } else {
+                    $('#errorFecha').hide();
+                }
+            });
+
+            // Inicializar DataTables si hay resultados
+            if ($('#tablaDisponibilidad').length && $('#tablaDisponibilidad tbody tr').length > 0) {
+                $('#tablaDisponibilidad').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                    },
+                    order: [[0, 'asc']],
+                    pageLength: 10,
+                    responsive: true
+                });
+            }
+        });
+    </script>
+</body>
+</html>

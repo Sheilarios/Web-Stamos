@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Historial de estados - Proyecto #<span th:text="${proyecto.id}"></span></h1>
+                <a th:href="@{/internal/proyectos/detalle/{id}(id=${proyecto.id})}" class="btn btn-secondary">Volver al proyecto</a>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tablaHistorial" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha y hora</th>
+                                    <th>Estado anterior</th>
+                                    <th>Estado nuevo</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="h : ${historial}">
+                                    <td th:text="${#dates.format(h.fechaHora, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                                    <td th:text="${h.estadoAnterior != null ? h.estadoAnterior : '-'}"></td>
+                                    <td th:text="${h.estadoNuevo}"></td>
+                                    <td th:text="${h.usuario.nombre}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script>
+        $(document).ready(function() {
+            $('#tablaHistorial').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                order: [[0, 'desc']],
+                pageLength: 10,
+                responsive: true
+            });
+        });
+    </script>
+</body>
+</html>

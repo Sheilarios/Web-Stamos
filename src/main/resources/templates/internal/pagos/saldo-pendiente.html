@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <h1 class="mb-4">Saldos pendientes por cliente</h1>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tablaSaldos" class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cliente ID</th>
+                                    <th>Cliente</th>
+                                    <th>Total pagado (S/)</th>
+                                    <th>Total cotización (S/)</th>
+                                    <th>Saldo pendiente (S/)</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="row : ${pendientes}">
+                                    <td th:text="${row[0]}"></td>
+                                    <td th:text="${row[1]}"></td>
+                                    <td th:text="${#numbers.formatDecimal(row[2], 1, 2)}"></td>
+                                    <td th:text="${#numbers.formatDecimal(row[3], 1, 2)}"></td>
+                                    <td class="fw-bold text-danger" th:text="${#numbers.formatDecimal(row[4], 1, 2)}"></td>
+                                    <td>
+                                        <a th:href="@{/internal/clientes/detalle/{id}(id=${row[0]})}" class="btn btn-sm btn-info">Ver cliente</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script>
+        $(document).ready(function() {
+            $('#tablaSaldos').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                order: [[4, 'desc']],
+                pageLength: 10,
+                responsive: true
+            });
+        });
+    </script>
+</body>
+</html>

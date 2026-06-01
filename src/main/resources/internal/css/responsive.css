@@ -1,0 +1,232 @@
+/* ==============================================
+   responsive.css - Estilos responsivos STAMOS
+   Sistema de gestión interna
+   ============================================== */
+
+/* ---------- TABLETS (menos de 992px) ---------- */
+@media (max-width: 991.98px) {
+    /* Ajustes del sidebar */
+    .sidebar {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        bottom: 0;
+        width: 260px;
+        z-index: 1050;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+    
+    /* Overlay para el sidebar */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1040;
+        display: none;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+    
+    /* Botón de menú hamburguesa */
+    .menu-toggle {
+        display: inline-block;
+        font-size: 1.5rem;
+        background: none;
+        border: none;
+        color: var(--stamos-primary);
+        cursor: pointer;
+    }
+    
+    /* Contenido principal */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 1rem;
+    }
+    
+    /* Tablas: permitir scroll horizontal */
+    .table-responsive-custom {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Tarjetas en columnas */
+    .card-deck {
+        flex-direction: column;
+    }
+    
+    /* Botones en formularios */
+    .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+    
+    /* Reducir padding de modales */
+    .modal-body {
+        padding: 1rem;
+    }
+}
+
+/* ---------- MÓVILES (menos de 768px) ---------- */
+@media (max-width: 767.98px) {
+    /* Fuentes más pequeñas */
+    body {
+        font-size: 14px;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Ajustes de tablas */
+    .table thead {
+        display: none;
+    }
+    
+    .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        background-color: white;
+    }
+    
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table tbody td:last-child {
+        border-bottom: none;
+    }
+    
+    .table tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        width: 40%;
+        color: var(--stamos-secondary);
+    }
+    
+    /* Formularios en una sola columna */
+    .row > [class*="col-"] {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Sidebar más angosto */
+    .sidebar {
+        width: 240px;
+        left: -240px;
+    }
+    
+    /* Tarjetas con padding reducido */
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Botones de acción en tablas */
+    .btn-group-sm {
+        display: flex;
+        gap: 0.25rem;
+    }
+    
+    /* Paginación compacta */
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .page-item {
+        margin: 0.125rem;
+    }
+    
+    /* Gráficos responsivos */
+    canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+}
+
+/* ---------- MÓVILES PEQUEÑOS (menos de 480px) ---------- */
+@media (max-width: 479.98px) {
+    /* Aumentar área táctil de botones */
+    .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Reducir márgenes */
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Ocultar columnas menos importantes en tablas (si se usan data-label) */
+    .table tbody td {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .table tbody td::before {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Sidebar más compacto */
+    .sidebar .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Modales ocupan casi toda la pantalla */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* ---------- CLASES AUXILIARES RESPONSIVAS ---------- */
+/* Ocultar en móviles */
+.hide-on-mobile {
+    display: inline-block;
+}
+@media (max-width: 767.98px) {
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
+/* Mostrar solo en móviles */
+.show-on-mobile {
+    display: none !important;
+}
+@media (max-width: 767.98px) {
+    .show-on-mobile {
+        display: inline-block !important;
+    }
+}
+
+/* Texto responsivo */
+.text-responsive {
+    font-size: clamp(0.875rem, 4vw, 1rem);
+}

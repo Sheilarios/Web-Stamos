@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Servicios para eventos corporativos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #080b11;
+            color: #d4dbe8;
+            overflow-x: hidden;
+        }
+        
+        /* NAVBAR */
+        .nav {
+            display: flex;
+            align-items: center;
+            padding: 0 60px;
+            height: 70px;
+            background: rgba(8, 11, 17, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 0.5px solid #14192a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #f0f4ff;
+        }
+        
+        .nav-brand span { color: #3d72d4; }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            margin-left: 60px;
+        }
+        
+        .nav-link {
+            font-size: 14px;
+            color: #4a5a72;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #c4cfe8;
+        }
+        
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-login {
+            background: none;
+            border: 0.5px solid #1e2a3e;
+            color: #5a6a82;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        
+        .btn-login:hover {
+            border-color: #2a3a58;
+            color: #b4c4d8;
+        }
+        
+        .btn-cta {
+            background: #1a2e54;
+            border: 0.5px solid #2a4878;
+            color: #6b9cf4;
+            padding: 8px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        
+        .btn-cta:hover {
+            background: #1f3664;
+            color: #8ab4f8;
+        }
+        
+        /* HERO */
+        .hero {
+            padding: 60px 60px 40px;
+            text-align: center;
+            background: linear-gradient(180deg, #080b11 0%, #0b0e15 100%);
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0d1828;
+            border: 0.5px solid #1a2e48;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: #4a72a4;
+            margin-bottom: 24px;
+        }
+        
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: #f0f4ff;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+        
+        .hero-title span { color: #3d72d4; }
+        
+        .hero-desc {
+            font-size: 16px;
+            color: #4a5a72;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        /* CATÁLOGO FLIP CARDS */
+        .catalog-section {
+            padding: 40px 60px 80px;
+        }
+        
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .flip-wrap {
+            height: 380px;
+            perspective: 1500px;
+            cursor: pointer;
+        }
+        
+        .flip-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .flip-wrap:hover .flip-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-front,
+        .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            padding: 28px;
+        }
+        
+        .flip-front {
+            background: #0f1219;
+            border: 0.5px solid #14192a;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .flip-back {
+            background: #0d1828;
+            border: 0.5px solid #1e3060;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .front-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .front-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #e8f0fc;
+            margin-bottom: 12px;
+        }
+        
+        .front-desc {
+            font-size: 13px;
+            color: #4a5a72;
+            line-height: 1.6;
+            flex: 1;
+        }
+        
+        .front-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        
+        .tag {
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: #0d1220;
+            border: 0.5px solid #1a2030;
+            color: #3a4a60;
+        }
+        
+        .back-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #3a5a8a;
+            margin-bottom: 12px;
+        }
+        
+        .back-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #e8f0fc;
+            margin-bottom: 16px;
+        }
+        
+        .back-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .back-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12px;
+            color: #5a6a82;
+        }
+        
+        .back-item i {
+            font-size: 14px;
+            color: #3d72d4;
+            margin-top: 1px;
+        }
+        
+        .back-price {
+            background: #0a1420;
+            border: 0.5px solid #1a2e48;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .bp-label {
+            font-size: 10px;
+            color: #3a4a60;
+        }
+        
+        .bp-val {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #6b9cf4;
+        }
+        
+        .back-cta {
+            width: 100%;
+            background: #1a2e54;
+            border: 0.5px solid #2a4878;
+            color: #6b9cf4;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 12px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        
+        /* Colores por categoría */
+        .c-blue .front-icon { background: #0d1828; border: 0.5px solid #1a2e48; }
+        .c-blue .front-icon i { color: #3d72d4; }
+        .c-green .front-icon { background: #0d1e14; border: 0.5px solid #1a3020; }
+        .c-green .front-icon i { color: #3a9a5a; }
+        .c-amber .front-icon { background: #1a1008; border: 0.5px solid #2a2010; }
+        .c-amber .front-icon i { color: #c07a2a; }
+        .c-purple .front-icon { background: #18102e; border: 0.5px solid #2a1e48; }
+        .c-purple .front-icon i { color: #8a6ad4; }
+        
+        /* FOOTER */
+        .footer {
+            background: #0b0e15;
+            border-top: 0.5px solid #14192a;
+            padding: 48px 60px 32px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #f0f4ff;
+            margin-bottom: 12px;
+        }
+        
+        .footer-brand span { color: #3d72d4; }
+        
+        .footer-desc {
+            font-size: 13px;
+            color: #3a4a60;
+            line-height: 1.6;
+        }
+        
+        .footer-title {
+            font-size: 12px;
+            color: #2a3448;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 18px;
+        }
+        
+        .footer-link {
+            display: block;
+            font-size: 13px;
+            color: #3a4a60;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+        
+        .footer-link:hover { color: #7a8ba6; }
+        
+        .footer-bottom {
+            border-top: 0.5px solid #14192a;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .footer-copy, .footer-ruc {
+            font-size: 11px;
+            color: #1e2838;
+        }
+        
+        @media (max-width: 900px) {
+            .nav { padding: 0 24px; }
+            .nav-links { display: none; }
+            .catalog-grid { grid-template-columns: 1fr; }
+            .hero-title { font-size: 32px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR PÚBLICO -->
+<nav class="nav">
+    <div class="nav-brand">STAMOS<span>.</span></div>
+    <div class="nav-links">
+        <a class="nav-link" th:href="@{/}">Inicio</a>
+        <a class="nav-link active" th:href="@{/servicios}">Servicios</a>
+        <a class="nav-link" th:href="@{/galeria}">Galería</a>
+        <a class="nav-link" th:href="@{/contacto}">Contacto</a>
+    </div>
+    <div class="nav-right">
+        <a th:href="@{/login}" class="btn-login"><i class="ti ti-lock"></i> Iniciar sesión</a>
+        <a th:href="@{/contacto}" class="btn-cta"><i class="ti ti-send"></i> Cotizar ahora</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-badge"><i class="ti ti-layout-grid"></i> Catálogo de servicios</div>
+    <h1 class="hero-title">Todo lo que necesitas para<br><span>tu próximo evento</span></h1>
+    <p class="hero-desc">Pasa el cursor sobre cada servicio para descubrir los detalles, precios y especificaciones técnicas.</p>
+</div>
+
+<!-- CATÁLOGO FLIP CARDS -->
+<section class="catalog-section">
+    <div class="catalog-grid">
+        <!-- Stand publicitario -->
+        <div class="flip-wrap c-blue">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <div class="front-icon"><i class="ti ti-layout" style="font-size: 28px;"></i></div>
+                    <div class="front-name">Stands publicitarios</div>
+                    <div class="front-desc">Diseño y fabricación de stands modulares y personalizados. Estructura metálica, impresión de alta resolución y acabados premium.</div>
+                    <div class="front-tags"><span class="tag">Modular</span><span class="tag">Personalizado</span><span class="tag">Alquiler/Venta</span></div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Stand publicitario</div>
+                    <div class="back-title">El espacio perfecto para tu marca</div>
+                    <div class="back-list">
+                        <div class="back-item"><i class="ti ti-check"></i> Módulos 2×2, 3×3, 4×3 y medidas personalizadas</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Estructura metálica + paneles de melamina o aluminio</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Impresión gráfica de alta resolución incluida</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Iluminación LED integrada</div>
+                    </div>
+                    <div class="back-price"><span class="bp-label">Desde</span><span class="bp-val">S/ 2,800</span></div>
+                    <a th:href="@{/contacto}" class="back-cta"><i class="ti ti-send"></i> Solicitar cotización</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video wall -->
+        <div class="flip-wrap c-green">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <div class="front-icon"><i class="ti ti-device-tv" style="font-size: 28px;"></i></div>
+                    <div class="front-name">Video walls & LED</div>
+                    <div class="front-desc">Pantallas LED modulares de alto impacto para eventos corporativos. Configura el tamaño y formato que necesites.</div>
+                    <div class="front-tags"><span class="tag">Video wall LED</span><span class="tag">Gran formato</span><span class="tag">Alquiler</span></div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Video wall & LED</div>
+                    <div class="back-title">Impacto visual que no pasa desapercibido</div>
+                    <div class="back-list">
+                        <div class="back-item"><i class="ti ti-check"></i> Paneles LED P3 / P4 de alta resolución</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Configuraciones: 2×1, 3×2, 4×3, L-shape</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Reproductor multimedia incluido</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Técnico de soporte durante el evento</div>
+                    </div>
+                    <div class="back-price"><span class="bp-label">Desde</span><span class="bp-val">S/ 1,800 / evento</span></div>
+                    <a th:href="@{/contacto}" class="back-cta"><i class="ti ti-send"></i> Solicitar cotización</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla táctil -->
+        <div class="flip-wrap c-blue">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <div class="front-icon"><i class="ti ti-device-tablet" style="font-size: 28px;"></i></div>
+                    <div class="front-name">Pantallas táctiles</div>
+                    <div class="front-desc">Kioscos interactivos y pantallas touch de 55" para activaciones comerciales, encuestas y catálogos digitales.</div>
+                    <div class="front-tags"><span class="tag">55" touch</span><span class="tag">Interactivo</span><span class="tag">Kiosko</span></div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Pantalla táctil</div>
+                    <div class="back-title">Tecnología interactiva para conectar con tu público</div>
+                    <div class="back-list">
+                        <div class="back-item"><i class="ti ti-check"></i> Pantalla Samsung / LG 55" Full HD touch</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Soporte de pie o integrado en stand</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Configuración de software a medida</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Disponible: 4 unidades en stock</div>
+                    </div>
+                    <div class="back-price"><span class="bp-label">Desde</span><span class="bp-val">S/ 480 / día</span></div>
+                    <a th:href="@{/contacto}" class="back-cta"><i class="ti ti-send"></i> Solicitar cotización</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobiliario ferial -->
+        <div class="flip-wrap c-amber">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <div class="front-icon"><i class="ti ti-armchair" style="font-size: 28px;"></i></div>
+                    <div class="front-name">Mobiliario ferial</div>
+                    <div class="front-desc">Catálogo completo de mesas altas, sillas lounge, módulos de exhibición y mobiliario corporativo para eventos.</div>
+                    <div class="front-tags"><span class="tag">Alquiler</span><span class="tag">Lima</span><span class="tag">Corporativo</span></div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Mobiliario ferial</div>
+                    <div class="back-title">Ambientación profesional para tu espacio</div>
+                    <div class="back-list">
+                        <div class="back-item"><i class="ti ti-check"></i> Mesas altas (stock: 10 unidades)</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Sillas lounge y banquetas (stock: 20 unidades)</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Módulos de exhibición y counters</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Entrega y recojo incluidos en Lima</div>
+                    </div>
+                    <div class="back-price"><span class="bp-label">Desde</span><span class="bp-val">S/ 45 / pieza/día</span></div>
+                    <a th:href="@{/contacto}" class="back-cta"><i class="ti ti-send"></i> Solicitar cotización</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diseño 3D -->
+        <div class="flip-wrap c-purple">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <div class="front-icon"><i class="ti ti-3d-cube-sphere" style="font-size: 28px;"></i></div>
+                    <div class="front-name">Diseño 3D & renders</div>
+                    <div class="front-desc">Visualiza tu stand antes de construirlo. Renders fotorrealistas en 3D, planos técnicos AutoCAD y recorridos virtuales.</div>
+                    <div class="front-tags"><span class="tag">3D Max</span><span class="tag">AutoCAD</span><span class="tag">Renders</span></div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Diseño 3D & renders</div>
+                    <div class="back-title">Aprueba antes de construir, sin sorpresas</div>
+                    <div class="back-list">
+                        <div class="back-item"><i class="ti ti-check"></i> Render fotorrealista en 3 ángulos</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Planos técnicos en AutoCAD (corte y planta)</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Hasta 2 revisiones incluidas</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Entrega en 48 horas hábiles</div>
+                    </div>
+                    <div class="back-price"><span class="bp-label">Desde</span><span class="bp-val">S/ 350 / proyecto</span></div>
+                    <a th:href="@{/contacto}" class="back-cta"><i class="ti ti-send"></i> Solicitar cotización</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Montaje y logística -->
+        <div class="flip-wrap c-green">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <div class="front-icon"><i class="ti ti-crane" style="font-size: 28px;"></i></div>
+                    <div class="front-name">Montaje y logística</div>
+                    <div class="front-desc">Equipo propio de montaje y desmontaje en el recinto ferial. Coordinamos transporte, instalación eléctrica y supervisión.</div>
+                    <div class="front-tags"><span class="tag">Montaje en feria</span><span class="tag">Transporte</span><span class="tag">Supervisión</span></div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Montaje y logística</div>
+                    <div class="back-title">Nos encargamos de todo el día del evento</div>
+                    <div class="back-list">
+                        <div class="back-item"><i class="ti ti-check"></i> Equipo de 2–4 operarios especializados</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Transporte desde almacén en Zárate, SJL</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Instalación eléctrica y señalización</div>
+                        <div class="back-item"><i class="ti ti-check"></i> Desmontaje y retiro al finalizar</div>
+                    </div>
+                    <div class="back-price"><span class="bp-label">Desde</span><span class="bp-val">S/ 650 / servicio</span></div>
+                    <a th:href="@{/contacto}" class="back-cta"><i class="ti ti-send"></i> Solicitar cotización</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand">STAMOS<span>.</span></div>
+            <div class="footer-desc">Diseño, producción y alquiler de stands publicitarios, mobiliario ferial y soluciones interactivas para eventos corporativos en Lima, Perú.</div>
+        </div>
+        <div>
+            <div class="footer-title">Servicios</div>
+            <a class="footer-link" th:href="@{/servicios}">Stands publicitarios</a>
+            <a class="footer-link" th:href="@{/servicios}">Video walls</a>
+            <a class="footer-link" th:href="@{/servicios}">Mobiliario ferial</a>
+            <a class="footer-link" th:href="@{/servicios}">Diseño 3D</a>
+        </div>
+        <div>
+            <div class="footer-title">Empresa</div>
+            <a class="footer-link" th:href="@{/}">Inicio</a>
+            <a class="footer-link" th:href="@{/galeria}">Galería</a>
+            <a class="footer-link" th:href="@{/contacto}">Contacto</a>
+            <a class="footer-link" th:href="@{/login}">Portal del cliente</a>
+        </div>
+        <div>
+            <div class="footer-title">Contacto</div>
+            <div class="footer-desc">Jr. Antisuyo 438, Zárate — SJL, Lima</div>
+            <div class="footer-desc">01 704-6345 · 987 819 456</div>
+            <div class="footer-desc">info@stamosl.com</div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-copy">© 2026 STAMOS LINARES S.R.L. · Todos los derechos reservados</div>
+        <div class="footer-ruc">RUC 20549500715</div>
+    </div>
+</footer>
+
+</body>
+</html>

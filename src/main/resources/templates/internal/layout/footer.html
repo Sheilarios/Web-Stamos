@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Fragmento para scripts que deben cargarse al final del body -->
+<div th:fragment="scripts">
+    <!-- Form validator (si se usa en todo el sistema) -->
+    <script th:src="@{/internal/js/form-validator.js}"></script>
+    <!-- Scripts específicos de cada página se incluirán después -->
+</div>
+
+<!-- Fragmento para mostrar mensajes flash (si se prefiere aquí en lugar del topbar) -->
+<div th:fragment="flash-messages">
+    <div th:if="${#strings.length(flashMessage) > 0}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${flashMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${#strings.length(errorMessage) > 0}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+
+<!-- Fragmento que cierra el body y html, útil si se usa en layouts anidados -->
+<div th:fragment="closing-tags">
+    <!-- Aquí no se incluye nada, solo para mantener consistencia -->
+</div>
+</html>

@@ -1,0 +1,185 @@
+/* ==============================================
+   custom.css - Estilos personalizados STAMOS
+   Sistema de gestión interna
+   ============================================== */
+
+/* ---------- VARIABLES GLOBALES ---------- */
+:root {
+    --stamos-primary: #2c3e50;
+    --stamos-secondary: #34495e;
+    --stamos-accent: #1abc9c;
+    --stamos-warning: #f39c12;
+    --stamos-danger: #e74c3c;
+    --stamos-success: #27ae60;
+    --stamos-info: #3498db;
+    --stamos-light: #ecf0f1;
+    --stamos-dark: #2c3e50;
+}
+
+/* ---------- ESTILOS GENERALES ---------- */
+body {
+    background-color: #f8f9fc;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+/* ---------- SIDEBAR (menú lateral) ---------- */
+.sidebar {
+    background-color: var(--stamos-primary);
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.8);
+    padding: 0.75rem 1rem;
+    transition: all 0.2s;
+    border-radius: 0.25rem;
+    margin: 0.2rem 0;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--stamos-secondary);
+    color: white;
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--stamos-accent);
+    color: white;
+}
+
+.sidebar .nav-link i {
+    margin-right: 0.75rem;
+    width: 1.5rem;
+    text-align: center;
+}
+
+/* ---------- CONTENIDO PRINCIPAL ---------- */
+.main-content {
+    padding: 1.5rem;
+}
+
+/* ---------- TARJETAS (CARDS) ---------- */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.card-title {
+    margin-bottom: 0;
+    font-size: 1.1rem;
+}
+
+/* ---------- TABLAS ---------- */
+.table {
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: var(--stamos-light);
+    color: var(--stamos-dark);
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(26, 188, 156, 0.05);
+}
+
+/* ---------- BOTONES ---------- */
+.btn-stamos-primary {
+    background-color: var(--stamos-primary);
+    border-color: var(--stamos-primary);
+    color: white;
+}
+.btn-stamos-primary:hover {
+    background-color: #1a252f;
+    border-color: #1a252f;
+    color: white;
+}
+
+.btn-stamos-accent {
+    background-color: var(--stamos-accent);
+    border-color: var(--stamos-accent);
+    color: white;
+}
+.btn-stamos-accent:hover {
+    background-color: #16a085;
+    border-color: #16a085;
+    color: white;
+}
+
+/* ---------- FORMULARIOS ---------- */
+.form-control:focus, .form-select:focus {
+    border-color: var(--stamos-accent);
+    box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+}
+
+.input-group-text {
+    background-color: var(--stamos-light);
+}
+
+/* ---------- BADGES Y ETIQUETAS ---------- */
+.badge-estado {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 2rem;
+}
+
+.badge-cotizacion-emitida { background-color: #3498db; color: white; }
+.badge-cotizacion-aprobada { background-color: #27ae60; color: white; }
+.badge-cotizacion-rechazada { background-color: #e74c3c; color: white; }
+.badge-cotizacion-anulada { background-color: #7f8c8d; color: white; }
+
+.badge-proyecto-cotizado { background-color: #95a5a6; }
+.badge-proyecto-aprobado { background-color: #3498db; }
+.badge-proyecto-diseno { background-color: #f39c12; }
+.badge-proyecto-produccion { background-color: #e67e22; }
+.badge-proyecto-instalacion { background-color: #9b59b6; }
+.badge-proyecto-entregado { background-color: #27ae60; }
+.badge-proyecto-anulado { background-color: #e74c3c; }
+
+/* ---------- PAGINACIÓN ---------- */
+.pagination .page-item.active .page-link {
+    background-color: var(--stamos-accent);
+    border-color: var(--stamos-accent);
+}
+
+.pagination .page-link {
+    color: var(--stamos-primary);
+}
+
+/* ---------- ALERTAS ---------- */
+.alert-stamos {
+    background-color: #e8f8f5;
+    border-left: 5px solid var(--stamos-accent);
+    color: #0c4e3a;
+}
+
+/* ---------- ANIMACIONES ---------- */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

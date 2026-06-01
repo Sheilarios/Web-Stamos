@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Fragmentos para tablas dinámicas con DataTables -->
+<!-- Uso: <div th:replace="~{internal/fragments/tablas :: dataTable(id, columns, rows)}"></div> -->
+
+<div th:fragment="basicTable(encabezados)">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr th:each="enc : ${encabezados}">
+                    <th th:text="${enc}"></th>
+                </tr>
+            </thead>
+            <tbody th:if="${#lists.isEmpty(rows)}">
+                <tr><td colspan="100%" class="text-center">No hay datos disponibles</td></tr>
+            </tbody>
+            <tbody>
+                <!-- El contenido se inyecta mediante fragmento o usando rows dinámico -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabla con DataTables (requiere inicialización JS) -->
+<div th:fragment="dataTable(id, columnas)">
+    <div class="table-responsive">
+        <table th:id="${id}" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th th:each="col : ${columnas}" th:text="${col}"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Contenido dinámico -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabla para listado de clientes (ejemplo) -->
+<div th:fragment="clientesTable(clientes)">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr><th>ID</th><th>Nombre/Razón social</th><th>Teléfono</th><th>Email</th><th>RUC</th><th>Estado</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${clientes}">
+                    <td th:text="${c.id}"></td>
+                    <td th:text="${c.nombreRazonSocial}"></td>
+                    <td th:text="${c.telefono}"></td>
+                    <td th:text="${c.email}"></td>
+                    <td th:text="${c.ruc}"></td>
+                    <td>
+                        <span th:if="${c.activo}" class="badge bg-success">Activo</span>
+                        <span th:unless="${c.activo}" class="badge bg-secondary">Inactivo</span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a th:href="@{/internal/clientes/detalle/{id}(id=${c.id})}" class="btn btn-sm btn-info">Ver</a>
+                            <a th:href="@{/internal/clientes/editar/{id}(id=${c.id})}" class="btn btn-sm btn-warning">Editar</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabla para listado de cotizaciones (ejemplo) -->
+<div th:fragment="cotizacionesTable(cotizaciones)">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr><th>ID</th><th>Cliente</th><th>Fecha emisión</th><th>Total</th><th>Estado</th><th>Versión</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${cotizaciones}">
+                    <td th:text="${c.id}"></td>
+                    <td th:text="${c.cliente.nombreRazonSocial}"></td>
+                    <td th:text="${#dates.format(c.fechaEmision, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${'S/ ' + #numbers.formatDecimal(c.total, 1, 2)}"></td>
+                    <td><span class="badge" th:classappend="${c.estado == 'APROBADA' ? 'bg-success' : 'bg-warning'}" th:text="${c.estado}"></span></td>
+                    <td th:text="${c.version}"></td>
+                    <td><a th:href="@{/internal/cotizaciones/detalle/{id}(id=${c.id})}" class="btn btn-sm btn-primary">Ver</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabla de proyectos asignados (para diseñador) -->
+<div th:fragment="proyectosAsignadosTable(proyectos)">
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead><tr><th>ID</th><th>Cliente</th><th>Estado</th><th>Fecha entrega</th><th>Acciones</th></tr></thead>
+            <tbody>
+                <tr th:each="p : ${proyectos}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.cliente.nombreRazonSocial}"></td>
+                    <td><span class="badge bg-info" th:text="${p.estado}"></span></td>
+                    <td th:text="${p.fechaEntregaEstimada}"></td>
+                    <td>
+                        <a th:href="@{/internal/proyectos/detalle/{id}(id=${p.id})}" class="btn btn-sm btn-primary">Gestionar</a>
+                        <button class="btn btn-sm btn-warning btn-cambiar-estado" th:data-id="${p.id}">Cambiar estado</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabla de reservas de equipos -->
+<div th:fragment="reservasEquiposTable(reservas)">
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead><tr><th>Equipo</th><th>Proyecto</th><th>Fecha inicio</th><th>Fecha fin</th><th>Cantidad</th></tr></thead>
+            <tbody>
+                <tr th:each="r : ${reservas}">
+                    <td th:text="${r.equipo.nombre}"></td>
+                    <td th:text="${r.proyecto.id} + ' - ' + ${r.proyecto.cliente.nombreRazonSocial}"></td>
+                    <td th:text="${#dates.format(r.fechaInicio, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(r.fechaFin, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${r.cantidad}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabla de pagos pendientes -->
+<div th:fragment="pagosPendientesTable(pagos)">
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead><tr><th>Proyecto</th><th>Cliente</th><th>Saldo pendiente</th><th>Fecha estimada</th><th>Acciones</th></tr></thead>
+            <tbody>
+                <tr th:each="p : ${pagos}">
+                    <td th:text="${p.proyecto.id}"></td>
+                    <td th:text="${p.proyecto.cliente.nombreRazonSocial}"></td>
+                    <td th:text="${'S/ ' + #numbers.formatDecimal(p.saldoPendiente, 1, 2)}"></td>
+                    <td th:text="${#dates.format(p.proyecto.fechaEntregaEstimada, 'dd/MM/yyyy')}"></td>
+                    <td><a th:href="@{/internal/pagos/registrar?proyectoId=${p.proyecto.id}}" class="btn btn-sm btn-success">Registrar pago</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</html>

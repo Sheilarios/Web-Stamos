@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Clientes</h1>
+                <a th:href="@{/internal/clientes/nuevo}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nuevo cliente
+                </a>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" id="searchClientes" class="form-control" placeholder="Buscar por nombre, RUC o teléfono...">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tablaClientes" class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre/Razón Social</th>
+                                    <th>Tipo</th>
+                                    <th>Teléfono</th>
+                                    <th>Email</th>
+                                    <th>RUC</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="cliente : ${clientes}">
+                                    <td th:text="${cliente.id}"></td>
+                                    <td th:text="${cliente.nombreRazonSocial}"></td>
+                                    <td>
+                                        <span th:if="${cliente.tipoPersona == 'PERSONA_NATURAL'}" class="badge bg-info">Natural</span>
+                                        <span th:if="${cliente.tipoPersona == 'EMPRESA'}" class="badge bg-primary">Empresa</span>
+                                    </td>
+                                    <td th:text="${cliente.telefono}"></td>
+                                    <td th:text="${cliente.email}"></td>
+                                    <td th:text="${cliente.ruc}"></td>
+                                    <td>
+                                        <span th:if="${cliente.activo}" class="badge bg-success">Activo</span>
+                                        <span th:unless="${cliente.activo}" class="badge bg-secondary">Deshabilitado</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/internal/clientes/detalle/{id}(id=${cliente.id})}" class="btn btn-sm btn-info" title="Ver detalle">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a th:href="@{/internal/clientes/editar/{id}(id=${cliente.id})}" class="btn btn-sm btn-warning" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form th:if="${cliente.activo}" th:action="@{/internal/clientes/deshabilitar/{id}(id=${cliente.id})}" method="post" style="display:inline;">
+                                                <button type="submit" class="btn btn-sm btn-danger btn-deshabilitar" title="Deshabilitar" onclick="return confirm('¿Deshabilitar este cliente? No podrá generar nuevas cotizaciones.')">
+                                                    <i class="bi bi-ban"></i>
+                                                </button>
+                                            </form>
+                                            <form th:unless="${cliente.activo}" th:action="@{/internal/clientes/habilitar/{id}(id=${cliente.id})}" method="post" style="display:inline;">
+                                                <button type="submit" class="btn btn-sm btn-success btn-habilitar" title="Habilitar" onclick="return confirm('¿Habilitar este cliente nuevamente?')">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    <script th:src="@{/internal/js/clientes.js}"></script>
+</body>
+</html>

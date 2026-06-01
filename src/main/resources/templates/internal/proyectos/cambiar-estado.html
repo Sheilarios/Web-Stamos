@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head}"></head>
+<body>
+    <div th:replace="~{layout/header :: topbar}"></div>
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Cambiar estado del proyecto #<span th:text="${proyecto.id}"></span></h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Estado actual:</strong> <span class="badge bg-secondary" th:text="${proyecto.estado}"></span></p>
+                    <form th:action="@{/internal/proyectos/cambiar-estado/{id}(id=${proyecto.id})}" method="post">
+                        <div class="mb-3">
+                            <label for="nuevoEstado" class="form-label">Nuevo estado *</label>
+                            <select id="nuevoEstado" name="nuevoEstado" class="form-select" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="est : ${estadosPermitidos}" th:value="${est}" th:text="${est}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Actualizar estado</button>
+                        <a th:href="@{/internal/proyectos/detalle/{id}(id=${proyecto.id})}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{layout/footer :: scripts}"></div>
+</body>
+</html>

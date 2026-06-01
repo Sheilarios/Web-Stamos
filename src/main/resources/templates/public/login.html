@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>STAMOS · Iniciar sesión</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#080b11;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}
+        .login-card{background:#0f1219;border:0.5px solid #1a2535;border-radius:24px;width:400px;padding:40px 32px}
+        .logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#f0f4ff;text-align:center}
+        .logo span{color:#3d72d4}
+        .input-group{margin-bottom:20px}
+        label{font-size:11px;text-transform:uppercase;color:#4a5a72;letter-spacing:1px;display:block;margin-bottom:6px}
+        input{width:100%;background:#0d1220;border:0.5px solid #1a2030;border-radius:10px;padding:12px;color:#c4cfe8}
+        button{width:100%;background:#1a2e54;border:0.5px solid #2a4878;color:#6b9cf4;padding:12px;border-radius:10px;font-weight:bold;cursor:pointer}
+        .extra-links{display:flex;justify-content:space-between;margin-top:20px;font-size:12px}
+        .extra-links a{color:#4a72a4;text-decoration:none}
+        .error{background:#1a0d0d;border:0.5px solid #3a1a1a;padding:10px;border-radius:8px;color:#b04040;margin-bottom:20px;font-size:13px}
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <div class="logo">STAMOS<span>.</span></div>
+    <div style="text-align:center; margin:8px 0 24px; color:#4a5a72;">Sistema de gestión</div>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${message}" class="error" style="background:#0d1828;color:#4a82d4" th:text="${message}"></div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="input-group">
+            <label>Correo electrónico</label>
+            <input type="email" name="username" required>
+        </div>
+        <div class="input-group">
+            <label>Contraseña</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit">Iniciar sesión</button>
+    </form>
+    <div class="extra-links">
+        <a th:href="@{/olvide-contrasena}">¿Olvidaste tu contraseña?</a>
+        <a th:href="@{/contacto}">Solicitar cotización</a>
+    </div>
+</div>
+</body>
+</html>

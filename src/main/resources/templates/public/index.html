@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Diseño y producción de stands publicitarios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Syne:wght@500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #080b11;
+            color: #d4dbe8;
+            overflow-x: hidden;
+        }
+        
+        /* NAVBAR */
+        .nav {
+            display: flex;
+            align-items: center;
+            padding: 0 60px;
+            height: 70px;
+            background: rgba(8, 11, 17, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 0.5px solid #14192a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #f0f4ff;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-brand span {
+            color: #3d72d4;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            margin-left: 60px;
+        }
+        
+        .nav-link {
+            font-size: 14px;
+            color: #4a5a72;
+            cursor: pointer;
+            transition: color 0.15s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #c4cfe8;
+        }
+        
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .btn-login {
+            background: none;
+            border: 0.5px solid #1e2a3e;
+            color: #5a6a82;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        
+        .btn-login:hover {
+            border-color: #2a3a58;
+            color: #b4c4d8;
+        }
+        
+        .btn-cta {
+            background: #1a2e54;
+            border: 0.5px solid #2a4878;
+            color: #6b9cf4;
+            padding: 8px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        
+        .btn-cta:hover {
+            background: #1f3664;
+            color: #8ab4f8;
+        }
+        
+        /* HERO SECTION */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 60px 60px;
+            position: relative;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(#14192a 1px, transparent 1px), linear-gradient(90deg, #14192a 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+        }
+        
+        .hero-glow {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 300px;
+            background: radial-gradient(ellipse, rgba(42, 78, 150, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0d1828;
+            border: 0.5px solid #1a2e48;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: #4a72a4;
+            margin-bottom: 28px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+        
+        .hero-badge i {
+            font-size: 14px;
+            color: #3d72d4;
+        }
+        
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 64px;
+            font-weight: 800;
+            color: #f0f4ff;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+        
+        .hero-title span {
+            color: #3d72d4;
+        }
+        
+        .hero-title em {
+            font-style: normal;
+            color: #8ab4f8;
+        }
+        
+        .hero-desc {
+            font-size: 18px;
+            color: #4a5a72;
+            line-height: 1.7;
+            max-width: 650px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+        }
+        
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: #1a2e54;
+            border: 0.5px solid #2a4878;
+            color: #6b9cf4;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        
+        .btn-primary:hover {
+            background: #1f3664;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: none;
+            border: 0.5px solid #1e2a3e;
+            color: #5a6a82;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #2a3a58;
+            color: #b4c4d8;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 60px;
+            justify-content: center;
+            margin-top: 70px;
+            padding-top: 40px;
+            border-top: 0.5px solid #14192a;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-val {
+            font-family: 'Syne', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #f0f4ff;
+        }
+        
+        .stat-val span {
+            color: #3d72d4;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #3a4a60;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        /* CLIENTS BAR */
+        .clients-bar {
+            padding: 28px 0;
+            border-top: 0.5px solid #14192a;
+            border-bottom: 0.5px solid #14192a;
+            background: #0b0e15;
+            overflow: hidden;
+        }
+        
+        .marquee-wrap {
+            display: flex;
+            gap: 60px;
+            animation: marquee 20s linear infinite;
+            white-space: nowrap;
+            width: max-content;
+        }
+        
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .client-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            color: #2a3448;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        
+        .client-name.highlight {
+            color: #3a5a8a;
+        }
+        
+        /* SECTIONS */
+        .section {
+            padding: 80px 60px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 52px;
+        }
+        
+        .section-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #3d5a8c;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+        
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #f0f4ff;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+        
+        .section-title span {
+            color: #3d72d4;
+        }
+        
+        .section-sub {
+            font-size: 16px;
+            color: #4a5a72;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        
+        /* SERVICIOS GRID */
+        .svc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .svc-card {
+            background: #0f1219;
+            border: 0.5px solid #14192a;
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.2s;
+            cursor: default;
+        }
+        
+        .svc-card:hover {
+            border-color: #1e2e4a;
+            transform: translateY(-3px);
+        }
+        
+        .svc-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 22px;
+        }
+        
+        .si-blue { background: #0d1828; border: 0.5px solid #1a2e48; }
+        .si-green { background: #0d1e14; border: 0.5px solid #1a3020; }
+        .si-amber { background: #1a1008; border: 0.5px solid #2a2010; }
+        
+        .svc-icon i { font-size: 26px; }
+        .ic-b { color: #3d72d4; }
+        .ic-g { color: #3a9a5a; }
+        .ic-a { color: #c07a2a; }
+        
+        .svc-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #e0e8f4;
+            margin-bottom: 12px;
+        }
+        
+        .svc-desc {
+            font-size: 14px;
+            color: #4a5a72;
+            line-height: 1.6;
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+        
+        .svc-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .svc-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: #0d1220;
+            border: 0.5px solid #1a2030;
+            color: #3a4a60;
+        }
+        
+        /* PROCESO */
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0;
+            position: relative;
+            margin-top: 52px;
+        }
+        
+        .ps {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 14px;
+            padding: 0 12px;
+        }
+        
+        .ps-num {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            border: 1px solid #1e2a3e;
+            background: #0b0e15;
+            color: #3a4a60;
+        }
+        
+        .ps-num.active {
+            background: #0d1828;
+            border-color: #2a4878;
+            color: #6b9cf4;
+        }
+        
+        .ps-label {
+            font-size: 12px;
+            color: #3a4a60;
+            line-height: 1.4;
+        }
+        
+        .ps-label.active-l {
+            color: #7a9ad4;
+        }
+        
+        /* GALERÍA */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 200px;
+            gap: 12px;
+        }
+        
+        .gitem {
+            background: #0f1219;
+            border: 0.5px solid #14192a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gitem.large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+        
+        .gitem-inner {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .gitem-inner i {
+            font-size: 48px;
+            opacity: 0.4;
+            color: #3d72d4;
+        }
+        
+        .gitem-label {
+            font-size: 12px;
+            color: #2a3448;
+            margin-top: 10px;
+        }
+        
+        /* TESTIMONIOS */
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .test-card {
+            background: #0f1219;
+            border: 0.5px solid #14192a;
+            border-radius: 16px;
+            padding: 28px;
+        }
+        
+        .stars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .stars i {
+            font-size: 14px;
+            color: #c07a2a;
+        }
+        
+        .test-text {
+            font-size: 14px;
+            color: #5a6a82;
+            line-height: 1.7;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .test-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 0.5px solid #14192a;
+        }
+        
+        .test-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0d1828;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #4a82d4;
+        }
+        
+        .test-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #b4c4d8;
+        }
+        
+        .test-company {
+            font-size: 11px;
+            color: #3a4a60;
+        }
+        
+        /* CTA BANNER */
+        .cta-banner {
+            margin: 40px 60px 60px;
+            background: #0d1828;
+            border: 0.5px solid #1a2e48;
+            border-radius: 20px;
+            padding: 56px 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        
+        .cta-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #f0f4ff;
+            line-height: 1.2;
+        }
+        
+        .cta-title span {
+            color: #3d72d4;
+        }
+        
+        .cta-sub {
+            font-size: 14px;
+            color: #4a5a72;
+            margin-top: 12px;
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: #0b0e15;
+            border-top: 0.5px solid #14192a;
+            padding: 48px 60px 32px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #f0f4ff;
+            margin-bottom: 12px;
+        }
+        
+        .footer-brand span {
+            color: #3d72d4;
+        }
+        
+        .footer-desc {
+            font-size: 13px;
+            color: #3a4a60;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .footer-title {
+            font-size: 12px;
+            color: #2a3448;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+        
+        .footer-link {
+            display: block;
+            font-size: 13px;
+            color: #3a4a60;
+            margin-bottom: 10px;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        
+        .footer-link:hover {
+            color: #7a8ba6;
+        }
+        
+        .footer-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .footer-contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            color: #3a4a60;
+            line-height: 1.5;
+        }
+        
+        .footer-contact-item i {
+            font-size: 15px;
+            color: #2a3a58;
+            margin-top: 2px;
+        }
+        
+        .footer-bottom {
+            border-top: 0.5px solid #14192a;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-copy {
+            font-size: 11px;
+            color: #1e2838;
+        }
+        
+        .footer-ruc {
+            font-size: 11px;
+            color: #1e2838;
+        }
+        
+        @media (max-width: 900px) {
+            .nav { padding: 0 24px; }
+            .nav-links { display: none; }
+            .hero-title { font-size: 42px; }
+            .svc-grid { grid-template-columns: 1fr; }
+            .process-steps { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+            .gallery-grid { grid-template-columns: 1fr 1fr; }
+            .test-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+            .cta-banner { flex-direction: column; text-align: center; margin: 20px; padding: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR PÚBLICO -->
+<nav class="nav">
+    <div class="nav-brand">STAMOS<span>.</span></div>
+    <div class="nav-links">
+        <a class="nav-link active" th:href="@{/}">Inicio</a>
+        <a class="nav-link" th:href="@{/servicios}">Servicios</a>
+        <a class="nav-link" th:href="@{/galeria}">Galería</a>
+        <a class="nav-link" th:href="@{/contacto}">Contacto</a>
+    </div>
+    <div class="nav-right">
+        <a th:href="@{/login}" class="btn-login">
+            <i class="ti ti-lock" style="font-size: 13px;"></i> Iniciar sesión
+        </a>
+        <a th:href="@{/contacto}" class="btn-cta">
+            <i class="ti ti-send" style="font-size: 13px;"></i> Cotizar ahora
+        </a>
+    </div>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="hero-grid"></div>
+        <div class="hero-glow"></div>
+    </div>
+    <div class="hero-content">
+        <div class="hero-badge">
+            <i class="ti ti-award"></i> +10 años de experiencia en Lima
+        </div>
+        <h1 class="hero-title">Diseñamos stands que<br><span>conquistan</span> <em>ferias</em></h1>
+        <p class="hero-desc">Producción y alquiler de stands publicitarios, video walls, mobiliario ferial y soluciones interactivas para eventos corporativos en Lima y todo el Perú.</p>
+        <div class="hero-btns">
+            <a th:href="@{/contacto}" class="btn-primary">
+                <i class="ti ti-file-invoice"></i> Solicitar cotización gratis
+            </a>
+            <a th:href="@{/galeria}" class="btn-secondary">
+                <i class="ti ti-photo"></i> Ver galería de proyectos
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-val">+<span>350</span></div>
+                <div class="stat-label">Proyectos entregados</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val">+<span>120</span></div>
+                <div class="stat-label">Clientes satisfechos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val"><span>10</span>+</div>
+                <div class="stat-label">Años en el mercado</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val"><span>48</span>h</div>
+                <div class="stat-label">Tiempo de respuesta</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CLIENTES MARQUEE -->
+<div class="clients-bar">
+    <div class="marquee-wrap">
+        <span class="client-name highlight">BCP Eventos</span>
+        <span class="client-name">·</span>
+        <span class="client-name">Grupo Farmacias SAC</span>
+        <span class="client-name">·</span>
+        <span class="client-name highlight">CAPECO</span>
+        <span class="client-name">·</span>
+        <span class="client-name">Innova Corp</span>
+        <span class="client-name">·</span>
+        <span class="client-name highlight">Alicorp S.A.</span>
+        <span class="client-name">·</span>
+        <span class="client-name">Constructora JL</span>
+        <span class="client-name">·</span>
+        <span class="client-name highlight">Expo Cibus</span>
+        <span class="client-name">·</span>
+        <span class="client-name">Retail Forum</span>
+        <!-- Duplicado para efecto infinito -->
+        <span class="client-name highlight">BCP Eventos</span>
+        <span class="client-name">·</span>
+        <span class="client-name">Grupo Farmacias SAC</span>
+        <span class="client-name">·</span>
+        <span class="client-name highlight">CAPECO</span>
+        <span class="client-name">·</span>
+        <span class="client-name">Innova Corp</span>
+        <span class="client-name">·</span>
+        <span class="client-name highlight">Alicorp S.A.</span>
+    </div>
+</div>
+
+<!-- SERVICIOS -->
+<section class="section">
+    <div class="section-header">
+        <div class="section-label">Nuestros servicios</div>
+        <div class="section-title">Soluciones completas para<br><span>cada tipo de evento</span></div>
+        <div class="section-sub">Desde el diseño 3D hasta el montaje final, nos encargamos de todo para que tu marca brille.</div>
+    </div>
+    <div class="svc-grid">
+        <div class="svc-card">
+            <div class="svc-icon si-blue"><i class="ti ti-layout ic-b"></i></div>
+            <div class="svc-name">Stands publicitarios</div>
+            <div class="svc-desc">Diseño y fabricación de stands modulares y personalizados para ferias, expos y eventos. Estructura metálica, impresión de alta resolución y acabados premium.</div>
+            <div class="svc-tags"><span class="svc-tag">Modular</span><span class="svc-tag">Personalizado</span><span class="svc-tag">Alquiler / Venta</span></div>
+        </div>
+        <div class="svc-card">
+            <div class="svc-icon si-green"><i class="ti ti-device-tv ic-g"></i></div>
+            <div class="svc-name">Video walls & pantallas</div>
+            <div class="svc-desc">Alquiler e instalación de video walls LED, pantallas táctiles de 55" y soluciones interactivas para activaciones comerciales.</div>
+            <div class="svc-tags"><span class="svc-tag">Video wall LED</span><span class="svc-tag">Pantalla táctil</span><span class="svc-tag">Interactivo</span></div>
+        </div>
+        <div class="svc-card">
+            <div class="svc-icon si-amber"><i class="ti ti-armchair ic-a"></i></div>
+            <div class="svc-name">Mobiliario ferial</div>
+            <div class="svc-desc">Catálogo completo de mesas altas, sillas lounge, módulos de exhibición y mobiliario corporativo para eventos, disponible en alquiler por días o semanas.</div>
+            <div class="svc-tags"><span class="svc-tag">Alquiler por evento</span><span class="svc-tag">Lima y provincias</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESO -->
+<section class="section" style="background: #0b0e15;">
+    <div class="section-header">
+        <div class="section-label">¿Cómo trabajamos?</div>
+        <div class="section-title">Tu proyecto en <span>6 pasos</span></div>
+        <div class="section-sub">Proceso claro y transparente desde el primer contacto hasta la entrega final.</div>
+    </div>
+    <div class="process-steps">
+        <div class="ps"><div class="ps-num active">1</div><div class="ps-label active-l">Contacto y requerimientos</div></div>
+        <div class="ps"><div class="ps-num">2</div><div class="ps-label">Cotización formal</div></div>
+        <div class="ps"><div class="ps-num">3</div><div class="ps-label">Diseño 3D y aprobación</div></div>
+        <div class="ps"><div class="ps-num">4</div><div class="ps-label">Producción</div></div>
+        <div class="ps"><div class="ps-num">5</div><div class="ps-label">Montaje en evento</div></div>
+        <div class="ps"><div class="ps-num">6</div><div class="ps-label">Entrega y reseña</div></div>
+    </div>
+</section>
+
+<!-- GALERÍA -->
+<section class="section">
+    <div class="section-header">
+        <div class="section-label">Galería de proyectos</div>
+        <div class="section-title">Trabajos que <span>hablan por sí solos</span></div>
+        <div class="section-sub">Una selección de nuestros proyectos recientes en ferias y eventos corporativos.</div>
+    </div>
+    <div class="gallery-grid">
+        <div class="gitem large">
+            <div class="gitem-inner">
+                <i class="ti ti-layout"></i>
+                <div class="gitem-label">Stand Expo Salud 2026</div>
+            </div>
+        </div>
+        <div class="gitem">
+            <div class="gitem-inner">
+                <i class="ti ti-device-tv"></i>
+                <div class="gitem-label">Video Wall</div>
+            </div>
+        </div>
+        <div class="gitem">
+            <div class="gitem-inner">
+                <i class="ti ti-armchair"></i>
+                <div class="gitem-label">Mobiliario Premium</div>
+            </div>
+        </div>
+        <div class="gitem">
+            <div class="gitem-inner">
+                <i class="ti ti-3d-cube-sphere"></i>
+                <div class="gitem-label">Diseño 3D</div>
+            </div>
+        </div>
+        <div class="gitem">
+            <div class="gitem-inner">
+                <i class="ti ti-device-tablet"></i>
+                <div class="gitem-label">Pantalla Táctil 55"</div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 32px;">
+        <a th:href="@{/galeria}" class="btn-secondary">Ver galería completa →</a>
+    </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="section" style="background: #0b0e15;">
+    <div class="section-header">
+        <div class="section-label">Testimonios</div>
+        <div class="section-title">Lo que dicen nuestros <span>clientes</span></div>
+    </div>
+    <div class="test-grid">
+        <div class="test-card">
+            <div class="stars">
+                <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
+            </div>
+            <div class="test-text">"Excelente calidad en los stands y una entrega perfectamente puntual. El equipo de STAMOS es muy profesional."</div>
+            <div class="test-author">
+                <div class="test-avatar">RM</div>
+                <div><div class="test-name">Rocío Mendoza</div><div class="test-company">Grupo Farmacias SAC</div></div>
+            </div>
+        </div>
+        <div class="test-card">
+            <div class="stars">
+                <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
+            </div>
+            <div class="test-text">"El video wall para el Congreso Retail fue impresionante. STAMOS coordinó todo el montaje y configuración técnica."</div>
+            <div class="test-author">
+                <div class="test-avatar">JV</div>
+                <div><div class="test-name">Jorge Vásquez</div><div class="test-company">Innova Corp</div></div>
+            </div>
+        </div>
+        <div class="test-card">
+            <div class="stars">
+                <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star"></i>
+            </div>
+            <div class="test-text">"Muy buena experiencia con el mobiliario para la Feria Perú Build. Todo llegó en perfectas condiciones."</div>
+            <div class="test-author">
+                <div class="test-avatar">KL</div>
+                <div><div class="test-name">Karen López</div><div class="test-company">Constructora JL</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+    <div>
+        <div class="cta-title">¿Tienes un evento próximo?<br><span>Cotiza en menos de 24h</span></div>
+        <div class="cta-sub">Cuéntanos tu proyecto y te enviamos una propuesta personalizada sin costo.</div>
+    </div>
+    <div>
+        <a th:href="@{/contacto}" class="btn-primary" style="display: inline-flex;">
+            <i class="ti ti-send"></i> Solicitar cotización
+        </a>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand">STAMOS<span>.</span></div>
+            <div class="footer-desc">Diseño, producción y alquiler de stands publicitarios, mobiliario ferial y soluciones interactivas para eventos corporativos en Lima, Perú.</div>
+        </div>
+        <div>
+            <div class="footer-title">Servicios</div>
+            <a class="footer-link">Stands publicitarios</a>
+            <a class="footer-link">Video walls</a>
+            <a class="footer-link">Mobiliario ferial</a>
+            <a class="footer-link">Diseño 3D</a>
+        </div>
+        <div>
+            <div class="footer-title">Empresa</div>
+            <a class="footer-link">Nosotros</a>
+            <a class="footer-link">Galería</a>
+            <a class="footer-link">Contacto</a>
+            <a class="footer-link">Portal del cliente</a>
+        </div>
+        <div>
+            <div class="footer-title">Contacto</div>
+            <div class="footer-contact">
+                <div class="footer-contact-item"><i class="ti ti-map-pin"></i>Jr. Antisuyo 438, Zárate — SJL, Lima</div>
+                <div class="footer-contact-item"><i class="ti ti-phone"></i>01 704-6345 · 987 819 456</div>
+                <div class="footer-contact-item"><i class="ti ti-mail"></i>info@stamosl.com</div>
+                <div class="footer-contact-item"><i class="ti ti-clock"></i>Lun–Vie 9:00–18:00 · Sáb 9:00–13:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-copy">© 2026 STAMOS LINARES S.R.L. · Todos los derechos reservados</div>
+        <div class="footer-ruc">RUC 20549500715</div>
+    </div>
+</footer>
+
+</body>
+</html>

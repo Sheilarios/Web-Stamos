@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Fragmentos de formularios comunes para toda la aplicación -->
+<!-- Uso: <div th:replace="~{internal/fragments/formularios :: input(texto, 'nombre', 'Nombre completo', 'Ingrese nombre', true)}"></div> -->
+
+<div th:fragment="input(tipo, id, label, placeholder, required)">
+    <div class="mb-3">
+        <label th:for="${id}" class="form-label" th:text="${label}"></label>
+        <input th:type="${tipo}" th:id="${id}" th:name="${id}" class="form-control" 
+               th:placeholder="${placeholder}" th:required="${required}">
+    </div>
+</div>
+
+<div th:fragment="textarea(id, label, rows, required)">
+    <div class="mb-3">
+        <label th:for="${id}" class="form-label" th:text="${label}"></label>
+        <textarea th:id="${id}" th:name="${id}" class="form-control" th:rows="${rows}" th:required="${required}"></textarea>
+    </div>
+</div>
+
+<div th:fragment="select(id, label, options, optionValue, optionText, required)">
+    <div class="mb-3">
+        <label th:for="${id}" class="form-label" th:text="${label}"></label>
+        <select th:id="${id}" th:name="${id}" class="form-select" th:required="${required}">
+            <option value="">Seleccione...</option>
+            <option th:each="opt : ${options}" th:value="${opt[optionValue]}" th:text="${opt[optionText]}"></option>
+        </select>
+    </div>
+</div>
+
+<div th:fragment="datepicker(id, label, required)">
+    <div class="mb-3">
+        <label th:for="${id}" class="form-label" th:text="${label}"></label>
+        <input type="date" th:id="${id}" th:name="${id}" class="form-control" th:required="${required}">
+    </div>
+</div>
+
+<div th:fragment="checkbox(id, label, checked)">
+    <div class="mb-3 form-check">
+        <input type="checkbox" th:id="${id}" th:name="${id}" class="form-check-input" th:checked="${checked}">
+        <label th:for="${id}" class="form-check-label" th:text="${label}"></label>
+    </div>
+</div>
+
+<div th:fragment="radio(nombre, valores, etiquetas, requerido)">
+    <div class="mb-3">
+        <div th:each="val, stat : ${valores}" class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" th:id="${nombre + '_' + stat.index}" th:name="${nombre}" th:value="${val}" th:required="${requerido}">
+            <label class="form-check-label" th:for="${nombre + '_' + stat.index}" th:text="${etiquetas[stat.index]}"></label>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="submit(texto, clase)">
+    <button type="submit" class="btn" th:classappend="${clase ?: 'btn-primary'}" th:text="${texto}">Enviar</button>
+</div>
+
+<div th:fragment="cancel(url)">
+    <a th:href="${url}" class="btn btn-secondary">Cancelar</a>
+</div>
+
+<!-- Grupo de botones de acción comunes -->
+<div th:fragment="acciones(editUrl, deleteUrl, listUrl, extraButtons)">
+    <div class="btn-group">
+        <a th:if="${editUrl}" th:href="${editUrl}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Editar</a>
+        <form th:if="${deleteUrl}" th:action="${deleteUrl}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar este registro?')">
+            <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Eliminar</button>
+        </form>
+        <a th:href="${listUrl}" class="btn btn-sm btn-secondary"><i class="bi bi-list"></i> Volver</a>
+        <span th:if="${extraButtons}" th:utext="${extraButtons}"></span>
+    </div>
+</div>
+
+<!-- Campo de búsqueda con filtro -->
+<div th:fragment="busqueda(action, placeholder)">
+    <form th:action="${action}" method="get" class="row g-3 align-items-center mb-3">
+        <div class="col-auto">
+            <input type="text" name="searchTerm" class="form-control" th:placeholder="${placeholder}" th:value="${param.searchTerm}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+</div>
+</html>
