@@ -1,22 +1,11 @@
 package com.stamos.entity;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-/**
- * Entidad que representa un pago realizado por un cliente para un proyecto.
- * 
- * Reglas de negocio:
- * - RPA01: Los pagos solo pueden registrarse para proyectos en estados específicos (validado en controller).
- * - RPA02: Se aceptan pagos parciales, el saldo pendiente se calcula dinámicamente.
- * - RPA03: El total de pagos no puede superar el monto de la cotización asociada (validado en controller).
- * - RPA04: Cada pago incluye fecha, monto, medio de pago y opcionalmente número de comprobante.
- * - RPA05: Solo ADMIN o COMERCIAL puede registrar o anular pagos (seguridad en controller).
- * - RPA06: Al anular un pago se registra motivo (vía auditoría).
- */
+
 @Entity
 @Table(name = "pago")
 public class Pago {
@@ -44,23 +33,20 @@ public class Pago {
 
     @NotBlank(message = "El medio de pago es obligatorio")
     @Column(name = "medio_pago", nullable = false, length = 20)
-    private String medioPago; // EFECTIVO, TRANSFERENCIA, DEPOSITO
+    private String medioPago; 
 
     @Column(name = "comprobante_numero", length = 50)
-    private String comprobanteNumero; // Número de factura/boleta (opcional)
+    private String comprobanteNumero;
 
     @Column(nullable = false, length = 20)
-    private String estado = "REGISTRADO"; // REGISTRADO, ANULADO
+    private String estado = "REGISTRADO";
 
-    // Relación opcional con factura externa (emitida por gestor)
     @OneToOne(mappedBy = "pago", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FacturaExterna facturaExterna;
 
-    // Constructor por defecto
     public Pago() {
     }
 
-    // Constructor con campos obligatorios
     public Pago(Proyecto proyecto, LocalDate fecha, BigDecimal monto, String medioPago) {
         this.proyecto = proyecto;
         this.fecha = fecha;
@@ -68,7 +54,6 @@ public class Pago {
         this.medioPago = medioPago;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -133,7 +118,6 @@ public class Pago {
         this.facturaExterna = facturaExterna;
     }
 
-    // equals y hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -157,5 +141,17 @@ public class Pago {
                 ", medioPago='" + medioPago + '\'' +
                 ", estado='" + estado + '\'' +
                 '}';
+    }
+
+    public void setNumeroOperacion(String numeroOperacion) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    public void setFechaRegistro(LocalDate now) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getFechaRegistro() {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

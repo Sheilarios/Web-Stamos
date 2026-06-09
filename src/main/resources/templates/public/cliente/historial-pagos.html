@@ -2,25 +2,569 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Historial de pagos</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de pagos · STAMOS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+        
+        /* ========== LAYOUT ========== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            width: 260px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .brand {
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .brand-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .brand-name span {
+            color: var(--yellow-dark);
+        }
+        
+        .brand-sub {
+            font-size: 10px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        
+        .user-pill {
+            margin: 16px;
+            padding: 12px;
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .avatar {
+            width: 38px;
+            height: 38px;
+            background: var(--yellow-mid);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--yellow-dark);
+            border: 1.5px solid var(--yellow-border);
+            flex-shrink: 0;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .user-role {
+            font-size: 10px;
+            color: var(--text-3);
+        }
+        
+        /* Navegación */
+        .nav {
+            padding: 12px;
+            flex: 1;
+        }
+        
+        .nav-section {
+            font-size: 10px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 8px 6px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-2);
+            text-decoration: none;
+            margin-bottom: 2px;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        
+        .nav-item:hover {
+            background: var(--yellow-light);
+            color: var(--text);
+        }
+        
+        .nav-item.active {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            border-left: 3px solid var(--yellow);
+        }
+        
+        .nav-item i {
+            font-size: 16px;
+        }
+        
+        /* ========== MAIN CONTENT ========== */
+        .main {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* Topbar */
+        .topbar {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .btn-logout {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+        }
+        
+        .btn-logout:hover {
+            border-color: var(--yellow);
+            color: var(--text);
+        }
+        
+        /* Content */
+        .content {
+            padding: 24px;
+            flex: 1;
+        }
+        
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .page-header h1 i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        /* Tabla */
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title i {
+            color: var(--yellow-dark);
+        }
+        
+        .payments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .payments-table th {
+            font-size: 11px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .payments-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #F0F2F5;
+            font-size: 13px;
+            color: var(--text-2);
+        }
+        
+        .payments-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Badges de estado */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-badge.verified {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-badge.pending {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-badge.cancelled {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .amount-positive {
+            color: var(--green);
+            font-weight: 600;
+        }
+        
+        .amount-pending {
+            color: var(--yellow-dark);
+            font-weight: 600;
+        }
+        
+        /* Botón volver */
+        .back-button {
+            margin-top: 24px;
+        }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-back:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        /* Mensaje vacío */
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar .brand-sub,
+            .sidebar .user-info,
+            .sidebar .nav-item span {
+                display: none;
+            }
+            
+            .sidebar .nav-item {
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            .sidebar .user-pill {
+                justify-content: center;
+                padding: 10px;
+            }
+            
+            .main {
+                margin-left: 70px;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .payments-table th,
+            .payments-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container" style="max-width:800px; margin:20px auto;">
-    <h2>Historial de pagos</h2>
-    <table style="width:100%; border-collapse:collapse;">
-        <tr style="border-bottom:0.5px solid #1e2535;">
-            <th>Proyecto</th><th>Fecha</th><th>Monto</th><th>Medio</th><th>Estado</th>
-        </tr>
-        <tr th:each="pago : ${pagos}">
-            <td th:text="${pago.proyecto.nombre}"></td>
-            <td th:text="${pago.fecha}"></td>
-            <td th:text="${pago.monto}"></td>
-            <td th:text="${pago.medioPago}"></td>
-            <td th:text="${pago.estado}"></td>
-        </tr>
-    </table>
-    <a th:href="@{/public/cliente/dashboard}">← Volver</a>
-</div>
+    <div class="app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="brand">
+                <div class="brand-name">STAMOS<span>.</span></div>
+                <div class="brand-sub">Portal del Cliente</div>
+            </div>
+            
+            <div class="user-pill">
+                <div class="avatar">
+                    <i class="ti ti-user"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name" th:text="${cliente.nombreRazonSocial}">Cliente</div>
+                    <div class="user-role">Cliente</div>
+                </div>
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-section">Principal</div>
+                <a href="/public/cliente/dashboard" class="nav-item">
+                    <i class="ti ti-layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/public/cliente/historial-pagos" class="nav-item active">
+                    <i class="ti ti-credit-card"></i>
+                    <span>Historial de pagos</span>
+                </a>
+                <a href="/public/cliente/perfil" class="nav-item">
+                    <i class="ti ti-user-circle"></i>
+                    <span>Mi perfil</span>
+                </a>
+                
+                <div class="nav-section">Cuenta</div>
+                <a href="/cambiar-contraseña" class="nav-item">
+                    <i class="ti ti-key"></i>
+                    <span>Cambiar contraseña</span>
+                </a>
+                <a href="/logout" class="nav-item">
+                    <i class="ti ti-logout"></i>
+                    <span>Cerrar sesión</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main">
+            <div class="topbar">
+                <div class="page-title">Historial de pagos</div>
+                <a href="/logout" class="btn-logout">
+                    <i class="ti ti-logout"></i> Salir
+                </a>
+            </div>
+            
+            <div class="content">
+                <!-- Header -->
+                <div class="page-header">
+                    <h1>
+                        <i class="ti ti-credit-card"></i>
+                        Historial de pagos
+                    </h1>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-label">Total pagado</div>
+                        <div class="stat-value" th:text="'S/ ' + ${totalPagado}">S/ 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pendiente de verificación</div>
+                        <div class="stat-value" th:text="'S/ ' + ${totalPendiente}">S/ 0</div>
+                    </div>
+                </div>
+                
+                <!-- Tabla de pagos -->
+                <div class="table-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="ti ti-list"></i>
+                            Registro de pagos realizados
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="payments-table">
+                            <thead>
+                                <tr>
+                                    <th>Proyecto</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Medio de pago</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="pago : ${pagos}">
+                                    <td>
+                                        <div style="font-weight: 500; color: var(--text);" th:text="${pago.proyecto.nombre}">Nombre del proyecto</div>
+                                        <div style="font-size: 11px; color: var(--text-3);" th:text="${pago.proyecto.cliente.nombreRazonSocial}">Cliente</div>
+                                    </td>
+                                    <td th:text="${#temporals.format(pago.fecha, 'dd/MM/yyyy')}">01/01/2024</td>
+                                    <td class="amount-positive" th:text="'S/ ' + ${pago.monto}">S/ 0</td>
+                                    <td th:text="${pago.medioPago}">Transferencia</td>
+                                    <td>
+                                        <span class="status-badge" 
+                                              th:classappend="${pago.estado == 'VERIFICADO'} ? 'verified' : 
+                                                             (pago.estado == 'VERIFICACION' ? 'pending' : 'cancelled')"
+                                              th:text="${pago.estado == 'VERIFICADO' ? 'Verificado' : 
+                                                       (pago.estado == 'VERIFICACION' ? 'En verificación' : 'Anulado')}">
+                                            Estado
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${pagos == null or pagos.isEmpty()}">
+                                    <td colspan="5" class="empty-message">
+                                        <i class="ti ti-receipt-off" style="font-size: 32px; margin-bottom: 8px; display: block;"></i>
+                                        No tienes pagos registrados aún.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Botón volver -->
+                <div class="back-button">
+                    <a th:href="@{/public/cliente/dashboard}" class="btn-back">
+                        <i class="ti ti-arrow-left"></i>
+                        Volver al dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -3,30 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Galería de proyectos 360°</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <title>STAMOS · Galería de proyectos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --green: #1A7040;
+        }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'DM Sans', sans-serif;
-            background: #080b11;
-            color: #d4dbe8;
+            background: var(--bg);
+            color: var(--text);
         }
         
-        /* NAVBAR */
-        .nav {
+        /* ========== NAVBAR ========== */
+        .navbar {
             display: flex;
             align-items: center;
-            padding: 0 60px;
-            height: 70px;
-            background: rgba(8, 11, 17, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 0.5px solid #14192a;
+            justify-content: space-between;
+            padding: 18px 56px;
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             z-index: 100;
         }
         
@@ -34,176 +50,158 @@
             font-family: 'Syne', sans-serif;
             font-size: 22px;
             font-weight: 800;
-            color: #f0f4ff;
+            color: var(--text);
+            letter-spacing: -0.5px;
         }
         
-        .nav-brand span { color: #3d72d4; }
+        .nav-brand span { color: var(--yellow-dark); }
         
         .nav-links {
             display: flex;
             gap: 32px;
-            margin-left: 60px;
         }
         
         .nav-link {
             font-size: 14px;
-            color: #4a5a72;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: color 0.15s;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.15s;
         }
         
         .nav-link:hover,
         .nav-link.active {
-            color: #c4cfe8;
+            color: var(--yellow-dark);
         }
         
-        .nav-right {
-            margin-left: auto;
-            display: flex;
-            gap: 12px;
-        }
-        
-        .btn-login {
-            background: none;
-            border: 0.5px solid #1e2a3e;
-            color: #5a6a82;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-size: 13px;
-            cursor: pointer;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.15s;
-        }
-        
-        .btn-login:hover {
-            border-color: #2a3a58;
-            color: #b4c4d8;
-        }
-        
-        .btn-cta {
-            background: #1a2e54;
-            border: 0.5px solid #2a4878;
-            color: #6b9cf4;
+        .nav-cta {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
             padding: 8px 22px;
             border-radius: 8px;
             font-size: 13px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
             text-decoration: none;
-            transition: all 0.15s;
         }
         
-        .btn-cta:hover {
-            background: #1f3664;
-            color: #8ab4f8;
+        .nav-cta:hover {
+            background: var(--yellow-mid);
         }
         
-        /* HERO */
+        /* ========== HERO ========== */
         .hero {
-            padding: 60px 60px 40px;
+            padding: 60px 56px 40px;
             text-align: center;
+            background: linear-gradient(135deg, #FFFBE6 0%, #FFFFFF 100%);
         }
         
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #0d1828;
-            border: 0.5px solid #1a2e48;
+            background: var(--yellow-light);
+            border: 0.5px solid var(--yellow-border);
             border-radius: 30px;
             padding: 6px 16px;
             font-size: 12px;
-            color: #4a72a4;
+            color: var(--yellow-dark);
             margin-bottom: 24px;
+            font-weight: 500;
         }
+        
+        .hero-badge i { font-size: 14px; }
         
         .hero-title {
             font-family: 'Syne', sans-serif;
             font-size: 48px;
             font-weight: 800;
-            color: #f0f4ff;
+            color: var(--text);
             line-height: 1.2;
             margin-bottom: 16px;
         }
         
-        .hero-title span { color: #3d72d4; }
+        .hero-title span { color: var(--yellow-dark); }
         
         .hero-desc {
             font-size: 16px;
-            color: #4a5a72;
+            color: var(--text-2);
             max-width: 600px;
             margin: 0 auto;
             line-height: 1.7;
         }
         
-        /* FILTROS */
+        /* ========== FILTROS ========== */
         .filters {
             display: flex;
             justify-content: center;
             gap: 12px;
-            padding: 20px 60px;
+            padding: 24px 56px;
             flex-wrap: wrap;
         }
         
-        .ft {
+        .filter-btn {
             padding: 8px 20px;
             border-radius: 30px;
             font-size: 13px;
             cursor: pointer;
-            border: 0.5px solid #1a2030;
-            background: none;
-            color: #4a5a72;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text-2);
             font-family: 'DM Sans', sans-serif;
             transition: all 0.15s;
         }
         
-        .ft:hover {
-            border-color: #2a3a58;
-            color: #b4c4d8;
+        .filter-btn:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
         }
         
-        .ft.on {
-            background: #101e38;
-            border-color: #2a4878;
-            color: #6b9cf4;
-            font-weight: 500;
+        .filter-btn.active {
+            background: var(--yellow-light);
+            border-color: var(--yellow-border);
+            color: var(--yellow-dark);
+            font-weight: 600;
         }
         
-        /* GALERÍA GRID */
+        /* ========== GALERÍA GRID ========== */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            padding: 20px 60px 60px;
+            gap: 20px;
+            padding: 20px 56px 60px;
         }
         
-        .g-item {
-            background: #0f1219;
-            border: 0.5px solid #14192a;
-            border-radius: 12px;
+        .gallery-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
-            min-height: 220px;
+            min-height: 240px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        .g-item:hover {
-            border-color: #2a3a58;
-            transform: translateY(-3px);
+        .gallery-item:hover {
+            border-color: var(--yellow);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
         
-        .g-item.tall {
+        .gallery-item.tall {
             grid-row: span 2;
-            min-height: 460px;
+            min-height: 500px;
         }
         
-        .g-item.wide {
+        .gallery-item.wide {
             grid-column: span 2;
         }
         
@@ -214,7 +212,7 @@
         
         .project-placeholder i {
             font-size: 48px;
-            color: #3d72d4;
+            color: var(--yellow-dark);
             opacity: 0.5;
             margin-bottom: 16px;
         }
@@ -222,33 +220,34 @@
         .project-name {
             font-family: 'Syne', sans-serif;
             font-size: 16px;
-            font-weight: 600;
-            color: #e0e8f4;
+            font-weight: 700;
+            color: var(--text);
             margin-bottom: 8px;
         }
         
         .project-client {
             font-size: 12px;
-            color: #4a5a72;
+            color: var(--text-3);
         }
         
         .project-tag {
             position: absolute;
-            bottom: 12px;
-            left: 12px;
+            bottom: 16px;
+            left: 16px;
             font-size: 10px;
             padding: 4px 10px;
             border-radius: 12px;
-            background: rgba(8, 11, 17, 0.8);
-            border: 0.5px solid #1a2030;
-            color: #3a4a60;
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            color: var(--yellow-dark);
+            font-weight: 500;
         }
         
-        /* FOOTER */
+        /* ========== FOOTER ========== */
         .footer {
-            background: #0b0e15;
-            border-top: 0.5px solid #14192a;
-            padding: 48px 60px 32px;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 48px 56px 32px;
         }
         
         .footer-grid {
@@ -262,61 +261,73 @@
             font-family: 'Syne', sans-serif;
             font-size: 20px;
             font-weight: 700;
-            color: #f0f4ff;
+            color: var(--text);
             margin-bottom: 12px;
         }
         
-        .footer-brand span { color: #3d72d4; }
+        .footer-brand span { color: var(--yellow-dark); }
         
         .footer-desc {
             font-size: 13px;
-            color: #3a4a60;
+            color: var(--text-2);
             line-height: 1.6;
         }
         
         .footer-title {
             font-size: 12px;
-            color: #2a3448;
+            color: var(--text-3);
             text-transform: uppercase;
             letter-spacing: 1.2px;
             margin-bottom: 18px;
+            font-weight: 600;
         }
         
         .footer-link {
             display: block;
             font-size: 13px;
-            color: #3a4a60;
+            color: var(--text-2);
             margin-bottom: 10px;
             text-decoration: none;
+            transition: color 0.15s;
         }
         
-        .footer-link:hover { color: #7a8ba6; }
+        .footer-link:hover { color: var(--yellow-dark); }
         
         .footer-bottom {
-            border-top: 0.5px solid #14192a;
+            border-top: 1px solid var(--border);
             padding-top: 24px;
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
         }
         
         .footer-copy, .footer-ruc {
             font-size: 11px;
-            color: #1e2838;
+            color: var(--text-3);
         }
         
-        @media (max-width: 900px) {
-            .nav { padding: 0 24px; }
+        @media (max-width: 1000px) {
+            .navbar { padding: 0 24px; }
             .nav-links { display: none; }
-            .gallery-grid { grid-template-columns: 1fr; }
+            .hero { padding: 40px 24px; }
             .hero-title { font-size: 32px; }
+            .filters { padding: 20px 24px; }
+            .gallery-grid { 
+                grid-template-columns: 1fr; 
+                padding: 20px 24px 40px;
+            }
+            .gallery-item.tall { min-height: auto; }
+            .gallery-item.wide { grid-column: span 1; }
             .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+            .footer { padding: 32px 24px; }
         }
     </style>
 </head>
 <body>
 
 <!-- NAVBAR PÚBLICO -->
-<nav class="nav">
+<nav class="navbar">
     <div class="nav-brand">STAMOS<span>.</span></div>
     <div class="nav-links">
         <a class="nav-link" th:href="@{/}">Inicio</a>
@@ -324,32 +335,33 @@
         <a class="nav-link active" th:href="@{/galeria}">Galería</a>
         <a class="nav-link" th:href="@{/contacto}">Contacto</a>
     </div>
-    <div class="nav-right">
-        <a th:href="@{/login}" class="btn-login"><i class="ti ti-lock"></i> Iniciar sesión</a>
-        <a th:href="@{/contacto}" class="btn-cta"><i class="ti ti-send"></i> Cotizar ahora</a>
-    </div>
+    <a th:href="@{/login}" class="nav-cta">
+        <i class="ti ti-login"></i> Portal cliente
+    </a>
 </nav>
 
 <!-- HERO -->
-<div class="hero">
-    <div class="hero-badge"><i class="ti ti-rotate-360"></i> Galería 360° de proyectos</div>
-    <h1 class="hero-title">Proyectos reales,<br><span>visión completa</span></h1>
+<section class="hero">
+    <div class="hero-badge">
+        <i class="ti ti-photo"></i> Galería de proyectos
+    </div>
+    <h1 class="hero-title">Proyectos reales,<br><span>resultados tangibles</span></h1>
     <p class="hero-desc">Explora nuestros proyectos más recientes. Haz clic en cualquier proyecto para verlo en detalle.</p>
-</div>
+</section>
 
 <!-- FILTROS -->
 <div class="filters">
-    <button class="ft on" data-cat="all">Todos</button>
-    <button class="ft" data-cat="stand">Stands</button>
-    <button class="ft" data-cat="escenografia">Escenografía</button>
-    <button class="ft" data-cat="modular">Modular</button>
-    <button class="ft" data-cat="interactivo">Interactivo</button>
+    <button class="filter-btn active" data-cat="all">Todos</button>
+    <button class="filter-btn" data-cat="stand">Stands</button>
+    <button class="filter-btn" data-cat="escenografia">Escenografía</button>
+    <button class="filter-btn" data-cat="modular">Modular</button>
+    <button class="filter-btn" data-cat="interactivo">Interactivo</button>
 </div>
 
 <!-- GALERÍA GRID -->
 <div class="gallery-grid" id="galleryGrid">
     <!-- Proyecto 1 -->
-    <div class="g-item tall" data-cat="stand">
+    <div class="gallery-item tall" data-cat="stand">
         <div class="project-placeholder">
             <i class="ti ti-layout"></i>
             <div class="project-name">Stand Dinet 2024</div>
@@ -359,7 +371,7 @@
     </div>
     
     <!-- Proyecto 2 -->
-    <div class="g-item" data-cat="escenografia">
+    <div class="gallery-item" data-cat="escenografia">
         <div class="project-placeholder">
             <i class="ti ti-building"></i>
             <div class="project-name">Stand GSK Farma</div>
@@ -369,7 +381,7 @@
     </div>
     
     <!-- Proyecto 3 -->
-    <div class="g-item" data-cat="stand">
+    <div class="gallery-item" data-cat="stand">
         <div class="project-placeholder">
             <i class="ti ti-layout"></i>
             <div class="project-name">Stand Scharff Expo</div>
@@ -379,7 +391,7 @@
     </div>
     
     <!-- Proyecto 4 -->
-    <div class="g-item wide" data-cat="modular">
+    <div class="gallery-item wide" data-cat="modular">
         <div class="project-placeholder">
             <i class="ti ti-box"></i>
             <div class="project-name">Stand Andino Inv.</div>
@@ -389,7 +401,7 @@
     </div>
     
     <!-- Proyecto 5 -->
-    <div class="g-item" data-cat="escenografia">
+    <div class="gallery-item" data-cat="escenografia">
         <div class="project-placeholder">
             <i class="ti ti-building"></i>
             <div class="project-name">Escenografía TECHCA</div>
@@ -399,7 +411,7 @@
     </div>
     
     <!-- Proyecto 6 -->
-    <div class="g-item" data-cat="interactivo">
+    <div class="gallery-item" data-cat="interactivo">
         <div class="project-placeholder">
             <i class="ti ti-device-tablet"></i>
             <div class="project-name">Stand Cenfotur</div>
@@ -409,7 +421,7 @@
     </div>
     
     <!-- Proyecto 7 -->
-    <div class="g-item" data-cat="stand">
+    <div class="gallery-item" data-cat="stand">
         <div class="project-placeholder">
             <i class="ti ti-layout"></i>
             <div class="project-name">Stand Energigas</div>
@@ -419,7 +431,7 @@
     </div>
     
     <!-- Proyecto 8 -->
-    <div class="g-item" data-cat="modular">
+    <div class="gallery-item" data-cat="modular">
         <div class="project-placeholder">
             <i class="ti ti-box"></i>
             <div class="project-name">Stand Brenta Plus</div>
@@ -465,18 +477,18 @@
 
 <script>
     // Filtro de galería
-    const filterBtns = document.querySelectorAll('.ft');
-    const items = document.querySelectorAll('.g-item');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const items = document.querySelectorAll('.gallery-item');
     
     filterBtns.forEach(btn => {
         btn.addEventListener('click', function() {
-            filterBtns.forEach(b => b.classList.remove('on'));
-            this.classList.add('on');
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
             const cat = this.getAttribute('data-cat');
             
             items.forEach(item => {
                 if (cat === 'all' || item.getAttribute('data-cat') === cat) {
-                    item.style.display = '';
+                    item.style.display = 'flex';
                 } else {
                     item.style.display = 'none';
                 }

@@ -107,7 +107,6 @@
     overflow-y: auto;
 }
 
-/* Mantener visibles ícono, nombre y descripción siempre */
 .svc-hover-info .svc-icon {
     font-size: 2.5rem;
     margin-bottom: 12px;
@@ -157,7 +156,6 @@
     text-align: left;
 }
 
-/* Ajuste responsive */
 @media (max-width: 768px) {
     .svc-card-inner {
         min-height: 280px;
@@ -916,7 +914,6 @@
     background: #004999;
 }
 
-/* Mantener el label visible en estado normal */
 .gitem-label {
     position: relative;
     z-index: 2;
@@ -924,7 +921,6 @@
     backdrop-filter: blur(8px);
 }
 
-/* Ajuste para que el overlay no tape el label por defecto */
 .gitem-inner {
     display: flex;
     flex-direction: column;
@@ -1068,7 +1064,7 @@
         <a class="nav-link" th:href="@{/galeria}">Galería</a>
         <a class="nav-link" th:href="@{/contacto}">Contacto</a>
     </div>
-    <a th:href="@{/login}" class="nav-cta">
+    <a th:href="@{login}" class="nav-cta">
         <i class="ti ti-login"></i> Portal cliente
     </a>
 </nav>
@@ -1304,30 +1300,6 @@
     </div>
     <div style="text-align: center; margin-top: 36px;">
         <a th:href="@{/galeria}" class="btn-secondary">Ver galería completa →</a>
-    </div>
-</section>
- 
-<section class="section" style="background: var(--card);">
-    <div class="section-header">
-        <div class="section-label">Testimonios</div>
-        <div class="section-title">Lo que dicen nuestros <span>clientes</span></div>
-    </div>
-    <div class="test-grid">
-        <div class="test-card">
-            <div class="stars"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-            <div class="test-text">"Excelente calidad en los stands y una entrega perfectamente puntual. El equipo de STAMOS es muy profesional."</div>
-            <div class="test-author"><div class="test-avatar">RM</div><div><div class="test-name">Rocío Mendoza</div><div class="test-company">Grupo Farmacias SAC</div></div></div>
-        </div>
-        <div class="test-card">
-            <div class="stars"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-            <div class="test-text">"El video wall para el Congreso Retail fue impresionante. STAMOS coordinó todo el montaje y configuración técnica."</div>
-            <div class="test-author"><div class="test-avatar">JV</div><div><div class="test-name">Jorge Vásquez</div><div class="test-company">Innova Corp</div></div></div>
-        </div>
-        <div class="test-card">
-            <div class="stars"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star"></i></div>
-            <div class="test-text">"Muy buena experiencia con el mobiliario para la Feria Perú Build. Todo llegó en perfectas condiciones."</div>
-            <div class="test-author"><div class="test-avatar">KL</div><div><div class="test-name">Karen López</div><div class="test-company">Constructora JL</div></div></div>
-        </div>
     </div>
 </section>
  

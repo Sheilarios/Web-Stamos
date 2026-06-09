@@ -3,10 +3,6 @@ package com.stamos.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * DTO para transferir datos básicos de una cotización.
- * Utilizado en listados y búsquedas para evitar enviar entidades completas.
- */
 public class CotizacionDTO {
 
     private Long id;
@@ -17,11 +13,9 @@ public class CotizacionDTO {
     private Integer version;
     private BigDecimal total;
 
-    // Constructor por defecto
     public CotizacionDTO() {
     }
 
-    // Constructor con campos principales
     public CotizacionDTO(Long id, Long clienteId, String clienteNombre, 
                          LocalDate fechaEmision, String estado, 
                          Integer version, BigDecimal total) {
@@ -34,7 +28,6 @@ public class CotizacionDTO {
         this.total = total;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

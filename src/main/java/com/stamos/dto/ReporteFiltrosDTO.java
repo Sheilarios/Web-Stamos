@@ -1,21 +1,14 @@
 package com.stamos.dto;
-
-/**
- * DTO para encapsular los filtros utilizados en la generación de reportes.
- * Especialmente útil para el reporte de ingresos por período (mensual/trimestral).
- */
 public class ReporteFiltrosDTO {
 
-    private String tipoPeriodo; // "MENSUAL" o "TRIMESTRAL"
+    private String tipoPeriodo; 
     private Integer anio;
-    private Integer mes;        // Solo para MENSUAL (1-12)
-    private Integer trimestre;  // Solo para TRIMESTRAL (1-4)
+    private Integer mes;        
+    private Integer trimestre;  
 
-    // Constructor por defecto
     public ReporteFiltrosDTO() {
     }
 
-    // Constructor con campos principales
     public ReporteFiltrosDTO(String tipoPeriodo, Integer anio, Integer mes, Integer trimestre) {
         this.tipoPeriodo = tipoPeriodo;
         this.anio = anio;
@@ -23,7 +16,6 @@ public class ReporteFiltrosDTO {
         this.trimestre = trimestre;
     }
 
-    // Getters y Setters
     public String getTipoPeriodo() {
         return tipoPeriodo;
     }

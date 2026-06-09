@@ -22,17 +22,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     private String determineTargetUrl(Authentication authentication) {
-        // Roles de empleados (sistema interno)
         if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"))) {
-            return "/internal/dashboard/admin";
+            return "/dashboard";  
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_COMERCIAL"))) {
-            return "/internal/dashboard/comercial";
+            return "/dashboard";
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DISENADOR"))) {
-            return "/internal/dashboard/disenador";
+            return "/dashboard";
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRODUCCION"))) {
-            return "/internal/dashboard/produccion";
+            return "/dashboard";
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SOPORTE_TECNICO"))) {
-            return "/internal/dashboard/soporte";
+            return "/dashboard";
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CLIENTE"))) {
             return "/public/cliente/dashboard";
         }

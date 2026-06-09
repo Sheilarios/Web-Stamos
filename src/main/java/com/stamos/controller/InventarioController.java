@@ -19,16 +19,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controlador para la gestión de inventario de equipos y mobiliario.
- * 
- * Reglas de negocio aplicadas (RIN01 a RIN05):
- * - Todo equipo debe registrarse con nombre, cantidad total disponible y ubicación.
- * - Al asignar un equipo a un proyecto, se reduce la cantidad disponible durante el período del evento.
- * - No se puede asignar un equipo si la cantidad disponible es insuficiente para las fechas solicitadas.
- * - Se puede consultar disponibilidad por rango de fechas.
- * - Solo ADMINISTRADOR o SOPORTE_TECNICO puede modificar el stock.
- */
 @Controller
 @RequestMapping("/internal/inventario")
 public class InventarioController {
@@ -38,13 +28,6 @@ public class InventarioController {
 
     @Autowired
     private ProyectoService proyectoService;
-
-    // ==================== EQUIPOS (CRUD) ====================
-
-    /**
-     * Lista todos los equipos registrados en el catálogo.
-     * Accesible para ADMIN, SOPORTE_TECNICO, y otros roles con solo lectura.
-     */
     @GetMapping("/equipos/lista")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIAL', 'DISEÑADOR', 'PRODUCCION', 'SOPORTE_TECNICO')")
     public String listEquipos(Model model) {
@@ -53,10 +36,6 @@ public class InventarioController {
         return "internal/inventario/equipos/lista";
     }
 
-    /**
-     * Muestra el formulario para crear un nuevo equipo.
-     * Solo ADMIN o SOPORTE_TECNICO.
-     */
     @GetMapping("/equipos/nuevo")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
     public String showCreateEquipoForm(Model model) {
@@ -65,9 +44,6 @@ public class InventarioController {
         return "internal/inventario/equipos/formulario";
     }
 
-    /**
-     * Guarda un nuevo equipo en el catálogo.
-     */
     @PostMapping("/equipos/guardar")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
     public String saveEquipo(@Valid @ModelAttribute("equipo") CatalogoEquipo equipo,
@@ -76,7 +52,6 @@ public class InventarioController {
         if (bindingResult.hasErrors()) {
             return "internal/inventario/equipos/formulario";
         }
-        // Validar que cantidad total no sea negativa
         if (equipo.getCantidadTotal() < 0) {
             bindingResult.rejectValue("cantidadTotal", "error.equipo", "La cantidad total no puede ser negativa");
             return "internal/inventario/equipos/formulario";
@@ -86,9 +61,6 @@ public class InventarioController {
         return "redirect:/internal/inventario/equipos/lista";
     }
 
-    /**
-     * Muestra el formulario para editar un equipo existente.
-     */
     @GetMapping("/equipos/editar/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
     public String showEditEquipoForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttrs) {
@@ -102,9 +74,6 @@ public class InventarioController {
         return "internal/inventario/equipos/formulario";
     }
 
-    /**
-     * Actualiza los datos de un equipo.
-     */
     @PostMapping("/equipos/actualizar/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
     public String updateEquipo(@PathVariable Long id,
@@ -127,10 +96,6 @@ public class InventarioController {
         return "redirect:/internal/inventario/equipos/lista";
     }
 
-    /**
-     * Elimina un equipo solo si no tiene reservas asociadas.
-     * (Alternativa: se podría deshabilitar lógicamente, pero por simplicidad se elimina físicamente)
-     */
     @PostMapping("/equipos/eliminar/{id}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public String deleteEquipo(@PathVariable Long id, RedirectAttributes redirectAttrs) {
@@ -149,11 +114,6 @@ public class InventarioController {
         return "redirect:/internal/inventario/equipos/lista";
     }
 
-    // ==================== RESERVAS (ALQUILERES) ====================
-
-    /**
-     * Lista todas las reservas (alquileres) de equipos.
-     */
     @GetMapping("/reservas/lista")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL')")
     public String listReservas(Model model) {
@@ -162,10 +122,6 @@ public class InventarioController {
         return "internal/inventario/reservas/lista-reservas";
     }
 
-    /**
-     * Muestra un calendario visual de reservas para todos los equipos.
-     * Utiliza FullCalendar.js en la vista.
-     */
     @GetMapping("/reservas/calendario")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL', 'DISEÑADOR')")
     public String showCalendar(Model model) {
@@ -174,9 +130,6 @@ public class InventarioController {
         return "internal/inventario/reservas/calendario";
     }
 
-    /**
-     * Endpoint AJAX para obtener eventos del calendario en formato JSON.
-     */
     @GetMapping("/reservas/eventos")
     @ResponseBody
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL', 'DISEÑADOR')")
@@ -184,9 +137,6 @@ public class InventarioController {
         return inventarioService.getReservasComoEventos(equipoId);
     }
 
-    /**
-     * Muestra el formulario para crear una nueva reserva.
-     */
     @GetMapping("/reservas/nueva")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL')")
     public String showCreateReservaForm(Model model) {
@@ -196,17 +146,12 @@ public class InventarioController {
         return "internal/inventario/reservas/nueva-reserva";
     }
 
-    /**
-     * Guarda una nueva reserva, validando disponibilidad según fechas.
-     * Aplica RIN03: No se puede asignar si la cantidad disponible es insuficiente.
-     */
     @PostMapping("/reservas/guardar")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL')")
     public String saveReserva(@Valid @ModelAttribute("reserva") ReservaEquipo reserva,
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttrs,
                               Model model) {
-        // Validar fechas: fecha inicio no puede ser posterior a fecha fin
         if (reserva.getFechaInicio() != null && reserva.getFechaFin() != null &&
             reserva.getFechaInicio().isAfter(reserva.getFechaFin())) {
             bindingResult.rejectValue("fechaFin", "error.reserva", "La fecha de fin debe ser posterior a la fecha de inicio");
@@ -220,13 +165,13 @@ public class InventarioController {
             return "internal/inventario/reservas/nueva-reserva";
         }
 
-        // Verificar disponibilidad (RIN03)
-        boolean disponible = inventarioService.verificarDisponibilidad(
-            reserva.getEquipo().getId(),
-            reserva.getFechaInicio(),
-            reserva.getFechaFin(),
-            reserva.getCantidad(),
-            null // ID de reserva actual es null para nueva
+        boolean disponible;
+        disponible = inventarioService.verificarDisponibilidad(
+                reserva.getEquipo().getId(),
+                reserva.getFechaInicio(),
+                reserva.getFechaFin(),
+                reserva.getCantidad(), 
+                null
         );
         if (!disponible) {
             redirectAttrs.addFlashAttribute("error", 
@@ -240,10 +185,6 @@ public class InventarioController {
         return "redirect:/internal/inventario/reservas/lista";
     }
 
-    /**
-     * Muestra el formulario para editar una reserva existente.
-     * También verifica disponibilidad antes de guardar cambios.
-     */
     @GetMapping("/reservas/editar/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
     public String showEditReservaForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttrs) {
@@ -258,9 +199,6 @@ public class InventarioController {
         return "internal/inventario/reservas/nueva-reserva";
     }
 
-    /**
-     * Actualiza una reserva, verificando disponibilidad (excluyéndose a sí misma).
-     */
     @PostMapping("/reservas/actualizar/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
     public String updateReserva(@PathVariable Long id,
@@ -282,7 +220,6 @@ public class InventarioController {
             return "internal/inventario/reservas/nueva-reserva";
         }
 
-        // Verificar disponibilidad excluyendo la reserva actual
         boolean disponible = inventarioService.verificarDisponibilidad(
             reserva.getEquipo().getId(),
             reserva.getFechaInicio(),
@@ -306,9 +243,6 @@ public class InventarioController {
         return "redirect:/internal/inventario/reservas/lista";
     }
 
-    /**
-     * Cancela (elimina) una reserva. Útil si un proyecto se cancela o cambia de fechas.
-     */
     @PostMapping("/reservas/cancelar/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
     public String cancelReserva(@PathVariable Long id, RedirectAttributes redirectAttrs) {
@@ -322,11 +256,6 @@ public class InventarioController {
         return "redirect:/internal/inventario/reservas/lista";
     }
 
-    // ==================== CONSULTA DE DISPONIBILIDAD (RF-24) ====================
-
-    /**
-     * Muestra un formulario para consultar disponibilidad de equipos por rango de fechas.
-     */
     @GetMapping("/disponibilidad")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL', 'DISEÑADOR')")
     public String showDisponibilidadForm(Model model) {
@@ -334,9 +263,6 @@ public class InventarioController {
         return "internal/inventario/disponibilidad";
     }
 
-    /**
-     * Procesa la consulta de disponibilidad y devuelve una tabla con los equipos disponibles.
-     */
     @GetMapping("/disponibilidad/consultar")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL', 'DISEÑADOR')")
     public String consultarDisponibilidad(@RequestParam("fechaInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
@@ -355,12 +281,6 @@ public class InventarioController {
         return "internal/inventario/disponibilidad";
     }
 
-    // ==================== ENDPOINTS AJAX ADICIONALES ====================
-
-    /**
-     * Devuelve la disponibilidad de un equipo específico en formato JSON.
-     * Útil para validaciones asíncronas en el formulario de reserva.
-     */
     @GetMapping("/api/disponibilidad-equipo")
     @ResponseBody
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO', 'COMERCIAL')")

@@ -5,11 +5,6 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-/**
- * Entidad que representa un detalle (ítem) de una cotización.
- * Cada ítem tiene un concepto, cantidad y precio unitario.
- * El precio unitario puede ser el precio base del catálogo o un valor negociado manualmente (RCOT03).
- */
 @Entity
 @Table(name = "detalle_cotizacion")
 public class DetalleCotizacion {
@@ -37,7 +32,6 @@ public class DetalleCotizacion {
     @Column(name = "precio_unitario", nullable = false, precision = 12, scale = 2)
     private BigDecimal precioUnitario;
 
-    // Constructores
     public DetalleCotizacion() {
     }
 
@@ -47,7 +41,6 @@ public class DetalleCotizacion {
         this.precioUnitario = precioUnitario;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -88,11 +81,6 @@ public class DetalleCotizacion {
         this.precioUnitario = precioUnitario;
     }
 
-    /**
-     * Calcula el subtotal de este ítem (cantidad * precio unitario).
-     *
-     * @return BigDecimal subtotal
-     */
     public BigDecimal getSubtotal() {
         if (cantidad == null || precioUnitario == null) {
             return BigDecimal.ZERO;
@@ -100,7 +88,6 @@ public class DetalleCotizacion {
         return precioUnitario.multiply(BigDecimal.valueOf(cantidad));
     }
 
-    // equals, hashCode y toString
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

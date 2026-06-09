@@ -1,5 +1,4 @@
 package com.stamos.controller;
-
 import com.stamos.entity.Proyecto;
 import com.stamos.entity.Cotizacion;
 import com.stamos.entity.HistorialEstadoProyecto;
@@ -18,18 +17,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Controlador para la gestión de proyectos.
- */
 @Controller
 @RequestMapping("/internal/proyectos")
-@PreAuthorize("isAuthenticated()") // Asegura que cualquier método no anotado requiera autenticación
+@PreAuthorize("isAuthenticated()") 
 public class ProyectoController {
 
     @Autowired
@@ -46,8 +41,6 @@ public class ProyectoController {
 
     @Autowired
     private InventarioService inventarioService;
-
-    // ==================== LISTAR PROYECTOS ====================
 
     @GetMapping("/lista")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIAL', 'DISEÑADOR', 'PRODUCCION', 'SOPORTE_TECNICO')")
@@ -68,7 +61,6 @@ public class ProyectoController {
         return "internal/proyectos/lista";
     }
 
-    // ==================== CREAR PROYECTO DESDE COTIZACIÓN APROBADA ====================
 
     @GetMapping("/nuevo")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIAL')")
@@ -110,8 +102,6 @@ public class ProyectoController {
         return "redirect:/internal/proyectos/detalle/" + proyecto.getId();
     }
 
-    // ==================== DETALLE Y TABLERO DE CONTROL ====================
-
     @GetMapping("/detalle/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIAL', 'DISEÑADOR', 'PRODUCCION', 'SOPORTE_TECNICO')")
     public String viewDetail(@PathVariable Long id, Model model, RedirectAttributes redirectAttrs) {
@@ -143,7 +133,6 @@ public class ProyectoController {
         return "internal/proyectos/dashboard";
     }
 
-    // ==================== CAMBIAR ESTADO DEL PROYECTO ====================
 
     @GetMapping("/cambiar-estado/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DISEÑADOR')")
@@ -203,8 +192,6 @@ public class ProyectoController {
         return "redirect:/internal/proyectos/detalle/" + id;
     }
 
-    // ==================== ASIGNAR RESPONSABLE ====================
-
     @PostMapping("/asignar-responsable/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIAL')")
     public String asignarResponsable(@PathVariable Long id,
@@ -226,8 +213,7 @@ public class ProyectoController {
         return "redirect:/internal/proyectos/detalle/" + id;
     }
 
-    // ==================== ARCHIVOS (RENDERS, PLANOS, BOCETOS) ====================
-
+    
     @PostMapping("/subir-archivo/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DISEÑADOR')")
     public String subirArchivo(@PathVariable Long id,
@@ -258,7 +244,6 @@ public class ProyectoController {
         return "internal/proyectos/archivos";
     }
 
-    // ==================== ALQUILER DE EQUIPOS ====================
 
     @PostMapping("/agregar-alquiler/{proyectoId}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SOPORTE_TECNICO')")
@@ -283,7 +268,6 @@ public class ProyectoController {
         return "redirect:/internal/proyectos/detalle/" + proyectoId;
     }
 
-    // ==================== REPORTE DE PROYECTOS ATRASADOS ====================
 
     @GetMapping("/atrasados")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIAL')")

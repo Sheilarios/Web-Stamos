@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{internal/layout/header :: header}"></head>
+<body>
+    <div th:replace="~{internal/layout/header :: topbar}"></div>
+    <div th:replace="~{internal/layout/sidebar :: sidebar}"></div>
+    
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Habilitar Cliente</h1>
+                <a th:href="@{/clientes/{id}(id=${cliente.id})}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-check-circle"></i> Habilitar cliente
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>¿Está seguro que desea habilitar nuevamente al cliente <strong th:text="${cliente.nombreRazonSocial}"></strong>?</p>
+                    
+                    <div class="mt-3 mb-3 p-3 bg-light rounded">
+                        <h5>Información del cliente:</h5>
+                        <ul class="mb-0">
+                            <li><strong>ID:</strong> <span th:text="${cliente.id}"></span></li>
+                            <li><strong>RUC/DNI:</strong> <span th:text="${cliente.ruc}"></span></li>
+                            <li><strong>Email:</strong> <span th:text="${cliente.email}"></span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-success">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Al habilitar el cliente:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Podrá generar nuevas cotizaciones</li>
+                            <li>Podrá iniciar nuevos proyectos</li>
+                            <li>Accederá nuevamente al portal de cliente</li>
+                        </ul>
+                    </div>
+                    
+                    <form th:action="@{/clientes/{id}/habilitar(id=${cliente.id})}" method="post">
+                        <input type="hidden" name="_method" value="PUT" />
+                        <button type="submit" class="btn btn-success" onclick="return confirm('¿Confirmar habilitación del cliente?')">
+                            <i class="bi bi-check-circle"></i> Sí, habilitar cliente
+                        </button>
+                        <a th:href="@{/clientes/{id}(id=${cliente.id})}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{internal/layout/footer :: scripts}"></div>
+</body>
+</html>

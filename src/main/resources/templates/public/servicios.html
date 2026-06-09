@@ -4,30 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STAMOS · Servicios para eventos corporativos</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --green: #1A7040;
+        }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'DM Sans', sans-serif;
-            background: #080b11;
-            color: #d4dbe8;
-            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--text);
         }
         
-        /* NAVBAR */
-        .nav {
+        /* ========== NAVBAR ========== */
+        .navbar {
             display: flex;
             align-items: center;
-            padding: 0 60px;
-            height: 70px;
-            background: rgba(8, 11, 17, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 0.5px solid #14192a;
+            justify-content: space-between;
+            padding: 18px 56px;
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             z-index: 100;
         }
         
@@ -35,20 +50,19 @@
             font-family: 'Syne', sans-serif;
             font-size: 22px;
             font-weight: 800;
-            color: #f0f4ff;
+            color: var(--text);
         }
         
-        .nav-brand span { color: #3d72d4; }
+        .nav-brand span { color: var(--yellow-dark); }
         
         .nav-links {
             display: flex;
             gap: 32px;
-            margin-left: 60px;
         }
         
         .nav-link {
             font-size: 14px;
-            color: #4a5a72;
+            color: var(--text-2);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.15s;
@@ -56,93 +70,71 @@
         
         .nav-link:hover,
         .nav-link.active {
-            color: #c4cfe8;
+            color: var(--yellow-dark);
         }
         
-        .nav-right {
-            margin-left: auto;
-            display: flex;
-            gap: 12px;
-        }
-        
-        .btn-login {
-            background: none;
-            border: 0.5px solid #1e2a3e;
-            color: #5a6a82;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-size: 13px;
-            cursor: pointer;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.15s;
-        }
-        
-        .btn-login:hover {
-            border-color: #2a3a58;
-            color: #b4c4d8;
-        }
-        
-        .btn-cta {
-            background: #1a2e54;
-            border: 0.5px solid #2a4878;
-            color: #6b9cf4;
+        .nav-cta {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
             padding: 8px 22px;
             border-radius: 8px;
             font-size: 13px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
             text-decoration: none;
-            transition: all 0.15s;
         }
         
-        .btn-cta:hover {
-            background: #1f3664;
-            color: #8ab4f8;
+        .nav-cta:hover {
+            background: var(--yellow-mid);
         }
         
-        /* HERO */
+        /* ========== HERO ========== */
         .hero {
-            padding: 60px 60px 40px;
+            padding: 60px 56px 40px;
             text-align: center;
-            background: linear-gradient(180deg, #080b11 0%, #0b0e15 100%);
+            background: linear-gradient(135deg, #FFFBE6 0%, #FFFFFF 100%);
         }
         
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #0d1828;
-            border: 0.5px solid #1a2e48;
+            background: var(--yellow-light);
+            border: 0.5px solid var(--yellow-border);
             border-radius: 30px;
             padding: 6px 16px;
             font-size: 12px;
-            color: #4a72a4;
+            color: var(--yellow-dark);
             margin-bottom: 24px;
         }
+        
+        .hero-badge i { font-size: 14px; }
         
         .hero-title {
             font-family: 'Syne', sans-serif;
             font-size: 48px;
             font-weight: 800;
-            color: #f0f4ff;
+            color: var(--text);
             line-height: 1.2;
             margin-bottom: 16px;
         }
         
-        .hero-title span { color: #3d72d4; }
+        .hero-title span { color: var(--yellow-dark); }
         
         .hero-desc {
             font-size: 16px;
-            color: #4a5a72;
+            color: var(--text-2);
             max-width: 600px;
             margin: 0 auto;
             line-height: 1.7;
         }
         
-        /* CATÁLOGO FLIP CARDS */
+        /* ========== CATÁLOGO FLIP CARDS ========== */
         .catalog-section {
-            padding: 40px 60px 80px;
+            padding: 40px 56px 80px;
         }
         
         .catalog-grid {
@@ -182,15 +174,15 @@
         }
         
         .flip-front {
-            background: #0f1219;
-            border: 0.5px solid #14192a;
+            background: var(--card);
+            border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
         }
         
         .flip-back {
-            background: #0d1828;
-            border: 0.5px solid #1e3060;
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
             transform: rotateY(180deg);
             display: flex;
             flex-direction: column;
@@ -204,19 +196,23 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
         }
+        
+        .front-icon i { font-size: 28px; color: var(--yellow-dark); }
         
         .front-name {
             font-family: 'Syne', sans-serif;
             font-size: 20px;
             font-weight: 700;
-            color: #e8f0fc;
+            color: var(--text);
             margin-bottom: 12px;
         }
         
         .front-desc {
             font-size: 13px;
-            color: #4a5a72;
+            color: var(--text-2);
             line-height: 1.6;
             flex: 1;
         }
@@ -232,24 +228,26 @@
             font-size: 10px;
             padding: 4px 10px;
             border-radius: 12px;
-            background: #0d1220;
-            border: 0.5px solid #1a2030;
-            color: #3a4a60;
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            color: var(--yellow-dark);
+            font-weight: 500;
         }
         
         .back-label {
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            color: #3a5a8a;
+            color: var(--yellow-dark);
             margin-bottom: 12px;
+            font-weight: 600;
         }
         
         .back-title {
             font-family: 'Syne', sans-serif;
             font-size: 18px;
             font-weight: 700;
-            color: #e8f0fc;
+            color: var(--text);
             margin-bottom: 16px;
         }
         
@@ -265,18 +263,18 @@
             align-items: flex-start;
             gap: 8px;
             font-size: 12px;
-            color: #5a6a82;
+            color: var(--text-2);
         }
         
         .back-item i {
             font-size: 14px;
-            color: #3d72d4;
+            color: var(--yellow-dark);
             margin-top: 1px;
         }
         
         .back-price {
-            background: #0a1420;
-            border: 0.5px solid #1a2e48;
+            background: white;
+            border: 1px solid var(--yellow-border);
             border-radius: 10px;
             padding: 12px 16px;
             margin-top: 16px;
@@ -287,47 +285,42 @@
         
         .bp-label {
             font-size: 10px;
-            color: #3a4a60;
+            color: var(--text-3);
         }
         
         .bp-val {
             font-family: 'Syne', sans-serif;
             font-size: 18px;
             font-weight: 700;
-            color: #6b9cf4;
+            color: var(--yellow-dark);
         }
         
         .back-cta {
             width: 100%;
-            background: #1a2e54;
-            border: 0.5px solid #2a4878;
-            color: #6b9cf4;
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
             padding: 10px;
             border-radius: 8px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             margin-top: 12px;
             text-align: center;
             text-decoration: none;
             display: block;
+            transition: background 0.15s;
         }
         
-        /* Colores por categoría */
-        .c-blue .front-icon { background: #0d1828; border: 0.5px solid #1a2e48; }
-        .c-blue .front-icon i { color: #3d72d4; }
-        .c-green .front-icon { background: #0d1e14; border: 0.5px solid #1a3020; }
-        .c-green .front-icon i { color: #3a9a5a; }
-        .c-amber .front-icon { background: #1a1008; border: 0.5px solid #2a2010; }
-        .c-amber .front-icon i { color: #c07a2a; }
-        .c-purple .front-icon { background: #18102e; border: 0.5px solid #2a1e48; }
-        .c-purple .front-icon i { color: #8a6ad4; }
+        .back-cta:hover {
+            background: var(--yellow-mid);
+        }
         
-        /* FOOTER */
+        /* ========== FOOTER ========== */
         .footer {
-            background: #0b0e15;
-            border-top: 0.5px solid #14192a;
-            padding: 48px 60px 32px;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 48px 56px 32px;
         }
         
         .footer-grid {
@@ -341,61 +334,68 @@
             font-family: 'Syne', sans-serif;
             font-size: 20px;
             font-weight: 700;
-            color: #f0f4ff;
+            color: var(--text);
             margin-bottom: 12px;
         }
         
-        .footer-brand span { color: #3d72d4; }
+        .footer-brand span { color: var(--yellow-dark); }
         
         .footer-desc {
             font-size: 13px;
-            color: #3a4a60;
+            color: var(--text-2);
             line-height: 1.6;
         }
         
         .footer-title {
             font-size: 12px;
-            color: #2a3448;
+            color: var(--text-3);
             text-transform: uppercase;
             letter-spacing: 1.2px;
             margin-bottom: 18px;
+            font-weight: 600;
         }
         
         .footer-link {
             display: block;
             font-size: 13px;
-            color: #3a4a60;
+            color: var(--text-2);
             margin-bottom: 10px;
             text-decoration: none;
+            transition: color 0.15s;
         }
         
-        .footer-link:hover { color: #7a8ba6; }
+        .footer-link:hover { color: var(--yellow-dark); }
         
         .footer-bottom {
-            border-top: 0.5px solid #14192a;
+            border-top: 1px solid var(--border);
             padding-top: 24px;
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
         }
         
         .footer-copy, .footer-ruc {
             font-size: 11px;
-            color: #1e2838;
+            color: var(--text-3);
         }
         
-        @media (max-width: 900px) {
-            .nav { padding: 0 24px; }
+        @media (max-width: 1000px) {
+            .navbar { padding: 0 24px; }
             .nav-links { display: none; }
             .catalog-grid { grid-template-columns: 1fr; }
+            .hero { padding: 40px 24px; }
             .hero-title { font-size: 32px; }
+            .catalog-section { padding: 24px 24px 60px; }
             .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+            .footer { padding: 32px 24px; }
         }
     </style>
 </head>
 <body>
 
 <!-- NAVBAR PÚBLICO -->
-<nav class="nav">
+<nav class="navbar">
     <div class="nav-brand">STAMOS<span>.</span></div>
     <div class="nav-links">
         <a class="nav-link" th:href="@{/}">Inicio</a>
@@ -403,27 +403,28 @@
         <a class="nav-link" th:href="@{/galeria}">Galería</a>
         <a class="nav-link" th:href="@{/contacto}">Contacto</a>
     </div>
-    <div class="nav-right">
-        <a th:href="@{/login}" class="btn-login"><i class="ti ti-lock"></i> Iniciar sesión</a>
-        <a th:href="@{/contacto}" class="btn-cta"><i class="ti ti-send"></i> Cotizar ahora</a>
-    </div>
+    <a th:href="@{/login}" class="nav-cta">
+        <i class="ti ti-login"></i> Portal cliente
+    </a>
 </nav>
 
 <!-- HERO -->
-<div class="hero">
-    <div class="hero-badge"><i class="ti ti-layout-grid"></i> Catálogo de servicios</div>
+<section class="hero">
+    <div class="hero-badge">
+        <i class="ti ti-layout-grid"></i> Catálogo de servicios
+    </div>
     <h1 class="hero-title">Todo lo que necesitas para<br><span>tu próximo evento</span></h1>
     <p class="hero-desc">Pasa el cursor sobre cada servicio para descubrir los detalles, precios y especificaciones técnicas.</p>
-</div>
+</section>
 
 <!-- CATÁLOGO FLIP CARDS -->
 <section class="catalog-section">
     <div class="catalog-grid">
         <!-- Stand publicitario -->
-        <div class="flip-wrap c-blue">
+        <div class="flip-wrap">
             <div class="flip-inner">
                 <div class="flip-front">
-                    <div class="front-icon"><i class="ti ti-layout" style="font-size: 28px;"></i></div>
+                    <div class="front-icon"><i class="ti ti-layout"></i></div>
                     <div class="front-name">Stands publicitarios</div>
                     <div class="front-desc">Diseño y fabricación de stands modulares y personalizados. Estructura metálica, impresión de alta resolución y acabados premium.</div>
                     <div class="front-tags"><span class="tag">Modular</span><span class="tag">Personalizado</span><span class="tag">Alquiler/Venta</span></div>
@@ -444,10 +445,10 @@
         </div>
 
         <!-- Video wall -->
-        <div class="flip-wrap c-green">
+        <div class="flip-wrap">
             <div class="flip-inner">
                 <div class="flip-front">
-                    <div class="front-icon"><i class="ti ti-device-tv" style="font-size: 28px;"></i></div>
+                    <div class="front-icon"><i class="ti ti-device-tv"></i></div>
                     <div class="front-name">Video walls & LED</div>
                     <div class="front-desc">Pantallas LED modulares de alto impacto para eventos corporativos. Configura el tamaño y formato que necesites.</div>
                     <div class="front-tags"><span class="tag">Video wall LED</span><span class="tag">Gran formato</span><span class="tag">Alquiler</span></div>
@@ -468,10 +469,10 @@
         </div>
 
         <!-- Pantalla táctil -->
-        <div class="flip-wrap c-blue">
+        <div class="flip-wrap">
             <div class="flip-inner">
                 <div class="flip-front">
-                    <div class="front-icon"><i class="ti ti-device-tablet" style="font-size: 28px;"></i></div>
+                    <div class="front-icon"><i class="ti ti-device-tablet"></i></div>
                     <div class="front-name">Pantallas táctiles</div>
                     <div class="front-desc">Kioscos interactivos y pantallas touch de 55" para activaciones comerciales, encuestas y catálogos digitales.</div>
                     <div class="front-tags"><span class="tag">55" touch</span><span class="tag">Interactivo</span><span class="tag">Kiosko</span></div>
@@ -492,10 +493,10 @@
         </div>
 
         <!-- Mobiliario ferial -->
-        <div class="flip-wrap c-amber">
+        <div class="flip-wrap">
             <div class="flip-inner">
                 <div class="flip-front">
-                    <div class="front-icon"><i class="ti ti-armchair" style="font-size: 28px;"></i></div>
+                    <div class="front-icon"><i class="ti ti-armchair"></i></div>
                     <div class="front-name">Mobiliario ferial</div>
                     <div class="front-desc">Catálogo completo de mesas altas, sillas lounge, módulos de exhibición y mobiliario corporativo para eventos.</div>
                     <div class="front-tags"><span class="tag">Alquiler</span><span class="tag">Lima</span><span class="tag">Corporativo</span></div>
@@ -516,10 +517,10 @@
         </div>
 
         <!-- Diseño 3D -->
-        <div class="flip-wrap c-purple">
+        <div class="flip-wrap">
             <div class="flip-inner">
                 <div class="flip-front">
-                    <div class="front-icon"><i class="ti ti-3d-cube-sphere" style="font-size: 28px;"></i></div>
+                    <div class="front-icon"><i class="ti ti-3d-cube-sphere"></i></div>
                     <div class="front-name">Diseño 3D & renders</div>
                     <div class="front-desc">Visualiza tu stand antes de construirlo. Renders fotorrealistas en 3D, planos técnicos AutoCAD y recorridos virtuales.</div>
                     <div class="front-tags"><span class="tag">3D Max</span><span class="tag">AutoCAD</span><span class="tag">Renders</span></div>
@@ -540,10 +541,10 @@
         </div>
 
         <!-- Montaje y logística -->
-        <div class="flip-wrap c-green">
+        <div class="flip-wrap">
             <div class="flip-inner">
                 <div class="flip-front">
-                    <div class="front-icon"><i class="ti ti-crane" style="font-size: 28px;"></i></div>
+                    <div class="front-icon"><i class="ti ti-crane"></i></div>
                     <div class="front-name">Montaje y logística</div>
                     <div class="front-desc">Equipo propio de montaje y desmontaje en el recinto ferial. Coordinamos transporte, instalación eléctrica y supervisión.</div>
                     <div class="front-tags"><span class="tag">Montaje en feria</span><span class="tag">Transporte</span><span class="tag">Supervisión</span></div>

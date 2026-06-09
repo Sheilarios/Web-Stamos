@@ -5,16 +5,6 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Entidad que representa un usuario del sistema.
- * Puede ser un empleado (con rol específico) o un cliente (rol CLIENTE).
- * 
- * Reglas de negocio:
- * - Las contraseñas se almacenan cifradas (BCrypt).
- * - Solo el administrador puede crear/modificar empleados.
- * - Los clientes reciben credenciales generadas por el administrador (no auto-registro).
- * - Se soporta restablecimiento de contraseña mediante token.
- */
 @Entity
 @Table(name = "usuario")
 public class Usuario {
@@ -30,7 +20,7 @@ public class Usuario {
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Column(nullable = false)
-    private String password; // Almacenada cifrada con BCrypt
+    private String password; 
 
     @NotBlank(message = "El nombre es obligatorio")
     @Column(nullable = false, length = 100)
@@ -38,13 +28,13 @@ public class Usuario {
 
     @NotBlank(message = "El rol es obligatorio")
     @Column(nullable = false, length = 30)
-    private String rol; // ADMINISTRADOR, COMERCIAL, DISEÑADOR, PRODUCCION, SOPORTE_TECNICO, CLIENTE
+    private String rol; 
 
     @Column(nullable = false)
     private boolean activo = true;
 
     @Column(name = "es_empleado", nullable = false)
-    private boolean esEmpleado = false; // true para empleados, false para clientes
+    private boolean esEmpleado = false; 
 
     @Column(name = "reset_token")
     private String resetToken;
@@ -52,11 +42,9 @@ public class Usuario {
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
 
-    // Relación con cliente (solo si es cliente)
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Cliente cliente;
 
-    // Constructores
     public Usuario() {
     }
 
@@ -68,7 +56,6 @@ public class Usuario {
         this.esEmpleado = esEmpleado;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -149,12 +136,10 @@ public class Usuario {
         this.cliente = cliente;
     }
 
-    // Método auxiliar para verificar roles
     public boolean hasRole(String roleName) {
         return this.rol != null && this.rol.equals(roleName);
     }
 
-    // equals y hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -4,12 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Entidad que registra el historial de cambios de estado de un proyecto.
- * 
- * Reglas de negocio:
- * - RPY04: El sistema debe registrar la fecha y hora de cada cambio de estado, y qué usuario lo hizo.
- */
 @Entity
 @Table(name = "historial_estado_proyecto")
 public class HistorialEstadoProyecto {
@@ -35,11 +29,9 @@ public class HistorialEstadoProyecto {
     @Column(name = "fecha_hora", nullable = false)
     private LocalDateTime fechaHora;
 
-    // Constructor por defecto
     public HistorialEstadoProyecto() {
     }
 
-    // Constructor con campos obligatorios
     public HistorialEstadoProyecto(Proyecto proyecto, String estadoAnterior, String estadoNuevo, Usuario usuario, LocalDateTime fechaHora) {
         this.proyecto = proyecto;
         this.estadoAnterior = estadoAnterior;
@@ -48,7 +40,6 @@ public class HistorialEstadoProyecto {
         this.fechaHora = fechaHora;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

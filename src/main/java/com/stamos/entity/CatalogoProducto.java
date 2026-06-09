@@ -4,11 +4,6 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-/**
- * Entidad que representa un producto o servicio en el catálogo de STAMOS.
- * Los ítems de cotización pueden partir de estos registros (con precio base)
- * o pueden ser conceptos personalizados con precio negociado.
- */
 @Entity
 @Table(name = "catalogo_producto")
 public class CatalogoProducto {
@@ -26,24 +21,20 @@ public class CatalogoProducto {
     @Column(name = "precio_base", nullable = false, precision = 12, scale = 2)
     private BigDecimal precioBase;
 
-    // Constructor por defecto
     public CatalogoProducto() {
     }
 
-    // Constructor con campos mínimos
     public CatalogoProducto(String nombre, BigDecimal precioBase) {
         this.nombre = nombre;
         this.precioBase = precioBase;
     }
 
-    // Constructor completo
     public CatalogoProducto(String nombre, String descripcion, BigDecimal precioBase) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precioBase = precioBase;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

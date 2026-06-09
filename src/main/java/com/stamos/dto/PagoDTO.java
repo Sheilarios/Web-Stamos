@@ -3,10 +3,6 @@ package com.stamos.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * DTO para transferir datos básicos de un pago.
- * Utilizado en listados y búsquedas para evitar enviar entidades completas.
- */
 public class PagoDTO {
 
     private Long id;
@@ -17,11 +13,9 @@ public class PagoDTO {
     private String medioPago;
     private String estado;
 
-    // Constructor por defecto
     public PagoDTO() {
     }
 
-    // Constructor con campos principales
     public PagoDTO(Long id, Long proyectoId, String proyectoNombre, 
                    LocalDate fecha, BigDecimal monto, 
                    String medioPago, String estado) {
@@ -34,7 +28,6 @@ public class PagoDTO {
         this.estado = estado;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

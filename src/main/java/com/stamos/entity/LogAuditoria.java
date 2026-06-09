@@ -4,14 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Entidad que representa un registro de auditoría.
- * 
- * Reglas de negocio:
- * - RRE05: Todas las acciones críticas deben quedar registradas en una tabla de logs.
- * - RF-31: El sistema debe registrar la fecha, hora, usuario, acción, entidad afectada,
- *   valores anteriores y nuevos.
- */
 @Entity
 @Table(name = "log_auditoria")
 public class LogAuditoria {
@@ -21,35 +13,33 @@ public class LogAuditoria {
     private Long id;
 
     @Column(name = "accion", nullable = false, length = 50)
-    private String accion; // CREAR, MODIFICAR, ANULAR, CAMBIAR_ESTADO, etc.
+    private String accion; 
 
     @Column(name = "entidad", nullable = false, length = 50)
-    private String entidad; // CLIENTE, COTIZACION, PROYECTO, PAGO, USUARIO, etc.
+    private String entidad; 
 
     @Column(name = "entidad_id")
-    private Long entidadId; // ID del registro afectado
+    private Long entidadId; 
 
     @Column(name = "valor_anterior", columnDefinition = "TEXT")
-    private String valorAnterior; // Representación en texto o JSON del valor previo
+    private String valorAnterior; 
 
     @Column(name = "valor_nuevo", columnDefinition = "TEXT")
-    private String valorNuevo; // Representación del nuevo valor
+    private String valorNuevo; 
 
     @Column(name = "fecha_hora", nullable = false)
     private LocalDateTime fechaHora;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
-    private Usuario usuario; // Usuario autenticado que realizó la acción (puede ser null si es sistema)
+    private Usuario usuario; 
 
     @Column(name = "usuario_email", length = 100)
-    private String usuarioEmail; // Denormalizado para búsquedas rápidas (útil si el usuario se elimina)
+    private String usuarioEmail; 
 
-    // Constructor por defecto
     public LogAuditoria() {
     }
 
-    // Constructor con campos obligatorios
     public LogAuditoria(String accion, String entidad, Long entidadId, String valorAnterior,
                         String valorNuevo, LocalDateTime fechaHora, Usuario usuario, String usuarioEmail) {
         this.accion = accion;
@@ -62,7 +52,6 @@ public class LogAuditoria {
         this.usuarioEmail = usuarioEmail;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

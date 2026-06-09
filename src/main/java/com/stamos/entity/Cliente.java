@@ -6,15 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Entidad que representa un cliente (persona natural o empresa).
- * 
- * Reglas de negocio:
- * - RC01: Todo cliente debe registrarse antes de generar una cotización.
- * - RC02: Datos mínimos: nombre o razón social, teléfono y email. RUC opcional.
- * - RC03: Tipo de cliente: PERSONA_NATURAL o EMPRESA.
- * - RC04: No se elimina físicamente si tiene proyectos/cotizaciones, solo se deshabilita (activo = false).
- */
 @Entity
 @Table(name = "cliente")
 public class Cliente {
@@ -29,7 +20,7 @@ public class Cliente {
 
     @NotBlank(message = "El tipo de persona es obligatorio")
     @Column(name = "tipo_persona", nullable = false, length = 20)
-    private String tipoPersona; // PERSONA_NATURAL o EMPRESA
+    private String tipoPersona; 
 
     @NotBlank(message = "El teléfono es obligatorio")
     @Column(nullable = false, length = 20)
@@ -41,27 +32,36 @@ public class Cliente {
     private String email;
 
     @Column(length = 20)
-    private String ruc; // Opcional, solo para empresas
+    private String ruc; 
 
     @Column(nullable = false)
-    private boolean activo = true; // Para deshabilitación lógica (RC04)
+    private boolean activo = true; 
 
-    // Relaciones
+    @Column(name = "direccion", length = 255)
+    private String direccion;
+
+    @Column(name = "ciudad", length = 100)
+    private String ciudad;
+
+    @Column(name = "departamento", length = 100)
+    private String departamento;
+
+    @Column(name = "codigo_postal", length = 20)
+    private String codigoPostal;
+
+    @Column(name = "nombre_contacto", length = 100)
+    private String nombreContacto;
+
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Cotizacion> cotizaciones = new ArrayList<>();
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Proyecto> proyectos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
-    private List<Resena> resenas = new ArrayList<>();
-
-    // Relación con usuario (para login en portal público)
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    // Constructores
     public Cliente() {
     }
 
@@ -74,7 +74,20 @@ public class Cliente {
         this.activo = true;
     }
 
-    // Getters y Setters
+    public Cliente(String nombreRazonSocial, String tipoPersona, String telefono, String email, String ruc, String direccion, String ciudad, String departamento, String codigoPostal, String nombreContacto) {
+        this.nombreRazonSocial = nombreRazonSocial;
+        this.tipoPersona = tipoPersona;
+        this.telefono = telefono;
+        this.email = email;
+        this.ruc = ruc;
+        this.direccion = direccion;
+        this.ciudad = ciudad;
+        this.departamento = departamento;
+        this.codigoPostal = codigoPostal;
+        this.nombreContacto = nombreContacto;
+        this.activo = true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -131,6 +144,46 @@ public class Cliente {
         this.activo = activo;
     }
 
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
+    }
+
+    public String getCodigoPostal() {
+        return codigoPostal;
+    }
+
+    public void setCodigoPostal(String codigoPostal) {
+        this.codigoPostal = codigoPostal;
+    }
+
+    public String getNombreContacto() {
+        return nombreContacto;
+    }
+
+    public void setNombreContacto(String nombreContacto) {
+        this.nombreContacto = nombreContacto;
+    }
+
     public List<Cotizacion> getCotizaciones() {
         return cotizaciones;
     }
@@ -147,14 +200,6 @@ public class Cliente {
         this.proyectos = proyectos;
     }
 
-    public List<Resena> getResenas() {
-        return resenas;
-    }
-
-    public void setResenas(List<Resena> resenas) {
-        this.resenas = resenas;
-    }
-
     public Usuario getUsuario() {
         return usuario;
     }
@@ -163,7 +208,6 @@ public class Cliente {
         this.usuario = usuario;
     }
 
-    // Métodos de conveniencia
     public void addCotizacion(Cotizacion cotizacion) {
         cotizaciones.add(cotizacion);
         cotizacion.setCliente(this);
@@ -174,7 +218,6 @@ public class Cliente {
         proyecto.setCliente(this);
     }
 
-    // equals, hashCode y toString
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -198,6 +241,11 @@ public class Cliente {
                 ", email='" + email + '\'' +
                 ", ruc='" + ruc + '\'' +
                 ", activo=" + activo +
+                ", direccion='" + direccion + '\'' +
+                ", ciudad='" + ciudad + '\'' +
+                ", departamento='" + departamento + '\'' +
+                ", codigoPostal='" + codigoPostal + '\'' +
+                ", nombreContacto='" + nombreContacto + '\'' +
                 '}';
     }
 }

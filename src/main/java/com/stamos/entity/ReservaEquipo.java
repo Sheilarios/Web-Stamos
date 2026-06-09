@@ -5,15 +5,6 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-/**
- * Entidad que representa una reserva de equipo (alquiler) para un proyecto.
- * 
- * Reglas de negocio:
- * - RPY06: Si el proyecto incluye alquiler de equipos, se debe registrar fecha de inicio y fin.
- * - RPY07: El sistema debe impedir solapamiento de reservas (control de disponibilidad).
- * - RIN02: Al asignar un equipo a un proyecto, se reduce la cantidad disponible durante el período.
- * - RIN03: No se puede asignar si la cantidad disponible es insuficiente.
- */
 @Entity
 @Table(name = "reserva_equipo")
 public class ReservaEquipo {
@@ -44,11 +35,9 @@ public class ReservaEquipo {
     @Column(nullable = false)
     private int cantidad;
 
-    // Constructor por defecto
     public ReservaEquipo() {
     }
 
-    // Constructor con campos obligatorios
     public ReservaEquipo(CatalogoEquipo equipo, Proyecto proyecto, LocalDate fechaInicio, LocalDate fechaFin, int cantidad) {
         this.equipo = equipo;
         this.proyecto = proyecto;
@@ -57,7 +46,6 @@ public class ReservaEquipo {
         this.cantidad = cantidad;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

@@ -9,45 +9,31 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repositorio para la entidad Cliente.
- * Proporciona métodos CRUD básicos y consultas personalizadas.
- */
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    /**
-     * Verifica si ya existe un cliente con el correo electrónico dado.
-     *
-     * @param email Correo electrónico
-     * @return true si existe
-     */
     boolean existsByEmail(String email);
-
-    /**
-     * Verifica si ya existe un cliente con el RUC dado.
-     *
-     * @param ruc RUC del cliente
-     * @return true si existe
-     */
     boolean existsByRuc(String ruc);
-
-    /**
-     * Obtiene todos los clientes activos (no deshabilitados).
-     *
-     * @return Lista de clientes activos
-     */
     List<Cliente> findByActivoTrue();
     Optional<Cliente> findByEmail(String email);
+    List<Cliente> findByActivoTrueOrderByNombreRazonSocialAsc();
+    long countByActivoTrue();
+    Optional<Cliente> findByRuc(String ruc);
 
-
-    /**
-     * Búsqueda de clientes por coincidencia parcial en nombre/razón social, RUC o teléfono.
-     * La búsqueda es insensible a mayúsculas/minúsculas.
-     *
-     * @param term Término de búsqueda envuelto en % (ej. "%juan%")
-     * @return Lista de clientes que coinciden
-     */
     @Query("SELECT c FROM Cliente c WHERE LOWER(c.nombreRazonSocial) LIKE :term OR LOWER(c.ruc) LIKE :term OR LOWER(c.telefono) LIKE :term")
     List<Cliente> searchByNombreOrRucOrTelefono(@Param("term") String term);
+
+    @Query("SELECT c FROM Cliente c WHERE c.activo = true AND (LOWER(c.nombreRazonSocial) LIKE :term OR LOWER(c.ruc) LIKE :term)")
+    List<Cliente> searchActiveByNombreOrRuc(@Param("term") String term);
+
+    List<Cliente> findByNombreRazonSocialContainingIgnoreCase(String nombre);
+
+    @Query("SELECT DISTINCT c FROM Cliente c JOIN c.proyectos p")
+    List<Cliente> findClientesWithProyectos();
+
+    @Query("SELECT DISTINCT c FROM Cliente c JOIN c.cotizaciones cot")
+    List<Cliente> findClientesWithCotizaciones();
+
+    @Query(value = "SELECT * FROM cliente ORDER BY id DESC LIMIT :limit", nativeQuery = true)
+    List<Cliente> findTopNByOrderByIdDesc(@Param("limit") int limit);
 }

@@ -20,18 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.validation.Valid;
 import java.util.List;
 
-/**
- * Controlador para la gestión de clientes dentro del sistema interno.
- * Solo accesible por usuarios con roles ADMINISTRADOR o COMERCIAL.
- * 
- * Reglas de negocio aplicadas:
- * - No se puede eliminar físicamente un cliente con proyectos o cotizaciones asociadas.
- * - En su lugar, se cambia el estado a "Deshabilitado".
- * - Los datos mínimos: nombre/razón social, teléfono, email.
- * - Cliente puede ser persona natural o empresa.
- */
 @Controller
-@RequestMapping("/internal/clientes")
+@RequestMapping("/clientes")
 @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIAL')")
 public class ClienteController {
 
@@ -47,124 +37,105 @@ public class ClienteController {
     @Autowired
     private PagoService pagoService;
 
-    /**
-     * Lista todos los clientes activos y deshabilitados, con opción de búsqueda.
-     * 
-     * @param searchTerm Término de búsqueda (nombre, RUC, teléfono) - opcional
-     * @param model      Modelo para Thymeleaf
-     * @return           Vista de lista de clientes
-     */
-    @GetMapping("/lista")
-    public String listClientes(@RequestParam(required = false) String searchTerm,
+    @GetMapping
+    public String listClientes(@RequestParam(required = false) String search,
+                               @RequestParam(required = false) boolean activos,
                                Model model) {
         List<Cliente> clientes;
-        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-            clientes = clienteService.search(searchTerm);
-            model.addAttribute("searchTerm", searchTerm);
+        
+        if (search != null && !search.trim().isEmpty()) {
+            clientes = clienteService.search(search);
+            model.addAttribute("search", search);
+        } else if (activos) {
+            clientes = clienteService.findActive();
+            model.addAttribute("activos", true);
         } else {
             clientes = clienteService.findAll();
         }
+        
         model.addAttribute("clientes", clientes);
+        model.addAttribute("total", clientes.size());
         return "internal/clientes/lista";
     }
 
-    /**
-     * Muestra el formulario para crear un nuevo cliente.
-     * 
-     * @param model Modelo con un cliente vacío
-     * @return      Vista del formulario
-     */
     @GetMapping("/nuevo")
-    public String showCreateForm(Model model) {
+    public String nuevoCliente(Model model) {
         model.addAttribute("cliente", new Cliente());
-        model.addAttribute("action", "crear");
+        model.addAttribute("tiposPersona", List.of("PERSONA_NATURAL", "EMPRESA"));
         return "internal/clientes/formulario";
     }
 
-    /**
-     * Procesa la creación de un nuevo cliente.
-     * Valida campos obligatorios: nombre/razón social, teléfono, email.
-     * 
-     * @param cliente         Cliente a crear (validado)
-     * @param bindingResult   Resultado de validación
-     * @param redirectAttrs   Para mensajes flash
-     * @return                Redirección a lista o formulario con errores
-     */
-    @PostMapping("/guardar")
-    public String saveCliente(@Valid @ModelAttribute("cliente") Cliente cliente,
-                              BindingResult bindingResult,
-                              RedirectAttributes redirectAttrs) {
-        if (bindingResult.hasErrors()) {
-            return "internal/clientes/formulario";
+    @PostMapping
+    public String crearCliente(@Valid @ModelAttribute("cliente") Cliente cliente,
+                               BindingResult result,
+                               Model model,
+                               RedirectAttributes redirect) {
+        if ("EMPRESA".equals(cliente.getTipoPersona()) && 
+            (cliente.getRuc() == null || cliente.getRuc().trim().isEmpty())) {
+            result.rejectValue("ruc", "error.cliente", "El RUC es obligatorio para empresas");
         }
-        // Verificar si ya existe un cliente con el mismo email o RUC (si aplica)
+        
         if (clienteService.existsByEmail(cliente.getEmail())) {
-            bindingResult.rejectValue("email", "error.cliente", "Ya existe un cliente con ese correo electrónico");
-            return "internal/clientes/formulario";
+            result.rejectValue("email", "error.cliente", "Ya existe un cliente con ese correo electrónico");
         }
-        if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() && 
+        
+        if (cliente.getRuc() != null && !cliente.getRuc().trim().isEmpty() && 
             clienteService.existsByRuc(cliente.getRuc())) {
-            bindingResult.rejectValue("ruc", "error.cliente", "Ya existe un cliente con ese RUC");
+            result.rejectValue("ruc", "error.cliente", "Ya existe un cliente con ese RUC");
+        }
+        
+        if (result.hasErrors()) {
+            model.addAttribute("tiposPersona", List.of("PERSONA_NATURAL", "EMPRESA"));
             return "internal/clientes/formulario";
         }
 
-        cliente.setActivo(true); // Por defecto, activo
+        cliente.setActivo(true);
         clienteService.save(cliente);
-        redirectAttrs.addFlashAttribute("success", "Cliente registrado exitosamente.");
-        return "redirect:/internal/clientes/lista";
+        redirect.addFlashAttribute("success", "Cliente registrado exitosamente.");
+        return "redirect:/clientes";
     }
 
-    /**
-     * Muestra el formulario para editar un cliente existente.
-     * 
-     * @param id    ID del cliente
-     * @param model Modelo con el cliente a editar
-     * @return      Vista del formulario
-     */
-    @GetMapping("/editar/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
+    @GetMapping("/{id}/editar")
+    public String editarCliente(@PathVariable Long id, 
+                                Model model, 
+                                RedirectAttributes redirect) {
         Cliente cliente = clienteService.findById(id);
         if (cliente == null) {
-            return "redirect:/internal/clientes/lista?error=notfound";
+            redirect.addFlashAttribute("error", "Cliente no encontrado.");
+            return "redirect:/clientes";
         }
+        
         model.addAttribute("cliente", cliente);
-        model.addAttribute("action", "editar");
-        return "internal/clientes/formulario";
+        model.addAttribute("tiposPersona", List.of("PERSONA_NATURAL", "EMPRESA"));
+        return "internal/clientes/formulario";  
     }
 
-    /**
-     * Procesa la actualización de un cliente.
-     * 
-     * @param id              ID del cliente a actualizar
-     * @param cliente         Datos actualizados
-     * @param bindingResult   Validación
-     * @param redirectAttrs   Mensajes flash
-     * @return                Redirección a lista o formulario
-     */
-    @PostMapping("/actualizar/{id}")
-    public String updateCliente(@PathVariable Long id,
-                                @Valid @ModelAttribute("cliente") Cliente cliente,
-                                BindingResult bindingResult,
-                                RedirectAttributes redirectAttrs) {
-        if (bindingResult.hasErrors()) {
-            return "internal/clientes/formulario";
-        }
+    @PutMapping("/{id}")
+    public String actualizarCliente(@PathVariable Long id,
+                                    @Valid @ModelAttribute("cliente") Cliente cliente,
+                                    BindingResult result,
+                                    Model model,
+                                    RedirectAttributes redirect) {
         Cliente existing = clienteService.findById(id);
         if (existing == null) {
-            redirectAttrs.addFlashAttribute("error", "Cliente no encontrado.");
-            return "redirect:/internal/clientes/lista";
+            redirect.addFlashAttribute("error", "Cliente no encontrado.");
+            return "redirect:/clientes";
         }
-        // Validar unicidad de email y RUC excluyendo el propio cliente
+        
         if (!existing.getEmail().equals(cliente.getEmail()) && 
             clienteService.existsByEmail(cliente.getEmail())) {
-            bindingResult.rejectValue("email", "error.cliente", "Ya existe otro cliente con ese correo");
-            return "internal/clientes/formulario";
+            result.rejectValue("email", "error.cliente", "Ya existe otro cliente con ese correo");
         }
-        if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
-            !existing.getRuc().equals(cliente.getRuc()) && 
+        
+        if (cliente.getRuc() != null && !cliente.getRuc().trim().isEmpty() &&
+            (existing.getRuc() == null || !existing.getRuc().equals(cliente.getRuc())) && 
             clienteService.existsByRuc(cliente.getRuc())) {
-            bindingResult.rejectValue("ruc", "error.cliente", "Ya existe otro cliente con ese RUC");
-            return "internal/clientes/formulario";
+            result.rejectValue("ruc", "error.cliente", "Ya existe otro cliente con ese RUC");
+        }
+        
+        if (result.hasErrors()) {
+            model.addAttribute("tiposPersona", List.of("PERSONA_NATURAL", "EMPRESA"));
+            return "internal/clientes/formulario";  
         }
 
         existing.setNombreRazonSocial(cliente.getNombreRazonSocial());
@@ -172,27 +143,27 @@ public class ClienteController {
         existing.setTelefono(cliente.getTelefono());
         existing.setEmail(cliente.getEmail());
         existing.setRuc(cliente.getRuc());
-        // activo no se modifica aquí (se maneja por separado)
+        existing.setDireccion(cliente.getDireccion());
+        existing.setCiudad(cliente.getCiudad());
+        existing.setDepartamento(cliente.getDepartamento());
+        existing.setNombreContacto(cliente.getNombreContacto());
+        
         clienteService.save(existing);
-        redirectAttrs.addFlashAttribute("success", "Cliente actualizado correctamente.");
-        return "redirect:/internal/clientes/lista";
+        redirect.addFlashAttribute("success", "Cliente actualizado correctamente.");
+        return "redirect:/clientes";
     }
 
-    /**
-     * Muestra el detalle completo de un cliente: historial de cotizaciones,
-     * proyectos y pagos.
-     * 
-     * @param id    ID del cliente
-     * @param model Modelo con cliente, cotizaciones, proyectos, pagos
-     * @return      Vista de detalle
-     */
-    @GetMapping("/detalle/{id}")
-    public String viewClientDetail(@PathVariable Long id, Model model) {
+    @GetMapping("/{id}")
+    public String verCliente(@PathVariable Long id, 
+                             Model model, 
+                             RedirectAttributes redirect) {
         Cliente cliente = clienteService.findById(id);
         if (cliente == null) {
-            return "redirect:/internal/clientes/lista?error=notfound";
+            redirect.addFlashAttribute("error", "Cliente no encontrado.");
+            return "redirect:/clientes";
         }
-        List<Cotizacion> cotizaciones = cotizacionService.findByClienteId(id);
+        
+        List<Cotizacion> cotizaciones = cotizacionService.findByClienteIdOrderByFechaEmisionDesc(id);
         List<Proyecto> proyectos = proyectoService.findByClienteId(id);
         List<Pago> pagos = pagoService.findByClienteId(id);
         
@@ -200,72 +171,69 @@ public class ClienteController {
         model.addAttribute("cotizaciones", cotizaciones);
         model.addAttribute("proyectos", proyectos);
         model.addAttribute("pagos", pagos);
-        return "internal/clientes/detalle";
+        model.addAttribute("totalCotizaciones", cotizaciones.size());
+        model.addAttribute("totalProyectos", proyectos.size());
+        model.addAttribute("totalPagos", pagos.size());
+        
+        return "internal/clientes/detalle"; 
     }
 
-    /**
-     * Deshabilita un cliente (no eliminación física).
-     * Solo permitido si el cliente no tiene proyectos o cotizaciones asociados.
-     * Si los tiene, se deniega la operación y se muestra un error.
-     * 
-     * @param id            ID del cliente
-     * @param redirectAttrs Mensajes flash
-     * @return              Redirección a lista
-     */
-    @PostMapping("/deshabilitar/{id}")
-    public String disableCliente(@PathVariable Long id, RedirectAttributes redirectAttrs) {
+    @DeleteMapping("/{id}/deshabilitar")
+    public String deshabilitarCliente(@PathVariable Long id, RedirectAttributes redirect) {
         Cliente cliente = clienteService.findById(id);
         if (cliente == null) {
-            redirectAttrs.addFlashAttribute("error", "Cliente no encontrado.");
-            return "redirect:/internal/clientes/lista";
+            redirect.addFlashAttribute("error", "Cliente no encontrado.");
+            return "redirect:/clientes";
         }
         
-        // Verificar si tiene proyectos o cotizaciones asociadas
-        boolean hasCotizaciones = cotizacionService.existsByClienteId(id);
-        boolean hasProyectos = proyectoService.existsByClienteId(id);
+        if (!cliente.isActivo()) {
+            redirect.addFlashAttribute("warning", "El cliente ya está deshabilitado.");
+            return "redirect:/clientes";
+        }
         
-        if (hasCotizaciones || hasProyectos) {
-            redirectAttrs.addFlashAttribute("error", 
-                "No se puede deshabilitar el cliente porque tiene cotizaciones o proyectos asociados.");
-            return "redirect:/internal/clientes/detalle/" + id;
+        boolean tieneCotizaciones = cotizacionService.existsByClienteId(id);
+        boolean tieneProyectos = proyectoService.existsByClienteId(id);
+        
+        if (tieneCotizaciones || tieneProyectos) {
+            redirect.addFlashAttribute("error", 
+                "No se puede deshabilitar el cliente porque tiene " + 
+                (tieneCotizaciones ? "cotizaciones " : "") + 
+                (tieneProyectos ? "proyectos " : "") + 
+                "asociados.");
+            return "redirect:/clientes/" + id;
         }
         
         cliente.setActivo(false);
         clienteService.save(cliente);
-        redirectAttrs.addFlashAttribute("success", "Cliente deshabilitado correctamente.");
-        return "redirect:/internal/clientes/lista";
+        redirect.addFlashAttribute("success", "Cliente deshabilitado correctamente.");
+        return "redirect:/clientes";
     }
 
-    /**
-     * Habilita un cliente previamente deshabilitado.
-     * 
-     * @param id            ID del cliente
-     * @param redirectAttrs Mensajes flash
-     * @return              Redirección a lista
-     */
-    @PostMapping("/habilitar/{id}")
-    public String enableCliente(@PathVariable Long id, RedirectAttributes redirectAttrs) {
+    @PutMapping("/{id}/habilitar")
+    public String habilitarCliente(@PathVariable Long id, RedirectAttributes redirect) {
         Cliente cliente = clienteService.findById(id);
         if (cliente == null) {
-            redirectAttrs.addFlashAttribute("error", "Cliente no encontrado.");
-            return "redirect:/internal/clientes/lista";
+            redirect.addFlashAttribute("error", "Cliente no encontrado.");
+            return "redirect:/clientes";
         }
+        
+        if (cliente.isActivo()) {
+            redirect.addFlashAttribute("warning", "El cliente ya está habilitado.");
+            return "redirect:/clientes";
+        }
+        
         cliente.setActivo(true);
         clienteService.save(cliente);
-        redirectAttrs.addFlashAttribute("success", "Cliente habilitado correctamente.");
-        return "redirect:/internal/clientes/lista";
+        redirect.addFlashAttribute("success", "Cliente habilitado correctamente.");
+        return "redirect:/clientes";
     }
 
-    /**
-     * Endpoint AJAX para búsqueda rápida de clientes (autocomplete).
-     * Devuelve una lista de clientes en formato JSON.
-     * 
-     * @param term Término de búsqueda
-     * @return     Lista de DTOs con id, nombre, RUC
-     */
     @GetMapping("/buscar")
     @ResponseBody
-    public List<ClienteDTO> searchClientesJson(@RequestParam("term") String term) {
-        return clienteService.searchDTO(term);
+    public List<ClienteDTO> buscarClientes(@RequestParam("q") String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of();
+        }
+        return clienteService.searchDTO(query);
     }
 }

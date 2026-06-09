@@ -1,65 +1,118 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="head">
+
+<!-- Fragmento HEAD -->
+<head th:fragment="header">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>STAMOS - Sistema de Gestión</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
+    
     <!-- Bootstrap 5 CSS + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
     <!-- DataTables + Bootstrap 5 CSS -->
     <link href="https://cdn.datatables.net/v/dt/dt-2.0.2/datatables.min.css" rel="stylesheet">
-    <!-- Estilos personalizados del sistema (cargar después de Bootstrap) -->
-    <link th:href="@{/internal/css/sidebar.css}" rel="stylesheet">
-    <link th:href="@{/internal/css/custom.css}" rel="stylesheet">
-    <link th:href="@{/internal/css/responsive.css}" rel="stylesheet">
-    <!-- Si se usa un archivo internal.css que agrupe todos, descomentar:
-    <link th:href="@{/internal/css/internal.css}" rel="stylesheet">
-    -->
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos personalizados del sistema -->
+    <link th:href="@{/css/sidebar.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <link th:href="@{/css/responsive.css}" rel="stylesheet">
+    
+    <style>
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+        
+        .navbar-stamos {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+        }
+        
+        .navbar-brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+        }
+        
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid var(--border);
+            min-height: calc(100vh - 60px);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
 </head>
 
-<div th:fragment="topbar">
-    <nav class="navbar navbar-dark bg-dark fixed-top">
+<!-- Fragmento TOPBAR -->
+<th:block th:fragment="topbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3 fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-dark d-lg-none" type="button" id="menuToggle">
-                <i class="bi bi-list"></i>
-            </button>
-            <a class="navbar-brand" th:href="@{/}">
-                <img th:src="@{/images/logo-stamos.png}" alt="STAMOS" height="35" class="d-inline-block align-top">
-                STAMOS
+            <a class="navbar-brand fw-bold" th:href="@{/internal/dashboard}">
+                <span style="font-family: 'Syne', sans-serif;">STAMOS<span style="color: var(--yellow-dark);">.</span></span>
             </a>
-            <div class="dropdown">
-                <button class="btn btn-outline-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle"></i> <span th:text="${#authentication.name}"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" th:href="@{/internal/usuarios/perfil}"><i class="bi bi-person"></i> Mi perfil</a></li>
-                    <li><a class="dropdown-item" th:href="@{/cambiar-contraseña}"><i class="bi bi-key"></i> Cambiar contraseña</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></li>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="ti ti-user-circle"></i> 
+                            <span th:text="${#authentication.name}">Usuario</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" th:href="@{/perfil}"><i class="ti ti-user"></i> Mi perfil</a></li>
+                            <li><a class="dropdown-item" th:href="@{/cambiar-contraseña}"><i class="ti ti-key"></i> Cambiar contraseña</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}"><i class="ti ti-logout"></i> Cerrar sesión</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <!-- Espaciador para compensar navbar fixed -->
     <div style="height: 60px;"></div>
-    <!-- Contenedor global para alertas flash / mensajes -->
-    <div id="alertContainer" class="container mt-2"></div>
-</div>
+</th:block>
 
-<!-- Scripts comunes que deben incluirse en el head o al inicio del body -->
-<div th:fragment="scripts-top">
-    <!-- jQuery (requerido por DataTables) -->
+<!-- Fragmento SCRIPTS -->
+<th:block th:fragment="scripts">
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap JS Bundle (incluye Popper) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables core + integración Bootstrap 5 -->
+    <!-- DataTables -->
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.min.js"></script>
-    <!-- Interceptor AJAX global y date-helpers (opcionales pero recomendados) -->
-    <script th:src="@{/internal/js/ajax-interceptor.js}"></script>
-    <script th:src="@{/internal/js/date-helpers.js}"></script>
-</div>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Scripts personalizados -->
+    <script th:src="@{/js/ajax-interceptor.js}"></script>
+    <script th:src="@{/js/date-helpers.js}"></script>
+    <script th:src="@{/js/form-validator.js}"></script>
+</th:block>
+
 </html>

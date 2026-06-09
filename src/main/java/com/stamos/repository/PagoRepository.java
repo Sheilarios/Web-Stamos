@@ -12,18 +12,40 @@ import java.util.List;
 
 @Repository
 public interface PagoRepository extends JpaRepository<Pago, Long> {
-
     List<Pago> findByProyectoIdOrderByFechaDesc(Long proyectoId);
-
-    @Query("SELECT SUM(p.monto) FROM Pago p WHERE p.fecha BETWEEN :start AND :end AND p.estado != 'ANULADO'")
-    BigDecimal sumMontoByFechaBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
-
-    @Query("SELECT p FROM Pago p WHERE p.fecha BETWEEN :start AND :end AND p.estado != 'ANULADO'")
-    List<Pago> findByFechaBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
-
+    List<Pago> findTop5ByOrderByFechaDesc();
     @Query("SELECT p FROM Pago p WHERE p.proyecto.cliente.id = :clienteId")
     List<Pago> findByClienteId(@Param("clienteId") Long clienteId);
+    @Query("SELECT p FROM Pago p WHERE p.fecha BETWEEN :start AND :end AND p.estado != 'ANULADO'")
+    List<Pago> findByFechaBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
+    int countByEstado(String estado);
+    @Query("SELECT SUM(p.monto) FROM Pago p WHERE p.proyecto.id = :proyectoId AND p.estado != :estado")
+    BigDecimal sumMontoByProyectoAndEstadoNot(@Param("proyectoId") Long proyectoId, 
+                                               @Param("estado") String estado);
+    
+    @Query("SELECT SUM(p.monto) FROM Pago p WHERE p.fecha BETWEEN :inicio AND :fin AND p.estado != :estado")
+    BigDecimal sumMontoByFechaBetweenAndEstadoNot(@Param("inicio") LocalDate inicio, 
+                                                   @Param("fin") LocalDate fin, 
+                                                   @Param("estado") String estado);
+    
+    @Query("SELECT SUM(p.monto) FROM Pago p WHERE p.fecha BETWEEN :start AND :end AND p.estado != 'ANULADO'")
+    BigDecimal sumMontoByFechaBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
+    
+    @Query("SELECT SUM(p.monto) FROM Pago p WHERE p.fecha < :fecha AND p.estado NOT IN (:estados)")
+    BigDecimal sumMontoVencidoByFechaBeforeAndEstadoNot(@Param("fecha") LocalDate fecha, 
+                                                         @Param("estados") List<String> estados);
+    
+    @Query("SELECT SUM(p.monto) FROM Pago p WHERE p.estado != 'ANULADO'")
+    BigDecimal sumTotalPagado();
 
+    @Query("SELECT SUM(p.monto) FROM Pago p WHERE p.proyecto.id = :proyectoId AND p.estado != 'ANULADO'")
+    BigDecimal sumTotalPagadoByProyecto(@Param("proyectoId") Long proyectoId);
+    @Query("SELECT SUM(cot.total - COALESCE((SELECT SUM(p.monto) FROM Pago p WHERE p.proyecto.id = pr.id AND p.estado != 'ANULADO'), 0)) " +
+           "FROM Proyecto pr " +
+           "JOIN pr.cotizacion cot " +
+           "WHERE pr.estado NOT IN ('ENTREGADO', 'ANULADO')")
+    BigDecimal sumSaldoPendienteByProyectosActivos();
+    
     @Query(value = "SELECT " +
                    "  c.id, " +
                    "  c.nombre_razon_social, " +
@@ -39,4 +61,13 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
                    "HAVING saldo_pendiente > 0 " +
                    "ORDER BY c.nombre_razon_social", nativeQuery = true)
     List<Object[]> findPagosPendientesPorCliente();
+    
+    @Query("SELECT SUM(p.monto) FROM Pago p WHERE YEAR(p.fecha) = :year AND MONTH(p.fecha) = :month AND p.estado != 'ANULADO'")
+    BigDecimal sumMontoByYearAndMonth(@Param("year") int year, @Param("month") int month);
+    
+    @Query("SELECT COUNT(p) FROM Pago p WHERE p.estado = :estado")
+    long countByEstadoQuery(@Param("estado") String estado);
+    
+    @Query("SELECT p FROM Pago p WHERE p.fecha >= :fecha AND p.estado != 'ANULADO' ORDER BY p.fecha DESC")
+    List<Pago> findRecentPagos(@Param("fecha") LocalDate fecha);
 }

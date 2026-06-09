@@ -1,27 +1,20 @@
 package com.stamos.dto;
 
-/**
- * DTO para transferir datos básicos de un cliente.
- * Utilizado en búsquedas y autocompletado (evita enviar entidades completas).
- */
 public class ClienteDTO {
 
     private Long id;
     private String nombre;
     private String ruc;
 
-    // Constructor por defecto
     public ClienteDTO() {
     }
 
-    // Constructor con campos
     public ClienteDTO(Long id, String nombre, String ruc) {
         this.id = id;
         this.nombre = nombre;
         this.ruc = ruc;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

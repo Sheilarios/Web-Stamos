@@ -4,14 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-/**
- * Entidad que representa una factura externa emitida por el gestor contable.
- * La empresa utiliza un gestor externo para emitir facturas electrónicas ante SUNAT.
- * El sistema solo almacena la referencia a la factura oficial (número, fecha, etc.)
- * y la vincula con un proyecto o pago interno.
- * 
- * Nota: No se genera la factura desde el sistema, solo se registra la emitida externamente.
- */
 @Entity
 @Table(name = "factura_externa")
 public class FacturaExterna {
@@ -33,30 +25,25 @@ public class FacturaExterna {
     private String moneda = "PEN";
 
     @Column(name = "ruc_emisor", length = 11)
-    private String rucEmisor;       // RUC del gestor o de la propia empresa (según configuración)
+    private String rucEmisor;       
 
     @Column(name = "archivo_pdf_url", length = 500)
-    private String archivoPdfUrl;   // Ruta o URL del archivo PDF de la factura (opcional)
+    private String archivoPdfUrl;   
 
-    // Relación opcional con un proyecto (la factura puede referirse a un proyecto)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proyecto_id")
     private Proyecto proyecto;
 
-    // Relación opcional con un pago (la factura puede referirse a un pago específico)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pago_id")
     private Pago pago;
 
-    // Fecha de registro en el sistema
     @Column(name = "fecha_registro", nullable = false)
     private LocalDate fechaRegistro;
 
-    // Constructor por defecto
     public FacturaExterna() {
     }
 
-    // Constructor con campos mínimos
     public FacturaExterna(String numeroFactura, LocalDate fechaEmision, java.math.BigDecimal montoTotal) {
         this.numeroFactura = numeroFactura;
         this.fechaEmision = fechaEmision;
@@ -64,7 +51,6 @@ public class FacturaExterna {
         this.fechaRegistro = LocalDate.now();
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

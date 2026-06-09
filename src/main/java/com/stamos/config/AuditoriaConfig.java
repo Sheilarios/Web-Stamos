@@ -10,39 +10,35 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
-/**
- * Configuración de auditoría JPA.
- * Habilita el auditor automático para registrar fechas de creación/modificación
- * y el usuario que realizó la acción.
- * 
- * Nota: Esta configuración es complementaria a AuditoriaService, que registra
- * logs detallados de acciones críticas (valores anteriores/nuevos).
- */
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class AuditoriaConfig {
-
-    /**
-     * Proveedor del auditor actual (usuario autenticado).
-     * Spring Data JPA llamará a este bean automáticamente al guardar entidades
-     * que usen anotaciones como @CreatedBy, @LastModifiedBy, etc.
-     *
-     * @return AuditorAware con el email del usuario actual o "SISTEMA"
-     */
     @Bean
     public AuditorAware<String> auditorProvider() {
         return () -> {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            try {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                
+                if (auth == null || !auth.isAuthenticated()) {
+                    return Optional.of("SISTEMA");
+                }
+                
+                Object principal = auth.getPrincipal();
+                if ("anonymousUser".equals(principal)) {
+                    return Optional.of("SISTEMA");
+                }
+                
+                if (principal instanceof Usuario usuario) {
+                    String email = usuario.getEmail();
+                    return Optional.of(email != null ? email : "SISTEMA");
+                }
+                
+                String name = auth.getName();
+                return Optional.of(name != null ? name : "SISTEMA");
+                
+            } catch (Exception e) {
                 return Optional.of("SISTEMA");
             }
-            // Si el principal es un objeto Usuario (de nuestra entidad), extraemos su email
-            Object principal = auth.getPrincipal();
-            if (principal instanceof Usuario) {
-                return Optional.of(((Usuario) principal).getEmail());
-            }
-            // Si es un String (email) típico de UserDetails
-            return Optional.of(auth.getName());
         };
     }
 }

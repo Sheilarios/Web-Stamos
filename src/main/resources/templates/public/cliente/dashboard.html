@@ -2,41 +2,556 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard · Cliente STAMOS</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        /* Estilos extraídos de portal del cliente.html */
-        body{background:#0e1117;font-family:'DM Sans',sans-serif;color:#e2e8f0;margin:0}
-        .app{display:flex;min-height:100vh}
-        .sidebar{width:220px;background:#13161f;border-right:0.5px solid #1e2535}
-        .brand{padding:24px 20px;border-bottom:0.5px solid #1e2535}
-        .main{flex:1;padding:24px 28px}
-        .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-        .metric{background:#13161f;border-radius:10px;padding:16px}
-        .project-row{display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #1e2535;padding:12px 0}
-        .status-pill{padding:3px 9px;border-radius:12px;font-size:10px}
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+        
+        /* ========== LAYOUT ========== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            width: 260px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .brand {
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .brand-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .brand-name span {
+            color: var(--yellow-dark);
+        }
+        
+        .brand-sub {
+            font-size: 10px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        
+        .user-pill {
+            margin: 16px;
+            padding: 12px;
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .avatar {
+            width: 38px;
+            height: 38px;
+            background: var(--yellow-mid);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--yellow-dark);
+            border: 1.5px solid var(--yellow-border);
+            flex-shrink: 0;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .user-role {
+            font-size: 10px;
+            color: var(--text-3);
+        }
+        
+        /* Navegación */
+        .nav {
+            padding: 12px;
+            flex: 1;
+        }
+        
+        .nav-section {
+            font-size: 10px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 8px 6px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-2);
+            text-decoration: none;
+            margin-bottom: 2px;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        
+        .nav-item:hover {
+            background: var(--yellow-light);
+            color: var(--text);
+        }
+        
+        .nav-item.active {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            border-left: 3px solid var(--yellow);
+        }
+        
+        .nav-item i {
+            font-size: 16px;
+        }
+        
+        /* ========== MAIN CONTENT ========== */
+        .main {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* Topbar */
+        .topbar {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .btn-logout {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+        }
+        
+        .btn-logout:hover {
+            border-color: var(--yellow);
+            color: var(--text);
+        }
+        
+        /* Content */
+        .content {
+            padding: 24px;
+            flex: 1;
+        }
+        
+        /* Bienvenida */
+        .welcome-header {
+            margin-bottom: 24px;
+        }
+        
+        .welcome-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .welcome-header p {
+            font-size: 13px;
+            color: var(--text-2);
+            margin-top: 4px;
+        }
+        
+        /* Metrics Cards */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .metric-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .metric-sub {
+            font-size: 11px;
+            margin-top: 8px;
+            color: var(--text-2);
+        }
+        
+        /* Tabla de proyectos */
+        .projects-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title i {
+            color: var(--yellow-dark);
+            font-size: 16px;
+        }
+        
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .project-table th {
+            font-size: 11px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .project-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #F0F2F5;
+            font-size: 13px;
+            color: var(--text-2);
+        }
+        
+        .project-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Badges de estado */
+        .status-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-pill.active {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-pill.pending {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-pill.completed {
+            background: #EEF3FF;
+            color: #3060B0;
+        }
+        
+        .status-pill.cancelled {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .btn-link {
+            color: var(--yellow-dark);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Mensaje sin proyectos */
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar .brand-sub,
+            .sidebar .user-info,
+            .sidebar .nav-item span {
+                display: none;
+            }
+            
+            .sidebar .nav-item {
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            .sidebar .user-pill {
+                justify-content: center;
+                padding: 10px;
+            }
+            
+            .main {
+                margin-left: 70px;
+            }
+            
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-table th, 
+            .project-table td {
+                padding: 10px 12px;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="app">
-    <div class="sidebar">
-        <div class="brand">STAMOS<span>.</span><div style="font-size:10px;">Portal del Cliente</div></div>
-    </div>
-    <div class="main">
-        <h2>Bienvenido, <span th:text="${cliente.nombreRazonSocial}"></span></h2>
-        <div class="metrics">
-            <div class="metric">Proyectos activos: <span th:text="${proyectosActivos}">0</span></div>
-            <div class="metric">Total cotizado: S/ <span th:text="${totalCotizado}"></span></div>
-            <div class="metric">Pagado: S/ <span th:text="${totalPagado}"></span></div>
-            <div class="metric">Saldo pendiente: S/ <span th:text="${saldoPendiente}"></span></div>
+    <div class="app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="brand">
+                <div class="brand-name">STAMOS<span>.</span></div>
+                <div class="brand-sub">Portal del Cliente</div>
+            </div>
+            
+            <div class="user-pill">
+                <div class="avatar">
+                    <i class="ti ti-user"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name" th:text="${cliente.nombreRazonSocial}">Cliente</div>
+                    <div class="user-role">Cliente</div>
+                </div>
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-section">Principal</div>
+                <a href="/public/cliente/dashboard" class="nav-item active">
+                    <i class="ti ti-layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/public/cliente/historial-pagos" class="nav-item">
+                    <i class="ti ti-credit-card"></i>
+                    <span>Historial de pagos</span>
+                </a>
+                <a href="/public/cliente/perfil" class="nav-item">
+                    <i class="ti ti-user-circle"></i>
+                    <span>Mi perfil</span>
+                </a>
+                
+                <div class="nav-section">Cuenta</div>
+                <a href="/logout" class="nav-item">
+                    <i class="ti ti-logout"></i>
+                    <span>Cerrar sesión</span>
+                </a>
+            </nav>
         </div>
-        <h3>Mis proyectos</h3>
-        <div th:each="p : ${proyectos}" class="project-row">
-            <span th:text="${p.nombre}"></span>
-            <span class="status-pill" th:text="${p.estado}"></span>
-            <a th:href="@{'/public/cliente/proyecto/' + ${p.id}}">Ver detalle</a>
+        
+        <!-- Main Content -->
+        <div class="main">
+            <div class="topbar">
+                <div class="page-title">Dashboard</div>
+                <a href="/logout" class="btn-logout">
+                    <i class="ti ti-logout"></i> Salir
+                </a>
+            </div>
+            
+            <div class="content">
+                <!-- Welcome -->
+                <div class="welcome-header">
+                    <h2>¡Bienvenido, <span th:text="${cliente.nombreRazonSocial}">Cliente</span>!</h2>
+                    <p>Aquí puedes ver el estado de tus proyectos y realizar pagos.</p>
+                </div>
+                
+                <!-- Metrics -->
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">Proyectos activos</div>
+                        <div class="metric-value" th:text="${proyectosActivos}">0</div>
+                        <div class="metric-sub">En ejecución</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total cotizado</div>
+                        <div class="metric-value" th:text="'S/ ' + ${totalCotizado}">S/ 0</div>
+                        <div class="metric-sub">Monto total presupuestado</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total pagado</div>
+                        <div class="metric-value" th:text="'S/ ' + ${totalPagado}">S/ 0</div>
+                        <div class="metric-sub">Pagos realizados</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Saldo pendiente</div>
+                        <div class="metric-value" th:text="'S/ ' + ${saldoPendiente}">S/ 0</div>
+                        <div class="metric-sub">Por pagar</div>
+                    </div>
+                </div>
+                
+                <!-- Proyectos -->
+                <div class="projects-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="ti ti-folder-open"></i>
+                            Mis proyectos
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <table class="project-table">
+                            <thead>
+                                <tr>
+                                    <th>Proyecto</th>
+                                    <th>Fecha de creación</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="proyecto : ${proyectos}">
+                                    <td>
+                                        <div style="font-weight: 500; color: var(--text);" th:text="${proyecto.nombre}">Nombre del proyecto</div>
+                                        <div style="font-size: 11px; color: var(--text-3);" th:text="${proyecto.cotizacion.total != null ? 'Cotización S/ ' + proyecto.cotizacion.total : 'Sin cotización'}"></div>
+                                    </td>
+                                    <td th:text="${#temporals.format(proyecto.fechaCreacion, 'dd/MM/yyyy')}">01/01/2024</td>
+                                    <td>
+                                        <span class="status-pill" 
+                                              th:classappend="${proyecto.estado == 'APROBADO' or proyecto.estado == 'EN_DISEÑO' or proyecto.estado == 'EN_PRODUCCION'} ? 'active' : 
+                                                           (proyecto.estado == 'ENTREGADO' ? 'completed' : 'pending')"
+                                              th:text="${proyecto.estado}">Estado</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{'/public/cliente/proyecto/' + ${proyecto.id}}" class="btn-link">
+                                            Ver detalle <i class="ti ti-arrow-right"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${proyectos == null or proyectos.isEmpty()}">
+                                    <td colspan="4" class="empty-message">
+                                        <i class="ti ti-folder-off" style="font-size: 32px; margin-bottom: 8px; display: block;"></i>
+                                        No tienes proyectos registrados aún.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 </body>
 </html>

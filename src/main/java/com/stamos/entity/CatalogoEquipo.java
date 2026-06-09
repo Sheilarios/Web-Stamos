@@ -3,10 +3,6 @@ package com.stamos.entity;
 import jakarta.persistence.*;
 import java.util.Objects;
 
-/**
- * Entidad que representa un equipo o mobiliario en el catálogo de inventario.
- * Cumple con la regla RIN01: nombre, cantidad total disponible y ubicación.
- */
 @Entity
 @Table(name = "catalogo_equipo")
 public class CatalogoEquipo {
@@ -24,18 +20,15 @@ public class CatalogoEquipo {
     @Column(nullable = false, length = 200)
     private String ubicacion;
 
-    // Constructor por defecto
     public CatalogoEquipo() {
     }
 
-    // Constructor con campos obligatorios
     public CatalogoEquipo(String nombre, Integer cantidadTotal, String ubicacion) {
         this.nombre = nombre;
         this.cantidadTotal = cantidadTotal;
         this.ubicacion = ubicacion;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

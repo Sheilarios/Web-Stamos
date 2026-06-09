@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/header :: head}"></head>
+<head th:replace="~{internal/layout/header :: head}"></head>
 <body>
-    <div th:replace="~{layout/header :: topbar}"></div>
-    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div th:replace="~{internal/layout/header :: topbar}"></div>
+    <div th:replace="~{internal/layout/sidebar :: sidebar}"></div>
     <div class="main-content">
         <div class="container-fluid">
             <h1 class="mb-4">Calendario de reservas</h1>
@@ -23,8 +23,7 @@
             </div>
         </div>
     </div>
-    <div th:replace="~{layout/footer :: scripts}"></div>
-    <!-- FullCalendar CSS y JS -->
+    <div th:replace="~{internal/layout/footer :: scripts}"></div>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script>

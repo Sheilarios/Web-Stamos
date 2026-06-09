@@ -1,15 +1,21 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Página no encontrada · STAMOS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        /* mismos estilos que 403.html */
+        .error-icon i { color: var(--yellow-dark); }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon"><i class="ti ti-search"></i></div>
+        <div class="error-code">404</div>
+        <h1>Página no encontrada</h1>
+        <p>La página que buscas no existe o ha sido movida.</p>
+        <a href="/internal/dashboard" class="btn-home"><i class="ti ti-home"></i> Volver al Dashboard</a>
+    </div>
+</body>
 </html>

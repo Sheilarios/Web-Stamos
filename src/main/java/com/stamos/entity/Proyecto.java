@@ -1,5 +1,4 @@
 package com.stamos.entity;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -7,19 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Entidad que representa un proyecto en STAMOS.
- * Un proyecto se crea a partir de una cotización aprobada (RPY01).
- * 
- * Estados obligatorios (RPY02):
- * - COTIZADO
- * - APROBADO
- * - EN_DISEÑO
- * - EN_PRODUCCION
- * - INSTALACION_MONTAJE
- * - ENTREGADO
- * - ANULADO
- */
 @Entity
 @Table(name = "proyecto")
 public class Proyecto {
@@ -40,7 +26,7 @@ public class Proyecto {
 
     @NotBlank(message = "El estado es obligatorio")
     @Column(nullable = false, length = 30)
-    private String estado; // COTIZADO, APROBADO, EN_DISEÑO, EN_PRODUCCION, INSTALACION_MONTAJE, ENTREGADO, ANULADO
+    private String estado; 
 
     @NotNull(message = "La fecha de creación es obligatoria")
     @Column(name = "fecha_creacion", nullable = false)
@@ -54,33 +40,26 @@ public class Proyecto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "responsable_id")
-    private Usuario responsable; // Puede ser diseñador, producción, etc.
+    private Usuario responsable; 
 
-    // Relación con pagos
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Pago> pagos = new ArrayList<>();
 
-    // Relación con reservas de equipos (alquileres)
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReservaEquipo> reservasEquipos = new ArrayList<>();
 
-    // Relación con archivos (renders, planos, bocetos)
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ArchivoProyecto> archivos = new ArrayList<>();
 
-    // Historial de cambios de estado (no se maneja en cascada para evitar ciclos)
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HistorialEstadoProyecto> historialEstados = new ArrayList<>();
 
-    // Relación opcional con factura externa
     @OneToOne(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FacturaExterna facturaExterna;
 
-    // Constructor por defecto
     public Proyecto() {
     }
 
-    // Constructor con campos obligatorios
     public Proyecto(Cotizacion cotizacion, Cliente cliente, String estado, LocalDate fechaCreacion) {
         this.cotizacion = cotizacion;
         this.cliente = cliente;
@@ -88,7 +67,6 @@ public class Proyecto {
         this.fechaCreacion = fechaCreacion;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -193,7 +171,6 @@ public class Proyecto {
         this.facturaExterna = facturaExterna;
     }
 
-    // Métodos de conveniencia
     public void addPago(Pago pago) {
         pagos.add(pago);
         pago.setProyecto(this);
@@ -214,7 +191,6 @@ public class Proyecto {
         historial.setProyecto(this);
     }
 
-    // equals y hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

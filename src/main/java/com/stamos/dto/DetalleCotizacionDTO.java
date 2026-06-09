@@ -2,10 +2,6 @@ package com.stamos.dto;
 
 import java.math.BigDecimal;
 
-/**
- * DTO para transferir datos de un detalle de cotización (ítem).
- * Utilizado en formularios y listados de cotizaciones.
- */
 public class DetalleCotizacionDTO {
 
     private Long id;
@@ -13,13 +9,9 @@ public class DetalleCotizacionDTO {
     private String concepto;
     private Integer cantidad;
     private BigDecimal precioUnitario;
-    private BigDecimal subtotal; // calculado: cantidad * precioUnitario
-
-    // Constructor por defecto
+    private BigDecimal subtotal; 
     public DetalleCotizacionDTO() {
     }
-
-    // Constructor con campos principales
     public DetalleCotizacionDTO(Long id, Long cotizacionId, String concepto, 
                                 Integer cantidad, BigDecimal precioUnitario) {
         this.id = id;
@@ -30,7 +22,6 @@ public class DetalleCotizacionDTO {
         this.subtotal = calcularSubtotal();
     }
 
-    // Método auxiliar para calcular subtotal
     private BigDecimal calcularSubtotal() {
         if (cantidad == null || precioUnitario == null) {
             return BigDecimal.ZERO;
@@ -38,7 +29,6 @@ public class DetalleCotizacionDTO {
         return precioUnitario.multiply(BigDecimal.valueOf(cantidad));
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }

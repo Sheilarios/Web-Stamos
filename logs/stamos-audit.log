@@ -1,0 +1,158 @@
+2026-06-01 19:50:32 - Starting GestionStamosApplication using Java 17.0.19 with PID 24540 (C:\gestion-stamos (1)\gestion-stamos\target\classes started by rioss in C:\gestion-stamos (1)\gestion-stamos)
+2026-06-01 19:50:32 - Running with Spring Boot v3.2.0, Spring v6.1.1
+2026-06-01 19:50:32 - No active profile set, falling back to 1 default profile: "default"
+2026-06-01 19:50:32 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-01 19:50:32 - Finished Spring Data repository scanning in 1 ms. Found 0 JPA repository interfaces.
+2026-06-01 19:50:32 - Tomcat initialized with port 8080 (http)
+2026-06-01 19:50:32 - Starting service [Tomcat]
+2026-06-01 19:50:32 - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-06-01 19:50:32 - Initializing Spring embedded WebApplicationContext
+2026-06-01 19:50:32 - Root WebApplicationContext: initialization completed in 451 ms
+2026-06-01 19:50:32 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-06-01 19:50:32 - HHH000026: Second-level cache disabled
+2026-06-01 19:50:32 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-01 19:50:32 - HikariPool-2 - Starting...
+2026-06-01 19:50:32 - HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@b31371f
+2026-06-01 19:50:32 - HikariPool-2 - Start completed.
+2026-06-01 19:50:32 - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-01 19:50:32 - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2026-06-01 19:50:32 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-01 19:50:32 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-01 19:50:32 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-01 19:50:33 - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-06-01 19:50:33 - 
+
+Using generated security password: e90a313a-561c-4a40-b778-cc89be1ccfdd
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-06-01 19:50:33 - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1261a6fc, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4a9f20ab, org.springframework.security.web.context.SecurityContextHolderFilter@6a8d102f, org.springframework.security.web.header.HeaderWriterFilter@290347f5, org.springframework.web.filter.CorsFilter@4b80def, org.springframework.security.web.csrf.CsrfFilter@415e3563, org.springframework.security.web.authentication.logout.LogoutFilter@6fb2e2c9, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@719e0015, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@c9b700, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@54cd135a, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1fb9e389, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5a48d530, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@33c66262, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4b840979, org.springframework.security.web.access.ExceptionTranslationFilter@23394bd0, org.springframework.security.web.access.intercept.AuthorizationFilter@9421f5e]
+2026-06-01 19:50:33 - LiveReload server is running on port 35729
+2026-06-01 19:50:33 - Tomcat started on port 8080 (http) with context path ''
+2026-06-01 19:50:33 - Started GestionStamosApplication in 0.915 seconds (process running for 515.183)
+2026-06-01 19:50:33 - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   SpringBootWebSecurityConfiguration.SecurityFilterChainConfiguration matched:
+      - AllNestedConditions 2 matched 0 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) did not find any beans; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
+
+   SpringBootWebSecurityConfiguration.WebSecurityEnablerConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity' (OnClassCondition)
+      - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   UserDetailsServiceAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager'; @ConditionalOnMissingClass did not find unwanted classes 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository', 'org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector', 'org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository' (OnClassCondition)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.ObjectPostProcessor; SearchStrategy: all) found bean 'objectPostProcessor'; @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.authentication.AuthenticationManagerResolver,org.springframework.security.oauth2.jwt.JwtDecoder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   TaskSchedulingAutoConfiguration#scheduledBeanLazyInitializationExcludeFilter:
+      Did not match:
+         - @ConditionalOnBean (names: org.springframework.context.annotation.internalScheduledAnnotationProcessor; SearchStrategy: all) did not find any beans named org.springframework.context.annotation.internalScheduledAnnotationProcessor (OnBeanCondition)
+
+   TaskSchedulingConfigurations.TaskSchedulerConfiguration:
+      Did not match:
+         - @ConditionalOnBean (names: org.springframework.context.annotation.internalScheduledAnnotationProcessor; SearchStrategy: all) did not find any beans named org.springframework.context.annotation.internalScheduledAnnotationProcessor (OnBeanCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2026-06-01 19:50:34 - Restarting due to 5 class path changes (5 additions, 0 deletions, 0 modifications)
+2026-06-01 19:50:34 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-06-01 19:50:34 - HikariPool-2 - Shutdown initiated...
+2026-06-01 19:50:34 - HikariPool-2 - Shutdown completed.
+2026-06-01 19:50:34 - Starting GestionStamosApplication using Java 17.0.19 with PID 24540 (C:\gestion-stamos (1)\gestion-stamos\target\classes started by rioss in C:\gestion-stamos (1)\gestion-stamos)
+2026-06-01 19:50:34 - Running with Spring Boot v3.2.0, Spring v6.1.1
+2026-06-01 19:50:34 - No active profile set, falling back to 1 default profile: "default"
+2026-06-01 19:50:35 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-01 19:50:35 - Finished Spring Data repository scanning in 1 ms. Found 0 JPA repository interfaces.
+2026-06-01 19:50:35 - Tomcat initialized with port 8080 (http)
+2026-06-01 19:50:35 - Starting service [Tomcat]
+2026-06-01 19:50:35 - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-06-01 19:50:35 - Initializing Spring embedded WebApplicationContext
+2026-06-01 19:50:35 - Root WebApplicationContext: initialization completed in 381 ms
+2026-06-01 19:50:35 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-06-01 19:50:35 - HHH000026: Second-level cache disabled
+2026-06-01 19:50:35 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-01 19:50:35 - HikariPool-3 - Starting...
+2026-06-01 19:50:35 - HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7f6b3da0
+2026-06-01 19:50:35 - HikariPool-3 - Start completed.
+2026-06-01 19:50:35 - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-01 19:50:35 - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2026-06-01 19:50:35 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-01 19:50:35 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-01 19:50:35 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-01 19:50:35 - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-06-01 19:50:35 - 
+
+Using generated security password: aef2f9dd-243d-4bd8-b59a-1ea58d9d9300
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-06-01 19:50:35 - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2f96f730, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@29a2c5aa, org.springframework.security.web.context.SecurityContextHolderFilter@54dc85cb, org.springframework.security.web.header.HeaderWriterFilter@5581738d, org.springframework.web.filter.CorsFilter@2a6c8ba0, org.springframework.security.web.csrf.CsrfFilter@520e18c0, org.springframework.security.web.authentication.logout.LogoutFilter@35b33741, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@4578d6a8, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@41ff5bc8, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@487f7685, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@367a9171, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@76b65f88, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1f3c5eb9, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@50c827cd, org.springframework.security.web.access.ExceptionTranslationFilter@5447a49b, org.springframework.security.web.access.intercept.AuthorizationFilter@69ddeded]
+2026-06-01 19:50:35 - LiveReload server is running on port 35729
+2026-06-01 19:50:35 - Tomcat started on port 8080 (http) with context path ''
+2026-06-01 19:50:35 - Started GestionStamosApplication in 0.683 seconds (process running for 517.359)
+2026-06-01 19:50:35 - Condition evaluation unchanged
+2026-06-01 19:50:36 - Restarting due to 14 class path changes (14 additions, 0 deletions, 0 modifications)
+2026-06-01 19:50:36 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-06-01 19:50:36 - HikariPool-3 - Shutdown initiated...
+2026-06-01 19:50:36 - HikariPool-3 - Shutdown completed.
+2026-06-01 19:50:36 - Starting GestionStamosApplication using Java 17.0.19 with PID 24540 (C:\gestion-stamos (1)\gestion-stamos\target\classes started by rioss in C:\gestion-stamos (1)\gestion-stamos)
+2026-06-01 19:50:36 - Running with Spring Boot v3.2.0, Spring v6.1.1
+2026-06-01 19:50:36 - No active profile set, falling back to 1 default profile: "default"
+2026-06-01 19:50:37 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-01 19:50:37 - Finished Spring Data repository scanning in 1 ms. Found 0 JPA repository interfaces.
+2026-06-01 19:50:37 - Tomcat initialized with port 8080 (http)
+2026-06-01 19:50:37 - Starting service [Tomcat]
+2026-06-01 19:50:37 - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-06-01 19:50:37 - Initializing Spring embedded WebApplicationContext
+2026-06-01 19:50:37 - Root WebApplicationContext: initialization completed in 324 ms
+2026-06-01 19:50:37 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-06-01 19:50:37 - HHH000026: Second-level cache disabled
+2026-06-01 19:50:37 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-01 19:50:37 - HikariPool-4 - Starting...
+2026-06-01 19:50:37 - HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3dedd746
+2026-06-01 19:50:37 - HikariPool-4 - Start completed.
+2026-06-01 19:50:37 - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-01 19:50:37 - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2026-06-01 19:50:37 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-01 19:50:37 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-01 19:50:37 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-01 19:50:37 - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-06-01 19:50:37 - 
+
+Using generated security password: 12a1a2f3-d822-41b8-b4a9-3bdf5a3d6679
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-06-01 19:50:37 - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@506fb, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2b478509, org.springframework.security.web.context.SecurityContextHolderFilter@2de1e24f, org.springframework.security.web.header.HeaderWriterFilter@40a0ca28, org.springframework.web.filter.CorsFilter@3c194855, org.springframework.security.web.csrf.CsrfFilter@24e1222d, org.springframework.security.web.authentication.logout.LogoutFilter@18d9169c, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@16003925, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@58ba567a, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@479f6f58, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@6553c5d3, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@bc4d94, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1e0d2e19, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6f859b8e, org.springframework.security.web.access.ExceptionTranslationFilter@754d7c56, org.springframework.security.web.access.intercept.AuthorizationFilter@46bdaa98]
+2026-06-01 19:50:37 - LiveReload server is running on port 35729
+2026-06-01 19:50:37 - Tomcat started on port 8080 (http) with context path ''
+2026-06-01 19:50:37 - Started GestionStamosApplication in 0.548 seconds (process running for 519.407)
+2026-06-01 19:50:37 - Condition evaluation unchanged
+2026-06-01 19:50:41 - Restarting due to 79 class path changes (79 additions, 0 deletions, 0 modifications)
+2026-06-01 19:50:41 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-06-01 19:50:41 - HikariPool-4 - Shutdown initiated...
+2026-06-01 19:50:41 - HikariPool-4 - Shutdown completed.

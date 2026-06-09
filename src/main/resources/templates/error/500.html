@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error interno · STAMOS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>/* mismos estilos */</style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon"><i class="ti ti-server"></i></div>
+        <div class="error-code">500</div>
+        <h1>Error interno del servidor</h1>
+        <p>Algo salió mal. Por favor, intenta más tarde.</p>
+        <a href="/internal/dashboard" class="btn-home"><i class="ti ti-home"></i> Volver al Dashboard</a>
+    </div>
+</body>
 </html>

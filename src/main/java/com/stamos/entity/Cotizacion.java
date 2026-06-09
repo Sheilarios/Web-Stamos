@@ -1,5 +1,4 @@
 package com.stamos.entity;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
@@ -7,51 +6,45 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-/**
- * Entidad que representa una cotización.
- * 
- * Reglas de negocio:
- * - RCOT01: Debe contener al menos un ítem (validado en servicio/controlador).
- * - RCOT02: Muestra subtotal, IGV y total calculados automáticamente.
- * - RCOT03: Permite precios base o negociados.
- * - RCOT04: Solo comercial o admin pueden modificar (seguridad aplicada en controlador).
- * - RCOT05: Una vez aprobada no se puede modificar.
- * - RCOT06: Se guarda historial de versiones.
- */
 @Entity
 @Table(name = "cotizacion")
 public class Cotizacion {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     @NotNull(message = "El cliente es obligatorio")
+    
     @ManyToOne(fetch = FetchType.LAZY)
+    
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
-
+    
     @NotNull(message = "La fecha de emisión es obligatoria")
+    
     @Column(name = "fecha_emision", nullable = false)
     private LocalDate fechaEmision;
-
+    
     @NotNull(message = "La validez en días es obligatoria")
+    
     @Positive(message = "La validez debe ser mayor a cero")
+    
     @Column(name = "validez_dias", nullable = false)
     private Integer validezDias;
-
+    
     @NotBlank(message = "El estado es obligatorio")
+    
     @Column(nullable = false, length = 20)
-    private String estado; // EMITIDA, APROBADA, RECHAZADA, ANULADA
-
+    private String estado; 
+    
     @Column(nullable = false)
     private Integer version = 1;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
+    
     @JoinColumn(name = "version_base_id")
-    private Cotizacion versionBase; // Referencia a la versión anterior (si existe)
-
+    private Cotizacion versionBase; 
+    
     @OneToMany(mappedBy = "cotizacion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<DetalleCotizacion> items = new ArrayList<>();
 
@@ -64,7 +57,6 @@ public class Cotizacion {
     @Column(precision = 12, scale = 2)
     private BigDecimal total = BigDecimal.ZERO;
 
-    // Constructores
     public Cotizacion() {
     }
 
@@ -75,7 +67,6 @@ public class Cotizacion {
         this.estado = estado;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -164,7 +155,6 @@ public class Cotizacion {
         this.total = total;
     }
 
-    // Métodos de conveniencia para gestionar items
     public void addItem(DetalleCotizacion item) {
         items.add(item);
         item.setCotizacion(this);
@@ -175,7 +165,6 @@ public class Cotizacion {
         item.setCotizacion(null);
     }
 
-    // equals, hashCode y toString
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

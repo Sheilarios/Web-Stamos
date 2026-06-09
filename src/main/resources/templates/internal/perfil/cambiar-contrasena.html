@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/header :: head}"></head>
+<head th:replace="~{internal/layout/header :: head}"></head>
 <body>
-    <div th:replace="~{layout/header :: topbar}"></div>
-    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <div th:replace="~{internal/layout/header :: topbar}"></div>
+    <div th:replace="~{interal/layout/sidebar :: sidebar}"></div>
     <div class="main-content">
         <div class="container-fluid">
             <div class="card">
@@ -49,7 +49,7 @@
             </div>
         </div>
     </div>
-    <div th:replace="~{layout/footer :: scripts}"></div>
+    <div th:replace="~{internal/layout/footer :: scripts}"></div>
     <script th:src="@{/internal/js/perfil.js}"></script>
 </body>
 </html>

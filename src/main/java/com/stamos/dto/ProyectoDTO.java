@@ -1,11 +1,5 @@
 package com.stamos.dto;
-
 import java.time.LocalDate;
-
-/**
- * DTO para transferir datos básicos de un proyecto.
- * Utilizado en listados y búsquedas para evitar enviar entidades completas.
- */
 public class ProyectoDTO {
 
     private Long id;
@@ -16,11 +10,9 @@ public class ProyectoDTO {
     private String responsableNombre;
     private Long clienteId;
 
-    // Constructor por defecto
     public ProyectoDTO() {
     }
 
-    // Constructor con campos principales
     public ProyectoDTO(Long id, String clienteNombre, String estado, 
                        LocalDate fechaCreacion, LocalDate fechaEntregaEstimada, 
                        String responsableNombre, Long clienteId) {
@@ -33,7 +25,6 @@ public class ProyectoDTO {
         this.clienteId = clienteId;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
