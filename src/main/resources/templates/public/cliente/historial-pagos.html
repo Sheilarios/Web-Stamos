@@ -3,169 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de pagos · STAMOS</title>
+    <title>STAMOS - Historial de pagos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
-        :root {
-            --yellow: #F5C400;
-            --yellow-light: #FFFBE6;
-            --yellow-mid: #FFE566;
-            --yellow-dark: #9A7500;
-            --yellow-border: #E0C84A;
-            --border: #E2E6EA;
-            --bg: #F5F6F8;
-            --card: #FFFFFF;
-            --text: #1A1F2E;
-            --text-2: #5A6478;
-            --text-3: #9BA5B7;
-            --green: #1A7040;
-            --green-light: #EBF7F0;
-            --red: #C0392B;
-            --red-light: #FFF0EE;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #FFFFFF;
+            color: #000000;
             font-size: 13px;
         }
-        
-        /* ========== LAYOUT ========== */
+
         .app {
             display: flex;
             min-height: 100vh;
         }
-        
-        /* ========== SIDEBAR ========== */
+
         .sidebar {
             width: 260px;
-            background: var(--card);
-            border-right: 1px solid var(--border);
+            background: #FFFFFF;
+            border-right: 1px solid #E0E0E0;
             flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
         }
-        
+
         .brand {
-            padding: 22px 20px 18px;
-            border-bottom: 1px solid var(--border);
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid #E0E0E0;
         }
-        
+
         .brand-name {
-            font-family: 'Syne', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
+            font-size: 22px;
+            font-weight: 800;
+            color: #000000;
         }
-        
+
         .brand-name span {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .brand-sub {
             font-size: 10px;
-            color: var(--text-3);
+            color: #888888;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-top: 4px;
         }
-        
+
         .user-pill {
             margin: 16px;
             padding: 12px;
-            background: var(--yellow-light);
-            border: 1px solid var(--yellow-border);
-            border-radius: 10px;
+            background: #F5C400;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .avatar {
             width: 38px;
             height: 38px;
-            background: var(--yellow-mid);
+            background: #000000;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            color: var(--yellow-dark);
-            border: 1.5px solid var(--yellow-border);
             flex-shrink: 0;
         }
-        
+
+        .avatar i {
+            font-size: 18px;
+            color: #F5C400;
+        }
+
         .user-info {
             flex: 1;
         }
-        
+
         .user-name {
             font-size: 13px;
             font-weight: 600;
-            color: var(--text);
+            color: #000000;
         }
-        
+
         .user-role {
             font-size: 10px;
-            color: var(--text-3);
+            color: #555555;
         }
-        
-        /* Navegación */
+
         .nav {
             padding: 12px;
             flex: 1;
         }
-        
+
         .nav-section {
             font-size: 10px;
-            color: var(--text-3);
+            color: #888888;
             text-transform: uppercase;
             letter-spacing: 1px;
             padding: 12px 8px 6px;
+            font-weight: 600;
         }
-        
+
         .nav-item {
             display: flex;
             align-items: center;
             gap: 10px;
             padding: 10px 12px;
             border-radius: 8px;
-            color: var(--text-2);
+            color: #555555;
             text-decoration: none;
             margin-bottom: 2px;
             transition: all 0.2s;
             font-size: 13px;
         }
-        
+
         .nav-item:hover {
-            background: var(--yellow-light);
-            color: var(--text);
+            background: #F5C400;
+            color: #000000;
         }
-        
+
         .nav-item.active {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #F5C400;
+            color: #000000;
             font-weight: 600;
-            border-left: 3px solid var(--yellow);
         }
-        
+
         .nav-item i {
             font-size: 16px;
         }
-        
-        /* ========== MAIN CONTENT ========== */
+
         .main {
             flex: 1;
             margin-left: 260px;
@@ -173,12 +147,11 @@
             flex-direction: column;
             min-height: 100vh;
         }
-        
-        /* Topbar */
+
         .topbar {
-            background: var(--card);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 24px;
+            background: #FFFFFF;
+            border-bottom: 1px solid #E0E0E0;
+            padding: 14px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -186,41 +159,39 @@
             top: 0;
             z-index: 100;
         }
-        
+
         .page-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text);
+            font-size: 18px;
+            font-weight: 700;
+            color: #000000;
         }
-        
+
         .btn-logout {
             background: none;
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: 6px;
+            border: 1px solid #E0E0E0;
+            padding: 6px 14px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 5px;
-            color: var(--text-2);
-            font-family: 'DM Sans', sans-serif;
+            gap: 6px;
+            color: #555555;
+            font-family: inherit;
             text-decoration: none;
+            transition: all 0.2s;
         }
-        
+
         .btn-logout:hover {
-            border-color: var(--yellow);
-            color: var(--text);
+            border-color: #F5C400;
+            color: #000000;
         }
-        
-        /* Content */
+
         .content {
             padding: 24px;
             flex: 1;
         }
-        
-        /* Header */
+
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -229,106 +200,102 @@
             flex-wrap: wrap;
             gap: 16px;
         }
-        
+
         .page-header h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text);
+            font-size: 26px;
+            font-weight: 800;
+            color: #000000;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-        
+
         .page-header h1 i {
-            color: var(--yellow-dark);
+            color: #F5C400;
             font-size: 28px;
         }
-        
-        /* Stats Cards */
+
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
-        
+
         .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
             border-radius: 12px;
-            padding: 18px;
+            padding: 20px;
         }
-        
+
         .stat-label {
             font-size: 11px;
-            color: var(--text-3);
+            color: #888888;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             margin-bottom: 8px;
+            font-weight: 600;
         }
-        
+
         .stat-value {
-            font-family: 'Syne', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text);
+            font-size: 26px;
+            font-weight: 800;
+            color: #000000;
         }
-        
-        /* Tabla */
+
         .table-card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
             border-radius: 12px;
             overflow: hidden;
         }
-        
+
         .card-header {
-            padding: 15px 18px;
-            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
+            border-bottom: 1px solid #E0E0E0;
         }
-        
+
         .card-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .card-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .payments-table {
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         .payments-table th {
             font-size: 11px;
-            color: var(--text-3);
+            color: #888888;
             text-transform: uppercase;
             letter-spacing: 0.7px;
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
+            padding: 14px 20px;
+            border-bottom: 1px solid #E0E0E0;
             text-align: left;
-            font-weight: 500;
+            font-weight: 600;
         }
-        
+
         .payments-table td {
-            padding: 14px 18px;
-            border-bottom: 1px solid #F0F2F5;
+            padding: 14px 20px;
+            border-bottom: 1px solid #F0F0F0;
             font-size: 13px;
-            color: var(--text-2);
+            color: #555555;
         }
-        
+
         .payments-table tr:last-child td {
             border-bottom: none;
         }
-        
-        /* Badges de estado */
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -336,94 +303,80 @@
             font-size: 11px;
             font-weight: 500;
         }
-        
+
         .status-badge.verified {
-            background: var(--green-light);
-            color: var(--green);
+            background: #F0FFF4;
+            color: #1A7040;
         }
-        
+
         .status-badge.pending {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #FFFBE6;
+            color: #F5C400;
         }
-        
+
         .status-badge.cancelled {
-            background: var(--red-light);
-            color: var(--red);
+            background: #FFF5F5;
+            color: #C0392B;
         }
-        
+
         .amount-positive {
-            color: var(--green);
+            color: #1A7040;
             font-weight: 600;
         }
-        
-        .amount-pending {
-            color: var(--yellow-dark);
-            font-weight: 600;
-        }
-        
-        /* Botón volver */
+
         .back-button {
             margin-top: 24px;
         }
-        
+
         .btn-back {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
             padding: 10px 20px;
             border-radius: 8px;
-            color: var(--text-2);
+            color: #555555;
             text-decoration: none;
             font-size: 13px;
             font-weight: 500;
             transition: all 0.2s;
         }
-        
+
         .btn-back:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+            border-color: #F5C400;
+            color: #F5C400;
         }
-        
-        /* Mensaje vacío */
+
         .empty-message {
             text-align: center;
             padding: 48px;
-            color: var(--text-3);
+            color: #999999;
         }
-        
-        /* Responsive */
+
         @media (max-width: 900px) {
             .sidebar {
                 width: 70px;
             }
-            
             .sidebar .brand-sub,
             .sidebar .user-info,
             .sidebar .nav-item span {
                 display: none;
             }
-            
             .sidebar .nav-item {
                 justify-content: center;
                 padding: 12px;
             }
-            
             .sidebar .user-pill {
                 justify-content: center;
                 padding: 10px;
             }
-            
             .main {
                 margin-left: 70px;
             }
-            
             .stats-cards {
                 grid-template-columns: 1fr;
             }
-            
             .payments-table th,
             .payments-table td {
                 padding: 10px 12px;
@@ -433,7 +386,6 @@
 </head>
 <body>
     <div class="app">
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="brand">
                 <div class="brand-name">STAMOS<span>.</span></div>
@@ -466,18 +418,13 @@
                 </a>
                 
                 <div class="nav-section">Cuenta</div>
-                <a href="/cambiar-contraseña" class="nav-item">
-                    <i class="ti ti-key"></i>
-                    <span>Cambiar contraseña</span>
-                </a>
                 <a href="/logout" class="nav-item">
                     <i class="ti ti-logout"></i>
-                    <span>Cerrar sesión</span>
+                    <span>Cerrar sesion</span>
                 </a>
             </nav>
         </div>
         
-        <!-- Main Content -->
         <div class="main">
             <div class="topbar">
                 <div class="page-title">Historial de pagos</div>
@@ -487,7 +434,6 @@
             </div>
             
             <div class="content">
-                <!-- Header -->
                 <div class="page-header">
                     <h1>
                         <i class="ti ti-credit-card"></i>
@@ -495,19 +441,17 @@
                     </h1>
                 </div>
                 
-                <!-- Stats Cards -->
                 <div class="stats-cards">
                     <div class="stat-card">
                         <div class="stat-label">Total pagado</div>
                         <div class="stat-value" th:text="'S/ ' + ${totalPagado}">S/ 0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Pendiente de verificación</div>
+                        <div class="stat-label">Pendiente de verificacion</div>
                         <div class="stat-value" th:text="'S/ ' + ${totalPendiente}">S/ 0</div>
                     </div>
                 </div>
                 
-                <!-- Tabla de pagos -->
                 <div class="table-card">
                     <div class="card-header">
                         <div class="card-title">
@@ -529,8 +473,8 @@
                             <tbody>
                                 <tr th:each="pago : ${pagos}">
                                     <td>
-                                        <div style="font-weight: 500; color: var(--text);" th:text="${pago.proyecto.nombre}">Nombre del proyecto</div>
-                                        <div style="font-size: 11px; color: var(--text-3);" th:text="${pago.proyecto.cliente.nombreRazonSocial}">Cliente</div>
+                                        <div style="font-weight: 600; color: #000000;" th:text="${pago.proyecto.nombre}">Nombre del proyecto</div>
+                                        <div style="font-size: 11px; color: #999999;" th:text="${pago.proyecto.cliente.nombreRazonSocial}">Cliente</div>
                                     </td>
                                     <td th:text="${#temporals.format(pago.fecha, 'dd/MM/yyyy')}">01/01/2024</td>
                                     <td class="amount-positive" th:text="'S/ ' + ${pago.monto}">S/ 0</td>
@@ -540,7 +484,7 @@
                                               th:classappend="${pago.estado == 'VERIFICADO'} ? 'verified' : 
                                                              (pago.estado == 'VERIFICACION' ? 'pending' : 'cancelled')"
                                               th:text="${pago.estado == 'VERIFICADO' ? 'Verificado' : 
-                                                       (pago.estado == 'VERIFICACION' ? 'En verificación' : 'Anulado')}">
+                                                       (pago.estado == 'VERIFICACION' ? 'En verificacion' : 'Anulado')}">
                                             Estado
                                         </span>
                                     </td>
@@ -548,7 +492,7 @@
                                 <tr th:if="${pagos == null or pagos.isEmpty()}">
                                     <td colspan="5" class="empty-message">
                                         <i class="ti ti-receipt-off" style="font-size: 32px; margin-bottom: 8px; display: block;"></i>
-                                        No tienes pagos registrados aún.
+                                        No tienes pagos registrados aun.
                                     </td>
                                 </tr>
                             </tbody>
@@ -556,7 +500,6 @@
                     </div>
                 </div>
                 
-                <!-- Botón volver -->
                 <div class="back-button">
                     <a th:href="@{/public/cliente/dashboard}" class="btn-back">
                         <i class="ti ti-arrow-left"></i>

@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
-@RequestMapping("/public/cliente")  // ← CAMBIADO de "/portal" a "/public/cliente"
+@RequestMapping("/public/cliente") 
 public class ClientePortalController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class ClientePortalController {
     @Value("${app.payment.verification-hours:24}")
     private int verificationHours;
 
-    @GetMapping("/dashboard")  // ← Ahora es /public/cliente/dashboard
+    @GetMapping("/dashboard") 
     public String dashboard(Authentication auth, Model model) {
         Cliente cliente = clienteService.findByEmail(auth.getName());
         List<Proyecto> proyectos = proyectoService.findByClienteId(cliente.getId());
@@ -78,7 +78,7 @@ public class ClientePortalController {
             .limit(5)
             .toList());
         
-        return "public/cliente/dashboard";  // ← Vista correcta
+        return "public/cliente/dashboard";
     }
 
     @GetMapping("/proyectos/{id}")

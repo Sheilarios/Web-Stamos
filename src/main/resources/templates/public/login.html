@@ -2,130 +2,128 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión · STAMOS</title>
+    <title>STAMOS - Iniciar Sesion</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(135deg, #F5F6F8 0%, #E8ECF1 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #FFFFFF;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px;
         }
-        
+
         .login-container {
             display: flex;
-            max-width: 1000px;
+            max-width: 1050px;
             width: 100%;
             background: #FFFFFF;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 5px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
             overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
         }
-        
-        .login-brand {
+
+        .login-banner {
             flex: 1;
-            background: linear-gradient(135deg, #1A1F2E 0%, #2A2F3E 100%);
-            padding: 40px;
+            background: #000000;
+            padding: 44px 36px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            color: white;
         }
-        
-        .brand-logo {
-            margin-bottom: 40px;
-        }
-        
-        .brand-name {
-            font-family: 'Syne', sans-serif;
+
+        .logo {
+            font-family: 'Segoe UI', system-ui;
             font-size: 28px;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .brand-name span {
-            color: #F5C400;
-        }
-        
-        .brand-tagline {
-            font-size: 12px;
-            color: #9BA5B7;
-            margin-top: 4px;
+            font-weight: 800;
+            color: #FFFFFF;
             letter-spacing: 1px;
         }
-        
-        .brand-quote {
-            margin: 60px 0;
+
+        .logo span {
+            color: #F5C400;
         }
-        
-        .brand-quote h2 {
-            font-family: 'Syne', sans-serif;
-            font-size: 24px;
-            font-weight: 600;
+
+        .logo-sub {
+            font-size: 12px;
+            color: #D4D4D4;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 6px;
+        }
+
+        .banner-content {
+            margin: 50px 0;
+        }
+
+        .banner-content h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
             margin-bottom: 16px;
-            line-height: 1.3;
+            line-height: 1.2;
         }
-        
-        .brand-quote p {
-            color: #9BA5B7;
+
+        .banner-content h2 span {
+            color: #F5C400;
+        }
+
+        .banner-content p {
             font-size: 14px;
-            line-height: 1.5;
+            color: #C0C0C0;
+            line-height: 1.6;
         }
-        
-        .brand-features {
+
+        .feature-list {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             margin-top: auto;
         }
-        
-        .feature {
+
+        .feature-item {
             display: flex;
             align-items: center;
             gap: 12px;
             font-size: 13px;
-            color: #CBD5E0;
+            color: #E0E0E0;
         }
-        
-        .feature i {
+
+        .feature-item i {
             color: #F5C400;
             font-size: 18px;
         }
-        
+
         .login-form-container {
             flex: 1;
-            padding: 48px;
-            background: white;
+            padding: 48px 44px;
+            background: #FFFFFF;
         }
-        
+
         .form-header {
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
-        
+
         .form-header h3 {
-            font-family: 'Syne', sans-serif;
-            font-size: 24px;
-            font-weight: 600;
-            color: #1A1F2E;
+            font-size: 26px;
+            font-weight: 700;
+            color: #000000;
             margin-bottom: 8px;
         }
-        
+
         .form-header p {
             font-size: 13px;
-            color: #9BA5B7;
+            color: #6B6B6B;
         }
-        
+
         .alert {
             display: flex;
             align-items: center;
@@ -134,140 +132,139 @@
             border-radius: 10px;
             font-size: 12px;
             margin-bottom: 24px;
+            border: 1px solid;
         }
-        
+
         .alert-danger {
-            background: #FFF0EE;
-            border: 1px solid #EFC8C5;
+            background: #FFF5F5;
+            border-color: #FFCDCD;
             color: #C0392B;
         }
-        
+
         .alert-success {
-            background: #EBF7F0;
-            border: 1px solid #A8D8BA;
+            background: #F0FFF4;
+            border-color: #C6F7D0;
             color: #1A7040;
         }
-        
+
         .alert i {
             font-size: 16px;
         }
-        
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
-        
+
         .form-label {
             display: block;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.7px;
-            color: #5A6478;
+            letter-spacing: 0.8px;
+            color: #3A3A3A;
             margin-bottom: 6px;
         }
-        
+
         .input-group {
             position: relative;
-            display: flex;
-            align-items: center;
         }
-        
+
         .input-group i {
             position: absolute;
             left: 14px;
-            color: #9BA5B7;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9A9A9A;
             font-size: 16px;
         }
-        
+
         .form-control {
             width: 100%;
-            padding: 12px 12px 12px 42px;
-            border: 1px solid #E2E6EA;
-            border-radius: 10px;
+            padding: 13px 13px 13px 44px;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
             font-size: 14px;
-            font-family: 'DM Sans', sans-serif;
             transition: all 0.2s;
-            background: white;
+            background: #FFFFFF;
             outline: none;
+            font-family: inherit;
         }
-        
+
         .form-control:focus {
             border-color: #F5C400;
-            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.2);
         }
-        
+
         .form-control::placeholder {
-            color: #C0C5CC;
+            color: #B0B0B0;
             font-size: 13px;
         }
-        
+
         .form-options {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            font-size: 12px;
+            margin-bottom: 26px;
+            font-size: 13px;
         }
-        
+
         .checkbox {
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
         }
-        
+
         .checkbox input {
             width: 16px;
             height: 16px;
             cursor: pointer;
             accent-color: #F5C400;
         }
-        
+
         .checkbox span {
-            color: #5A6478;
+            color: #444444;
         }
-        
+
         .forgot-link {
             color: #F5C400;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.2s;
         }
-        
+
         .forgot-link:hover {
-            color: #9A7500;
+            color: #C49F00;
             text-decoration: underline;
         }
-        
+
         .btn-login {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             background: #F5C400;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 700;
-            font-family: 'DM Sans', sans-serif;
-            color: #2A1800;
+            color: #000000;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
-        
+
         .btn-login:hover {
-            background: #FFE566;
-            transform: translateY(-1px);
+            background: #E0B000;
         }
-        
+
         .login-divider {
             text-align: center;
-            margin: 24px 0;
+            margin: 26px 0;
             position: relative;
         }
-        
+
         .login-divider::before {
             content: '';
             position: absolute;
@@ -275,144 +272,113 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: #E2E6EA;
+            background: #E0E0E0;
         }
-        
+
         .login-divider span {
-            background: white;
-            padding: 0 12px;
+            background: #FFFFFF;
+            padding: 0 14px;
             font-size: 11px;
-            color: #9BA5B7;
+            color: #8A8A8A;
             position: relative;
             text-transform: uppercase;
         }
-        
+
         .register-link {
             text-align: center;
             margin-top: 24px;
             font-size: 13px;
-            color: #5A6478;
+            color: #555555;
         }
-        
+
         .register-link a {
             color: #F5C400;
             text-decoration: none;
             font-weight: 600;
         }
-        
-        .demo-access {
-            margin-top: 24px;
-            padding: 12px;
-            background: #F5F6F8;
-            border-radius: 10px;
-            text-align: center;
+
+        .register-link a:hover {
+            text-decoration: underline;
         }
-        
-        .demo-access p {
-            font-size: 11px;
-            color: #9BA5B7;
-            margin-bottom: 8px;
-        }
-        
-        .demo-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            font-size: 11px;
-            flex-wrap: wrap;
-        }
-        
-        .demo-btn {
-            background: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            border: 1px solid #E2E6EA;
-        }
-        
-        @media (max-width: 768px) {
+
+        @media (max-width: 800px) {
             .login-container {
                 flex-direction: column;
-                max-width: 400px;
+                max-width: 450px;
             }
-            .login-brand {
-                padding: 30px;
+            .login-banner {
+                border-right: none;
                 text-align: center;
             }
-            .brand-quote {
-                margin: 30px 0;
+            .banner-content h2 {
+                font-size: 24px;
             }
-            .brand-features {
-                display: none;
+            .feature-list {
+                margin-top: 30px;
             }
             .login-form-container {
-                padding: 32px;
+                padding: 32px 28px;
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-brand">
-            <div class="brand-logo">
-                <div class="brand-name">STAMOS<span>.</span></div>
-                <div class="brand-tagline">Sistema de Gestión Empresarial</div>
+        <div class="login-banner">
+            <div>
+                <div class="logo">STAMOS<span>.</span></div>
+                <div class="logo-sub">Sistema de Gestion</div>
             </div>
-            
-            <div class="brand-quote">
-                <h2>Gestiona tus proyectos<br>de manera inteligente</h2>
-                <p>Cotizaciones, proyectos, inventario y pagos en un solo lugar.</p>
+            <div class="banner-content">
+                <h2>Controla tus<br><span>proyectos</span> con estilo</h2>
+                <p>Cotizaciones, eventos, inventario y pagos en un solo lugar.</p>
             </div>
-            
-            <div class="brand-features">
-                <div class="feature">
+            <div class="feature-list">
+                <div class="feature-item">
                     <i class="ti ti-checks"></i>
-                    <span>Gestión completa de proyectos</span>
+                    <span>Gestion completa de stands</span>
                 </div>
-                <div class="feature">
+                <div class="feature-item">
                     <i class="ti ti-chart-bar"></i>
-                    <span>Reportes en tiempo real</span>
+                    <span>Reportes y estadisticas</span>
                 </div>
-                <div class="feature">
+                <div class="feature-item">
                     <i class="ti ti-shield-check"></i>
-                    <span>Seguridad y control de accesos</span>
+                    <span>Acceso seguro para clientes</span>
                 </div>
             </div>
         </div>
-        
+
         <div class="login-form-container">
             <div class="form-header">
-                <h3>Iniciar Sesión</h3>
-                <p>Ingresa tus credenciales para acceder al sistema</p>
+                <h3>Bienvenido</h3>
+                <p>Ingresa tus credenciales para continuar</p>
             </div>
-            
-            <!-- Mostrar errores de autenticación -->
+
             <div th:if="${param.error}" class="alert alert-danger">
                 <i class="ti ti-alert-circle"></i>
                 <span>Usuario o contraseña incorrectos.</span>
             </div>
-            
-            <!-- Mostrar mensaje de logout exitoso -->
+
             <div th:if="${param.logout}" class="alert alert-success">
                 <i class="ti ti-check-circle"></i>
-                <span>Has cerrado sesión correctamente.</span>
+                <span>Sesion cerrada correctamente.</span>
             </div>
-            
-            <!-- Mostrar mensaje de sesión expirada -->
+
             <div th:if="${expired}" class="alert alert-danger">
                 <i class="ti ti-alert-circle"></i>
-                <span>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</span>
+                <span>Tu sesion ha expirado. Inicia sesion nuevamente.</span>
             </div>
-            
+
             <form th:action="@{/login}" method="post">
                 <div class="form-group">
-                    <label class="form-label">Correo electrónico</label>
+                    <label class="form-label">Correo electronico</label>
                     <div class="input-group">
                         <i class="ti ti-mail"></i>
                         <input type="email" name="username" class="form-control" placeholder="usuario@stamos.com" required autofocus>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Contraseña</label>
                     <div class="input-group">
@@ -420,7 +386,7 @@
                         <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                     </div>
                 </div>
-                
+
                 <div class="form-options">
                     <label class="checkbox">
                         <input type="checkbox" name="remember-me">
@@ -428,18 +394,18 @@
                     </label>
                     <a href="/olvide-contrasena" class="forgot-link">¿Olvidaste tu contraseña?</a>
                 </div>
-                
+
                 <button type="submit" class="btn-login">
                     <i class="ti ti-login"></i>
-                    Iniciar Sesión
+                    Iniciar Sesion
                 </button>
-                
+
                 <div class="login-divider">
-                    <span>¿Nuevo cliente?</span>
+                    <span>Nuevo cliente</span>
                 </div>
-                
+
                 <div class="register-link">
-                    <a href="/contacto">Solicitar acceso</a> — Nuestro equipo te contactará
+                    <a href="/contacto">Solicitar acceso</a> — nuestro equipo te contactara
                 </div>
             </form>
         </div>
