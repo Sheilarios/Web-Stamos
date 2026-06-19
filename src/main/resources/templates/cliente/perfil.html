@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Mi Perfil</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+            --sidebar-width: 260px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        /* ===== LAYOUT ===== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-brand i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .sidebar-brand span {
+            color: var(--yellow-dark);
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.15s;
+            margin-bottom: 4px;
+        }
+        
+        .sidebar-nav a i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-nav a:hover {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .sidebar-nav a.active {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            border-left: 3px solid var(--yellow);
+        }
+        
+        .sidebar-nav .nav-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-3);
+            font-weight: 600;
+            padding: 16px 16px 8px;
+        }
+        
+        .sidebar-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+            margin-top: auto;
+        }
+        
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.15s;
+        }
+        
+        .sidebar-footer a:hover {
+            background: #FEF2F2;
+            color: var(--red);
+        }
+        
+        .sidebar-footer a i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .page-title small {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            margin-left: 8px;
+        }
+        
+        .user-info {
+            background: var(--yellow-light);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--yellow-border);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-2);
+        }
+        
+        .user-info i {
+            color: var(--yellow-dark);
+        }
+        
+        /* ===== PERFIL ===== */
+        .perfil-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .perfil-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .perfil-card .card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .perfil-card .card-header h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .perfil-card .card-header h3 i {
+            color: var(--yellow-dark);
+        }
+        
+        .perfil-card .card-body {
+            padding: 24px;
+        }
+        
+        /* ===== AVATAR ===== */
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--yellow-light);
+            border: 4px solid var(--yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--yellow-dark);
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .avatar .badge-estado {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--green);
+            border: 3px solid var(--card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .avatar .badge-estado.inactivo {
+            background: var(--red);
+        }
+        
+        .avatar-nombre {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .avatar-tipo {
+            font-size: 14px;
+            color: var(--text-3);
+            margin-top: 4px;
+        }
+        
+        .avatar-ruc {
+            font-size: 13px;
+            color: var(--text-2);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+        
+        /* ===== CAMPOS DE FORMULARIO ===== */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 6px;
+        }
+        
+        .form-group label .required {
+            color: var(--red);
+            margin-left: 2px;
+        }
+        
+        .form-group .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.15s;
+            outline: none;
+        }
+        
+        .form-group .form-control:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+            background: var(--card);
+        }
+        
+        .form-group .form-control:disabled,
+        .form-group .form-control[readonly] {
+            background: #F0F1F3;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .form-group .form-control.is-invalid {
+            border-color: var(--red);
+        }
+        
+        .form-group .invalid-feedback {
+            color: var(--red);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        
+        .form-group .invalid-feedback.show {
+            display: block;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        /* ===== BOTONES ===== */
+        .btn {
+            padding: 10px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            color: var(--text);
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-dark);
+            color: white;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--text-2);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-outline:hover {
+            background: var(--bg);
+        }
+        
+        .btn-danger {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .btn-danger:hover {
+            background: var(--red);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .btn-success:hover {
+            background: var(--green);
+            color: white;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        
+        /* ===== ALERTAS ===== */
+        .alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .alert i {
+            font-size: 20px;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            color: var(--green);
+            border: 1px solid #A3D8B3;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            color: var(--red);
+            border: 1px solid #F5C6CB;
+        }
+        
+        .alert-warning {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            border: 1px solid var(--yellow-border);
+        }
+        
+        .alert-info {
+            background: var(--blue-light);
+            color: var(--blue);
+            border: 1px solid #B8D4FE;
+        }
+        
+        /* ===== ESTADÍSTICAS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .stat-item {
+            background: var(--bg);
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-item .stat-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-item .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-3);
+            font-weight: 600;
+        }
+        
+        /* ===== TOAST NOTIFICACIÓN ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            padding: 16px 24px;
+            border-left: 4px solid var(--green);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            max-width: 400px;
+            animation: slideUp 0.3s ease;
+        }
+        
+        .toast.show {
+            display: flex;
+        }
+        
+        .toast.error {
+            border-left-color: var(--red);
+        }
+        
+        .toast i {
+            font-size: 24px;
+        }
+        
+        .toast .toast-icon-success {
+            color: var(--green);
+        }
+        
+        .toast .toast-icon-error {
+            color: var(--red);
+        }
+        
+        .toast .toast-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-3);
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 8px;
+            }
+            .sidebar-brand span,
+            .sidebar-nav a span,
+            .sidebar-nav .nav-label,
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-nav a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-nav a i {
+                font-size: 24px;
+                width: auto;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-footer a i {
+                font-size: 24px;
+                width: auto;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+            .perfil-container {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .perfil-container {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .card-actions {
+                flex-direction: column;
+            }
+            .card-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .toast {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="ti ti-construction"></i>
+            <span>STAMOS</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-label">Cliente</div>
+            
+            <a href="#" th:href="@{/cliente/dashboard}">
+                <i class="ti ti-layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="#" th:href="@{/cliente/proyectos}">
+                <i class="ti ti-folder-open"></i>
+                <span>Mis Proyectos</span>
+            </a>
+            
+            <a href="#" th:href="@{/cliente/documentos}">
+                <i class="ti ti-file-text"></i>
+                <span>Documentos</span>
+            </a>
+            
+            <a href="#" th:href="@{/cliente/pagos}">
+                <i class="ti ti-credit-card"></i>
+                <span>Historial de Pagos</span>
+            </a>
+            
+            <a href="#" class="active" th:href="@{/cliente/perfil}">
+                <i class="ti ti-user-circle"></i>
+                <span>Mi Perfil</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="#" th:href="@{/logout}">
+                <i class="ti ti-logout"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+    
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="page-title">
+                <i class="ti ti-user-circle"></i>
+                <span>Mi Perfil <small>Gestiona tu información personal</small></span>
+            </div>
+            <div class="user-info">
+                <i class="ti ti-user-circle"></i>
+                <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
+            </div>
+        </div>
+        
+        <!-- Alerta de éxito (se muestra después de guardar) -->
+        <div id="alertExito" class="alert alert-success" th:if="${mensajeExito}" style="display:flex;">
+            <i class="ti ti-check-circle"></i>
+            <span th:text="${mensajeExito}">Perfil actualizado exitosamente</span>
+        </div>
+        
+        <!-- Alerta de error -->
+        <div id="alertError" class="alert alert-danger" th:if="${mensajeError}" style="display:flex;">
+            <i class="ti ti-alert-circle"></i>
+            <span th:text="${mensajeError}">Error al actualizar el perfil</span>
+        </div>
+        
+        <!-- Contenido del Perfil -->
+        <div class="perfil-container">
+            
+            <!-- ===== COLUMNA IZQUIERDA: AVATAR + ESTADÍSTICAS ===== -->
+            <div>
+                <!-- Card de Avatar -->
+                <div class="perfil-card" style="margin-bottom:24px;">
+                    <div class="card-body">
+                        <div class="avatar-section">
+                            <div class="avatar">
+                                <i class="ti ti-user"></i>
+                                <div class="badge-estado" th:classappend="${cliente.estado == 'Activo'} ? '' : 'inactivo'">
+                                    <i class="ti ti-check" th:if="${cliente.estado == 'Activo'}"></i>
+                                    <i class="ti ti-x" th:unless="${cliente.estado == 'Activo'}"></i>
+                                </div>
+                            </div>
+                            <div class="avatar-nombre" th:text="${cliente.nombreRazonSocial}">Nombre del Cliente</div>
+                            <div class="avatar-tipo" th:text="${cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}">Persona Natural</div>
+                            <div class="avatar-ruc" th:if="${cliente.ruc}" th:text="'RUC: ' + ${cliente.ruc}">RUC: 12345678901</div>
+                            <div class="avatar-tipo" style="margin-top:8px; font-size:12px; color:var(--text-3);">
+                                <span class="status-badge" th:classappend="${cliente.estado == 'Activo'} ? 'status-validado' : 'status-rechazado'"
+                                      th:text="${cliente.estado}">Activo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card de Estadísticas -->
+                <div class="perfil-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="ti ti-chart-bar"></i> Mi Actividad
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number" th:text="${totalProyectos}">0</div>
+                                <div class="stat-label">Proyectos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" th:text="${totalCotizado}">0</div>
+                                <div class="stat-label">Cotizado</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" th:text="${totalPagado}">0</div>
+                                <div class="stat-label">Pagado</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" th:text="${saldoPendiente}">0</div>
+                                <div class="stat-label">Pendiente</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
+                            <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-2);">
+                                <span>Cliente desde:</span>
+                                <span th:text="${#temporals.format(cliente.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-2); margin-top:4px;">
+                                <span>Último acceso:</span>
+                                <span th:if="${ultimoAcceso}" th:text="${#temporals.format(ultimoAcceso, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
+                                <span th:unless="${ultimoAcceso}" style="color:var(--text-3);">Nunca</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ===== COLUMNA DERECHA: FORMULARIO ===== -->
+            <div>
+                <form id="formPerfil" th:action="@{/cliente/perfil/actualizar}" method="post">
+                    <input type="hidden" name="idCliente" th:value="${cliente.idCliente}">
+                    
+                    <div class="perfil-card">
+                        <div class="card-header">
+                            <h3>
+                                <i class="ti ti-edit"></i> Información Personal
+                            </h3>
+                            <span style="font-size:12px; color:var(--text-3);">
+                                <i class="ti ti-lock"></i> Solo tú puedes ver esta información
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            
+                            <!-- Tipo de Persona (solo lectura) -->
+                            <div class="form-group">
+                                <label>Tipo de Persona</label>
+                                <input type="text" class="form-control" 
+                                       th:value="${cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}"
+                                       disabled readonly>
+                            </div>
+                            
+                            <!-- Nombre / Razón Social -->
+                            <div class="form-group">
+                                <label for="nombreRazonSocial">Nombre / Razón Social <span class="required">*</span></label>
+                                <input type="text" id="nombreRazonSocial" name="nombreRazonSocial" 
+                                       class="form-control" 
+                                       th:value="${cliente.nombreRazonSocial}"
+                                       required>
+                            </div>
+                            
+                            <!-- RUC -->
+                            <div class="form-group">
+                                <label for="ruc">RUC</label>
+                                <input type="text" id="ruc" name="ruc" 
+                                       class="form-control" 
+                                       th:value="${cliente.ruc}"
+                                       placeholder="12345678901"
+                                       maxlength="11">
+                            </div>
+                            
+                            <!-- Teléfono -->
+                            <div class="form-group">
+                                <label for="telefono">Teléfono <span class="required">*</span></label>
+                                <input type="tel" id="telefono" name="telefono" 
+                                       class="form-control" 
+                                       th:value="${cliente.telefono}"
+                                       required>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email">Correo Electrónico <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" 
+                                       class="form-control" 
+                                       th:value="${cliente.email}"
+                                       required>
+                            </div>
+                            
+                            <!-- Dirección -->
+                            <div class="form-group">
+                                <label for="direccion">Dirección</label>
+                                <input type="text" id="direccion" name="direccion" 
+                                       class="form-control" 
+                                       th:value="${cliente.direccion}"
+                                       placeholder="Jr. Antisuyo 438, San Juan de Lurigancho">
+                            </div>
+                            
+                            <!-- Acciones -->
+                            <div class="card-actions">
+                                <button type="button" class="btn btn-outline" onclick="resetForm()">
+                                    <i class="ti ti-refresh"></i> Restaurar
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="btnGuardar">
+                                    <i class="ti ti-device-floppy"></i> Guardar Cambios
+                                </button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Card de Cambio de Contraseña -->
+                <div class="perfil-card" style="margin-top:24px;">
+                    <div class="card-header">
+                        <h3>
+                            <i class="ti ti-key"></i> Cambiar Contraseña
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="formPassword" th:action="@{/cliente/perfil/cambiar-password}" method="post">
+                            <input type="hidden" name="idCliente" th:value="${cliente.idCliente}">
+                            
+                            <div class="form-group">
+                                <label for="passwordActual">Contraseña Actual <span class="required">*</span></label>
+                                <input type="password" id="passwordActual" name="passwordActual" 
+                                       class="form-control" 
+                                       placeholder="••••••••"
+                                       required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="passwordNueva">Nueva Contraseña <span class="required">*</span></label>
+                                    <input type="password" id="passwordNueva" name="passwordNueva" 
+                                           class="form-control" 
+                                           placeholder="••••••••"
+                                           minlength="6"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="passwordConfirmar">Confirmar Contraseña <span class="required">*</span></label>
+                                    <input type="password" id="passwordConfirmar" name="passwordConfirmar" 
+                                           class="form-control" 
+                                           placeholder="••••••••"
+                                           minlength="6"
+                                           required>
+                                </div>
+                            </div>
+                            
+                            <div style="font-size:12px; color:var(--text-3); margin-bottom:12px;">
+                                <i class="ti ti-info-circle"></i> La contraseña debe tener al menos 6 caracteres
+                            </div>
+                            
+                            <div class="card-actions" style="border-top:none; padding-top:0; margin-top:0;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="ti ti-key"></i> Cambiar Contraseña
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </main>
+</div>
+
+<!-- ===== TOAST NOTIFICACIÓN ===== -->
+<div class="toast" id="toast">
+    <i class="ti ti-check-circle toast-icon-success" id="toastIcon"></i>
+    <span id="toastMessage">Perfil actualizado correctamente</span>
+    <button class="toast-close" onclick="cerrarToast()">&times;</button>
+</div>
+
+<script>
+    // ===== FUNCIÓN PARA RESTAURAR FORMULARIO =====
+    function resetForm() {
+        // Recargar la página para restaurar los valores originales
+        window.location.reload();
+    }
+    
+    // ===== VALIDACIÓN DE CONTRASEÑAS =====
+    document.getElementById('formPassword').addEventListener('submit', function(e) {
+        const passwordNueva = document.getElementById('passwordNueva').value;
+        const passwordConfirmar = document.getElementById('passwordConfirmar').value;
+        
+        if (passwordNueva !== passwordConfirmar) {
+            e.preventDefault();
+            mostrarToast('Las contraseñas no coinciden', 'error');
+            document.getElementById('passwordConfirmar').classList.add('is-invalid');
+            return false;
+        }
+        
+        if (passwordNueva.length < 6) {
+            e.preventDefault();
+            mostrarToast('La contraseña debe tener al menos 6 caracteres', 'error');
+            document.getElementById('passwordNueva').classList.add('is-invalid');
+            return false;
+        }
+        
+        document.getElementById('passwordConfirmar').classList.remove('is-invalid');
+        document.getElementById('passwordNueva').classList.remove('is-invalid');
+    });
+    
+    // ===== VALIDACIÓN EN TIEMPO REAL DE CONTRASEÑAS =====
+    document.getElementById('passwordConfirmar').addEventListener('input', function() {
+        const passwordNueva = document.getElementById('passwordNueva').value;
+        const passwordConfirmar = this.value;
+        
+        if (passwordConfirmar && passwordNueva !== passwordConfirmar) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    document.getElementById('passwordNueva').addEventListener('input', function() {
+        const passwordConfirmar = document.getElementById('passwordConfirmar').value;
+        if (passwordConfirmar && this.value !== passwordConfirmar) {
+            document.getElementById('passwordConfirmar').classList.add('is-invalid');
+        } else {
+            document.getElementById('passwordConfirmar').classList.remove('is-invalid');
+        }
+    });
+    
+    // ===== TOAST NOTIFICACIÓN =====
+    function mostrarToast(mensaje, tipo) {
+        const toast = document.getElementById('toast');
+        const icon = document.getElementById('toastIcon');
+        const message = document.getElementById('toastMessage');
+        
+        message.textContent = mensaje;
+        
+        if (tipo === 'error') {
+            toast.className = 'toast show error';
+            icon.className = 'ti ti-alert-circle toast-icon-error';
+        } else {
+            toast.className = 'toast show';
+            icon.className = 'ti ti-check-circle toast-icon-success';
+        }
+        
+        setTimeout(cerrarToast, 5000);
+    }
+    
+    function cerrarToast() {
+        document.getElementById('toast').classList.remove('show');
+    }
+    
+    // ===== MOSTRAR TOAST SI HAY MENSAJE DE ÉXITO O ERROR =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const alertExito = document.getElementById('alertExito');
+        const alertError = document.getElementById('alertError');
+        
+        if (alertExito && alertExito.style.display !== 'none') {
+            mostrarToast(alertExito.querySelector('span').textContent, 'success');
+            setTimeout(function() {
+                alertExito.style.display = 'none';
+            }, 100);
+        }
+        
+        if (alertError && alertError.style.display !== 'none') {
+            mostrarToast(alertError.querySelector('span').textContent, 'error');
+            setTimeout(function() {
+                alertError.style.display = 'none';
+            }, 100);
+        }
+    });
+    
+    // ===== PREVENIR ENVÍO DUPLICADO DE FORMULARIO =====
+    document.getElementById('formPerfil').addEventListener('submit', function() {
+        const btn = document.getElementById('btnGuardar');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="ti ti-loader ti-spin"></i> Guardando...';
+    });
+</script>
+
+</body>
+</html>

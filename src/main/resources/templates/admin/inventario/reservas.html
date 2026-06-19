@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Administración · Reservas de Equipos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); padding: 40px 24px; }
+        .container { max-width: 1400px; margin: 0 auto; background: var(--card); border-radius: 20px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
+        .page-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .page-title i { color: var(--yellow-dark); font-size: 28px; }
+        .btn-primary { background: var(--yellow); border: none; color: #2A1800; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { background: var(--yellow-mid); }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-2); padding: 10px 20px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow-dark); }
+        .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 14px 16px; background: var(--yellow-light); color: var(--yellow-dark); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--yellow-border); }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-2); }
+        tr:last-child td { border-bottom: none; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .status-reservado { background: var(--yellow-light); color: var(--yellow-dark); }
+        .status-entregado { background: var(--green-light); color: var(--green); }
+        .status-cancelado { background: var(--red-light); color: var(--red); }
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-icon { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); }
+        .btn-icon:hover { border-color: var(--yellow); color: var(--yellow-dark); }
+        .btn-icon.danger:hover { border-color: var(--red); color: var(--red); }
+        .empty-message { text-align: center; padding: 48px; color: var(--text-3); }
+        .empty-message i { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+        @media (max-width: 768px) { body { padding: 20px; } th, td { padding: 10px 12px; } .action-buttons { flex-direction: column; } .btn-icon { width: 100%; justify-content: center; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-calendar-event"></i>
+            <span>Reservas de Equipos</span>
+        </div>
+        <a th:href="@{/admin/inventario/reservas/nueva}" class="btn-primary">
+            <i class="ti ti-plus"></i> Nueva Reserva
+        </a>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Reserva</th>
+                    <th>Equipo</th>
+                    <th>Proyecto</th>
+                    <th>Cantidad</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="res : ${reservas}">
+                    <td th:text="${res.id}">—</td>
+                    <td th:text="${res.equipo.nombre}">—</td>
+                    <td th:text="${res.proyecto.nombre}">—</td>
+                    <td th:text="${res.cantidad}">—</td>
+                    <td th:text="${#temporals.format(res.fechaInicio, 'dd/MM/yyyy')}">—</td>
+                    <td th:text="${#temporals.format(res.fechaFin, 'dd/MM/yyyy')}">—</td>
+                    <td>
+                        <span th:classappend="${res.estadoReserva == 'reservado'} ? 'status-badge status-reservado' : 
+                                              (res.estadoReserva == 'entregado' ? 'status-badge status-entregado' : 'status-badge status-cancelado')"
+                              th:text="${res.estadoReserva}">—</span>
+                    </td>
+                    <td class="action-buttons">
+                        <form th:action="@{/admin/inventario/reservas/eliminar/{id}(id=${res.id})}" method="post">
+                            <button type="submit" class="btn-icon danger" onclick="return confirm('¿Cancelar esta reserva? Se restituirá el stock.');"><i class="ti ti-x"></i> Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${reservas.isEmpty()}">
+                    <td colspan="8">
+                        <div class="empty-message">
+                            <i class="ti ti-calendar-off"></i>
+                            <p>No hay reservas registradas.</p>
+                            <a th:href="@{/admin/inventario/reservas/nueva}" class="btn-primary" style="margin-top: 16px;">Crear primera reserva</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Administración · Versiones de Cotización</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .cotizacion-info {
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .info-item {
+            font-size: 13px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--yellow-dark);
+            margin-right: 8px;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            .cotizacion-info { flex-direction: column; align-items: flex-start; }
+            th, td { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-history"></i>
+            <span>Historial de Versiones</span>
+        </div>
+        <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
+            <i class="ti ti-arrow-left"></i> Volver a cotizaciones
+        </a>
+    </div>
+
+    <!-- Información de la cotización principal -->
+    <div class="cotizacion-info" th:if="${cotizacion != null}">
+        <div class="info-item">
+            <span class="info-label">Cotización ID:</span>
+            <span th:text="${cotizacion.codCot}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Cliente:</span>
+            <span th:text="${cotizacion.cliente.razonCli}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Fecha emisión:</span>
+            <span th:text="${#temporals.format(cotizacion.fechaEmision, 'dd/MM/yyyy')}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Estado actual:</span>
+            <span th:text="${cotizacion.estado}">—</span>
+        </div>
+    </div>
+
+    <!-- Tabla de versiones -->
+    <div class="table-wrapper">
+        <table th:if="${!versiones.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>Versión</th>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Datos de la versión</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ver : ${versiones}">
+                    <td th:text="${ver.versionNumero}">—</td>
+                    <td th:text="${#temporals.format(ver.fecha, 'dd/MM/yyyy')}">—</td>
+                    <td th:text="${ver.usuario}">—</td>
+                    <td>
+                        <span th:text="${ver.datosSnapshot != null ? ver.datosSnapshot : 'Sin detalles'}">—</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div th:if="${versiones.isEmpty()}" class="empty-message">
+            <i class="ti ti-history-off"></i>
+            <p>No hay versiones registradas para esta cotización.</p>
+        </div>
+    </div>
+
+    <!-- Botón adicional para volver (opcional) -->
+    <div style="margin-top: 24px; text-align: right;">
+        <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
+            <i class="ti ti-arrow-left"></i> Regresar al listado
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

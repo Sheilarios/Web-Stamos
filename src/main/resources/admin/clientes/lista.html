@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Administración · Clientes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        /* Contenedor principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        /* Encabezado */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        /* Búsqueda */
+        .search-bar {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        
+        .search-input i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .search-input input {
+            width: 100%;
+            padding: 10px 10px 10px 42px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .search-input input:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        /* Tabla */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-inactive {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+            color: var(--text-2);
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-icon.danger:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        /* Paginación simple */
+        .pagination {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        .page-link {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 13px;
+        }
+        
+        .page-link.active {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #2A1800;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            th, td { padding: 10px 12px; }
+            .action-buttons { flex-direction: column; align-items: flex-start; }
+            .btn-icon { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-users"></i>
+            <span>Gestión de Clientes</span>
+        </div>
+        <a th:href="@{/admin/clientes/nuevo}" class="btn-primary">
+            <i class="ti ti-plus"></i> Nuevo Cliente
+        </a>
+    </div>
+
+    <!-- Formulario de búsqueda -->
+    <form th:action="@{/admin/clientes}" method="get" class="search-bar">
+        <div class="search-input">
+            <i class="ti ti-search"></i>
+            <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre, RUC o teléfono...">
+        </div>
+        <button type="submit" class="btn-secondary">
+            <i class="ti ti-search"></i> Buscar
+        </button>
+        <a th:href="@{/admin/clientes}" class="btn-secondary" th:if="${search != null}">
+            <i class="ti ti-refresh"></i> Limpiar
+        </a>
+    </form>
+
+    <!-- Tabla de clientes -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Razón Social / Nombre</th>
+                    <th>RUC</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cliente : ${clientes}">
+                    <td th:text="${cliente.codCli}">—</td>
+                    <td th:text="${cliente.razonCli}">—</td>
+                    <td th:text="${cliente.rucCli != null ? cliente.rucCli : '-'}">—</td>
+                    <td th:text="${cliente.telefCli}">—</td>
+                    <td th:text="${cliente.correoCli}">—</td>
+                    <td>
+                        <span th:if="${cliente.activo}" class="status-badge status-active">ACTIVO</span>
+                        <span th:unless="${cliente.activo}" class="status-badge status-inactive">INACTIVO</span>
+                    </td>
+                    <td class="action-buttons">
+                        <a th:href="@{/admin/clientes/editar/{codCli}(codCli=${cliente.codCli})}" class="btn-icon">
+                            <i class="ti ti-edit"></i> Editar
+                        </a>
+                        <a th:href="@{/admin/clientes/historial/{codCli}(codCli=${cliente.codCli})}" class="btn-icon">
+                            <i class="ti ti-history"></i> Historial
+                        </a>
+                        <form th:action="@{/admin/clientes/eliminar/{codCli}(codCli=${cliente.codCli})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn-icon danger" onclick="return confirm('¿Estás seguro de eliminar/deshabilitar este cliente?');">
+                                <i class="ti ti-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${clientes.isEmpty()}">
+                    <td colspan="7">
+                        <div class="empty-message">
+                            <i class="ti ti-users-off"></i>
+                            <p>No hay clientes registrados.</p>
+                            <a th:href="@{/admin/clientes/nuevo}" class="btn-primary" style="margin-top: 16px;">Registrar primer cliente</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" th:if="${clientes != null and !clientes.isEmpty()}">
+        <a href="#" class="page-link active">1</a>
+        <a href="#" class="page-link">2</a>
+        <a href="#" class="page-link">3</a>
+        <a href="#" class="page-link">Siguiente →</a>
+    </div>
+</div>
+
+</body>
+</html>

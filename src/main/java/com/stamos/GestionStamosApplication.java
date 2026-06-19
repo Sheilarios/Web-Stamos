@@ -1,9 +1,7 @@
 package com.stamos;
 
-import com.stamos.entity.Cliente;
-import com.stamos.entity.Cotizacion;
-import com.stamos.entity.DetalleCotizacion;
-import com.stamos.service.ClienteService;
+import com.stamos.model.Cliente;
+import com.stamos.model.Cotizacion;
 import com.stamos.service.CotizacionService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

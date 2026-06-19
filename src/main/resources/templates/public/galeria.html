@@ -32,7 +32,6 @@
             color: var(--text);
         }
         
-        /* ========== NAVBAR ========== */
         .navbar {
             display: flex;
             align-items: center;
@@ -93,7 +92,6 @@
             background: var(--yellow-mid);
         }
         
-        /* ========== HERO ========== */
         .hero {
             padding: 60px 56px 40px;
             text-align: center;
@@ -135,7 +133,6 @@
             line-height: 1.7;
         }
         
-        /* ========== FILTROS ========== */
         .filters {
             display: flex;
             justify-content: center;
@@ -168,7 +165,6 @@
             font-weight: 600;
         }
         
-        /* ========== GALERÍA GRID ========== */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -243,7 +239,6 @@
             font-weight: 500;
         }
         
-        /* ========== FOOTER ========== */
         .footer {
             background: white;
             border-top: 1px solid var(--border);
@@ -326,7 +321,6 @@
 </head>
 <body>
 
-<!-- NAVBAR PÚBLICO -->
 <nav class="navbar">
     <div class="nav-brand">STAMOS<span>.</span></div>
     <div class="nav-links">
@@ -340,7 +334,6 @@
     </a>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-badge">
         <i class="ti ti-photo"></i> Galería de proyectos
@@ -349,18 +342,15 @@
     <p class="hero-desc">Explora nuestros proyectos más recientes. Haz clic en cualquier proyecto para verlo en detalle.</p>
 </section>
 
-<!-- FILTROS -->
 <div class="filters">
-    <button class="filter-btn active" data-cat="all">Todos</button>
-    <button class="filter-btn" data-cat="stand">Stands</button>
-    <button class="filter-btn" data-cat="escenografia">Escenografía</button>
-    <button class="filter-btn" data-cat="modular">Modular</button>
-    <button class="filter-btn" data-cat="interactivo">Interactivo</button>
+    <button type="button" class="filter-btn active" data-cat="all">Todos</button>
+    <button type="button" class="filter-btn" data-cat="stand">Stands</button>
+    <button type="button" class="filter-btn" data-cat="escenografia">Escenografía</button>
+    <button type="button" class="filter-btn" data-cat="modular">Modular</button>
+    <button type="button" class="filter-btn" data-cat="interactivo">Interactivo</button>
 </div>
 
-<!-- GALERÍA GRID -->
 <div class="gallery-grid" id="galleryGrid">
-    <!-- Proyecto 1 -->
     <div class="gallery-item tall" data-cat="stand">
         <div class="project-placeholder">
             <i class="ti ti-layout"></i>
@@ -370,7 +360,6 @@
         <div class="project-tag">8×6m · Doble altura</div>
     </div>
     
-    <!-- Proyecto 2 -->
     <div class="gallery-item" data-cat="escenografia">
         <div class="project-placeholder">
             <i class="ti ti-building"></i>
@@ -380,7 +369,6 @@
         <div class="project-tag">Escenografía · Forma curva</div>
     </div>
     
-    <!-- Proyecto 3 -->
     <div class="gallery-item" data-cat="stand">
         <div class="project-placeholder">
             <i class="ti ti-layout"></i>
@@ -390,7 +378,6 @@
         <div class="project-tag">5×5m · Corporativo</div>
     </div>
     
-    <!-- Proyecto 4 -->
     <div class="gallery-item wide" data-cat="modular">
         <div class="project-placeholder">
             <i class="ti ti-box"></i>
@@ -400,7 +387,6 @@
         <div class="project-tag">4×3m · Modular · Rojo y blanco</div>
     </div>
     
-    <!-- Proyecto 5 -->
     <div class="gallery-item" data-cat="escenografia">
         <div class="project-placeholder">
             <i class="ti ti-building"></i>
@@ -410,7 +396,6 @@
         <div class="project-tag">10×6m · Trusses</div>
     </div>
     
-    <!-- Proyecto 6 -->
     <div class="gallery-item" data-cat="interactivo">
         <div class="project-placeholder">
             <i class="ti ti-device-tablet"></i>
@@ -420,7 +405,6 @@
         <div class="project-tag">Interactivo · Pantalla touch</div>
     </div>
     
-    <!-- Proyecto 7 -->
     <div class="gallery-item" data-cat="stand">
         <div class="project-placeholder">
             <i class="ti ti-layout"></i>
@@ -430,7 +414,6 @@
         <div class="project-tag">6×4m · Trusses · Verde</div>
     </div>
     
-    <!-- Proyecto 8 -->
     <div class="gallery-item" data-cat="modular">
         <div class="project-placeholder">
             <i class="ti ti-box"></i>
@@ -441,7 +424,6 @@
     </div>
 </div>
 
-<!-- FOOTER -->
 <footer class="footer">
     <div class="footer-grid">
         <div>
@@ -476,7 +458,6 @@
 </footer>
 
 <script>
-    // Filtro de galería
     const filterBtns = document.querySelectorAll('.filter-btn');
     const items = document.querySelectorAll('.gallery-item');
     

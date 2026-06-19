@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Administración · Proyectos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #3060B0;
+            --blue-light: #EEF3FF;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .filters-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px;
+        }
+        
+        .filter-group i {
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .filter-group select, .filter-group input {
+            border: none;
+            padding: 10px 0;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-aprobado {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        
+        .status-diseno {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-produccion {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-instalacion {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-entregado {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-anulado {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+            color: var(--text-2);
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            th, td { padding: 10px 12px; }
+            .action-buttons { flex-direction: column; align-items: flex-start; }
+            .btn-icon { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-folder-open"></i>
+            <span>Gestión de Proyectos</span>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/proyectos}" method="get" class="filters-bar">
+        <div class="filter-group">
+            <i class="ti ti-filter"></i>
+            <select name="estado">
+                <option value="">Todos los estados</option>
+                <option value="APROBADO" th:selected="${estadoSeleccionado == 'APROBADO'}">Aprobado</option>
+                <option value="EN_DISEÑO" th:selected="${estadoSeleccionado == 'EN_DISEÑO'}">En Diseño</option>
+                <option value="EN_PRODUCCION" th:selected="${estadoSeleccionado == 'EN_PRODUCCION'}">En Producción</option>
+                <option value="INSTALACION" th:selected="${estadoSeleccionado == 'INSTALACION'}">Instalación/Montaje</option>
+                <option value="ENTREGADO" th:selected="${estadoSeleccionado == 'ENTREGADO'}">Entregado</option>
+                <option value="ANULADO" th:selected="${estadoSeleccionado == 'ANULADO'}">Anulado</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-search"></i>
+            <input type="text" name="clienteId" placeholder="ID Cliente (opcional)" th:value="${clienteId}">
+        </div>
+        <button type="submit" class="btn-secondary">Filtrar</button>
+        <a th:href="@{/admin/proyectos}" class="btn-secondary" th:if="${estadoSeleccionado != null or clienteId != null}">Limpiar</a>
+    </form>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Cliente</th>
+                    <th>Fecha creación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="proy : ${proyectos}">
+                    <td th:text="${proy.codProy}">—</td>
+                    <td th:text="${proy.nombre}">—</td>
+                    <td th:text="${proy.cotizacion.cliente.razonCli}">—</td>
+                    <td th:text="${#temporals.format(proy.fechaCreacion, 'dd/MM/yyyy')}">—</td>
+                    <td>
+                        <span th:classappend="${proy.estado == 'APROBADO'} ? 'status-badge status-aprobado' : 
+                                              (proy.estado == 'EN_DISEÑO' ? 'status-badge status-diseno' : 
+                                              (proy.estado == 'EN_PRODUCCION' ? 'status-badge status-produccion' : 
+                                              (proy.estado == 'INSTALACION' ? 'status-badge status-instalacion' : 
+                                              (proy.estado == 'ENTREGADO' ? 'status-badge status-entregado' : 'status-badge status-anulado'))))"
+                              th:text="${proy.estado}">—</span>
+                    </td>
+                    <td class="action-buttons">
+                        <a th:href="@{/admin/proyectos/detalle/{id}(id=${proy.codProy})}" class="btn-icon"><i class="ti ti-eye"></i> Detalle</a>
+                    </td>
+                </tr>
+                <tr th:if="${proyectos.isEmpty()}">
+                    <td colspan="6">
+                        <div class="empty-message">
+                            <i class="ti ti-folder-off"></i>
+                            <p>No hay proyectos registrados.</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

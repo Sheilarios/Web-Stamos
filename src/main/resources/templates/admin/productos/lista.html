@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Administración · Productos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .filters-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px;
+        }
+        
+        .filter-group i {
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .filter-group select, .filter-group input {
+            border: none;
+            padding: 10px 0;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+            color: var(--text-2);
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-icon.danger:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            th, td { padding: 10px 12px; }
+            .action-buttons { flex-direction: column; align-items: flex-start; }
+            .btn-icon { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-package"></i>
+            <span>Catálogo de Productos / Servicios</span>
+        </div>
+        <a th:href="@{/admin/productos/nuevo}" class="btn-primary">
+            <i class="ti ti-plus"></i> Nuevo Producto
+        </a>
+    </div>
+
+    <form th:action="@{/admin/productos}" method="get" class="filters-bar">
+        <div class="filter-group">
+            <i class="ti ti-search"></i>
+            <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre...">
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-category"></i>
+            <select name="categoria">
+                <option value="">Todas las categorías</option>
+                <option value="Stands y estructuras feriales" th:selected="${categoriaSeleccionada == 'Stands y estructuras feriales'}">Stands y estructuras feriales</option>
+                <option value="Mobiliario para eventos" th:selected="${categoriaSeleccionada == 'Mobiliario para eventos'}">Mobiliario para eventos</option>
+                <option value="Equipamiento interactivo y audiovisual" th:selected="${categoriaSeleccionada == 'Equipamiento interactivo y audiovisual'}">Equipamiento interactivo</option>
+                <option value="Publicidad gráfica" th:selected="${categoriaSeleccionada == 'Publicidad gráfica'}">Publicidad gráfica</option>
+                <option value="Servicios" th:selected="${categoriaSeleccionada == 'Servicios'}">Servicios</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-secondary">Filtrar</button>
+        <a th:href="@{/admin/productos}" class="btn-secondary" th:if="${search != null or categoriaSeleccionada != null}">Limpiar</a>
+    </form>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio base</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="prod : ${productos}">
+                    <td th:text="${prod.id}">—</td>
+                    <td th:text="${prod.nombre}">—</td>
+                    <td th:text="${prod.categoria != null ? prod.categoria : '-'}">—</td>
+                    <td th:text="'S/ ' + ${prod.precioBase}">—</td>
+                    <td th:text="${prod.tipo != null ? prod.tipo : '-'}">—</td>
+                    <td class="action-buttons">
+                        <a th:href="@{/admin/productos/ver/{id}(id=${prod.id})}" class="btn-icon"><i class="ti ti-eye"></i> Ver</a>
+                        <a th:href="@{/admin/productos/editar/{id}(id=${prod.id})}" class="btn-icon"><i class="ti ti-edit"></i> Editar</a>
+                        <form th:action="@{/admin/productos/eliminar/{id}(id=${prod.id})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn-icon danger" onclick="return confirm('¿Eliminar este producto?');"><i class="ti ti-trash"></i> Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${productos.isEmpty()}">
+                    <td colspan="6">
+                        <div class="empty-message">
+                            <i class="ti ti-package-off"></i>
+                            <p>No hay productos o servicios registrados.</p>
+                            <a th:href="@{/admin/productos/nuevo}" class="btn-primary" style="margin-top: 16px;">Agregar primer producto</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

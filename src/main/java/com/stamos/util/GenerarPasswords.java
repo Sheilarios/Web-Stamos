@@ -16,3 +16,4 @@ public class GenerarPasswords {
         System.out.println("Hash BCrypt: " + encoder.encode(clientePass));
     }
 }
+

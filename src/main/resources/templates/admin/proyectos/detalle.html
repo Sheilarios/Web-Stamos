@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Administración · Detalle Proyecto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #3060B0;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .info-card {
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 14px;
+        }
+        
+        .info-label {
+            width: 180px;
+            font-weight: 600;
+            color: var(--yellow-dark);
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--text);
+        }
+        
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 24px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: var(--yellow-dark);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #a71d2a;
+        }
+        
+        @media (max-width: 768px) {
+            .info-row { flex-direction: column; margin-bottom: 12px; }
+            .info-label { width: auto; margin-bottom: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-folder"></i>
+            <span th:text="${proyecto.nombre}">Detalle del proyecto</span>
+        </div>
+        <a th:href="@{/admin/proyectos}" class="btn-secondary"><i class="ti ti-arrow-left"></i> Volver</a>
+    </div>
+
+    <div class="info-card">
+        <div class="info-row">
+            <div class="info-label">ID Proyecto:</div>
+            <div class="info-value" th:text="${proyecto.codProy}">—</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Cliente:</div>
+            <div class="info-value" th:text="${proyecto.cotizacion.cliente.razonCli}">—</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Cotización asociada:</div>
+            <div class="info-value" th:text="'#' + ${proyecto.cotizacion.codCot} + ' - S/ ' + ${proyecto.cotizacion.total}">—</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Fecha creación:</div>
+            <div class="info-value" th:text="${#temporals.format(proyecto.fechaCreacion, 'dd/MM/yyyy')}">—</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Fecha entrega estimada:</div>
+            <div class="info-value" th:text="${proyecto.fechaEntregaEstimada != null ? #temporals.format(proyecto.fechaEntregaEstimada, 'dd/MM/yyyy') : 'No definida'}">—</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Estado actual:</div>
+            <div class="info-value">
+                <span class="status-badge" th:classappend="${proyecto.estado == 'APROBADO'} ? 'status-aprobado' : 
+                                                      (proyecto.estado == 'EN_DISEÑO' ? 'status-diseno' : 
+                                                      (proyecto.estado == 'EN_PRODUCCION' ? 'status-produccion' : 
+                                                      (proyecto.estado == 'INSTALACION' ? 'status-instalacion' : 
+                                                      (proyecto.estado == 'ENTREGADO' ? 'status-entregado' : 'status-anulado'))))"
+                      th:text="${proyecto.estado}">—</span>
+            </div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Responsable actual:</div>
+            <div class="info-value" th:text="${proyecto.responsable != null ? proyecto.responsable : 'No asignado'}">—</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Último cambio:</div>
+            <div class="info-value" th:text="${proyecto.ultimoCambioFecha != null ? #temporals.format(proyecto.ultimoCambioFecha, 'dd/MM/yyyy') + ' por ' + proyecto.ultimoCambioResponsable : 'Sin cambios'}">—</div>
+        </div>
+    </div>
+
+    <!-- Sección de cambio de estado -->
+    <div class="section-title">
+        <i class="ti ti-arrow-forward"></i> Avanzar estado
+    </div>
+    <div class="info-card" th:if="${siguienteEstado != null}">
+        <form th:action="@{/admin/proyectos/avanzar/{id}(id=${proyecto.codProy})}" method="post">
+            <div class="info-row">
+                <div class="info-label">Siguiente estado:</div>
+                <div class="info-value">
+                    <strong th:text="${siguienteEstado}">—</strong>
+                    <input type="hidden" name="responsable" th:value="${#authentication.name}">
+                </div>
+            </div>
+            <div class="action-buttons" style="margin-top: 12px;">
+                <button type="submit" class="btn-primary"><i class="ti ti-arrow-right"></i> Avanzar proyecto</button>
+            </div>
+        </form>
+    </div>
+    <div class="action-buttons" th:if="${puedeAnular}">
+        <form th:action="@{/admin/proyectos/anular/{id}(id=${proyecto.codProy})}" method="post">
+            <input type="hidden" name="responsable" th:value="${#authentication.name}">
+            <button type="submit" class="btn-primary btn-danger" onclick="return confirm('¿Anular este proyecto? No se podrá revertir.');"><i class="ti ti-x"></i> Anular proyecto</button>
+        </form>
+    </div>
+
+    <!-- Historial de cambios -->
+    <div class="section-title">
+        <i class="ti ti-history"></i> Historial de cambios de estado
+    </div>
+    <div class="table-wrapper" th:if="${!logs.isEmpty()}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Estado anterior</th>
+                    <th>Estado nuevo</th>
+                    <th>Responsable</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="log : ${logs}">
+                    <td th:text="${#temporals.format(log.fechaCambio, 'dd/MM/yyyy HH:mm')}">—</td>
+                    <td th:text="${log.estadoAnterior}">—</td>
+                    <td th:text="${log.estadoNuevo}">—</td>
+                    <td th:text="${log.responsable}">—</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${logs.isEmpty()}" class="info-card" style="text-align: center;">
+        No hay registros de cambios de estado.
+    </div>
+</div>
+
+</body>
+</html>

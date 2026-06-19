@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Mis Documentos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --sidebar-width: 260px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        /* ===== LAYOUT ===== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-brand i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .sidebar-brand span {
+            color: var(--yellow-dark);
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.15s;
+            margin-bottom: 4px;
+        }
+        
+        .sidebar-nav a i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-nav a:hover {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .sidebar-nav a.active {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            border-left: 3px solid var(--yellow);
+        }
+        
+        .sidebar-nav .nav-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-3);
+            font-weight: 600;
+            padding: 16px 16px 8px;
+        }
+        
+        .sidebar-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+            margin-top: auto;
+        }
+        
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.15s;
+        }
+        
+        .sidebar-footer a:hover {
+            background: #FEF2F2;
+            color: var(--red);
+        }
+        
+        .sidebar-footer a i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .page-title small {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            margin-left: 8px;
+        }
+        
+        .user-info {
+            background: var(--yellow-light);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--yellow-border);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-2);
+        }
+        
+        .user-info i {
+            color: var(--yellow-dark);
+        }
+        
+        /* ===== FILTROS ===== */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            background: var(--card);
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+        
+        .filters label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-2);
+        }
+        
+        .filters select,
+        .filters input {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: all 0.15s;
+        }
+        
+        .filters select:focus,
+        .filters input:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+        }
+        
+        /* ===== DOCUMENTOS GRID ===== */
+        .documentos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .documento-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .documento-card:hover {
+            border-color: var(--yellow);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .documento-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 14px;
+        }
+        
+        .documento-icon.render {
+            background: #E8F0FE;
+            color: #1A56DB;
+        }
+        
+        .documento-icon.plano {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+        
+        .documento-icon.boceto {
+            background: #D1FAE5;
+            color: #047857;
+        }
+        
+        .documento-icon.contrato {
+            background: #FCE4EC;
+            color: #C62828;
+        }
+        
+        .documento-icon.otro {
+            background: #F3E8FF;
+            color: #6D28D9;
+        }
+        
+        .documento-nombre {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .documento-meta {
+            font-size: 12px;
+            color: var(--text-3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        
+        .documento-meta .badge-tipo {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-tipo.render {
+            background: #E8F0FE;
+            color: #1A56DB;
+        }
+        
+        .badge-tipo.plano {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+        
+        .badge-tipo.boceto {
+            background: #D1FAE5;
+            color: #047857;
+        }
+        
+        .badge-tipo.contrato {
+            background: #FCE4EC;
+            color: #C62828;
+        }
+        
+        .badge-tipo.otro {
+            background: #F3E8FF;
+            color: #6D28D9;
+        }
+        
+        .documento-proyecto {
+            font-size: 12px;
+            color: var(--text-2);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .documento-proyecto i {
+            font-size: 14px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        
+        .documento-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .documento-actions .btn-visualizar {
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: none;
+            background: var(--yellow);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .documento-actions .btn-visualizar:hover {
+            background: var(--yellow-dark);
+            color: white;
+        }
+        
+        .documento-actions .btn-visualizar i {
+            font-size: 16px;
+        }
+        
+        /* ===== MODAL VISUALIZADOR ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--card);
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalIn 0.25s ease;
+        }
+        
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-header h3 i {
+            color: var(--yellow-dark);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--text-3);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+        
+        .modal-close:hover {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            background: var(--bg);
+        }
+        
+        .modal-body img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        
+        .modal-body .pdf-container {
+            width: 100%;
+            height: 70vh;
+        }
+        
+        .modal-body .pdf-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .modal-body .no-preview {
+            text-align: center;
+            color: var(--text-3);
+            padding: 40px;
+        }
+        
+        .modal-body .no-preview i {
+            font-size: 64px;
+            opacity: 0.5;
+            display: block;
+            margin-bottom: 16px;
+        }
+        
+        .modal-footer {
+            padding: 14px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .modal-footer .btn-descargar {
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: none;
+            background: var(--yellow);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .modal-footer .btn-descargar:hover {
+            background: var(--yellow-dark);
+            color: white;
+        }
+        
+        .modal-footer .btn-cerrar {
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-2);
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .modal-footer .btn-cerrar:hover {
+            background: var(--bg);
+        }
+        
+        /* ===== EMPTY STATE ===== */
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+        
+        .empty-message h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        .empty-message p {
+            font-size: 14px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 8px;
+            }
+            .sidebar-brand span,
+            .sidebar-nav a span,
+            .sidebar-nav .nav-label,
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-nav a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-nav a i {
+                font-size: 24px;
+                width: auto;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-footer a i {
+                font-size: 24px;
+                width: auto;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .documentos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="ti ti-construction"></i>
+            <span>STAMOS</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-label">Cliente</div>
+            
+            <a href="#" th:href="@{/cliente/dashboard}">
+                <i class="ti ti-layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="#" th:href="@{/cliente/proyectos}">
+                <i class="ti ti-folder-open"></i>
+                <span>Mis Proyectos</span>
+            </a>
+            
+            <a href="#" class="active" th:href="@{/cliente/documentos}">
+                <i class="ti ti-file-text"></i>
+                <span>Documentos</span>
+            </a>
+            
+            <a href="#" th:href="@{/cliente/pagos}">
+                <i class="ti ti-credit-card"></i>
+                <span>Historial de Pagos</span>
+            </a>
+            
+            <a href="#" th:href="@{/cliente/perfil}">
+                <i class="ti ti-user-circle"></i>
+                <span>Mi Perfil</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="#" th:href="@{/logout}">
+                <i class="ti ti-logout"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+    
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="page-title">
+                <i class="ti ti-file-text"></i>
+                <span>Mis Documentos <small>Renders, planos y bocetos</small></span>
+            </div>
+            <div class="user-info">
+                <i class="ti ti-user-circle"></i>
+                <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
+            </div>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="filters">
+            <label for="tipoFiltro">Filtrar por tipo:</label>
+            <select id="tipoFiltro" onchange="filtrarDocumentos()">
+                <option value="todos">Todos los tipos</option>
+                <option value="Render">Renders</option>
+                <option value="Plano">Planos</option>
+                <option value="Boceto">Bocetos</option>
+                <option value="Contrato">Contratos</option>
+                <option value="Otro">Otros</option>
+            </select>
+            
+            <label for="proyectoFiltro" style="margin-left:8px;">Proyecto:</label>
+            <select id="proyectoFiltro" onchange="filtrarDocumentos()">
+                <option value="todos">Todos los proyectos</option>
+                <option th:each="p : ${proyectos}" th:value="${p.idProyecto}" th:text="${p.nombreProyecto}">Proyecto</option>
+            </select>
+        </div>
+        
+        <!-- Documentos -->
+        <div th:if="${!documentos.isEmpty()}">
+            <div class="documentos-grid" id="documentosGrid">
+                <div th:each="doc : ${documentos}" class="documento-card" 
+                     th:data-tipo="${doc.tipoDocumento}"
+                     th:data-proyecto="${doc.idProyecto}">
+                    
+                    <!-- Icono según tipo -->
+                    <div th:classappend="${doc.tipoDocumento == 'Render'} ? 'documento-icon render' :
+                                        ${doc.tipoDocumento == 'Plano'} ? 'documento-icon plano' :
+                                        ${doc.tipoDocumento == 'Boceto'} ? 'documento-icon boceto' :
+                                        ${doc.tipoDocumento == 'Contrato'} ? 'documento-icon contrato' :
+                                        'documento-icon otro'">
+                        <i th:if="${doc.tipoDocumento == 'Render'}" class="ti ti-photo"></i>
+                        <i th:if="${doc.tipoDocumento == 'Plano'}" class="ti ti-ruler-2"></i>
+                        <i th:if="${doc.tipoDocumento == 'Boceto'}" class="ti ti-pencil"></i>
+                        <i th:if="${doc.tipoDocumento == 'Contrato'}" class="ti ti-file-contract"></i>
+                        <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="ti ti-file"></i>
+                    </div>
+                    
+                    <!-- Nombre -->
+                    <div class="documento-nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
+                    
+                    <!-- Meta datos -->
+                    <div class="documento-meta">
+                        <span class="badge-tipo" th:classappend="${doc.tipoDocumento == 'Render'} ? 'render' :
+                                            ${doc.tipoDocumento == 'Plano'} ? 'plano' :
+                                            ${doc.tipoDocumento == 'Boceto'} ? 'boceto' :
+                                            ${doc.tipoDocumento == 'Contrato'} ? 'contrato' : 'otro'"
+                              th:text="${doc.tipoDocumento}">Render</span>
+                        <span th:text="${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">01/01/2024</span>
+                        <span th:if="${doc.tamanoBytes}" th:text="${#strings.substring(#numbers.formatDecimal(doc.tamanoBytes / 1024, 0, 0) + ' KB', 0, 8)}">256 KB</span>
+                    </div>
+                    
+                    <!-- Proyecto -->
+                    <div class="documento-proyecto">
+                        <i class="ti ti-folder"></i>
+                        <span th:text="${doc.nombreProyecto}">Proyecto</span>
+                    </div>
+                    
+                    <!-- Acciones -->
+                    <div class="documento-actions">
+                        <button class="btn-visualizar" th:onclick="'abrirVisualizador(' + ${doc.idDocumento} + ')'">
+                            <i class="ti ti-eye"></i> Visualizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div th:if="${documentos.isEmpty()}" class="empty-message">
+            <i class="ti ti-file-off"></i>
+            <h3>No hay documentos disponibles</h3>
+            <p>Aún no se han subido renders, planos o bocetos para tus proyectos. 
+            Cuando estén disponibles, los verás aquí.</p>
+        </div>
+        
+    </main>
+</div>
+
+<!-- ===== MODAL VISUALIZADOR ===== -->
+<div class="modal-overlay" id="modalVisualizador">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>
+                <i class="ti ti-eye"></i>
+                <span id="modalTitulo">Visualizar documento</span>
+            </h3>
+            <button class="modal-close" onclick="cerrarVisualizador()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <div class="no-preview">
+                <i class="ti ti-photo-off"></i>
+                <p>Cargando documento...</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cerrar" onclick="cerrarVisualizador()">Cerrar</button>
+            <a href="#" class="btn-descargar" id="btnDescargar" download>
+                <i class="ti ti-download"></i> Descargar
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Datos de documentos desde el backend (se inyectan en el HTML)
+    const documentosData = /*[[${documentos}]]*/ [];
+    
+    // Función para abrir el visualizador
+    function abrirVisualizador(idDocumento) {
+        const doc = documentosData.find(d => d.idDocumento === idDocumento);
+        if (!doc) return;
+        
+        const modal = document.getElementById('modalVisualizador');
+        const modalBody = document.getElementById('modalBody');
+        const modalTitulo = document.getElementById('modalTitulo');
+        const btnDescargar = document.getElementById('btnDescargar');
+        
+        // Actualizar título
+        modalTitulo.textContent = doc.nombreArchivo || 'Documento';
+        
+        // Configurar botón descargar
+        btnDescargar.href = doc.urlArchivo || '#';
+        btnDescargar.download = doc.nombreArchivo || 'documento';
+        
+        // Determinar tipo de archivo y mostrar preview
+        const extension = (doc.nombreArchivo || '').split('.').pop().toLowerCase();
+        const esImagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension);
+        const esPdf = extension === 'pdf';
+        
+        if (esImagen) {
+            modalBody.innerHTML = `<img src="${doc.urlArchivo}" alt="${doc.nombreArchivo}" loading="lazy">`;
+        } else if (esPdf) {
+            modalBody.innerHTML = `
+                <div class="pdf-container">
+                    <iframe src="${doc.urlArchivo}#toolbar=0" allowfullscreen></iframe>
+                </div>
+            `;
+        } else {
+            modalBody.innerHTML = `
+                <div class="no-preview">
+                    <i class="ti ti-file"></i>
+                    <p>Vista previa no disponible para este tipo de archivo</p>
+                    <p style="font-size:12px; margin-top:8px; color:var(--text-3);">
+                        ${doc.nombreArchivo || 'Archivo'}
+                    </p>
+                    <div style="margin-top:16px;">
+                        <a href="${doc.urlArchivo}" download="${doc.nombreArchivo}" class="btn-descargar" style="display:inline-flex; align-items:center; gap:8px; padding:10px 24px; background:var(--yellow); border-radius:10px; text-decoration:none; color:var(--text); font-weight:600;">
+                            <i class="ti ti-download"></i> Descargar archivo
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Función para cerrar el visualizador
+    function cerrarVisualizador() {
+        document.getElementById('modalVisualizador').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Cerrar con tecla ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') cerrarVisualizador();
+    });
+    
+    // Cerrar clic en overlay
+    document.getElementById('modalVisualizador').addEventListener('click', function(e) {
+        if (e.target === this) cerrarVisualizador();
+    });
+    
+    // Función para filtrar documentos
+    function filtrarDocumentos() {
+        const tipoFiltro = document.getElementById('tipoFiltro').value;
+        const proyectoFiltro = document.getElementById('proyectoFiltro').value;
+        
+        const cards = document.querySelectorAll('.documento-card');
+        
+        cards.forEach(card => {
+            const tipo = card.dataset.tipo;
+            const proyecto = card.dataset.proyecto;
+            
+            let mostrar = true;
+            
+            if (tipoFiltro !== 'todos' && tipo !== tipoFiltro) {
+                mostrar = false;
+            }
+            
+            if (proyectoFiltro !== 'todos' && proyecto !== proyectoFiltro) {
+                mostrar = false;
+            }
+            
+            card.style.display = mostrar ? '' : 'none';
+        });
+    }
+</script>
+
+</body>
+</html>

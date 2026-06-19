@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Proyectos - STAMOS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #1A1A1A;
+        }
+        .header a {
+            color: #F5C400;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .header a:hover {
+            text-decoration: underline;
+        }
+        .card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #EEEEEE;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .card-header h3 {
+            font-size: 16px;
+            color: #1A1A1A;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-aprobado { background: #DBEAFE; color: #1A56DB; }
+        .badge-diseno { background: #FEF3C7; color: #D97706; }
+        .badge-produccion { background: #DBEAFE; color: #2563EB; }
+        .badge-instalacion { background: #EDE9FE; color: #7C3AED; }
+        .badge-entregado { background: #D1FAE5; color: #065F46; }
+        .badge-anulado { background: #FEE2E2; color: #991B1B; }
+        .badge-pendiente { background: #F3F4F6; color: #6B7280; }
+        .card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 14px;
+            color: #4B5563;
+        }
+        .card-body .label {
+            color: #9CA3AF;
+            font-size: 12px;
+        }
+        .card-body .value {
+            font-weight: 500;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6B7280;
+        }
+        .empty-state i {
+            font-size: 48px;
+            color: #D1D5DB;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .empty-state h2 {
+            font-size: 20px;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .card-body {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="ti ti-folder"></i> Mis Proyectos</h1>
+            <a href="/cliente/dashboard"><i class="ti ti-arrow-left"></i> Volver al Dashboard</a>
+        </div>
+
+        <div th:if="${proyectos != null && !proyectos.isEmpty()}">
+            <div class="card" th:each="proyecto : ${proyectos}">
+                <div class="card-header">
+                    <h3 th:text="${proyecto.nombreProyecto}">Nombre del Proyecto</h3>
+                    <span class="badge" 
+                          th:classappend="${proyecto.estadoBadgeClass}" 
+                          th:text="${proyecto.estadoLegible}">Estado</span>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="label">Código</div>
+                        <div class="value" th:text="${proyecto.codigoProyecto}">PRO-00000</div>
+                    </div>
+                    <div>
+                        <div class="label">Monto Total</div>
+                        <div class="value" th:text="${proyecto.montoTotalFormateado}">S/ 0.00</div>
+                    </div>
+                    <div>
+                        <div class="label">Fecha Inicio</div>
+                        <div class="value" th:text="${proyecto.fechaInicioFormateada}">-</div>
+                    </div>
+                    <div>
+                        <div class="label">Fecha Fin Estimada</div>
+                        <div class="value" th:text="${proyecto.fechaFinEstimadaFormateada}">-</div>
+                    </div>
+                    <div>
+                        <div class="label">Fecha Vencimiento</div>
+                        <div class="value" th:text="${proyecto.fechaVencimientoFormateada}">-</div>
+                    </div>
+                    <div>
+                        <div class="label">Progreso</div>
+                        <div class="value">
+                            <span th:text="${proyecto.progreso} + '%'">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${proyectos == null || proyectos.isEmpty()}" class="empty-state">
+            <i class="ti ti-folder-off"></i>
+            <h2>No tienes proyectos</h2>
+            <p>Actualmente no tienes proyectos asignados. <br> Cuando tengas un proyecto, aparecerá aquí.</p>
+            <a href="/cliente/dashboard" style="display:inline-block;margin-top:16px;color:#F5C400;font-weight:600;text-decoration:none;">
+                <i class="ti ti-arrow-left"></i> Volver al Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>
