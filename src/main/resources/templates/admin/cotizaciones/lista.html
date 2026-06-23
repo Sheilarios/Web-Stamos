@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Administración · Cotizaciones</title>
+    <title>Gestión de Cotizaciones · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,8 +24,8 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
-            --blue: #3060B0;
-            --blue-light: #EEF3FF;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -70,6 +70,13 @@
             font-size: 28px;
         }
         
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
         .btn-primary {
             background: var(--yellow);
             border: none;
@@ -89,6 +96,28 @@
         
         .btn-primary:hover {
             background: var(--yellow-mid);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
         }
         
         .filters-bar {
@@ -123,23 +152,8 @@
             font-family: 'DM Sans', sans-serif;
         }
         
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-2);
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
-            text-decoration: none;
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+        .filter-group select {
+            min-width: 120px;
         }
         
         .table-wrapper {
@@ -175,9 +189,13 @@
             border-bottom: none;
         }
         
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
         .status-badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
@@ -200,7 +218,7 @@
         
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         
@@ -214,9 +232,10 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.15s;
             color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
         }
         
         .btn-icon:hover {
@@ -224,14 +243,25 @@
             color: var(--yellow-dark);
         }
         
-        .btn-icon.approve:hover {
+        .btn-icon.verde:hover {
             border-color: var(--green);
             color: var(--green);
         }
         
-        .btn-icon.cancel:hover {
+        .btn-icon.rojo:hover {
             border-color: var(--red);
             color: var(--red);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .btn-icon:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
         }
         
         .empty-message {
@@ -246,12 +276,127 @@
             opacity: 0.5;
         }
         
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .pagination {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .page-link {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+        
+        .page-link:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .page-link.active {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #2A1800;
+            font-weight: 600;
+        }
+        
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+        }
+        
+        .stat-card .numero {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-card .etiqueta {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .stat-card .numero.amarillo { color: var(--yellow-dark); }
+        .stat-card .numero.verde { color: var(--green); }
+        .stat-card .numero.rojo { color: var(--red); }
+        
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
-            th, td { padding: 10px 12px; }
-            .action-buttons { flex-direction: column; align-items: flex-start; }
-            .btn-icon { width: 100%; justify-content: center; }
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-group select, .filter-group input { width: 100%; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .pagination { flex-direction: column; align-items: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -262,30 +407,58 @@
         <div class="page-title">
             <i class="ti ti-file-invoice"></i>
             <span>Gestión de Cotizaciones</span>
+            <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
         </div>
         <a th:href="@{/admin/cotizaciones/nuevo}" class="btn-primary">
             <i class="ti ti-plus"></i> Nueva Cotización
         </a>
     </div>
 
-    <form th:action="@{/admin/cotizaciones}" method="get" class="filters-bar">
-        <div class="filter-group">
-            <i class="ti ti-search"></i>
-            <input type="text" name="search" th:value="${search}" placeholder="Buscar por cliente...">
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="numero amarillo" th:text="${totalPendientes}">0</div>
+            <div class="etiqueta">Pendientes</div>
         </div>
+        <div class="stat-card">
+            <div class="numero verde" th:text="${totalAprobadas}">0</div>
+            <div class="etiqueta">Aprobadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero rojo" th:text="${totalAnuladas}">0</div>
+            <div class="etiqueta">Anuladas</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero" th:text="${totalCotizaciones}">0</div>
+            <div class="etiqueta">Total</div>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/cotizaciones}" method="get" class="filters-bar">
         <div class="filter-group">
             <i class="ti ti-filter"></i>
             <select name="estado">
                 <option value="">Todos los estados</option>
-                <option value="PENDIENTE" th:selected="${estadoSeleccionado == 'PENDIENTE'}">Pendiente</option>
-                <option value="APROBADA" th:selected="${estadoSeleccionado == 'APROBADA'}">Aprobada</option>
-                <option value="ANULADA" th:selected="${estadoSeleccionado == 'ANULADA'}">Anulada</option>
+                <option value="Pendiente" th:selected="${estado == 'Pendiente'}">Pendientes</option>
+                <option value="Aprobada" th:selected="${estado == 'Aprobada'}">Aprobadas</option>
+                <option value="Anulada" th:selected="${estado == 'Anulada'}">Anuladas</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-user"></i>
+            <select name="clienteId">
+                <option value="">Todos los clientes</option>
+                <option th:each="c : ${clientes}" th:value="${c.idCliente}" 
+                        th:text="${c.nombreRazonSocial}" 
+                        th:selected="${clienteId != null and clienteId == c.idCliente}"></option>
             </select>
         </div>
         <button type="submit" class="btn-secondary">
             <i class="ti ti-search"></i> Filtrar
         </button>
-        <a th:href="@{/admin/cotizaciones}" class="btn-secondary" th:if="${search != null or estadoSeleccionado != null}">
+        <a th:href="@{/admin/cotizaciones}" class="btn-secondary" th:if="${estado != null or clienteId != null}">
             <i class="ti ti-refresh"></i> Limpiar
         </a>
     </form>
@@ -296,54 +469,91 @@
                 <tr>
                     <th>ID</th>
                     <th>Cliente</th>
-                    <th>Fecha Emisión</th>
+                    <th>Fecha</th>
+                    <th>Subtotal</th>
                     <th>Total</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="cot : ${cotizaciones}">
-                    <td th:text="${cot.codCot}">—</td>
-                    <td th:text="${cot.cliente.razonCli}">—</td>
-                    <td th:text="${#temporals.format(cot.fechaEmision, 'dd/MM/yyyy')}">—</td>
-                    <td th:text="'S/ ' + ${cot.total}">—</td>
+                <tr th:each="cotizacion : ${cotizaciones}">
+                    <td th:text="'COT-' + ${#strings.padLeft(cotizacion.idCotizacion, 5, '0')}">COT-00000</td>
+                    <td th:text="${cotizacion.nombreCliente != null ? cotizacion.nombreCliente : 'Cliente ID: ' + cotizacion.idCliente}">—</td>
+                    <td th:text="${#temporals.format(cotizacion.fechaEmision, 'dd/MM/yyyy HH:mm')}">—</td>
+                    <td th:text="'S/ ' + ${#numbers.formatDecimal(cotizacion.subtotal, 0, 2)}">S/ 0.00</td>
+                    <td th:text="'S/ ' + ${#numbers.formatDecimal(cotizacion.total, 0, 2)}">S/ 0.00</td>
                     <td>
-                        <span th:classappend="${cot.estado == 'PENDIENTE'} ? 'status-badge status-pendiente' : 
-                                              (cot.estado == 'APROBADA' ? 'status-badge status-aprobada' : 'status-badge status-anulada')"
-                              th:text="${cot.estado}">—</span>
+                        <span class="status-badge" 
+                              th:classappend="${cotizacion.estado == 'Pendiente'} ? 'status-pendiente' : 
+                                              (cotizacion.estado == 'Aprobada' ? 'status-aprobada' : 'status-anulada')"
+                              th:text="${cotizacion.estado}">—</span>
                     </td>
                     <td class="action-buttons">
-                        <a th:href="@{/admin/cotizaciones/editar/{id}(id=${cot.codCot})}" class="btn-icon" th:if="${cot.estado != 'APROBADA'}">
+                        <a th:href="@{/admin/cotizaciones/editar/{id}(id=${cotizacion.idCotizacion})}" 
+                           class="btn-icon azul" 
+                           th:if="${cotizacion.estado == 'Pendiente'}">
                             <i class="ti ti-edit"></i> Editar
                         </a>
-                        <a th:href="@{/admin/cotizaciones/versiones/{id}(id=${cot.codCot})}" class="btn-icon">
+                        <a th:href="@{/admin/cotizaciones/versiones/{id}(id=${cotizacion.idCotizacion})}" 
+                           class="btn-icon">
                             <i class="ti ti-history"></i> Versiones
                         </a>
-                        <form th:action="@{/admin/cotizaciones/aprobar/{id}(id=${cot.codCot})}" method="post" style="display: inline;" th:if="${cot.estado == 'PENDIENTE'}">
-                            <button type="submit" class="btn-icon approve" onclick="return confirm('¿Aprobar esta cotización? Se generará un proyecto automáticamente.');">
+                        <form th:action="@{/admin/cotizaciones/aprobar/{id}(id=${cotizacion.idCotizacion})}" method="post" style="display:inline;" 
+                              th:if="${cotizacion.estado == 'Pendiente'}">
+                            <button type="submit" class="btn-icon verde" onclick="return confirm('¿Aprobar esta cotización? Se generará un proyecto automáticamente.');">
                                 <i class="ti ti-check"></i> Aprobar
                             </button>
                         </form>
-                        <form th:action="@{/admin/cotizaciones/anular/{id}(id=${cot.codCot})}" method="post" style="display: inline;" th:if="${cot.estado == 'PENDIENTE'}">
-                            <button type="submit" class="btn-icon cancel" onclick="return confirm('¿Anular esta cotización?');">
+                        <form th:action="@{/admin/cotizaciones/anular/{id}(id=${cotizacion.idCotizacion})}" method="post" style="display:inline;" 
+                              th:if="${cotizacion.estado == 'Pendiente'}">
+                            <button type="submit" class="btn-icon rojo" onclick="return confirm('¿Anular esta cotización?');">
                                 <i class="ti ti-x"></i> Anular
                             </button>
                         </form>
                     </td>
                 </tr>
-                <tr th:if="${cotizaciones.isEmpty()}">
-                    <td colspan="6">
+                <tr th:if="${cotizaciones == null || cotizaciones.isEmpty()}">
+                    <td colspan="7">
                         <div class="empty-message">
                             <i class="ti ti-file-off"></i>
                             <p>No hay cotizaciones registradas.</p>
-                            <a th:href="@{/admin/cotizaciones/nuevo}" class="btn-primary" style="margin-top: 16px;">Crear primera cotización</a>
+                            <a th:href="@{/admin/cotizaciones/nuevo}" class="btn-primary" style="margin-top: 16px;">
+                                <i class="ti ti-plus"></i> Crear primera cotización
+                            </a>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div class="pagination" th:if="${cotizaciones != null && !cotizaciones.isEmpty()}">
+        <div class="pagination-info">
+            Mostrando <span th:text="${#lists.size(cotizaciones)}">0</span> de <span th:text="${totalItems}">0</span> cotizaciones
+            <span th:if="${totalPages > 1}" th:text="'· Página ' + ${currentPage + 1} + ' de ' + ${totalPages}"></span>
+        </div>
+        <div class="pagination-buttons" th:if="${totalPages > 1}">
+            <a th:href="@{/admin/cotizaciones(page=${currentPage - 1}, estado=${estado}, clienteId=${clienteId})}" 
+               class="page-link" 
+               th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                Anterior
+            </a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+               th:href="@{/admin/cotizaciones(page=${i}, estado=${estado}, clienteId=${clienteId})}" 
+               class="page-link" 
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               th:text="${i + 1}">
+                1
+            </a>
+            <a th:href="@{/admin/cotizaciones(page=${currentPage + 1}, estado=${estado}, clienteId=${clienteId})}" 
+               class="page-link" 
+               th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                Siguiente
+            </a>
+        </div>
+    </div>
+
 </div>
 
 </body>

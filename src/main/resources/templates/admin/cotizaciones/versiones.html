@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Administración · Versiones de Cotización</title>
+    <title>Historial de Versiones · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,6 +24,8 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -68,27 +70,12 @@
             font-size: 28px;
         }
         
-        .cotizacion-info {
-            background: var(--yellow-light);
-            border: 1px solid var(--yellow-border);
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 24px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .info-item {
-            font-size: 13px;
-        }
-        
-        .info-label {
-            font-weight: 600;
-            color: var(--yellow-dark);
-            margin-right: 8px;
+        .page-title small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+            margin-left: 8px;
         }
         
         .btn-secondary {
@@ -111,6 +98,100 @@
         .btn-secondary:hover {
             border-color: var(--yellow);
             color: var(--yellow-dark);
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .cotizacion-info {
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        .info-item {
+            font-size: 13px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--yellow-dark);
+            margin-right: 6px;
+        }
+        
+        .info-value {
+            color: var(--text);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-pendiente {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-aprobada {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-anulada {
+            background: var(--red-light);
+            color: var(--red);
         }
         
         .table-wrapper {
@@ -146,6 +227,40 @@
             border-bottom: none;
         }
         
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
+        .version-actual {
+            background: var(--green-light);
+            font-weight: 600;
+            color: var(--green);
+        }
+        
+        .version-actual td {
+            background: var(--green-light);
+        }
+        
+        .badge-actual {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .badge-historical {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--bg);
+            color: var(--text-3);
+        }
+        
         .empty-message {
             text-align: center;
             padding: 48px;
@@ -158,11 +273,54 @@
             opacity: 0.5;
         }
         
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s;
+            color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .btn-icon.verde:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
-            .cotizacion-info { flex-direction: column; align-items: flex-start; }
-            th, td { padding: 10px 12px; }
+            .cotizacion-info { grid-template-columns: 1fr; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
         }
     </style>
 </head>
@@ -173,66 +331,128 @@
         <div class="page-title">
             <i class="ti ti-history"></i>
             <span>Historial de Versiones</span>
+            <small th:text="'COT-' + ${#strings.leftPad(cotizacion.idCotizacion, 5, '0')}">COT-00000</small>
         </div>
-        <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
-            <i class="ti ti-arrow-left"></i> Volver a cotizaciones
-        </a>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a th:href="@{/admin/cotizaciones/editar/{id}(id=${cotizacion.idCotizacion})}" 
+               class="btn-primary" 
+               th:if="${cotizacion.estado == 'Pendiente'}">
+                <i class="ti ti-edit"></i> Editar cotización
+            </a>
+            <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
+                <i class="ti ti-arrow-left"></i> Volver
+            </a>
+        </div>
     </div>
 
-    <!-- Información de la cotización principal -->
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
     <div class="cotizacion-info" th:if="${cotizacion != null}">
         <div class="info-item">
-            <span class="info-label">Cotización ID:</span>
-            <span th:text="${cotizacion.codCot}">—</span>
-        </div>
-        <div class="info-item">
             <span class="info-label">Cliente:</span>
-            <span th:text="${cotizacion.cliente.razonCli}">—</span>
+            <span class="info-value" th:text="${cotizacion.nombreCliente}">—</span>
         </div>
         <div class="info-item">
             <span class="info-label">Fecha emisión:</span>
-            <span th:text="${#temporals.format(cotizacion.fechaEmision, 'dd/MM/yyyy')}">—</span>
+            <span class="info-value" th:text="${#temporals.format(cotizacion.fechaEmision, 'dd/MM/yyyy HH:mm')}">—</span>
         </div>
         <div class="info-item">
-            <span class="info-label">Estado actual:</span>
-            <span th:text="${cotizacion.estado}">—</span>
+            <span class="info-label">Estado:</span>
+            <span class="status-badge" 
+                  th:classappend="${cotizacion.estado == 'Pendiente'} ? 'status-pendiente' : 
+                                  (cotizacion.estado == 'Aprobada' ? 'status-aprobada' : 'status-anulada')"
+                  th:text="${cotizacion.estado}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Versión actual:</span>
+            <span class="info-value" th:text="'V' + ${cotizacion.versionActual}">V1</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Total:</span>
+            <span class="info-value" th:text="${cotizacion.totalFormateado}">S/ 0.00</span>
+        </div>
+        <div class="info-item" th:if="${cotizacion.tieneProyectoAsociado}">
+            <span class="info-label">Proyecto:</span>
+            <span class="info-value" th:text="'PRO-' + ${#strings.leftPad(cotizacion.idProyectoAsociado, 5, '0')}">PRO-00000</span>
         </div>
     </div>
 
-    <!-- Tabla de versiones -->
     <div class="table-wrapper">
-        <table th:if="${!versiones.isEmpty()}">
+        <table th:if="${versiones != null && !versiones.isEmpty()}">
             <thead>
                 <tr>
                     <th>Versión</th>
                     <th>Fecha</th>
                     <th>Usuario</th>
-                    <th>Datos de la versión</th>
+                    <th>Subtotal</th>
+                    <th>IGV</th>
+                    <th>Total</th>
+                    <th>Tasa IGV</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="ver : ${versiones}">
-                    <td th:text="${ver.versionNumero}">—</td>
-                    <td th:text="${#temporals.format(ver.fecha, 'dd/MM/yyyy')}">—</td>
-                    <td th:text="${ver.usuario}">—</td>
+                <tr th:each="ver : ${versiones}" 
+                    th:classappend="${ver.numeroVersion == cotizacion.versionActual} ? 'version-actual' : ''">
                     <td>
-                        <span th:text="${ver.datosSnapshot != null ? ver.datosSnapshot : 'Sin detalles'}">—</span>
+                        <strong th:text="'V' + ${ver.numeroVersion}">V1</strong>
+                    </td>
+                    <td th:text="${#temporals.format(ver.fechaCreacion, 'dd/MM/yyyy HH:mm')}">—</td>
+                    <td>
+                        <span th:text="${ver.nombreUsuarioCreador}">—</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${ver.emailUsuarioCreador}">—</span>
+                    </td>
+                    <td th:text="${ver.subtotalFormateado}">S/ 0.00</td>
+                    <td th:text="${ver.igvFormateado}">S/ 0.00</td>
+                    <td>
+                        <strong th:text="${ver.totalFormateado}">S/ 0.00</strong>
+                    </td>
+                    <td th:text="${ver.tasaIgvFormateada}">18.00%</td>
+                    <td>
+                        <span th:text="${ver.motivoCambio != null ? ver.motivoCambio : '-'}">—</span>
+                    </td>
+                    <td>
+                        <span th:if="${ver.numeroVersion == cotizacion.versionActual}" 
+                              class="badge-actual">
+                            <i class="ti ti-check"></i> Actual
+                        </span>
+                        <span th:unless="${ver.numeroVersion == cotizacion.versionActual}" 
+                              class="badge-historical">
+                            Histórica
+                        </span>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <div th:if="${versiones.isEmpty()}" class="empty-message">
+        <div th:if="${versiones == null || versiones.isEmpty()}" class="empty-message">
             <i class="ti ti-history-off"></i>
             <p>No hay versiones registradas para esta cotización.</p>
+            <p style="font-size:12px; color:var(--text-3); margin-top:8px;">
+                Las versiones se crean automáticamente al editar una cotización.
+            </p>
         </div>
     </div>
 
-    <!-- Botón adicional para volver (opcional) -->
-    <div style="margin-top: 24px; text-align: right;">
-        <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
-            <i class="ti ti-arrow-left"></i> Regresar al listado
-        </a>
+    <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+        <div style="font-size:12px; color:var(--text-3);">
+            <i class="ti ti-info-circle"></i> 
+            <span th:text="'Total de versiones: ' + ${#lists.size(versiones)}">Total de versiones: 0</span>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
+                <i class="ti ti-arrow-left"></i> Regresar al listado
+            </a>
+            <a th:href="@{/admin/cotizaciones/editar/{id}(id=${cotizacion.idCotizacion})}" 
+               class="btn-primary" 
+               th:if="${cotizacion.estado == 'Pendiente'}">
+                <i class="ti ti-file-plus"></i> Crear nueva versión
+            </a>
+        </div>
     </div>
+
 </div>
 
 </body>

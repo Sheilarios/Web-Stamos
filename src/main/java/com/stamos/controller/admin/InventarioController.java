@@ -31,7 +31,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-
 @Controller
 @RequestMapping("/admin/inventario")
 @PreAuthorize("hasAnyRole('ADMIN', 'SOPORTE_TECNICO', 'PRODUCCION')")
@@ -45,7 +44,10 @@ public class InventarioController {
 
     @Autowired
     private ProyectoService proyectoService;
-    
+
+    @Autowired
+    private ClienteService clienteService;
+
     @GetMapping
     public String listarInventario(@RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "10") int size,
@@ -55,7 +57,7 @@ public class InventarioController {
                                    Model model) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by("idInventario").descending());
-            
+
             Page<Inventario> inventarioPage;
             if (estado != null && !estado.isEmpty()) {
                 inventarioPage = inventarioService.findByEstadoFisico(estado);
@@ -66,13 +68,13 @@ public class InventarioController {
             } else {
                 inventarioPage = inventarioService.findAll(pageable);
             }
-            
+
             long totalDisponibles = inventarioService.countByEstadoFisico("Disponible");
             long totalEnUso = inventarioService.countByEstadoFisico("En uso");
             long totalMantenimiento = inventarioService.countByEstadoFisico("Mantenimiento");
             long totalDanados = inventarioService.countByEstadoFisico("Dañado");
             long totalInventario = inventarioService.count();
-            
+
             model.addAttribute("inventario", inventarioPage.getContent());
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", inventarioPage.getTotalPages());
@@ -86,9 +88,9 @@ public class InventarioController {
             model.addAttribute("totalMantenimiento", totalMantenimiento);
             model.addAttribute("totalDanados", totalDanados);
             model.addAttribute("totalInventario", totalInventario);
-            
+
             return "admin/inventario/equipos";
-            
+
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el inventario: " + e.getMessage());
             return "admin/inventario/equipos";
@@ -117,7 +119,7 @@ public class InventarioController {
                 model.addAttribute("error", "Equipo no encontrado");
                 return "redirect:/admin/inventario";
             }
-            
+
             model.addAttribute("inventario", equipo);
             model.addAttribute("productos", productoService.findAll());
             model.addAttribute("titulo", "Editar Equipo");
@@ -148,18 +150,25 @@ public class InventarioController {
             }
 
             if (inventarioService.existsByCodigoSerial(inventario.getCodigoSerial())) {
-                redirectAttributes.addFlashAttribute("error", 
+                redirectAttributes.addFlashAttribute("error",
                     "El código serial ya está registrado en el sistema.");
                 return "redirect:/admin/inventario/nuevo";
             }
 
+            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario != null) {
+                inventario.setIdUsuarioRegistro(usuario.getIdUsuario());
+            }
+
             inventario.setEstadoFisico("Disponible");
+            inventario.setFechaRegistro(LocalDate.now());
+            inventario.setFechaActualizacion(LocalDate.now());
             inventarioService.save(inventario);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
+            redirectAttributes.addFlashAttribute("mensaje",
                 "Equipo registrado exitosamente. Serial: " + inventario.getCodigoSerial());
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
+
             return "redirect:/admin/inventario";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al registrar el equipo: " + e.getMessage());
@@ -188,18 +197,24 @@ public class InventarioController {
 
             if (!existente.getCodigoSerial().equals(inventario.getCodigoSerial()) &&
                 inventarioService.existsByCodigoSerial(inventario.getCodigoSerial())) {
-                redirectAttributes.addFlashAttribute("error", 
+                redirectAttributes.addFlashAttribute("error",
                     "El código serial ya está registrado en el sistema.");
                 return "redirect:/admin/inventario/editar/" + id;
             }
 
+            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario != null) {
+                inventario.setIdUsuarioActualizacion(usuario.getIdUsuario());
+            }
+
             inventario.setIdInventario(id);
+            inventario.setFechaActualizacion(LocalDate.now());
             inventarioService.update(inventario);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
+            redirectAttributes.addFlashAttribute("mensaje",
                 "Equipo actualizado exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
+
             return "redirect:/admin/inventario";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al actualizar el equipo: " + e.getMessage());
@@ -221,16 +236,22 @@ public class InventarioController {
                 return "redirect:/admin/inventario";
             }
 
+            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario != null) {
+                equipo.setIdUsuarioActualizacion(usuario.getIdUsuario());
+            }
+
             equipo.setEstadoFisico(estado);
             if (observaciones != null && !observaciones.isEmpty()) {
                 equipo.setObservaciones(observaciones);
             }
+            equipo.setFechaActualizacion(LocalDate.now());
             inventarioService.update(equipo);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
+            redirectAttributes.addFlashAttribute("mensaje",
                 "Estado del equipo actualizado a: " + estado);
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
+
             return "redirect:/admin/inventario";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al cambiar el estado: " + e.getMessage());
@@ -246,7 +267,7 @@ public class InventarioController {
             ReservaInventario reserva = new ReservaInventario();
             reserva.setEstadoReserva("Activa");
             reserva.setFechaReserva(LocalDateTime.now());
-            
+
             if (equipoId != null) {
                 reserva.setIdInventario(equipoId);
                 Inventario equipo = inventarioService.findById(equipoId);
@@ -254,7 +275,7 @@ public class InventarioController {
                     model.addAttribute("equipoSeleccionado", equipo);
                 }
             }
-            
+
             if (proyectoId != null) {
                 reserva.setIdProyecto(proyectoId);
                 Proyecto proyecto = proyectoService.findById(proyectoId);
@@ -262,14 +283,14 @@ public class InventarioController {
                     model.addAttribute("proyectoSeleccionado", proyecto);
                 }
             }
-            
+
             Page<Inventario> equiposDisponibles = inventarioService.findByEstadoFisico("Disponible");
-            
+
             model.addAttribute("reserva", reserva);
             model.addAttribute("equipos", equiposDisponibles);
             model.addAttribute("proyectos", proyectoService.findAll());
             model.addAttribute("titulo", "Asignar Equipo a Proyecto");
-            
+
             return "admin/inventario/formulario_reserva";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
@@ -290,13 +311,13 @@ public class InventarioController {
             }
 
             if (reserva.getFechaInicio().isAfter(reserva.getFechaFin())) {
-                redirectAttributes.addFlashAttribute("error", 
+                redirectAttributes.addFlashAttribute("error",
                     "La fecha de inicio no puede ser posterior a la fecha de fin.");
                 return "redirect:/admin/inventario/reservar";
             }
 
             if (reserva.getFechaInicio().isBefore(LocalDate.now())) {
-                redirectAttributes.addFlashAttribute("error", 
+                redirectAttributes.addFlashAttribute("error",
                     "La fecha de inicio no puede ser anterior a la fecha actual.");
                 return "redirect:/admin/inventario/reservar";
             }
@@ -306,16 +327,16 @@ public class InventarioController {
                 reserva.getFechaInicio(),
                 reserva.getFechaFin()
             );
-            
+
             if (!disponible) {
-                redirectAttributes.addFlashAttribute("error", 
+                redirectAttributes.addFlashAttribute("error",
                     "El equipo no está disponible en el rango de fechas seleccionado.");
                 return "redirect:/admin/inventario/reservar";
             }
 
             Inventario equipo = inventarioService.findById(reserva.getIdInventario());
             if (equipo == null || !"Disponible".equals(equipo.getEstadoFisico())) {
-                redirectAttributes.addFlashAttribute("error", 
+                redirectAttributes.addFlashAttribute("error",
                     "El equipo no está disponible para ser asignado.");
                 return "redirect:/admin/inventario/reservar";
             }
@@ -326,17 +347,24 @@ public class InventarioController {
                 return "redirect:/admin/inventario/reservar";
             }
 
+            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario != null) {
+                reserva.setIdUsuarioRegistro(usuario.getIdUsuario());
+            }
+
             reserva.setEstadoReserva("Activa");
             reserva.setFechaReserva(LocalDateTime.now());
+            reserva.setFechaActualizacion(LocalDateTime.now());
             inventarioService.crearReserva(reserva);
 
             equipo.setEstadoFisico("En uso");
+            equipo.setFechaActualizacion(LocalDate.now());
             inventarioService.update(equipo);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
+            redirectAttributes.addFlashAttribute("mensaje",
                 "Equipo asignado exitosamente al proyecto: " + proyecto.getNombreProyecto());
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
+
             return "redirect:/admin/inventario/reservas";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al asignar el equipo: " + e.getMessage());
@@ -351,14 +379,14 @@ public class InventarioController {
                                  Model model) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by("fechaReserva").descending());
-            
+
             Page<ReservaInventario> reservasPage;
             if (estado != null && !estado.isEmpty()) {
                 reservasPage = inventarioService.findReservasByEstado(estado, pageable);
             } else {
                 reservasPage = inventarioService.findAllReservas(pageable);
             }
-            
+
             for (ReservaInventario reserva : reservasPage.getContent()) {
                 Inventario equipo = inventarioService.findById(reserva.getIdInventario());
                 if (equipo != null) {
@@ -373,11 +401,11 @@ public class InventarioController {
                     reserva.setNombreProyecto(proyecto.getNombreProyecto());
                 }
             }
-            
+
             long totalActivas = inventarioService.countReservasByEstado("Activa");
             long totalCompletadas = inventarioService.countReservasByEstado("Completada");
             long totalCanceladas = inventarioService.countReservasByEstado("Cancelada");
-            
+
             model.addAttribute("reservas", reservasPage.getContent());
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", reservasPage.getTotalPages());
@@ -386,7 +414,7 @@ public class InventarioController {
             model.addAttribute("totalActivas", totalActivas);
             model.addAttribute("totalCompletadas", totalCompletadas);
             model.addAttribute("totalCanceladas", totalCanceladas);
-            
+
             return "admin/inventario/reservas";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar las reservas: " + e.getMessage());
@@ -407,22 +435,29 @@ public class InventarioController {
                 return "redirect:/admin/inventario/reservas";
             }
 
+            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario != null) {
+                reserva.setIdUsuarioActualizacion(usuario.getIdUsuario());
+            }
+
             reserva.setEstadoReserva("Completada");
             if (notas != null && !notas.isEmpty()) {
                 reserva.setNotas(notas);
             }
+            reserva.setFechaActualizacion(LocalDateTime.now());
             inventarioService.updateReserva(reserva);
 
             Inventario equipo = inventarioService.findById(reserva.getIdInventario());
             if (equipo != null) {
                 equipo.setEstadoFisico("Disponible");
+                equipo.setFechaActualizacion(LocalDate.now());
                 inventarioService.update(equipo);
             }
 
-            redirectAttributes.addFlashAttribute("mensaje", 
+            redirectAttributes.addFlashAttribute("mensaje",
                 "Reserva completada exitosamente. Equipo devuelto al inventario.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
+
             return "redirect:/admin/inventario/reservas";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al completar la reserva: " + e.getMessage());
@@ -443,22 +478,29 @@ public class InventarioController {
                 return "redirect:/admin/inventario/reservas";
             }
 
+            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario != null) {
+                reserva.setIdUsuarioActualizacion(usuario.getIdUsuario());
+            }
+
             reserva.setEstadoReserva("Cancelada");
             if (motivo != null && !motivo.isEmpty()) {
                 reserva.setNotas("Cancelada: " + motivo);
             }
+            reserva.setFechaActualizacion(LocalDateTime.now());
             inventarioService.updateReserva(reserva);
 
             Inventario equipo = inventarioService.findById(reserva.getIdInventario());
             if (equipo != null && "En uso".equals(equipo.getEstadoFisico())) {
                 equipo.setEstadoFisico("Disponible");
+                equipo.setFechaActualizacion(LocalDate.now());
                 inventarioService.update(equipo);
             }
 
-            redirectAttributes.addFlashAttribute("mensaje", 
+            redirectAttributes.addFlashAttribute("mensaje",
                 "Reserva cancelada exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
+
             return "redirect:/admin/inventario/reservas";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al cancelar la reserva: " + e.getMessage());
@@ -512,7 +554,7 @@ public class InventarioController {
             model.addAttribute("totalDisponibles", totalDisponibles);
             model.addAttribute("totalReservados", totalReservados);
             model.addAttribute("totalMantenimiento", totalMantenimiento);
-            model.addAttribute("porcentajeDisponibilidad", totalEquipos > 0 ? 
+            model.addAttribute("porcentajeDisponibilidad", totalEquipos > 0 ?
                 (totalDisponibles * 100 / totalEquipos) : 0);
 
             return "admin/inventario/disponibilidad";
@@ -530,7 +572,7 @@ public class InventarioController {
         try {
             boolean disponible = inventarioService.verificarDisponibilidad(equipoId, fechaInicio, fechaFin);
             Inventario equipo = inventarioService.findById(equipoId);
-            
+
             return Map.of(
                 "disponible", disponible,
                 "equipoId", equipoId,
@@ -556,7 +598,6 @@ public class InventarioController {
         }
     }
 
-
     @GetMapping("/disponibles-por-producto/{productoId}")
     @ResponseBody
     public List<Inventario> getDisponiblesByProducto(@PathVariable Integer productoId) {
@@ -566,7 +607,6 @@ public class InventarioController {
             return List.of();
         }
     }
-
 
     public String getEstadoFisicoLegible(String estado) {
         if (estado == null) return "Sin estado";
@@ -578,7 +618,6 @@ public class InventarioController {
             default -> estado;
         };
     }
-
 
     public String getEstadoFisicoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";

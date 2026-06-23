@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Detalle de Producto</title>
+    <title>Detalle de Producto · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -13,31 +13,286 @@
             --yellow-light: #FFFBE6;
             --yellow-mid: #FFE566;
             --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
             --border: #E2E6EA;
             --bg: #F5F6F8;
             --card: #FFFFFF;
             --text: #1A1F2E;
             --text-2: #5A6478;
             --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+            --purple: #7C3AED;
+            --purple-light: #EDE9FE;
         }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); padding: 40px 24px; }
-        .container { max-width: 800px; margin: 0 auto; background: var(--card); border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); padding: 32px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
-        .page-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .page-title i { color: var(--yellow-dark); font-size: 28px; }
-        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-2); padding: 8px 16px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow-dark); }
-        .info-card { background: var(--yellow-light); border: 1px solid var(--yellow-border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
-        .info-row { display: flex; margin-bottom: 16px; }
-        .info-label { width: 140px; font-weight: 600; color: var(--yellow-dark); }
-        .info-value { flex: 1; color: var(--text); }
-        .image-preview { text-align: center; margin-bottom: 24px; }
-        .image-preview img { max-width: 100%; max-height: 200px; border-radius: 12px; border: 1px solid var(--border); }
-        .action-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
-        .btn-primary { background: var(--yellow); border: none; color: #2A1800; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-primary:hover { background: var(--yellow-mid); }
-        @media (max-width: 640px) { .info-row { flex-direction: column; margin-bottom: 12px; } .info-label { width: auto; margin-bottom: 4px; } }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .page-title small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+            margin-left: 8px;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-danger {
+            background: var(--red);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-danger:hover {
+            background: #a71d2a;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .producto-header {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .producto-imagen {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+        
+        .producto-imagen img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        
+        .producto-imagen .no-image {
+            text-align: center;
+            color: var(--text-3);
+        }
+        
+        .producto-imagen .no-image i {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        .producto-info .nombre {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        .producto-info .codigo {
+            font-size: 13px;
+            color: var(--text-3);
+            margin-bottom: 12px;
+        }
+        
+        .producto-info .descripcion {
+            font-size: 14px;
+            color: var(--text-2);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .producto-info .precio {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--yellow-dark);
+            margin-bottom: 16px;
+        }
+        
+        .badge-tipo {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-alquiler { background: #DBEAFE; color: #2563EB; }
+        .badge-venta { background: var(--green-light); color: var(--green); }
+        .badge-servicio { background: var(--purple-light); color: var(--purple); }
+        
+        .badge-estado {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-activo { background: var(--green-light); color: var(--green); }
+        .badge-inactivo { background: var(--red-light); color: var(--red); }
+        
+        .info-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+        
+        .info-card .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        
+        .info-card .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-card .info-row .label {
+            color: var(--text-3);
+        }
+        
+        .info-card .info-row .value {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            .producto-header { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons .btn { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -46,56 +301,125 @@
     <div class="header">
         <div class="page-title">
             <i class="ti ti-package"></i>
-            <span th:text="${producto.nombre}">Detalle del producto</span>
+            <span>Detalle de Producto</span>
+            <small th:text="'#' + ${producto.idProducto}">#0</small>
         </div>
-        <a th:href="@{/admin/productos}" class="btn-secondary"><i class="ti ti-arrow-left"></i> Volver al listado</a>
+        <a th:href="@{/admin/productos}" class="btn-secondary">
+            <i class="ti ti-arrow-left"></i> Volver
+        </a>
     </div>
 
-    <div th:if="${producto.urlImagen != null}" class="image-preview">
-        <img th:src="${producto.urlImagen}" alt="Imagen del producto">
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+    <div class="producto-header">
+        <div class="producto-imagen">
+            <div th:if="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}">
+                <img th:src="${producto.imagenUrl}" th:alt="${producto.nombreItem}">
+            </div>
+            <div th:unless="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}" class="no-image">
+                <i class="ti ti-photo-off"></i>
+                <p>Sin imagen</p>
+            </div>
+        </div>
+        <div class="producto-info">
+            <div class="nombre" th:text="${producto.nombreItem}">—</div>
+            <div class="codigo">
+                <i class="ti ti-hash"></i> 
+                <span th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
+                <span style="margin-left:16px;">
+                    <i class="ti ti-tag"></i> 
+                    <span th:text="${producto.tipo}">Alquiler</span>
+                </span>
+            </div>
+            <div class="descripcion" th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">—</div>
+            <div class="precio" th:text="${producto.precioBaseFormateado}">S/ 0.00</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <span class="badge-tipo" 
+                      th:classappend="${producto.tipo == 'Alquiler'} ? 'badge-alquiler' : 
+                                      (producto.tipo == 'Venta' ? 'badge-venta' : 'badge-servicio')"
+                      th:text="${producto.tipo}">Alquiler</span>
+                <span class="badge-estado" 
+                      th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
+                      th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                <span style="font-size:12px; color:var(--text-3);" 
+                      th:if="${producto.categoria != null}" 
+                      th:text="'Categoría: ' + ${producto.categoria}">Categoría: —</span>
+            </div>
+        </div>
     </div>
 
     <div class="info-card">
         <div class="info-row">
-            <div class="info-label">ID:</div>
-            <div class="info-value" th:text="${producto.id}">—</div>
+            <span class="label">ID del Producto</span>
+            <span class="value" th:text="${producto.idProducto}">0</span>
         </div>
         <div class="info-row">
-            <div class="info-label">Nombre:</div>
-            <div class="info-value" th:text="${producto.nombre}">—</div>
+            <span class="label">Código</span>
+            <span class="value" th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
         </div>
         <div class="info-row">
-            <div class="info-label">Descripción:</div>
-            <div class="info-value" th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">—</div>
+            <span class="label">Nombre</span>
+            <span class="value" th:text="${producto.nombreItem}">—</span>
         </div>
         <div class="info-row">
-            <div class="info-label">Precio base:</div>
-            <div class="info-value" th:text="'S/ ' + ${producto.precioBase}">—</div>
+            <span class="label">Categoría</span>
+            <span class="value" th:text="${producto.nombreCategoria != null ? producto.nombreCategoria : 'No asignada'}">—</span>
         </div>
         <div class="info-row">
-            <div class="info-label">Categoría:</div>
-            <div class="info-value" th:text="${producto.categoria != null ? producto.categoria : 'No especificada'}">—</div>
+            <span class="label">Tipo</span>
+            <span class="value" th:text="${producto.tipo}">—</span>
         </div>
         <div class="info-row">
-            <div class="info-label">Tipo:</div>
-            <div class="info-value" th:text="${producto.tipo != null ? producto.tipo : 'No especificado'}">—</div>
+            <span class="label">Precio Base</span>
+            <span class="value" style="font-weight:700; color:var(--yellow-dark);" th:text="${producto.precioBaseFormateado}">S/ 0.00</span>
         </div>
         <div class="info-row">
-            <div class="info-label">Imagen URL:</div>
-            <div class="info-value" th:text="${producto.urlImagen != null ? producto.urlImagen : 'No disponible'}">—</div>
+            <span class="label">Estado</span>
+            <span class="value">
+                <span class="badge-estado" 
+                      th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
+                      th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+            </span>
+        </div>
+        <div class="info-row">
+            <span class="label">Fecha de Creación</span>
+            <span class="value" th:text="${#temporals.format(producto.fechaCreacion, 'dd/MM/yyyy HH:mm')}">—</span>
+        </div>
+        <div class="info-row" th:if="${producto.fechaActualizacion != null}">
+            <span class="label">Última Actualización</span>
+            <span class="value" th:text="${#temporals.format(producto.fechaActualizacion, 'dd/MM/yyyy HH:mm')}">—</span>
         </div>
     </div>
 
     <div class="action-buttons">
-        <a th:href="@{/admin/productos/editar/{id}(id=${producto.id})}" class="btn-primary">
-            <i class="ti ti-edit"></i> Editar producto
+        <a th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" class="btn-primary">
+            <i class="ti ti-edit"></i> Editar Producto
         </a>
-        <form th:action="@{/admin/productos/eliminar/{id}(id=${producto.id})}" method="post" style="display: inline;">
-            <button type="submit" class="btn-primary" style="background: var(--red); color: white;" onclick="return confirm('¿Eliminar este producto permanentemente?');">
+        <form th:action="@{/admin/productos/activar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
+              th:if="${!producto.activo}">
+            <button type="submit" class="btn-primary" style="background:var(--green); color:white;" 
+                    onclick="return confirm('¿Activar este producto?');">
+                <i class="ti ti-check"></i> Activar
+            </button>
+        </form>
+        <form th:action="@{/admin/productos/desactivar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
+              th:if="${producto.activo}">
+            <button type="submit" class="btn-secondary" style="border-color:var(--red); color:var(--red);" 
+                    onclick="return confirm('¿Desactivar este producto?');">
+                <i class="ti ti-x"></i> Desactivar
+            </button>
+        </form>
+        <form th:action="@{/admin/productos/eliminar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;">
+            <button type="submit" class="btn-danger" onclick="return confirm('¿Eliminar este producto permanentemente?');">
                 <i class="ti ti-trash"></i> Eliminar
             </button>
         </form>
+        <a th:href="@{/admin/productos}" class="btn-secondary">
+            <i class="ti ti-arrow-left"></i> Volver al listado
+        </a>
     </div>
+
 </div>
 
 </body>

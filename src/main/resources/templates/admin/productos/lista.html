@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Administración · Productos</title>
+    <title>Catálogo de Productos · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,6 +24,10 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+            --purple: #7C3AED;
+            --purple-light: #EDE9FE;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -68,6 +72,13 @@
             font-size: 28px;
         }
         
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
         .btn-primary {
             background: var(--yellow);
             border: none;
@@ -87,6 +98,28 @@
         
         .btn-primary:hover {
             background: var(--yellow-mid);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
         }
         
         .filters-bar {
@@ -119,25 +152,6 @@
             outline: none;
             background: transparent;
             font-family: 'DM Sans', sans-serif;
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-2);
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
-            text-decoration: none;
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
         }
         
         .table-wrapper {
@@ -173,9 +187,37 @@
             border-bottom: none;
         }
         
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
+        .badge-tipo {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-alquiler { background: #DBEAFE; color: #2563EB; }
+        .badge-venta { background: var(--green-light); color: var(--green); }
+        .badge-servicio { background: var(--purple-light); color: var(--purple); }
+        
+        .badge-estado {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .badge-activo { background: var(--green-light); color: var(--green); }
+        .badge-inactivo { background: var(--red-light); color: var(--red); }
+        
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         
@@ -189,9 +231,10 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.15s;
             color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
         }
         
         .btn-icon:hover {
@@ -199,7 +242,17 @@
             color: var(--yellow-dark);
         }
         
-        .btn-icon.danger:hover {
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .btn-icon.verde:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
+        .btn-icon.rojo:hover {
             border-color: var(--red);
             color: var(--red);
         }
@@ -216,12 +269,127 @@
             opacity: 0.5;
         }
         
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .pagination {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .page-link {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+        
+        .page-link:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .page-link.active {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #2A1800;
+            font-weight: 600;
+        }
+        
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+        }
+        
+        .stat-card .numero {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-card .etiqueta {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .stat-card .numero.azul { color: var(--blue); }
+        .stat-card .numero.verde { color: var(--green); }
+        .stat-card .numero.purple { color: var(--purple); }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
-            th, td { padding: 10px 12px; }
-            .action-buttons { flex-direction: column; align-items: flex-start; }
-            .btn-icon { width: 100%; justify-content: center; }
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-group select, .filter-group input { width: 100%; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .pagination { flex-direction: column; align-items: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -231,11 +399,34 @@
     <div class="header">
         <div class="page-title">
             <i class="ti ti-package"></i>
-            <span>Catálogo de Productos / Servicios</span>
+            <span>Catálogo de Productos</span>
+            <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
         </div>
         <a th:href="@{/admin/productos/nuevo}" class="btn-primary">
             <i class="ti ti-plus"></i> Nuevo Producto
         </a>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="numero azul" th:text="${totalAlquiler}">0</div>
+            <div class="etiqueta">Alquiler</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero verde" th:text="${totalVenta}">0</div>
+            <div class="etiqueta">Venta</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero purple" th:text="${totalServicio}">0</div>
+            <div class="etiqueta">Servicio</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero" th:text="${totalActivos}">0</div>
+            <div class="etiqueta">Activos</div>
+        </div>
     </div>
 
     <form th:action="@{/admin/productos}" method="get" class="filters-bar">
@@ -245,17 +436,36 @@
         </div>
         <div class="filter-group">
             <i class="ti ti-category"></i>
-            <select name="categoria">
+            <select name="categoriaId">
                 <option value="">Todas las categorías</option>
-                <option value="Stands y estructuras feriales" th:selected="${categoriaSeleccionada == 'Stands y estructuras feriales'}">Stands y estructuras feriales</option>
-                <option value="Mobiliario para eventos" th:selected="${categoriaSeleccionada == 'Mobiliario para eventos'}">Mobiliario para eventos</option>
-                <option value="Equipamiento interactivo y audiovisual" th:selected="${categoriaSeleccionada == 'Equipamiento interactivo y audiovisual'}">Equipamiento interactivo</option>
-                <option value="Publicidad gráfica" th:selected="${categoriaSeleccionada == 'Publicidad gráfica'}">Publicidad gráfica</option>
-                <option value="Servicios" th:selected="${categoriaSeleccionada == 'Servicios'}">Servicios</option>
+                <option th:each="c : ${categorias}" th:value="${c.idCategoria}" 
+                        th:text="${c.nombreCategoria}" 
+                        th:selected="${categoriaId != null and categoriaId == c.idCategoria}"></option>
             </select>
         </div>
-        <button type="submit" class="btn-secondary">Filtrar</button>
-        <a th:href="@{/admin/productos}" class="btn-secondary" th:if="${search != null or categoriaSeleccionada != null}">Limpiar</a>
+        <div class="filter-group">
+            <i class="ti ti-filter"></i>
+            <select name="tipo">
+                <option value="">Todos los tipos</option>
+                <option value="Alquiler" th:selected="${tipo == 'Alquiler'}">Alquiler</option>
+                <option value="Venta" th:selected="${tipo == 'Venta'}">Venta</option>
+                <option value="Servicio" th:selected="${tipo == 'Servicio'}">Servicio</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-toggle-left"></i>
+            <select name="activo">
+                <option value="">Todos</option>
+                <option value="true" th:selected="${activo == true}">Activos</option>
+                <option value="false" th:selected="${activo == false}">Inactivos</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-secondary">
+            <i class="ti ti-search"></i> Filtrar
+        </button>
+        <a th:href="@{/admin/productos}" class="btn-secondary" th:if="${search != null or categoriaId != null or tipo != null or activo != null}">
+            <i class="ti ti-refresh"></i> Limpiar
+        </a>
     </form>
 
     <div class="table-wrapper">
@@ -265,38 +475,99 @@
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Categoría</th>
-                    <th>Precio base</th>
                     <th>Tipo</th>
+                    <th>Precio Base</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="prod : ${productos}">
-                    <td th:text="${prod.id}">—</td>
-                    <td th:text="${prod.nombre}">—</td>
-                    <td th:text="${prod.categoria != null ? prod.categoria : '-'}">—</td>
-                    <td th:text="'S/ ' + ${prod.precioBase}">—</td>
-                    <td th:text="${prod.tipo != null ? prod.tipo : '-'}">—</td>
+                <tr th:each="producto : ${productos}">
+                    <td th:text="${producto.idProducto}">—</td>
+                    <td>
+                        <strong th:text="${producto.nombreItem}">—</strong>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
+                    </td>
+                    <td>
+                        <span th:text="${producto.nombreCategoria != null ? producto.nombreCategoria : 'Sin categoría'}">—</span>
+                    </td>
+                    <td>
+                        <span class="badge-tipo" 
+                              th:classappend="${producto.tipo == 'Alquiler'} ? 'badge-alquiler' : 
+                                              (producto.tipo == 'Venta' ? 'badge-venta' : 'badge-servicio')"
+                              th:text="${producto.tipo}">Alquiler</span>
+                    </td>
+                    <td>
+                        <strong th:text="${producto.precioBaseFormateado}">S/ 0.00</strong>
+                    </td>
+                    <td>
+                        <span class="badge-estado" 
+                              th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                    </td>
                     <td class="action-buttons">
-                        <a th:href="@{/admin/productos/ver/{id}(id=${prod.id})}" class="btn-icon"><i class="ti ti-eye"></i> Ver</a>
-                        <a th:href="@{/admin/productos/editar/{id}(id=${prod.id})}" class="btn-icon"><i class="ti ti-edit"></i> Editar</a>
-                        <form th:action="@{/admin/productos/eliminar/{id}(id=${prod.id})}" method="post" style="display: inline;">
-                            <button type="submit" class="btn-icon danger" onclick="return confirm('¿Eliminar este producto?');"><i class="ti ti-trash"></i> Eliminar</button>
+                        <a th:href="@{/admin/productos/detalle/{id}(id=${producto.idProducto})}" class="btn-icon">
+                            <i class="ti ti-eye"></i> Ver
+                        </a>
+                        <a th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" class="btn-icon azul">
+                            <i class="ti ti-edit"></i> Editar
+                        </a>
+                        <form th:action="@{/admin/productos/activar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
+                              th:if="${!producto.activo}">
+                            <button type="submit" class="btn-icon verde" onclick="return confirm('¿Activar este producto?');">
+                                <i class="ti ti-check"></i> Activar
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/productos/desactivar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
+                              th:if="${producto.activo}">
+                            <button type="submit" class="btn-icon" style="border-color:var(--red); color:var(--red);" 
+                                    onclick="return confirm('¿Desactivar este producto?');">
+                                <i class="ti ti-x"></i> Desactivar
+                            </button>
                         </form>
                     </td>
                 </tr>
-                <tr th:if="${productos.isEmpty()}">
-                    <td colspan="6">
+                <tr th:if="${productos == null || productos.isEmpty()}">
+                    <td colspan="7">
                         <div class="empty-message">
                             <i class="ti ti-package-off"></i>
-                            <p>No hay productos o servicios registrados.</p>
-                            <a th:href="@{/admin/productos/nuevo}" class="btn-primary" style="margin-top: 16px;">Agregar primer producto</a>
+                            <p>No hay productos registrados.</p>
+                            <a th:href="@{/admin/productos/nuevo}" class="btn-primary" style="margin-top: 16px;">
+                                <i class="ti ti-plus"></i> Crear primer producto
+                            </a>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div class="pagination" th:if="${productos != null && !productos.isEmpty()}">
+        <div class="pagination-info">
+            Mostrando <span th:text="${#lists.size(productos)}">0</span> de <span th:text="${totalItems}">0</span> productos
+        </div>
+        <div class="pagination-buttons">
+            <a th:href="@{/admin/productos(page=${currentPage - 1}, search=${search}, categoriaId=${categoriaId}, tipo=${tipo}, activo=${activo})}" 
+               class="page-link" 
+               th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                Anterior
+            </a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+               th:href="@{/admin/productos(page=${i}, search=${search}, categoriaId=${categoriaId}, tipo=${tipo}, activo=${activo})}" 
+               class="page-link" 
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               th:text="${i + 1}">
+                1
+            </a>
+            <a th:href="@{/admin/productos(page=${currentPage + 1}, search=${search}, categoriaId=${categoriaId}, tipo=${tipo}, activo=${activo})}" 
+               class="page-link" 
+               th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                Siguiente
+            </a>
+        </div>
+    </div>
+
 </div>
 
 </body>

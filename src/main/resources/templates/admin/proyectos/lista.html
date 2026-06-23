@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Administración · Proyectos</title>
+    <title>Gestión de Proyectos · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,8 +24,12 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
-            --blue: #3060B0;
-            --blue-light: #EEF3FF;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+            --orange: #D97706;
+            --orange-light: #FEF3C7;
+            --purple: #7C3AED;
+            --purple-light: #EDE9FE;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -70,6 +74,35 @@
             font-size: 28px;
         }
         
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
         .filters-bar {
             display: flex;
             gap: 12px;
@@ -102,23 +135,8 @@
             font-family: 'DM Sans', sans-serif;
         }
         
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-2);
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
-            text-decoration: none;
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+        .filter-group input[type="date"] {
+            min-width: 130px;
         }
         
         .table-wrapper {
@@ -154,47 +172,28 @@
             border-bottom: none;
         }
         
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
         .status-badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
         }
         
-        .status-aprobado {
-            background: var(--blue-light);
-            color: var(--blue);
-        }
-        
-        .status-diseno {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
-        }
-        
-        .status-produccion {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
-        }
-        
-        .status-instalacion {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
-        }
-        
-        .status-entregado {
-            background: var(--green-light);
-            color: var(--green);
-        }
-        
-        .status-anulado {
-            background: var(--red-light);
-            color: var(--red);
-        }
+        .status-aprobado { background: var(--blue-light); color: var(--blue); }
+        .status-diseno { background: var(--orange-light); color: var(--orange); }
+        .status-produccion { background: var(--blue-light); color: var(--blue); }
+        .status-instalacion { background: var(--purple-light); color: var(--purple); }
+        .status-entregado { background: var(--green-light); color: var(--green); }
+        .status-anulado { background: var(--red-light); color: var(--red); }
         
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         
@@ -208,15 +207,19 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.15s;
             color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
         }
         
         .btn-icon:hover {
             border-color: var(--yellow);
             color: var(--yellow-dark);
         }
+        
+        .btn-icon.azul:hover { border-color: var(--blue); color: var(--blue); }
+        .btn-icon.verde:hover { border-color: var(--green); color: var(--green); }
         
         .empty-message {
             text-align: center;
@@ -230,12 +233,127 @@
             opacity: 0.5;
         }
         
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .pagination {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .page-link {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+        
+        .page-link:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .page-link.active {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #2A1800;
+            font-weight: 600;
+        }
+        
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+        }
+        
+        .stat-card .numero {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-card .etiqueta {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .stat-card .numero.azul { color: var(--blue); }
+        .stat-card .numero.verde { color: var(--green); }
+        .stat-card .numero.rojo { color: var(--red); }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
-            th, td { padding: 10px 12px; }
-            .action-buttons { flex-direction: column; align-items: flex-start; }
-            .btn-icon { width: 100%; justify-content: center; }
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-group select, .filter-group input { width: 100%; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .pagination { flex-direction: column; align-items: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -246,6 +364,29 @@
         <div class="page-title">
             <i class="ti ti-folder-open"></i>
             <span>Gestión de Proyectos</span>
+            <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
+        </div>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="numero azul" th:text="${totalActivos}">0</div>
+            <div class="etiqueta">Activos</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero verde" th:text="${totalEntregados}">0</div>
+            <div class="etiqueta">Entregados</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero rojo" th:text="${totalAnulados}">0</div>
+            <div class="etiqueta">Anulados</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero" th:text="${totalProyectos}">0</div>
+            <div class="etiqueta">Total</div>
         </div>
     </div>
 
@@ -254,20 +395,41 @@
             <i class="ti ti-filter"></i>
             <select name="estado">
                 <option value="">Todos los estados</option>
-                <option value="APROBADO" th:selected="${estadoSeleccionado == 'APROBADO'}">Aprobado</option>
-                <option value="EN_DISEÑO" th:selected="${estadoSeleccionado == 'EN_DISEÑO'}">En Diseño</option>
-                <option value="EN_PRODUCCION" th:selected="${estadoSeleccionado == 'EN_PRODUCCION'}">En Producción</option>
-                <option value="INSTALACION" th:selected="${estadoSeleccionado == 'INSTALACION'}">Instalación/Montaje</option>
-                <option value="ENTREGADO" th:selected="${estadoSeleccionado == 'ENTREGADO'}">Entregado</option>
-                <option value="ANULADO" th:selected="${estadoSeleccionado == 'ANULADO'}">Anulado</option>
+                <option value="Aprobado" th:selected="${estado == 'Aprobado'}">Aprobado</option>
+                <option value="En Diseño" th:selected="${estado == 'En Diseño'}">En Diseño</option>
+                <option value="En Producción" th:selected="${estado == 'En Producción'}">En Producción</option>
+                <option value="Instalación/Montaje" th:selected="${estado == 'Instalación/Montaje'}">Instalación/Montaje</option>
+                <option value="Entregado" th:selected="${estado == 'Entregado'}">Entregado</option>
+                <option value="Anulado" th:selected="${estado == 'Anulado'}">Anulado</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-user"></i>
+            <select name="clienteId">
+                <option value="">Todos los clientes</option>
+                <option th:each="c : ${clientes}" th:value="${c.idCliente}" 
+                        th:text="${c.nombreRazonSocial}" 
+                        th:selected="${clienteId != null and clienteId == c.idCliente}"></option>
             </select>
         </div>
         <div class="filter-group">
             <i class="ti ti-search"></i>
-            <input type="text" name="clienteId" placeholder="ID Cliente (opcional)" th:value="${clienteId}">
+            <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre...">
         </div>
-        <button type="submit" class="btn-secondary">Filtrar</button>
-        <a th:href="@{/admin/proyectos}" class="btn-secondary" th:if="${estadoSeleccionado != null or clienteId != null}">Limpiar</a>
+        <div class="filter-group">
+            <i class="ti ti-calendar"></i>
+            <input type="date" name="fechaInicio" th:value="${fechaInicio}">
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-calendar"></i>
+            <input type="date" name="fechaFin" th:value="${fechaFin}">
+        </div>
+        <button type="submit" class="btn-secondary">
+            <i class="ti ti-search"></i> Filtrar
+        </button>
+        <a th:href="@{/admin/proyectos}" class="btn-secondary" th:if="${estado != null or clienteId != null or search != null or fechaInicio != null or fechaFin != null}">
+            <i class="ti ti-refresh"></i> Limpiar
+        </a>
     </form>
 
     <div class="table-wrapper">
@@ -275,42 +437,95 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre</th>
+                    <th>Proyecto</th>
                     <th>Cliente</th>
-                    <th>Fecha creación</th>
+                    <th>Cotización</th>
+                    <th>Monto Total</th>
+                    <th>Fecha Inicio</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="proy : ${proyectos}">
-                    <td th:text="${proy.codProy}">—</td>
-                    <td th:text="${proy.nombre}">—</td>
-                    <td th:text="${proy.cotizacion.cliente.razonCli}">—</td>
-                    <td th:text="${#temporals.format(proy.fechaCreacion, 'dd/MM/yyyy')}">—</td>
+                <tr th:each="proyecto : ${proyectos}">
+                    <td th:text="${proyecto.idProyecto}">—</td>
                     <td>
-                        <span th:classappend="${proy.estado == 'APROBADO'} ? 'status-badge status-aprobado' : 
-                                              (proy.estado == 'EN_DISEÑO' ? 'status-badge status-diseno' : 
-                                              (proy.estado == 'EN_PRODUCCION' ? 'status-badge status-produccion' : 
-                                              (proy.estado == 'INSTALACION' ? 'status-badge status-instalacion' : 
-                                              (proy.estado == 'ENTREGADO' ? 'status-badge status-entregado' : 'status-badge status-anulado'))))"
-                              th:text="${proy.estado}">—</span>
+                        <strong th:text="${proyecto.nombreProyecto}">—</strong>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${proyecto.codigoProyecto}">—</span>
+                    </td>
+                    <td th:text="${proyecto.nombreCliente}">—</td>
+                    <td>
+                        <span th:text="'COT-' + ${#strings.leftPad(proyecto.idCotizacion, 5, '0')}">COT-00000</span>
+                    </td>
+                    <td>
+                        <strong th:text="${proyecto.montoTotalFormateado}">S/ 0.00</strong>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="'Pagado: ' + ${proyecto.totalPagadoFormateado}">Pagado: S/ 0.00</span>
+                    </td>
+                    <td th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">—</td>
+                    <td>
+                        <span class="status-badge" 
+                              th:classappend="${proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
+                                              (proyecto.estado == 'En Diseño' ? 'status-diseno' : 
+                                              (proyecto.estado == 'En Producción' ? 'status-produccion' : 
+                                              (proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                              (proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
+                              th:text="${proyecto.estado}">Aprobado</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:if="${proyecto.saldoPendiente != null and proyecto.saldoPendiente.compareTo(0) > 0}" 
+                              th:text="'Saldo: ' + ${proyecto.saldoPendienteFormateado}">Saldo: S/ 0.00</span>
                     </td>
                     <td class="action-buttons">
-                        <a th:href="@{/admin/proyectos/detalle/{id}(id=${proy.codProy})}" class="btn-icon"><i class="ti ti-eye"></i> Detalle</a>
+                        <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" class="btn-icon azul">
+                            <i class="ti ti-eye"></i> Detalle
+                        </a>
+                        <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto.idProyecto})}" class="btn-icon verde" 
+                           th:if="${proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
+                            <i class="ti ti-credit-card-plus"></i> Pago
+                        </a>
                     </td>
                 </tr>
-                <tr th:if="${proyectos.isEmpty()}">
-                    <td colspan="6">
+                <tr th:if="${proyectos == null || proyectos.isEmpty()}">
+                    <td colspan="8">
                         <div class="empty-message">
                             <i class="ti ti-folder-off"></i>
                             <p>No hay proyectos registrados.</p>
+                            <p style="font-size:12px; color:var(--text-3); margin-top:8px;">
+                                Los proyectos se generan automáticamente al aprobar una cotización.
+                            </p>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div class="pagination" th:if="${proyectos != null && !proyectos.isEmpty()}">
+        <div class="pagination-info">
+            Mostrando <span th:text="${#lists.size(proyectos)}">0</span> de <span th:text="${totalItems}">0</span> proyectos
+        </div>
+        <div class="pagination-buttons">
+            <a th:href="@{/admin/proyectos(page=${currentPage - 1}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
+               class="page-link" 
+               th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                Anterior
+            </a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+               th:href="@{/admin/proyectos(page=${i}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
+               class="page-link" 
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               th:text="${i + 1}">
+                1
+            </a>
+            <a th:href="@{/admin/proyectos(page=${currentPage + 1}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
+               class="page-link" 
+               th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                Siguiente
+            </a>
+        </div>
+    </div>
+
 </div>
 
 </body>

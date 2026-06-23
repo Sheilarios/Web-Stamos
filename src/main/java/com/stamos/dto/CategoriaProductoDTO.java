@@ -5,33 +5,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO (Data Transfer Object) para la entidad CategoriaProducto.
- * 
- * <p>Este DTO se utiliza para transferir datos de categorías de productos
- * entre la capa de servicio y la capa de presentación, evitando exponer
- * directamente la entidad y permitiendo una mejor organización de los datos.</p>
- * 
- * <p>Incluye información de la categoría, cantidad de productos asociados
- * y métricas adicionales para la vista.</p>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 public class CategoriaProductoDTO {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     private Integer idCategoria;
     private String nombreCategoria;
     private String descripcion;
     private Boolean activo;
-
-    // ============================================
-    // CAMPOS DE AUDITORÍA
-    // ============================================
 
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
@@ -40,10 +19,6 @@ public class CategoriaProductoDTO {
     private String nombreUsuarioCreacion;
     private String nombreUsuarioActualizacion;
 
-    // ============================================
-    // CAMPOS DE MÉTRICAS
-    // ============================================
-
     private Integer cantidadProductos;
     private Integer cantidadProductosActivos;
     private Integer cantidadProductosInactivos;
@@ -51,21 +26,9 @@ public class CategoriaProductoDTO {
     private Integer cantidadProductosVenta;
     private Integer cantidadProductosServicio;
 
-    // ============================================
-    // CAMPOS ADICIONALES
-    // ============================================
-
     private List<ProductoDTO> productos = new ArrayList<>();
     private String color;
     private String icono;
-
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
-    /**
-     * Constructor por defecto.
-     */
     public CategoriaProductoDTO() {
         this.activo = true;
         this.cantidadProductos = 0;
@@ -79,14 +42,6 @@ public class CategoriaProductoDTO {
         this.icono = "ti ti-category";
     }
 
-    /**
-     * Constructor con los campos principales.
-     * 
-     * @param idCategoria ID de la categoría
-     * @param nombreCategoria Nombre de la categoría
-     * @param descripcion Descripción de la categoría
-     * @param activo Estado activo/inactivo
-     */
     public CategoriaProductoDTO(Integer idCategoria, String nombreCategoria, 
                                String descripcion, Boolean activo) {
         this();
@@ -96,16 +51,6 @@ public class CategoriaProductoDTO {
         this.activo = activo;
     }
 
-    /**
-     * Constructor completo.
-     * 
-     * @param idCategoria ID de la categoría
-     * @param nombreCategoria Nombre de la categoría
-     * @param descripcion Descripción de la categoría
-     * @param activo Estado activo/inactivo
-     * @param cantidadProductos Total de productos
-     * @param cantidadProductosActivos Productos activos
-     */
     public CategoriaProductoDTO(Integer idCategoria, String nombreCategoria, 
                                String descripcion, Boolean activo,
                                Integer cantidadProductos, Integer cantidadProductosActivos) {
@@ -117,9 +62,6 @@ public class CategoriaProductoDTO {
         }
     }
 
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdCategoria() {
         return idCategoria;

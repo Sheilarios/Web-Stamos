@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Detalle del Proyecto</title>
+    <title>Detalle del Proyecto · STAMOS Cliente</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -28,6 +28,8 @@
             --blue-light: #E8F0FE;
             --orange: #D97706;
             --orange-light: #FEF3C7;
+            --purple: #7C3AED;
+            --purple-light: #EDE9FE;
             --sidebar-width: 260px;
         }
         
@@ -37,21 +39,15 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
-        }
-        
-        /* ===== LAYOUT ===== */
-        .app {
             display: flex;
             min-height: 100vh;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--card);
             border-right: 1px solid var(--border);
-            padding: 24px 16px;
+            padding: 24px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -63,110 +59,109 @@
         }
         
         .sidebar-brand {
-            font-family: 'Syne', sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-            padding-bottom: 24px;
+            padding: 0 20px 24px;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 20px;
         }
         
-        .sidebar-brand i {
-            color: var(--yellow-dark);
-            font-size: 28px;
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
         }
         
-        .sidebar-brand span {
-            color: var(--yellow-dark);
+        .sidebar-brand h2 span {
+            color: var(--yellow);
         }
         
-        .sidebar-nav {
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
             flex: 1;
         }
         
-        .sidebar-nav a {
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
             color: var(--text-2);
             text-decoration: none;
-            font-weight: 500;
             font-size: 14px;
+            font-weight: 500;
             transition: all 0.15s;
-            margin-bottom: 4px;
         }
         
-        .sidebar-nav a i {
-            font-size: 20px;
-            width: 24px;
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
             text-align: center;
         }
         
-        .sidebar-nav a:hover {
+        .sidebar-menu li a:hover {
             background: var(--yellow-light);
-            color: var(--yellow-dark);
+            color: var(--text);
         }
         
-        .sidebar-nav a.active {
+        .sidebar-menu li a.active {
             background: var(--yellow-light);
             color: var(--yellow-dark);
             font-weight: 600;
-            border-left: 3px solid var(--yellow);
         }
         
-        .sidebar-nav .nav-label {
-            font-size: 11px;
+        .sidebar-menu .menu-label {
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-3);
-            font-weight: 600;
             padding: 16px 16px 8px;
+            font-weight: 600;
         }
         
         .sidebar-footer {
+            padding: 16px 20px;
             border-top: 1px solid var(--border);
-            padding-top: 16px;
             margin-top: auto;
         }
         
         .sidebar-footer a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-2);
+            gap: 10px;
+            color: var(--red);
             text-decoration: none;
+            font-size: 13px;
             font-weight: 500;
-            font-size: 14px;
-            transition: all 0.15s;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
         }
         
         .sidebar-footer a:hover {
-            background: #FEF2F2;
-            color: var(--red);
+            background: var(--red-light);
         }
         
-        .sidebar-footer a i {
-            font-size: 20px;
-            width: 24px;
-            text-align: center;
-        }
-        
-        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 32px 40px;
+            padding: 32px 36px;
+            min-height: 100vh;
         }
         
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -178,7 +173,7 @@
         
         .page-title {
             font-family: 'Syne', sans-serif;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text);
             display: flex;
@@ -192,37 +187,20 @@
         }
         
         .page-title small {
-            font-family: 'DM Sans', sans-serif;
             font-size: 14px;
             font-weight: 400;
             color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
         
-        .user-info {
-            background: var(--yellow-light);
-            padding: 8px 16px;
-            border-radius: 30px;
-            border: 1px solid var(--yellow-border);
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-2);
-        }
-        
-        .user-info i {
-            color: var(--yellow-dark);
-        }
-        
-        /* ===== BREADCRUMB ===== */
         .breadcrumb {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 13px;
             color: var(--text-3);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         
         .breadcrumb a {
@@ -234,55 +212,67 @@
             text-decoration: underline;
         }
         
-        .breadcrumb .separator {
-            color: var(--text-3);
+        .user-info {
+            background: var(--card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        /* ===== BADGES ===== */
+        .user-info i {
+            color: var(--yellow-dark);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
         .status-badge {
             display: inline-block;
-            padding: 6px 16px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
         }
         
-        .status-aprobado {
-            background: var(--blue-light);
-            color: var(--blue);
-        }
+        .status-aprobado { background: var(--blue-light); color: var(--blue); }
+        .status-diseno { background: var(--orange-light); color: var(--orange); }
+        .status-produccion { background: var(--blue-light); color: var(--blue); }
+        .status-instalacion { background: var(--purple-light); color: var(--purple); }
+        .status-entregado { background: var(--green-light); color: var(--green); }
+        .status-anulado { background: var(--red-light); color: var(--red); }
         
-        .status-diseno {
-            background: var(--orange-light);
-            color: var(--orange);
-        }
+        .status-pago-validado { background: var(--green-light); color: var(--green); }
+        .status-pago-pendiente { background: var(--yellow-light); color: var(--yellow-dark); }
+        .status-pago-rechazado { background: var(--red-light); color: var(--red); }
         
-        .status-produccion {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
-        }
-        
-        .status-instalacion {
-            background: #E0F2FE;
-            color: #0369A1;
-        }
-        
-        .status-entregado {
-            background: var(--green-light);
-            color: var(--green);
-        }
-        
-        .status-anulado {
-            background: var(--red-light);
-            color: var(--red);
-        }
-        
-        /* ===== PROYECTO HEADER ===== */
         .proyecto-header {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px 24px;
             margin-bottom: 24px;
         }
         
@@ -306,17 +296,13 @@
             margin-top: 4px;
         }
         
-        .proyecto-header .estado {
-            margin-top: 8px;
-        }
-        
         .proyecto-header .fechas {
             display: flex;
             flex-wrap: wrap;
             gap: 24px;
             margin-top: 16px;
             padding-top: 16px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--yellow-border);
         }
         
         .proyecto-header .fechas .item {
@@ -330,84 +316,101 @@
             font-size: 14px;
         }
         
-        /* ===== GRID DE INFORMACIÓN ===== */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-        
-        .info-card {
-            background: var(--card);
+        .section {
             border: 1px solid var(--border);
             border-radius: 16px;
             overflow: hidden;
+            margin-bottom: 24px;
         }
         
-        .info-card .card-header {
+        .section-header {
             padding: 16px 20px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
         
-        .info-card .card-header h3 {
+        .section-title {
             font-family: 'Syne', sans-serif;
             font-size: 16px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         
-        .info-card .card-header h3 i {
+        .section-title i {
             color: var(--yellow-dark);
         }
         
-        .info-card .card-body {
-            padding: 20px;
+        .section-body {
+            padding: 16px 20px;
         }
         
-        /* ===== TABLA DE DETALLES ===== */
-        .detail-table {
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
         }
         
-        .detail-table td {
+        th {
+            text-align: left;
+            padding: 10px 14px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px solid var(--border);
+            font-size: 13px;
         }
         
-        .detail-table td:last-child {
-            text-align: right;
-            font-weight: 600;
-        }
-        
-        .detail-table tr:last-child td {
+        .detail-row:last-child {
             border-bottom: none;
-            padding-top: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--yellow-dark);
         }
         
-        .detail-table .label {
+        .detail-row .label {
             color: var(--text-3);
         }
         
-        /* ===== HISTORIAL DE ESTADOS ===== */
+        .detail-row .value {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
         .timeline {
             position: relative;
-            padding-left: 24px;
+            padding-left: 20px;
         }
         
         .timeline::before {
             content: '';
             position: absolute;
-            left: 6px;
+            left: 4px;
             top: 8px;
             bottom: 8px;
             width: 2px;
@@ -416,7 +419,7 @@
         
         .timeline-item {
             position: relative;
-            padding-bottom: 20px;
+            padding-bottom: 16px;
             padding-left: 20px;
         }
         
@@ -427,7 +430,7 @@
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -18px;
+            left: -16px;
             top: 6px;
             width: 12px;
             height: 12px;
@@ -452,7 +455,7 @@
         }
         
         .timeline-item .comentario {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-2);
             margin-top: 4px;
             padding: 8px 12px;
@@ -460,14 +463,66 @@
             border-radius: 8px;
         }
         
-        /* ===== DOCUMENTOS ===== */
-        .documentos-mini {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .empty-message {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-3);
         }
         
-        .documento-mini {
+        .empty-message i {
+            font-size: 32px;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+        
+        .resumen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        
+        .resumen-item {
+            text-align: center;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 10px;
+        }
+        
+        .resumen-item .valor {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .resumen-item .valor.total { color: var(--blue); }
+        .resumen-item .valor.pagado { color: var(--green); }
+        .resumen-item .valor.pendiente { color: var(--red); }
+        
+        .resumen-item .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: var(--bg);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-bar .fill {
+            height: 100%;
+            background: var(--yellow);
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        
+        .documento-item {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -480,38 +535,31 @@
             cursor: pointer;
         }
         
-        .documento-mini:hover {
+        .documento-item:hover {
             background: var(--yellow-light);
             color: var(--yellow-dark);
         }
         
-        .documento-mini i {
+        .documento-item i {
             font-size: 20px;
             color: var(--yellow-dark);
         }
         
-        .documento-mini .info {
+        .documento-item .info {
             flex: 1;
         }
         
-        .documento-mini .info .nombre {
+        .documento-item .info .nombre {
             font-size: 13px;
             font-weight: 500;
         }
         
-        .documento-mini .info .tipo {
+        .documento-item .info .tipo {
             font-size: 11px;
             color: var(--text-3);
         }
         
-        /* ===== PAGOS ===== */
-        .pagos-mini {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .pago-mini {
+        .pago-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -521,252 +569,139 @@
             font-size: 13px;
         }
         
-        .pago-mini .monto {
+        .pago-item .monto {
             font-weight: 600;
             color: var(--text);
         }
         
-        .pago-mini .fecha {
+        .pago-item .fecha {
             color: var(--text-3);
             font-size: 12px;
         }
         
-        .pago-mini .estado {
-            font-size: 11px;
-            font-weight: 600;
-        }
-        
-        .pago-mini .estado.validado {
-            color: var(--green);
-        }
-        
-        .pago-mini .estado.pendiente {
-            color: var(--orange);
-        }
-        
-        .pago-mini .estado.rechazado {
-            color: var(--red);
-        }
-        
-        /* ===== RESUMEN FINANCIERO ===== */
-        .resumen-financiero {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        
-        .resumen-financiero .item {
-            text-align: center;
-            padding: 12px;
-            background: var(--bg);
+        .alert {
+            padding: 12px 16px;
             border-radius: 10px;
-        }
-        
-        .resumen-financiero .item .valor {
-            font-family: 'Syne', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-        }
-        
-        .resumen-financiero .item .label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-3);
-            font-weight: 600;
-        }
-        
-        .resumen-financiero .item .valor.total {
-            color: var(--blue);
-        }
-        
-        .resumen-financiero .item .valor.pagado {
-            color: var(--green);
-        }
-        
-        .resumen-financiero .item .valor.pendiente {
-            color: var(--red);
-        }
-        
-        /* ===== EMPTY STATE ===== */
-        .empty-message {
-            text-align: center;
-            padding: 24px;
-            color: var(--text-3);
-        }
-        
-        .empty-message i {
-            font-size: 32px;
-            margin-bottom: 8px;
-            opacity: 0.5;
-            display: block;
-        }
-        
-        .empty-message p {
+            margin-bottom: 16px;
             font-size: 13px;
         }
         
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 72px;
-                padding: 16px 8px;
-            }
-            .sidebar-brand span,
-            .sidebar-nav a span,
-            .sidebar-nav .nav-label,
-            .sidebar-footer a span {
-                display: none;
-            }
-            .sidebar-nav a {
-                justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-nav a i {
-                font-size: 24px;
-                width: auto;
-            }
-            .sidebar-footer a {
-                justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-footer a i {
-                font-size: 24px;
-                width: auto;
-            }
-            .main-content {
-                margin-left: 72px;
-                padding: 20px;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .resumen-financiero {
-                grid-template-columns: 1fr 1fr;
-            }
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
         }
         
-        @media (max-width: 600px) {
-            .sidebar {
-                display: none;
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 16px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .proyecto-header .top {
-                flex-direction: column;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .resumen-financiero {
-                grid-template-columns: 1fr;
-            }
-            .proyecto-header .fechas {
-                flex-direction: column;
-                gap: 8px;
-            }
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-warning {
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            color: var(--yellow-dark);
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar { width: 72px; padding: 16px 0; }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span { display: none; }
+            .sidebar-menu li a { justify-content: center; padding: 12px; }
+            .sidebar-menu li a i { font-size: 22px; width: auto; }
+            .sidebar-footer a span { display: none; }
+            .sidebar-footer a { justify-content: center; }
+            .main-content { margin-left: 72px; padding: 20px; }
+        }
+        
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+            .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; flex: 1; }
+            .sidebar-menu li { margin-bottom: 0; }
+            .sidebar-menu li a { padding: 6px 10px; font-size: 12px; }
+            .sidebar-menu li a i { font-size: 16px; }
+            .sidebar-menu .menu-label { display: none; }
+            .sidebar-footer { border-top: none; padding: 0; margin: 0; }
+            .main-content { margin-left: 0; padding: 16px; }
+            .proyecto-header .top { flex-direction: column; }
+            .proyecto-header .fechas { flex-direction: column; gap: 8px; }
+            .resumen-grid { grid-template-columns: 1fr 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+        }
+        
+        @media (max-width: 480px) {
+            .resumen-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<div class="app">
-    
-    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <i class="ti ti-construction"></i>
-            <span>STAMOS</span>
+            <h2>STAMOS<span>.</span></h2>
+            <small>Área del Cliente</small>
         </div>
         
-        <nav class="sidebar-nav">
-            <div class="nav-label">Cliente</div>
-            
-            <a href="#" th:href="@{/cliente/dashboard}">
-                <i class="ti ti-layout-dashboard"></i>
-                <span>Dashboard</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/proyectos}">
-                <i class="ti ti-folder-open"></i>
-                <span>Mis Proyectos</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/documentos}">
-                <i class="ti ti-file-text"></i>
-                <span>Documentos</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/pagos}">
-                <i class="ti ti-credit-card"></i>
-                <span>Historial de Pagos</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/perfil}">
-                <i class="ti ti-user-circle"></i>
-                <span>Mi Perfil</span>
-            </a>
-        </nav>
+        <ul class="sidebar-menu">
+            <li><a href="/cliente/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a href="/cliente/proyectos" class="active"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a href="/cliente/pagos"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a href="/cliente/perfil"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+        </ul>
         
         <div class="sidebar-footer">
-            <a href="#" th:href="@{/logout}">
+            <a href="/logout">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
     </aside>
-    
-    <!-- ===== MAIN CONTENT ===== -->
+
     <main class="main-content">
-        
-        <!-- Breadcrumb -->
         <div class="breadcrumb">
-            <a href="#" th:href="@{/cliente/dashboard}">Dashboard</a>
-            <span class="separator">›</span>
-            <a href="#" th:href="@{/cliente/proyectos}">Mis Proyectos</a>
-            <span class="separator">›</span>
+            <a href="/cliente/dashboard">Dashboard</a>
+            <span>›</span>
+            <a href="/cliente/proyectos">Mis Proyectos</a>
+            <span>›</span>
             <span th:text="${proyecto.nombreProyecto}">Detalle del Proyecto</span>
         </div>
-        
-        <!-- Header -->
+
         <div class="header">
             <div class="page-title">
                 <i class="ti ti-folder"></i>
-                <span>Detalle del Proyecto <small th:text="${proyecto.nombreProyecto}">Nombre del Proyecto</small></span>
+                <span>Detalle del Proyecto</span>
+                <small th:text="${proyecto.nombreProyecto}">Nombre del Proyecto</small>
             </div>
             <div class="user-info">
                 <i class="ti ti-user-circle"></i>
                 <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
             </div>
         </div>
-        
-        <!-- ===== PROYECTO HEADER ===== -->
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
         <div class="proyecto-header">
             <div class="top">
                 <div>
                     <div class="nombre" th:text="${proyecto.nombreProyecto}">Nombre del Proyecto</div>
                     <div class="codigo">
                         <i class="ti ti-hash"></i> 
-                        Código: <span th:text="'STAMOS-' + ${#strings.leftPad(proyecto.idProyecto, 5, '0')}">STAMOS-00001</span>
+                        Código: <span th:text="${proyecto.codigoProyecto}">PRO-00000</span>
                         <span style="margin-left:16px;">
                             <i class="ti ti-file-invoice"></i> 
-                            Cotización: <span th:text="'COT-' + ${#strings.leftPad(proyecto.idCotizacion, 5, '0')}">COT-00001</span>
+                            Cotización: <span th:text="${cotizacion.codigoCotizacion}">COT-00000</span>
                         </span>
                     </div>
-                    <div class="estado">
-                        <span class="status-badge" th:classappend="${proyecto.estado == 'Aprobado'} ? 'status-aprobado' :
-                                                                 ${proyecto.estado == 'En Diseño'} ? 'status-diseno' :
-                                                                 ${proyecto.estado == 'En Producción'} ? 'status-produccion' :
-                                                                 ${proyecto.estado == 'Instalación/Montaje'} ? 'status-instalacion' :
-                                                                 ${proyecto.estado == 'Entregado'} ? 'status-entregado' :
-                                                                 'status-anulado'"
+                    <div style="margin-top:8px;">
+                        <span class="status-badge" 
+                              th:classappend="${proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
+                                              (proyecto.estado == 'En Diseño' ? 'status-diseno' : 
+                                              (proyecto.estado == 'En Producción' ? 'status-produccion' : 
+                                              (proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                              (proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
                               th:text="${proyecto.estado}">Aprobado</span>
                     </div>
                 </div>
@@ -795,293 +730,184 @@
                 </div>
             </div>
         </div>
-        
-        <!-- ===== INFO GRID ===== -->
-        <div class="info-grid">
-            
-            <!-- ===== COLUMNA IZQUIERDA ===== -->
-            <div>
-                
-                <!-- Detalles de la Cotización -->
-                <div class="info-card" style="margin-bottom:24px;">
-                    <div class="card-header">
-                        <h3>
-                            <i class="ti ti-file-invoice"></i> Detalles de la Cotización
-                        </h3>
-                        <span style="font-size:12px; color:var(--text-3);">
-                            Versión <span th:text="${cotizacion.versionActual}">1</span>
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <table class="detail-table">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:left; font-size:12px; color:var(--text-3); font-weight:600; text-transform:uppercase; padding-bottom:8px; border-bottom:2px solid var(--border);">Concepto</th>
-                                    <th style="text-align:right; font-size:12px; color:var(--text-3); font-weight:600; text-transform:uppercase; padding-bottom:8px; border-bottom:2px solid var(--border);">Importe</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="detalle : ${detallesCotizacion}">
-                                    <td>
-                                        <span th:text="${detalle.nombreProducto}">Producto</span>
-                                        <span style="display:block; font-size:11px; color:var(--text-3);" th:text="'x ' + ${detalle.cantidad} + ' unidad(es)'">x 1</span>
-                                    </td>
-                                    <td th:text="'S/ ' + ${#numbers.formatDecimal(detalle.subtotalLinea, 0, 2)}">S/ 0.00</td>
-                                </tr>
-                                <tr>
-                                    <td style="color:var(--text-3);">Subtotal</td>
-                                    <td th:text="'S/ ' + ${#numbers.formatDecimal(cotizacion.subtotal, 0, 2)}">S/ 0.00</td>
-                                </tr>
-                                <tr>
-                                    <td style="color:var(--text-3);">IGV (<span th:text="${cotizacion.tasaIgv}">18</span>%)</td>
-                                    <td th:text="'S/ ' + ${#numbers.formatDecimal(cotizacion.igv, 0, 2)}">S/ 0.00</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:700;">Total</td>
-                                    <td style="font-weight:700; font-size:18px; color:var(--yellow-dark);" th:text="'S/ ' + ${#numbers.formatDecimal(cotizacion.total, 0, 2)}">S/ 0.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Documentos -->
-                <div class="info-card">
-                    <div class="card-header">
-                        <h3>
-                            <i class="ti ti-file-text"></i> Documentos del Proyecto
-                        </h3>
-                        <a href="#" th:href="@{/cliente/documentos}" style="font-size:12px; color:var(--yellow-dark); text-decoration:none;">
-                            Ver todos <i class="ti ti-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${!documentos.isEmpty()}" class="documentos-mini">
-                            <a th:each="doc : ${documentos}" class="documento-mini" 
-                               th:onclick="'abrirVisualizador(' + ${doc.idDocumento} + ')'" 
-                               style="cursor:pointer;">
-                                <i th:if="${doc.tipoDocumento == 'Render'}" class="ti ti-photo"></i>
-                                <i th:if="${doc.tipoDocumento == 'Plano'}" class="ti ti-ruler-2"></i>
-                                <i th:if="${doc.tipoDocumento == 'Boceto'}" class="ti ti-pencil"></i>
-                                <i th:if="${doc.tipoDocumento == 'Contrato'}" class="ti ti-file-contract"></i>
-                                <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="ti ti-file"></i>
-                                <div class="info">
-                                    <div class="nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
-                                    <div class="tipo" th:text="${doc.tipoDocumento} + ' · ' + ${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">Render · 01/01/2024</div>
-                                </div>
-                                <i class="ti ti-eye" style="color:var(--text-3);"></i>
-                            </a>
-                        </div>
-                        <div th:if="${documentos.isEmpty()}" class="empty-message">
-                            <i class="ti ti-file-off"></i>
-                            <p>No hay documentos disponibles para este proyecto.</p>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            
-            <!-- ===== COLUMNA DERECHA ===== -->
-            <div>
-                
-                <!-- Resumen Financiero -->
-                <div class="info-card" style="margin-bottom:24px;">
-                    <div class="card-header">
-                        <h3>
-                            <i class="ti ti-wallet"></i> Resumen Financiero
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="resumen-financiero">
-                            <div class="item">
-                                <div class="valor total" th:text="'S/ ' + ${#numbers.formatDecimal(cotizacion.total, 0, 2)}">S/ 0.00</div>
-                                <div class="label">Total</div>
-                            </div>
-                            <div class="item">
-                                <div class="valor pagado" th:text="'S/ ' + ${#numbers.formatDecimal(totalPagado, 0, 2)}">S/ 0.00</div>
-                                <div class="label">Pagado</div>
-                            </div>
-                            <div class="item">
-                                <div class="valor pendiente" th:text="'S/ ' + ${#numbers.formatDecimal(saldoPendiente, 0, 2)}">S/ 0.00</div>
-                                <div class="label">Pendiente</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Barra de progreso de pago -->
-                        <div style="margin-top:16px;">
-                            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-3);">
-                                <span>Progreso de pago</span>
-                                <span th:text="${porcentajePagado} + '%'">0%</span>
-                            </div>
-                            <div style="height:6px; background:var(--bg); border-radius:4px; overflow:hidden; margin-top:4px;">
-                                <div style="height:100%; background:var(--yellow); border-radius:4px; transition:width 0.5s;"
-                                     th:style="'width:' + ${porcentajePagado} + '%;'"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Historial de Pagos -->
-                <div class="info-card" style="margin-bottom:24px;">
-                    <div class="card-header">
-                        <h3>
-                            <i class="ti ti-credit-card"></i> Pagos Registrados
-                        </h3>
-                        <a href="#" th:href="@{/cliente/pagos}" style="font-size:12px; color:var(--yellow-dark); text-decoration:none;">
-                            Ver todos <i class="ti ti-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${!pagos.isEmpty()}" class="pagos-mini">
-                            <div th:each="p : ${pagos}" class="pago-mini">
-                                <div>
-                                    <div class="monto" th:text="'S/ ' + ${#numbers.formatDecimal(p.monto, 0, 2)}">S/ 0.00</div>
-                                    <div class="fecha" th:text="${#temporals.format(p.fechaPago, 'dd/MM/yyyy')}">01/01/2024</div>
-                                </div>
-                                <div>
-                                    <span class="estado" th:classappend="${p.estadoPago == 'Validado'} ? 'validado' :
-                                                                      ${p.estadoPago == 'Pendiente'} ? 'pendiente' : 'rechazado'"
-                                          th:text="${p.estadoPago}">Validado</span>
-                                    <span style="display:block; font-size:10px; color:var(--text-3); text-align:right;" th:text="${p.metodoPago}">Transferencia</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:if="${pagos.isEmpty()}" class="empty-message">
-                            <i class="ti ti-credit-card-off"></i>
-                            <p>No hay pagos registrados para este proyecto.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Historial de Estados -->
-                <div class="info-card">
-                    <div class="card-header">
-                        <h3>
-                            <i class="ti ti-clock"></i> Historial de Estados
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${!historialEstados.isEmpty()}" class="timeline">
-                            <div th:each="cambio : ${historialEstados}" class="timeline-item">
-                                <div class="estado" th:text="${cambio.estadoNuevo}">Aprobado</div>
-                                <div class="fecha" th:text="${#temporals.format(cambio.fechaCambio, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</div>
-                                <div class="usuario" th:text="'Responsable: ' + ${cambio.usuarioResponsable}">Responsable: Admin</div>
-                                <div th:if="${cambio.comentario}" class="comentario" th:text="${cambio.comentario}">Comentario del cambio</div>
-                            </div>
-                        </div>
-                        <div th:if="${historialEstados.isEmpty()}" class="empty-message">
-                            <i class="ti ti-clock-off"></i>
-                            <p>No hay cambios de estado registrados.</p>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            
-        </div>
-        
-    </main>
-</div>
 
-<!-- ===== MODAL VISUALIZADOR DE DOCUMENTOS ===== -->
-<div class="modal-overlay" id="modalVisualizador" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); z-index:999; justify-content:center; align-items:center; padding:24px;">
-    <div class="modal-content" style="background:var(--card); border-radius:20px; max-width:900px; width:100%; max-height:90vh; overflow:hidden; animation:modalIn 0.25s ease;">
-        <div class="modal-header" style="padding:18px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="font-family:'Syne',sans-serif; font-size:18px; display:flex; align-items:center; gap:10px;">
-                <i class="ti ti-eye" style="color:var(--yellow-dark);"></i>
-                <span id="modalTitulo">Visualizar documento</span>
-            </h3>
-            <button class="modal-close" onclick="cerrarVisualizador()" style="background:none; border:none; font-size:28px; color:var(--text-3); cursor:pointer; padding:4px 8px; border-radius:8px;">&times;</button>
-        </div>
-        <div class="modal-body" id="modalBody" style="padding:24px; overflow-y:auto; flex:1; display:flex; align-items:center; justify-content:center; min-height:300px; background:var(--bg);">
-            <div class="no-preview" style="text-align:center; color:var(--text-3); padding:40px;">
-                <i class="ti ti-photo-off" style="font-size:64px; opacity:0.5; display:block; margin-bottom:16px;"></i>
-                <p>Cargando documento...</p>
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-wallet"></i> Resumen Financiero
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="resumen-grid">
+                    <div class="resumen-item">
+                        <div class="valor total" th:text="${cotizacion.totalFormateado}">S/ 0.00</div>
+                        <div class="label">Total</div>
+                    </div>
+                    <div class="resumen-item">
+                        <div class="valor pagado" th:text="${totalPagadoFormateado}">S/ 0.00</div>
+                        <div class="label">Pagado</div>
+                    </div>
+                    <div class="resumen-item">
+                        <div class="valor pendiente" th:text="${saldoPendienteFormateado}">S/ 0.00</div>
+                        <div class="label">Pendiente</div>
+                    </div>
+                </div>
+                <div style="margin-top:12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-3);">
+                        <span>Progreso de pago</span>
+                        <span th:text="${porcentajePagado} + '%'">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="fill" th:style="'width:' + ${porcentajePagado} + '%;'"></div>
+                    </div>
+                </div>
+                <div style="margin-top:8px; font-size:12px;" th:if="${tienePagosVencidos}">
+                    <span style="color:var(--red);">
+                        <i class="ti ti-alert-triangle"></i> Tienes pagos vencidos. Contacta con el área de ventas.
+                    </span>
+                </div>
             </div>
         </div>
-        <div class="modal-footer" style="padding:14px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:12px;">
-            <button class="btn-cerrar" onclick="cerrarVisualizador()" style="padding:8px 20px; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--text-2); font-weight:500; font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif;">Cerrar</button>
-            <a href="#" class="btn-descargar" id="btnDescargar" download style="padding:8px 20px; border-radius:10px; border:none; background:var(--yellow); color:var(--text); font-weight:600; font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-                <i class="ti ti-download"></i> Descargar
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-file-invoice"></i> Detalles de la Cotización
+                </div>
+                <span style="font-size:12px; color:var(--text-3);">
+                    <i class="ti ti-file"></i> 
+                    <span th:text="${cotizacion.codigoCotizacion}">COT-00000</span>
+                    <span style="margin-left:8px;" th:text="'Versión ' + ${cotizacion.versionActual}">Versión 1</span>
+                </span>
+            </div>
+            <div class="section-body">
+                <div class="detail-row">
+                    <span class="label">Subtotal</span>
+                    <span class="value" th:text="${cotizacion.subtotalFormateado}">S/ 0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">IGV (<span th:text="${cotizacion.tasaIgv}">18</span>%)</span>
+                    <span class="value" th:text="${cotizacion.igvFormateado}">S/ 0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Total</span>
+                    <span class="value" style="font-weight:700; color:var(--yellow-dark); font-size:16px;" 
+                          th:text="${cotizacion.totalFormateado}">S/ 0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${detallesCotizacion != null && !detallesCotizacion.isEmpty()}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-list"></i> Productos y Servicios
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="detalle : ${detallesCotizacion}">
+                            <td th:text="${detalle.nombreProducto}">—</td>
+                            <td th:text="${detalle.cantidad}">0</td>
+                            <td th:text="${detalle.precioUnitarioFormateado}">S/ 0.00</td>
+                            <td th:text="${detalle.subtotalFormateado}">S/ 0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section" th:if="${documentos != null && !documentos.isEmpty()}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-file-text"></i> Documentos del Proyecto
+                </div>
+                <a href="/cliente/documentos" class="btn-secondary" style="font-size:12px;">
+                    Ver todos <i class="ti ti-arrow-right"></i>
+                </a>
+            </div>
+            <div class="section-body">
+                <div th:each="doc : ${documentos}">
+                    <a th:href="@{/cliente/documentos/ver/{id}(id=${doc.idDocumento})}" class="documento-item" target="_blank">
+                        <i th:if="${doc.tipoDocumento == 'Render'}" class="ti ti-photo"></i>
+                        <i th:if="${doc.tipoDocumento == 'Plano'}" class="ti ti-ruler-2"></i>
+                        <i th:if="${doc.tipoDocumento == 'Boceto'}" class="ti ti-pencil"></i>
+                        <i th:if="${doc.tipoDocumento == 'Contrato'}" class="ti ti-file-contract"></i>
+                        <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="ti ti-file"></i>
+                        <div class="info">
+                            <div class="nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
+                            <div class="tipo" th:text="${doc.tipoDocumento} + ' · ' + ${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">Render · 01/01/2024</div>
+                        </div>
+                        <i class="ti ti-eye" style="color:var(--text-3);"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${pagos != null && !pagos.isEmpty()}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-credit-card"></i> Pagos Registrados
+                </div>
+                <a href="/cliente/pagos" class="btn-secondary" style="font-size:12px;">
+                    Ver todos <i class="ti ti-arrow-right"></i>
+                </a>
+            </div>
+            <div class="section-body">
+                <div th:each="pago : ${pagos}" class="pago-item">
+                    <div>
+                        <div class="monto" th:text="${pago.montoFormateado}">S/ 0.00</div>
+                        <div class="fecha" th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy')}">01/01/2024</div>
+                    </div>
+                    <div>
+                        <span class="status-badge" 
+                              th:classappend="${pago.estadoPago == 'Validado'} ? 'status-pago-validado' : 
+                                              (pago.estadoPago == 'Pendiente' ? 'status-pago-pendiente' : 'status-pago-rechazado')"
+                              th:text="${pago.estadoPago}">Validado</span>
+                        <span style="display:block; font-size:10px; color:var(--text-3); text-align:right;" th:text="${pago.metodoPago}">Transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${historialEstados != null && !historialEstados.isEmpty()}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-clock"></i> Historial de Estados
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="timeline">
+                    <div th:each="cambio : ${historialEstados}" class="timeline-item">
+                        <div class="estado" th:text="${cambio.estadoNuevoNombre}">Aprobado</div>
+                        <div class="fecha" th:text="${#temporals.format(cambio.fechaCambio, 'dd/MM/yyyy HH:mm')}">—</div>
+                        <div class="usuario" th:text="'Responsable: ' + ${cambio.responsableNombre}">—</div>
+                        <div th:if="${cambio.comentario}" class="comentario" th:text="${cambio.comentario}">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;">
+            <a href="/cliente/proyectos" class="btn-secondary">
+                <i class="ti ti-arrow-left"></i> Volver a mis proyectos
+            </a>
+            <a href="/cliente/documentos" class="btn-secondary">
+                <i class="ti ti-file-text"></i> Ver documentos
+            </a>
+            <a href="/cliente/pagos" class="btn-secondary">
+                <i class="ti ti-credit-card"></i> Ver pagos
             </a>
         </div>
-    </div>
-</div>
-
-<style>
-    .modal-overlay { display: none; }
-    .modal-overlay.active { display: flex; }
-    @keyframes modalIn {
-        from { opacity: 0; transform: scale(0.95) translateY(20px); }
-        to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .modal-body img { max-width: 100%; max-height: 70vh; border-radius: 8px; object-fit: contain; }
-    .modal-body .pdf-container { width: 100%; height: 70vh; }
-    .modal-body .pdf-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
-</style>
-
-<script>
-    // Datos de documentos desde el backend
-    const documentosData = /*[[${documentos}]]*/ [];
-    
-    // Función para abrir el visualizador
-    function abrirVisualizador(idDocumento) {
-        const doc = documentosData.find(d => d.idDocumento === idDocumento);
-        if (!doc) return;
-        
-        const modal = document.getElementById('modalVisualizador');
-        const modalBody = document.getElementById('modalBody');
-        const modalTitulo = document.getElementById('modalTitulo');
-        const btnDescargar = document.getElementById('btnDescargar');
-        
-        modalTitulo.textContent = doc.nombreArchivo || 'Documento';
-        btnDescargar.href = doc.urlArchivo || '#';
-        btnDescargar.download = doc.nombreArchivo || 'documento';
-        
-        const extension = (doc.nombreArchivo || '').split('.').pop().toLowerCase();
-        const esImagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension);
-        const esPdf = extension === 'pdf';
-        
-        if (esImagen) {
-            modalBody.innerHTML = `<img src="${doc.urlArchivo}" alt="${doc.nombreArchivo}" loading="lazy">`;
-        } else if (esPdf) {
-            modalBody.innerHTML = `
-                <div class="pdf-container">
-                    <iframe src="${doc.urlArchivo}#toolbar=0" allowfullscreen></iframe>
-                </div>
-            `;
-        } else {
-            modalBody.innerHTML = `
-                <div class="no-preview" style="text-align:center; color:var(--text-3); padding:40px;">
-                    <i class="ti ti-file" style="font-size:64px; opacity:0.5; display:block; margin-bottom:16px;"></i>
-                    <p>Vista previa no disponible para este tipo de archivo</p>
-                    <p style="font-size:12px; margin-top:8px; color:var(--text-3);">${doc.nombreArchivo || 'Archivo'}</p>
-                    <div style="margin-top:16px;">
-                        <a href="${doc.urlArchivo}" download="${doc.nombreArchivo}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 24px; background:var(--yellow); border-radius:10px; text-decoration:none; color:var(--text); font-weight:600;">
-                            <i class="ti ti-download"></i> Descargar archivo
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-        
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function cerrarVisualizador() {
-        document.getElementById('modalVisualizador').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') cerrarVisualizador();
-    });
-    
-    document.getElementById('modalVisualizador').addEventListener('click', function(e) {
-        if (e.target === this) cerrarVisualizador();
-    });
-</script>
+    </main>
 
 </body>
 </html>

@@ -1,15 +1,444 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagos Vencidos · STAMOS Administración</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--red);
+            font-size: 28px;
+        }
+        
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-danger {
+            background: var(--red);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-danger:hover {
+            background: #a71d2a;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+        }
+        
+        .stat-card .numero {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-card .etiqueta {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .stat-card .numero.rojo { color: var(--red); }
+        .stat-card .numero.amarillo { color: var(--yellow-dark); }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
+        tr.vencido {
+            border-left: 3px solid var(--red);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-vencido {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .status-pendiente {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-validado {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s;
+            color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .dias-vencido {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-alert-triangle"></i>
+            <span>Pagos Vencidos</span>
+            <span class="count" th:text="'(' + ${totalVencidos} + ')'">(0)</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a th:href="@{/admin/pagos}" class="btn-secondary">
+                <i class="ti ti-arrow-left"></i> Volver a Pagos
+            </a>
+            <a th:href="@{/admin/pagos/registrar}" class="btn-primary">
+                <i class="ti ti-plus"></i> Registrar Pago
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="numero rojo" th:text="${totalVencidos}">0</div>
+            <div class="etiqueta">Proyectos con pagos vencidos</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero amarillo" th:text="${totalPendientes}">0</div>
+            <div class="etiqueta">Pagos pendientes de validación</div>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Proyecto</th>
+                    <th>Cliente</th>
+                    <th>Monto Total</th>
+                    <th>Total Pagado</th>
+                    <th>Saldo Pendiente</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Días Vencidos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="proyecto : ${proyectosVencidos}" class="vencido">
+                    <td>
+                        <strong th:text="${proyecto.nombreProyecto}">—</strong>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${proyecto.codigoProyecto}">—</span>
+                    </td>
+                    <td th:text="${proyecto.nombreCliente}">—</td>
+                    <td th:text="${proyecto.montoTotalFormateado}">S/ 0.00</td>
+                    <td th:text="${proyecto.totalPagadoFormateado}">S/ 0.00</td>
+                    <td>
+                        <strong style="color:var(--red);" th:text="${proyecto.saldoPendienteFormateado}">S/ 0.00</strong>
+                    </td>
+                    <td th:text="${#temporals.format(proyecto.fechaVencimiento, 'dd/MM/yyyy')}">—</td>
+                    <td>
+                        <span class="dias-vencido" th:text="${proyecto.diasVencidos + ' días'}">0 días</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-vencido">VENCIDO</span>
+                    </td>
+                    <td class="action-buttons">
+                        <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" class="btn-icon azul">
+                            <i class="ti ti-eye"></i> Ver Proyecto
+                        </a>
+                        <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto.idProyecto})}" class="btn-icon">
+                            <i class="ti ti-credit-card-plus"></i> Registrar Pago
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${proyectosVencidos == null || proyectosVencidos.isEmpty()}">
+                    <td colspan="9">
+                        <div class="empty-message">
+                            <i class="ti ti-check-circle" style="color:var(--green);"></i>
+                            <p style="font-size:16px; color:var(--green); font-weight:600;">¡No hay pagos vencidos!</p>
+                            <p style="font-size:13px;">Todos los proyectos tienen sus pagos al día.</p>
+                            <a th:href="@{/admin/pagos}" class="btn-secondary" style="margin-top:16px;">
+                                <i class="ti ti-arrow-left"></i> Volver a Pagos
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+        <div style="font-size:12px; color:var(--text-3);">
+            <i class="ti ti-info-circle"></i> 
+            <span>Los pagos vencidos requieren atención inmediata. Contacta a los clientes para regularizar.</span>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a th:href="@{/admin/pagos}" class="btn-secondary">
+                <i class="ti ti-arrow-left"></i> Volver a Pagos
+            </a>
+            <a th:href="@{/admin/pagos/registrar}" class="btn-primary">
+                <i class="ti ti-plus"></i> Registrar Pago
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</body>
 </html>

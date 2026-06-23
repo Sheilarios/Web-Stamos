@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Mi Perfil</title>
+    <title>Mi Perfil · STAMOS Cliente</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -35,21 +35,15 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
-        }
-        
-        /* ===== LAYOUT ===== */
-        .app {
             display: flex;
             min-height: 100vh;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--card);
             border-right: 1px solid var(--border);
-            padding: 24px 16px;
+            padding: 24px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -61,110 +55,109 @@
         }
         
         .sidebar-brand {
-            font-family: 'Syne', sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-            padding-bottom: 24px;
+            padding: 0 20px 24px;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 20px;
         }
         
-        .sidebar-brand i {
-            color: var(--yellow-dark);
-            font-size: 28px;
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
         }
         
-        .sidebar-brand span {
-            color: var(--yellow-dark);
+        .sidebar-brand h2 span {
+            color: var(--yellow);
         }
         
-        .sidebar-nav {
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
             flex: 1;
         }
         
-        .sidebar-nav a {
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
             color: var(--text-2);
             text-decoration: none;
-            font-weight: 500;
             font-size: 14px;
+            font-weight: 500;
             transition: all 0.15s;
-            margin-bottom: 4px;
         }
         
-        .sidebar-nav a i {
-            font-size: 20px;
-            width: 24px;
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
             text-align: center;
         }
         
-        .sidebar-nav a:hover {
+        .sidebar-menu li a:hover {
             background: var(--yellow-light);
-            color: var(--yellow-dark);
+            color: var(--text);
         }
         
-        .sidebar-nav a.active {
+        .sidebar-menu li a.active {
             background: var(--yellow-light);
             color: var(--yellow-dark);
             font-weight: 600;
-            border-left: 3px solid var(--yellow);
         }
         
-        .sidebar-nav .nav-label {
-            font-size: 11px;
+        .sidebar-menu .menu-label {
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-3);
-            font-weight: 600;
             padding: 16px 16px 8px;
+            font-weight: 600;
         }
         
         .sidebar-footer {
+            padding: 16px 20px;
             border-top: 1px solid var(--border);
-            padding-top: 16px;
             margin-top: auto;
         }
         
         .sidebar-footer a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-2);
+            gap: 10px;
+            color: var(--red);
             text-decoration: none;
+            font-size: 13px;
             font-weight: 500;
-            font-size: 14px;
-            transition: all 0.15s;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
         }
         
         .sidebar-footer a:hover {
-            background: #FEF2F2;
-            color: var(--red);
+            background: var(--red-light);
         }
         
-        .sidebar-footer a i {
-            font-size: 20px;
-            width: 24px;
-            text-align: center;
-        }
-        
-        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 32px 40px;
+            padding: 32px 36px;
+            min-height: 100vh;
         }
         
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -190,30 +183,28 @@
         }
         
         .page-title small {
-            font-family: 'DM Sans', sans-serif;
             font-size: 14px;
             font-weight: 400;
             color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
         
         .user-info {
-            background: var(--yellow-light);
+            background: var(--card);
             padding: 8px 16px;
             border-radius: 30px;
-            border: 1px solid var(--yellow-border);
+            border: 1px solid var(--border);
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--text-2);
         }
         
         .user-info i {
             color: var(--yellow-dark);
         }
         
-        /* ===== PERFIL ===== */
         .perfil-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -251,7 +242,6 @@
             padding: 24px;
         }
         
-        /* ===== AVATAR ===== */
         .avatar-section {
             display: flex;
             flex-direction: column;
@@ -315,7 +305,6 @@
             font-weight: 500;
         }
         
-        /* ===== CAMPOS DE FORMULARIO ===== */
         .form-group {
             margin-bottom: 18px;
         }
@@ -363,24 +352,12 @@
             border-color: var(--red);
         }
         
-        .form-group .invalid-feedback {
-            color: var(--red);
-            font-size: 12px;
-            margin-top: 4px;
-            display: none;
-        }
-        
-        .form-group .invalid-feedback.show {
-            display: block;
-        }
-        
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
         
-        /* ===== BOTONES ===== */
         .btn {
             padding: 10px 24px;
             border-radius: 10px;
@@ -451,7 +428,6 @@
             flex-wrap: wrap;
         }
         
-        /* ===== ALERTAS ===== */
         .alert {
             padding: 14px 18px;
             border-radius: 12px;
@@ -490,7 +466,6 @@
             border: 1px solid #B8D4FE;
         }
         
-        /* ===== ESTADÍSTICAS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -520,7 +495,6 @@
             font-weight: 600;
         }
         
-        /* ===== TOAST NOTIFICACIÓN ===== */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -568,176 +542,109 @@
         }
         
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 72px;
-                padding: 16px 8px;
-            }
-            .sidebar-brand span,
-            .sidebar-nav a span,
-            .sidebar-nav .nav-label,
-            .sidebar-footer a span {
-                display: none;
-            }
-            .sidebar-nav a {
-                justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-nav a i {
-                font-size: 24px;
-                width: auto;
-            }
-            .sidebar-footer a {
-                justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-footer a i {
-                font-size: 24px;
-                width: auto;
-            }
-            .main-content {
-                margin-left: 72px;
-                padding: 20px;
-            }
-            .perfil-container {
-                grid-template-columns: 1fr;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
         }
         
-        @media (max-width: 600px) {
-            .sidebar {
-                display: none;
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 16px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .perfil-container {
-                grid-template-columns: 1fr;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .card-actions {
-                flex-direction: column;
-            }
-            .card-actions .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            .toast {
-                left: 16px;
-                right: 16px;
-                bottom: 16px;
-            }
+        .status-validado {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-rechazado {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar { width: 72px; padding: 16px 0; }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span { display: none; }
+            .sidebar-menu li a { justify-content: center; padding: 12px; }
+            .sidebar-menu li a i { font-size: 22px; width: auto; }
+            .sidebar-footer a span { display: none; }
+            .sidebar-footer a { justify-content: center; }
+            .main-content { margin-left: 72px; padding: 20px; }
+            .perfil-container { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+            .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; flex: 1; }
+            .sidebar-menu li { margin-bottom: 0; }
+            .sidebar-menu li a { padding: 6px 10px; font-size: 12px; }
+            .sidebar-menu li a i { font-size: 16px; }
+            .sidebar-menu .menu-label { display: none; }
+            .sidebar-footer { border-top: none; padding: 0; margin: 0; }
+            .main-content { margin-left: 0; padding: 16px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .perfil-container { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .card-actions { flex-direction: column; }
+            .card-actions .btn { width: 100%; justify-content: center; }
+            .toast { left: 16px; right: 16px; bottom: 16px; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<div class="app">
-    
-    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <i class="ti ti-construction"></i>
-            <span>STAMOS</span>
+            <h2>STAMOS<span>.</span></h2>
+            <small>Área del Cliente</small>
         </div>
         
-        <nav class="sidebar-nav">
-            <div class="nav-label">Cliente</div>
-            
-            <a href="#" th:href="@{/cliente/dashboard}">
-                <i class="ti ti-layout-dashboard"></i>
-                <span>Dashboard</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/proyectos}">
-                <i class="ti ti-folder-open"></i>
-                <span>Mis Proyectos</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/documentos}">
-                <i class="ti ti-file-text"></i>
-                <span>Documentos</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/pagos}">
-                <i class="ti ti-credit-card"></i>
-                <span>Historial de Pagos</span>
-            </a>
-            
-            <a href="#" class="active" th:href="@{/cliente/perfil}">
-                <i class="ti ti-user-circle"></i>
-                <span>Mi Perfil</span>
-            </a>
-        </nav>
+        <ul class="sidebar-menu">
+            <li><a href="/cliente/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a href="/cliente/proyectos"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a href="/cliente/pagos"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a href="/cliente/perfil" class="active"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+        </ul>
         
         <div class="sidebar-footer">
-            <a href="#" th:href="@{/logout}">
+            <a href="/logout">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
     </aside>
-    
-    <!-- ===== MAIN CONTENT ===== -->
+
     <main class="main-content">
-        
-        <!-- Header -->
         <div class="header">
             <div class="page-title">
                 <i class="ti ti-user-circle"></i>
-                <span>Mi Perfil <small>Gestiona tu información personal</small></span>
+                <span>Mi Perfil</span>
+                <small>Gestiona tu información personal</small>
             </div>
             <div class="user-info">
                 <i class="ti ti-user-circle"></i>
                 <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
             </div>
         </div>
-        
-        <!-- Alerta de éxito (se muestra después de guardar) -->
-        <div id="alertExito" class="alert alert-success" th:if="${mensajeExito}" style="display:flex;">
-            <i class="ti ti-check-circle"></i>
-            <span th:text="${mensajeExito}">Perfil actualizado exitosamente</span>
-        </div>
-        
-        <!-- Alerta de error -->
-        <div id="alertError" class="alert alert-danger" th:if="${mensajeError}" style="display:flex;">
-            <i class="ti ti-alert-circle"></i>
-            <span th:text="${mensajeError}">Error al actualizar el perfil</span>
-        </div>
-        
-        <!-- Contenido del Perfil -->
+
+        <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+        <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
+
         <div class="perfil-container">
             
-            <!-- ===== COLUMNA IZQUIERDA: AVATAR + ESTADÍSTICAS ===== -->
             <div>
-                <!-- Card de Avatar -->
                 <div class="perfil-card" style="margin-bottom:24px;">
                     <div class="card-body">
                         <div class="avatar-section">
@@ -759,7 +666,6 @@
                     </div>
                 </div>
                 
-                <!-- Card de Estadísticas -->
                 <div class="perfil-card">
                     <div class="card-header">
                         <h3>
@@ -801,7 +707,6 @@
                 </div>
             </div>
             
-            <!-- ===== COLUMNA DERECHA: FORMULARIO ===== -->
             <div>
                 <form id="formPerfil" th:action="@{/cliente/perfil/actualizar}" method="post">
                     <input type="hidden" name="idCliente" th:value="${cliente.idCliente}">
@@ -817,7 +722,6 @@
                         </div>
                         <div class="card-body">
                             
-                            <!-- Tipo de Persona (solo lectura) -->
                             <div class="form-group">
                                 <label>Tipo de Persona</label>
                                 <input type="text" class="form-control" 
@@ -825,7 +729,6 @@
                                        disabled readonly>
                             </div>
                             
-                            <!-- Nombre / Razón Social -->
                             <div class="form-group">
                                 <label for="nombreRazonSocial">Nombre / Razón Social <span class="required">*</span></label>
                                 <input type="text" id="nombreRazonSocial" name="nombreRazonSocial" 
@@ -834,7 +737,6 @@
                                        required>
                             </div>
                             
-                            <!-- RUC -->
                             <div class="form-group">
                                 <label for="ruc">RUC</label>
                                 <input type="text" id="ruc" name="ruc" 
@@ -844,7 +746,6 @@
                                        maxlength="11">
                             </div>
                             
-                            <!-- Teléfono -->
                             <div class="form-group">
                                 <label for="telefono">Teléfono <span class="required">*</span></label>
                                 <input type="tel" id="telefono" name="telefono" 
@@ -853,7 +754,6 @@
                                        required>
                             </div>
                             
-                            <!-- Email -->
                             <div class="form-group">
                                 <label for="email">Correo Electrónico <span class="required">*</span></label>
                                 <input type="email" id="email" name="email" 
@@ -862,7 +762,6 @@
                                        required>
                             </div>
                             
-                            <!-- Dirección -->
                             <div class="form-group">
                                 <label for="direccion">Dirección</label>
                                 <input type="text" id="direccion" name="direccion" 
@@ -871,9 +770,8 @@
                                        placeholder="Jr. Antisuyo 438, San Juan de Lurigancho">
                             </div>
                             
-                            <!-- Acciones -->
                             <div class="card-actions">
-                                <button type="button" class="btn btn-outline" onclick="resetForm()">
+                                <button type="button" class="btn btn-outline" onclick="window.location.reload()">
                                     <i class="ti ti-refresh"></i> Restaurar
                                 </button>
                                 <button type="submit" class="btn btn-primary" id="btnGuardar">
@@ -885,7 +783,6 @@
                     </div>
                 </form>
                 
-                <!-- Card de Cambio de Contraseña -->
                 <div class="perfil-card" style="margin-top:24px;">
                     <div class="card-header">
                         <h3>
@@ -938,118 +835,101 @@
             </div>
             
         </div>
-        
     </main>
-</div>
 
-<!-- ===== TOAST NOTIFICACIÓN ===== -->
-<div class="toast" id="toast">
-    <i class="ti ti-check-circle toast-icon-success" id="toastIcon"></i>
-    <span id="toastMessage">Perfil actualizado correctamente</span>
-    <button class="toast-close" onclick="cerrarToast()">&times;</button>
-</div>
+    <div class="toast" id="toast">
+        <i class="ti ti-check-circle toast-icon-success" id="toastIcon"></i>
+        <span id="toastMessage">Perfil actualizado correctamente</span>
+        <button class="toast-close" onclick="cerrarToast()">&times;</button>
+    </div>
 
-<script>
-    // ===== FUNCIÓN PARA RESTAURAR FORMULARIO =====
-    function resetForm() {
-        // Recargar la página para restaurar los valores originales
-        window.location.reload();
-    }
-    
-    // ===== VALIDACIÓN DE CONTRASEÑAS =====
-    document.getElementById('formPassword').addEventListener('submit', function(e) {
-        const passwordNueva = document.getElementById('passwordNueva').value;
-        const passwordConfirmar = document.getElementById('passwordConfirmar').value;
-        
-        if (passwordNueva !== passwordConfirmar) {
-            e.preventDefault();
-            mostrarToast('Las contraseñas no coinciden', 'error');
-            document.getElementById('passwordConfirmar').classList.add('is-invalid');
-            return false;
+    <script>
+        function resetForm() {
+            window.location.reload();
         }
         
-        if (passwordNueva.length < 6) {
-            e.preventDefault();
-            mostrarToast('La contraseña debe tener al menos 6 caracteres', 'error');
-            document.getElementById('passwordNueva').classList.add('is-invalid');
-            return false;
-        }
-        
-        document.getElementById('passwordConfirmar').classList.remove('is-invalid');
-        document.getElementById('passwordNueva').classList.remove('is-invalid');
-    });
-    
-    // ===== VALIDACIÓN EN TIEMPO REAL DE CONTRASEÑAS =====
-    document.getElementById('passwordConfirmar').addEventListener('input', function() {
-        const passwordNueva = document.getElementById('passwordNueva').value;
-        const passwordConfirmar = this.value;
-        
-        if (passwordConfirmar && passwordNueva !== passwordConfirmar) {
-            this.classList.add('is-invalid');
-        } else {
-            this.classList.remove('is-invalid');
-        }
-    });
-    
-    document.getElementById('passwordNueva').addEventListener('input', function() {
-        const passwordConfirmar = document.getElementById('passwordConfirmar').value;
-        if (passwordConfirmar && this.value !== passwordConfirmar) {
-            document.getElementById('passwordConfirmar').classList.add('is-invalid');
-        } else {
+        document.getElementById('formPassword').addEventListener('submit', function(e) {
+            const passwordNueva = document.getElementById('passwordNueva').value;
+            const passwordConfirmar = document.getElementById('passwordConfirmar').value;
+            
+            if (passwordNueva !== passwordConfirmar) {
+                e.preventDefault();
+                mostrarToast('Las contraseñas no coinciden', 'error');
+                document.getElementById('passwordConfirmar').classList.add('is-invalid');
+                return false;
+            }
+            
+            if (passwordNueva.length < 6) {
+                e.preventDefault();
+                mostrarToast('La contraseña debe tener al menos 6 caracteres', 'error');
+                document.getElementById('passwordNueva').classList.add('is-invalid');
+                return false;
+            }
+            
             document.getElementById('passwordConfirmar').classList.remove('is-invalid');
+            document.getElementById('passwordNueva').classList.remove('is-invalid');
+        });
+        
+        document.getElementById('passwordConfirmar').addEventListener('input', function() {
+            const passwordNueva = document.getElementById('passwordNueva').value;
+            const passwordConfirmar = this.value;
+            
+            if (passwordConfirmar && passwordNueva !== passwordConfirmar) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        document.getElementById('passwordNueva').addEventListener('input', function() {
+            const passwordConfirmar = document.getElementById('passwordConfirmar').value;
+            if (passwordConfirmar && this.value !== passwordConfirmar) {
+                document.getElementById('passwordConfirmar').classList.add('is-invalid');
+            } else {
+                document.getElementById('passwordConfirmar').classList.remove('is-invalid');
+            }
+        });
+        
+        function mostrarToast(mensaje, tipo) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const message = document.getElementById('toastMessage');
+            
+            message.textContent = mensaje;
+            
+            if (tipo === 'error') {
+                toast.className = 'toast show error';
+                icon.className = 'ti ti-alert-circle toast-icon-error';
+            } else {
+                toast.className = 'toast show';
+                icon.className = 'ti ti-check-circle toast-icon-success';
+            }
+            
+            setTimeout(cerrarToast, 5000);
         }
-    });
-    
-    // ===== TOAST NOTIFICACIÓN =====
-    function mostrarToast(mensaje, tipo) {
-        const toast = document.getElementById('toast');
-        const icon = document.getElementById('toastIcon');
-        const message = document.getElementById('toastMessage');
         
-        message.textContent = mensaje;
-        
-        if (tipo === 'error') {
-            toast.className = 'toast show error';
-            icon.className = 'ti ti-alert-circle toast-icon-error';
-        } else {
-            toast.className = 'toast show';
-            icon.className = 'ti ti-check-circle toast-icon-success';
+        function cerrarToast() {
+            document.getElementById('toast').classList.remove('show');
         }
         
-        setTimeout(cerrarToast, 5000);
-    }
-    
-    function cerrarToast() {
-        document.getElementById('toast').classList.remove('show');
-    }
-    
-    // ===== MOSTRAR TOAST SI HAY MENSAJE DE ÉXITO O ERROR =====
-    document.addEventListener('DOMContentLoaded', function() {
-        const alertExito = document.getElementById('alertExito');
-        const alertError = document.getElementById('alertError');
+        document.addEventListener('DOMContentLoaded', function() {
+            const alertExito = document.querySelector('.alert-success');
+            const alertError = document.querySelector('.alert-danger');
+            
+            if (alertExito) {
+                mostrarToast(alertExito.textContent, 'success');
+            }
+            if (alertError) {
+                mostrarToast(alertError.textContent, 'error');
+            }
+        });
         
-        if (alertExito && alertExito.style.display !== 'none') {
-            mostrarToast(alertExito.querySelector('span').textContent, 'success');
-            setTimeout(function() {
-                alertExito.style.display = 'none';
-            }, 100);
-        }
-        
-        if (alertError && alertError.style.display !== 'none') {
-            mostrarToast(alertError.querySelector('span').textContent, 'error');
-            setTimeout(function() {
-                alertError.style.display = 'none';
-            }, 100);
-        }
-    });
-    
-    // ===== PREVENIR ENVÍO DUPLICADO DE FORMULARIO =====
-    document.getElementById('formPerfil').addEventListener('submit', function() {
-        const btn = document.getElementById('btnGuardar');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="ti ti-loader ti-spin"></i> Guardando...';
-    });
-</script>
+        document.getElementById('formPerfil').addEventListener('submit', function() {
+            const btn = document.getElementById('btnGuardar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ti ti-loader ti-spin"></i> Guardando...';
+        });
+    </script>
 
 </body>
 </html>

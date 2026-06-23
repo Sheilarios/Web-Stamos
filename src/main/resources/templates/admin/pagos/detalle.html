@@ -1,15 +1,676 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Pago · STAMOS Administración</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .page-title small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+            margin-left: 8px;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-success {
+            background: var(--green);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-success:hover {
+            background: #155D34;
+        }
+        
+        .btn-danger {
+            background: var(--red);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-danger:hover {
+            background: #a71d2a;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .info-card {
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .info-item .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-3);
+            font-weight: 600;
+        }
+        
+        .info-item .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 4px;
+        }
+        
+        .info-item .value .monto {
+            font-size: 18px;
+            color: var(--yellow-dark);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-validado {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-pendiente {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-rechazado {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .section {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        
+        .section-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: var(--yellow-dark);
+        }
+        
+        .section-body {
+            padding: 16px 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-row .label {
+            color: var(--text-3);
+        }
+        
+        .detail-row .value {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .comprobante-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+        
+        .comprobante-preview i {
+            font-size: 32px;
+            color: var(--yellow-dark);
+        }
+        
+        .comprobante-preview .info {
+            flex: 1;
+        }
+        
+        .comprobante-preview .info .nombre {
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .comprobante-preview .info .meta {
+            font-size: 12px;
+            color: var(--text-3);
+        }
+        
+        .comprobante-preview .btn-ver {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-2);
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        
+        .comprobante-preview .btn-ver:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        
+        .metodo-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metodo-efectivo { background: #D1FAE5; color: #047857; }
+        .metodo-transferencia { background: #E8F0FE; color: #1A56DB; }
+        .metodo-tarjeta { background: #FEF3C7; color: #B45309; }
+        .metodo-cheque { background: #FCE4EC; color: #C62828; }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--card);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            animation: modalIn 0.25s ease;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-header h3 i {
+            color: var(--yellow-dark);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-3);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+        
+        .modal-close:hover {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+        }
+        
+        .modal-body img {
+            max-width: 100%;
+            max-height: 60vh;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        
+        .modal-body .pdf-container {
+            width: 100%;
+            height: 60vh;
+        }
+        
+        .modal-body .pdf-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            .info-card { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-receipt"></i>
+            <span>Detalle de Pago</span>
+            <small th:text="'#' + ${pago.idPago}">#0</small>
+        </div>
+        <a th:href="@{/admin/pagos}" class="btn-secondary">
+            <i class="ti ti-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+    <div class="info-card">
+        <div class="info-item">
+            <div class="label">Proyecto</div>
+            <div class="value" th:text="${pago.nombreProyecto}">—</div>
+        </div>
+        <div class="info-item">
+            <div class="label">Cliente</div>
+            <div class="value" th:text="${pago.nombreCliente}">—</div>
+        </div>
+        <div class="info-item">
+            <div class="label">Monto</div>
+            <div class="value">
+                <span class="monto" th:text="${pago.montoFormateado}">S/ 0.00</span>
+            </div>
+        </div>
+        <div class="info-item">
+            <div class="label">Estado</div>
+            <div class="value">
+                <span class="status-badge" 
+                      th:classappend="${pago.estadoPago == 'Validado'} ? 'status-validado' : 
+                                      (pago.estadoPago == 'Pendiente' ? 'status-pendiente' : 'status-rechazado')"
+                      th:text="${pago.estadoPago}">—</span>
+            </div>
+        </div>
+        <div class="info-item">
+            <div class="label">Método de Pago</div>
+            <div class="value">
+                <span class="metodo-badge" 
+                      th:classappend="${pago.metodoPago == 'Efectivo'} ? 'metodo-efectivo' : 
+                                      (pago.metodoPago == 'Transferencia' ? 'metodo-transferencia' : 
+                                      (pago.metodoPago == 'Tarjeta' ? 'metodo-tarjeta' : 'metodo-cheque'))"
+                      th:text="${pago.metodoPago}">—</span>
+            </div>
+        </div>
+        <div class="info-item">
+            <div class="label">Fecha de Pago</div>
+            <div class="value" th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm')}">—</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="ti ti-file-invoice"></i> Información del Comprobante
+            </div>
+        </div>
+        <div class="section-body" th:if="${comprobante != null}">
+            <div class="detail-row">
+                <span class="label">Tipo</span>
+                <span class="value" th:text="${comprobante.tipoComprobante}">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Número</span>
+                <span class="value" th:text="${comprobante.numeroComprobante}">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Estado</span>
+                <span class="value">
+                    <span class="status-badge" 
+                          th:classappend="${comprobante.validado} ? 'status-validado' : 'status-pendiente'"
+                          th:text="${comprobante.validado} ? 'Validado' : 'Pendiente de validación'">—</span>
+                </span>
+            </div>
+            <div th:if="${comprobante.fechaValidacion != null}" class="detail-row">
+                <span class="label">Fecha de Validación</span>
+                <span class="value" th:text="${#temporals.format(comprobante.fechaValidacion, 'dd/MM/yyyy HH:mm')}">—</span>
+            </div>
+            <div th:if="${comprobante.nombreUsuarioValidador != null}" class="detail-row">
+                <span class="label">Validado por</span>
+                <span class="value" th:text="${comprobante.nombreUsuarioValidador}">—</span>
+            </div>
+            <div th:if="${comprobante.archivoUrl != null}" class="comprobante-preview">
+                <i class="ti ti-file-pdf"></i>
+                <div class="info">
+                    <div class="nombre" th:text="${comprobante.nombreArchivo}">comprobante.pdf</div>
+                    <div class="meta">Archivo adjunto</div>
+                </div>
+                <button class="btn-ver" onclick="abrirComprobante()">
+                    <i class="ti ti-eye"></i> Ver
+                </button>
+            </div>
+            <div th:if="${comprobante == null}" style="text-align:center; padding:20px; color:var(--text-3);">
+                <i class="ti ti-file-off" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                <p>No hay comprobante asociado a este pago.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="ti ti-credit-card"></i> Resumen Financiero
+            </div>
+        </div>
+        <div class="section-body">
+            <div class="detail-row">
+                <span class="label">Monto Total del Proyecto</span>
+                <span class="value" th:text="${pago.montoTotalProyectoFormateado}">S/ 0.00</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Total Pagado</span>
+                <span class="value" style="color:var(--green);" th:text="${pago.totalPagadoFormateado}">S/ 0.00</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Saldo Pendiente</span>
+                <span class="value" style="color:var(--red);" th:text="${pago.saldoPendienteFormateado}">S/ 0.00</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Porcentaje Pagado</span>
+                <span class="value" th:text="${pago.porcentajePagado} + '%'">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" th:if="${pago.observaciones != null}">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="ti ti-notes"></i> Observaciones
+            </div>
+        </div>
+        <div class="section-body">
+            <p style="font-size:13px; color:var(--text-2); line-height:1.6;" th:text="${pago.observaciones}">—</p>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a th:href="@{/admin/pagos}" class="btn-secondary">
+            <i class="ti ti-arrow-left"></i> Volver al listado
+        </a>
+        <a th:href="@{/admin/proyectos/detalle/{id}(id=${pago.idProyecto})}" class="btn-primary">
+            <i class="ti ti-folder"></i> Ver Proyecto
+        </a>
+        <form th:action="@{/admin/pagos/validar/{id}(id=${pago.idPago})}" method="post" style="display:inline;" 
+              th:if="${pago.estadoPago == 'Pendiente'}">
+            <button type="submit" class="btn-success" onclick="return confirm('¿Validar este pago?');">
+                <i class="ti ti-check"></i> Validar Pago
+            </button>
+        </form>
+        <form th:action="@{/admin/pagos/rechazar/{id}(id=${pago.idPago})}" method="post" style="display:inline;" 
+              th:if="${pago.estadoPago == 'Pendiente'}">
+            <button type="submit" class="btn-danger" onclick="return confirm('¿Rechazar este pago?');">
+                <i class="ti ti-x"></i> Rechazar Pago
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<!-- Modal para ver comprobante -->
+<div class="modal-overlay" id="modalComprobante">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>
+                <i class="ti ti-file"></i>
+                <span>Comprobante de Pago</span>
+            </h3>
+            <button class="modal-close" onclick="cerrarComprobante()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <div class="pdf-container" th:if="${comprobante != null and comprobante.archivoUrl != null}">
+                <iframe th:src="${comprobante.archivoUrl}" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function abrirComprobante() {
+        const modal = document.getElementById('modalComprobante');
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarComprobante() {
+        const modal = document.getElementById('modalComprobante');
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') cerrarComprobante();
+    });
+
+    document.getElementById('modalComprobante').addEventListener('click', function(e) {
+        if (e.target === this) cerrarComprobante();
+    });
+</script>
+
+</body>
 </html>

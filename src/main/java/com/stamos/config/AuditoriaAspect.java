@@ -61,7 +61,11 @@ public class AuditoriaAspect {
             Map<String, Object> datos = new HashMap<>();
             datos.put("metodo", joinPoint.getSignature().getName());
             datos.put("mensaje", "Inicio de ejecución");
-            auditoria.setDatosNuevos(datos);
+            try {
+                auditoria.setDatosNuevos(objectMapper.writeValueAsString(datos));
+            } catch (JsonProcessingException e) {
+                auditoria.setDatosNuevos("{}");
+            }
             
             auditoriaRepository.save(auditoria);
         } catch (Exception e) {
@@ -78,12 +82,15 @@ public class AuditoriaAspect {
             if (result != null) {
                 try {
                     String json = objectMapper.writeValueAsString(result);
-                    Map<String, Object> datos = objectMapper.readValue(json, Map.class);
-                    auditoria.setDatosNuevos(datos);
+                    auditoria.setDatosNuevos(json);
                 } catch (JsonProcessingException e) {
                     Map<String, Object> datos = new HashMap<>();
                     datos.put("resultado", result.toString());
-                    auditoria.setDatosNuevos(datos);
+                    try {
+                        auditoria.setDatosNuevos(objectMapper.writeValueAsString(datos));
+                    } catch (JsonProcessingException ex) {
+                        auditoria.setDatosNuevos("{}");
+                    }
                 }
             }
             
@@ -111,14 +118,17 @@ public class AuditoriaAspect {
             Object[] args = joinPoint.getArgs();
             if (args != null && args.length > 0) {
                 try {
-                    String json = objectMapper.writeValueAsString(args);
-                    datos.put("argumentos", objectMapper.readValue(json, Map.class));
-                } catch (JsonProcessingException e) {
                     datos.put("argumentos", Arrays.toString(args));
+                } catch (Exception e) {
+                    datos.put("argumentos", "Error al serializar argumentos");
                 }
             }
             
-            auditoria.setDatosNuevos(datos);
+            try {
+                auditoria.setDatosNuevos(objectMapper.writeValueAsString(datos));
+            } catch (JsonProcessingException e) {
+                auditoria.setDatosNuevos("{}");
+            }
             auditoriaRepository.save(auditoria);
         } catch (Exception e) {
             System.err.println("Error en auditoría AFTER THROWING: " + e.getMessage());
@@ -127,10 +137,18 @@ public class AuditoriaAspect {
 
     private Auditoria crearAuditoriaBase(JoinPoint joinPoint) {
         Auditoria auditoria = new Auditoria();
-        auditoria.setIdUsuario(getUsuarioActualId());
+        try {
+            auditoria.setIdUsuario(getUsuarioActualId());
+        } catch (Exception e) {
+            auditoria.setIdUsuario(null);
+        }
         String clase = joinPoint.getTarget().getClass().getSimpleName();
         auditoria.setEntidad(clase);
-        auditoria.setIpOrigen(getClientIP());
+        try {
+            auditoria.setIpOrigen(getClientIP());
+        } catch (Exception e) {
+            auditoria.setIpOrigen(null);
+        }
         auditoria.setFechaHora(LocalDateTime.now());
         return auditoria;
     }

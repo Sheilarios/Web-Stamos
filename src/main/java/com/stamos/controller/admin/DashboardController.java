@@ -41,11 +41,7 @@ public class DashboardController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private DocumentoService documentoService;
 
-    @Autowired
-    private CambioEstadoProyectoService cambioEstadoProyectoService;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -140,7 +136,6 @@ public class DashboardController {
 
         } catch (Exception e) {
             System.err.println("Error en dashboard admin: " + e.getMessage());
-            e.printStackTrace();
             model.addAttribute("error", "Error al cargar el dashboard: " + e.getMessage());
             model.addAttribute("username", "Administrador");
             model.addAttribute("totalClientes", 0);
@@ -160,315 +155,9 @@ public class DashboardController {
         return "redirect:/admin/dashboard";
     }
 
-    private void cargarDashboardCompleto(Model model) {
-        try {
-            long totalProyectos = proyectoService.count();
-            long proyectosActivos = proyectoService.countByEstadoNotIn(Arrays.asList("Entregado", "Anulado"));
-            long proyectosEnDiseno = proyectoService.countByEstado("En Diseño");
-            long proyectosEnProduccion = proyectoService.countByEstado("En Producción");
-            long proyectosInstalacion = proyectoService.countByEstado("Instalación/Montaje");
-            long proyectosEntregados = proyectoService.countByEstado("Entregado");
-            long proyectosAnulados = proyectoService.countByEstado("Anulado");
-            
-            long totalCotizaciones = cotizacionService.count();
-            long cotizacionesPendientes = cotizacionService.countByEstado("Pendiente");
-            long cotizacionesAprobadas = cotizacionService.countByEstado("Aprobada");
-            long cotizacionesAnuladas = cotizacionService.countByEstado("Anulada");
-            
-            long totalClientes = clienteService.count();
-            long clientesActivos = clienteService.countByEstado("Activo");
-            long clientesDeshabilitados = clienteService.countByEstado("Deshabilitado");
-            
-            BigDecimal totalFacturado = pagoService.getTotalFacturado();
-            if (totalFacturado == null) {
-                totalFacturado = BigDecimal.ZERO;
-            }
-            BigDecimal totalPagado = pagoService.getTotalPagadoGeneral();
-            if (totalPagado == null) {
-                totalPagado = BigDecimal.ZERO;
-            }
-            BigDecimal totalPendiente = totalFacturado.subtract(totalPagado);
-            if (totalPendiente.compareTo(BigDecimal.ZERO) < 0) {
-                totalPendiente = BigDecimal.ZERO;
-            }
-            
-            int porcentajeCobranza = 0;
-            if (totalFacturado.compareTo(BigDecimal.ZERO) > 0) {
-                porcentajeCobranza = totalPagado.multiply(new BigDecimal(100))
-                        .divide(totalFacturado, 0, RoundingMode.HALF_UP)
-                        .intValue();
-                if (porcentajeCobranza > 100) {
-                    porcentajeCobranza = 100;
-                }
-            }
-            
-            List<Proyecto> proyectosRecientes = new ArrayList<>();
-            try {
-                proyectosRecientes = proyectoService.findTop10ByOrderByFechaInicioDesc();
-                if (proyectosRecientes == null) {
-                    proyectosRecientes = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos recientes: " + e.getMessage());
-                proyectosRecientes = new ArrayList<>();
-            }
-            
-            List<Cotizacion> cotizacionesRecientes = new ArrayList<>();
-            try {
-                cotizacionesRecientes = cotizacionService.findTopNPendientes(10);
-                if (cotizacionesRecientes == null) {
-                    cotizacionesRecientes = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar cotizaciones recientes: " + e.getMessage());
-                cotizacionesRecientes = new ArrayList<>();
-            }
-            
-            Map<String, Long> proyectosPorEstado = new LinkedHashMap<>();
-            proyectosPorEstado.put("En Diseño", proyectosEnDiseno);
-            proyectosPorEstado.put("En Producción", proyectosEnProduccion);
-            proyectosPorEstado.put("Instalación/Montaje", proyectosInstalacion);
-            proyectosPorEstado.put("Entregados", proyectosEntregados);
-            proyectosPorEstado.put("Anulados", proyectosAnulados);
-            
-            Map<String, Long> cotizacionesPorEstado = new LinkedHashMap<>();
-            cotizacionesPorEstado.put("Pendientes", cotizacionesPendientes);
-            cotizacionesPorEstado.put("Aprobadas", cotizacionesAprobadas);
-            cotizacionesPorEstado.put("Anuladas", cotizacionesAnuladas);
-            
-            Map<String, Long> proyectosPorMes = getProyectosPorMes(6);
-            Map<String, BigDecimal> pagosPorMes = getPagosPorMes(6);
-            
-            List<Proyecto> proyectosConPagosVencidos = new ArrayList<>();
-            try {
-                proyectosConPagosVencidos = proyectoService.findProyectosConPagosVencidos();
-                if (proyectosConPagosVencidos == null) {
-                    proyectosConPagosVencidos = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar pagos vencidos: " + e.getMessage());
-                proyectosConPagosVencidos = new ArrayList<>();
-            }
-            long totalPagosVencidos = proyectosConPagosVencidos.size();
-            
-            List<String> alertas = new ArrayList<>();
-            List<Inventario> inventarioBajo = new ArrayList<>();
-            try {
-                inventarioBajo = inventarioService.findInventarioBajo();
-                if (inventarioBajo == null) {
-                    inventarioBajo = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar inventario bajo: " + e.getMessage());
-                inventarioBajo = new ArrayList<>();
-            }
-            if (!inventarioBajo.isEmpty()) {
-                alertas.add(inventarioBajo.size() + " items de inventario estan en niveles bajos.");
-            }
-            if (totalPagosVencidos > 0) {
-                alertas.add(totalPagosVencidos + " proyectos tienen pagos vencidos.");
-            }
-            
-            List<Cotizacion> cotizacionesAntiguas = new ArrayList<>();
-            try {
-                cotizacionesAntiguas = cotizacionService.findPendientesAntiguas(7);
-                if (cotizacionesAntiguas == null) {
-                    cotizacionesAntiguas = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar cotizaciones antiguas: " + e.getMessage());
-                cotizacionesAntiguas = new ArrayList<>();
-            }
-            if (!cotizacionesAntiguas.isEmpty()) {
-                alertas.add(cotizacionesAntiguas.size() + " cotizaciones pendientes tienen mas de 7 dias.");
-            }
-            
-            model.addAttribute("totalProyectos", totalProyectos);
-            model.addAttribute("proyectosActivos", proyectosActivos);
-            model.addAttribute("totalCotizaciones", totalCotizaciones);
-            model.addAttribute("cotizacionesPendientes", cotizacionesPendientes);
-            model.addAttribute("totalClientes", totalClientes);
-            model.addAttribute("clientesActivos", clientesActivos);
-            model.addAttribute("totalFacturado", totalFacturado);
-            model.addAttribute("totalPagado", totalPagado);
-            model.addAttribute("totalPendiente", totalPendiente);
-            model.addAttribute("porcentajeCobranza", porcentajeCobranza);
-            model.addAttribute("totalPagosVencidos", totalPagosVencidos);
-            model.addAttribute("proyectosRecientes", proyectosRecientes);
-            model.addAttribute("cotizacionesRecientes", cotizacionesRecientes);
-            model.addAttribute("proyectosPorEstado", proyectosPorEstado);
-            model.addAttribute("cotizacionesPorEstado", cotizacionesPorEstado);
-            model.addAttribute("proyectosPorMes", proyectosPorMes);
-            model.addAttribute("pagosPorMes", pagosPorMes);
-            model.addAttribute("alertas", alertas);
-            model.addAttribute("tieneAlertas", !alertas.isEmpty());
-            model.addAttribute("proyectosEnDiseno", proyectosEnDiseno);
-            model.addAttribute("proyectosEnProduccion", proyectosEnProduccion);
-            model.addAttribute("proyectosInstalacion", proyectosInstalacion);
-            model.addAttribute("proyectosEntregados", proyectosEntregados);
-            model.addAttribute("proyectosAnulados", proyectosAnulados);
-            model.addAttribute("cotizacionesAprobadas", cotizacionesAprobadas);
-            model.addAttribute("cotizacionesAnuladas", cotizacionesAnuladas);
-            model.addAttribute("clientesDeshabilitados", clientesDeshabilitados);
-            model.addAttribute("tituloDashboard", "Dashboard - Administrador");
-            
-        } catch (Exception e) {
-            System.err.println("Error en cargarDashboardCompleto: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "Error al cargar datos del dashboard: " + e.getMessage());
-        }
-    }
 
-    private void cargarDashboardDisenador(Model model) {
-        try {
-            List<Proyecto> proyectosEnDiseno = new ArrayList<>();
-            try {
-                proyectosEnDiseno = proyectoService.findByEstado("En Diseño");
-                if (proyectosEnDiseno == null) {
-                    proyectosEnDiseno = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos en diseño: " + e.getMessage());
-                proyectosEnDiseno = new ArrayList<>();
-            }
-            long totalEnDiseno = proyectosEnDiseno.size();
-            
-            List<Proyecto> proyectosRecientes = new ArrayList<>();
-            try {
-                proyectosRecientes = proyectoService.findTopNByEstado("En Producción", 5);
-                if (proyectosRecientes == null) {
-                    proyectosRecientes = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos recientes: " + e.getMessage());
-                proyectosRecientes = new ArrayList<>();
-            }
-            
-            List<DocumentoProyecto> documentosRecientes = new ArrayList<>();
-            try {
-                documentosRecientes = documentoService.findTopN(5);
-                if (documentosRecientes == null) {
-                    documentosRecientes = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar documentos recientes: " + e.getMessage());
-                documentosRecientes = new ArrayList<>();
-            }
-            
-            model.addAttribute("proyectosEnDiseno", proyectosEnDiseno);
-            model.addAttribute("totalEnDiseno", totalEnDiseno);
-            model.addAttribute("proyectosRecientes", proyectosRecientes);
-            model.addAttribute("documentosRecientes", documentosRecientes);
-            model.addAttribute("tituloDashboard", "Dashboard - Diseñador");
-            
-        } catch (Exception e) {
-            System.err.println("Error en cargarDashboardDisenador: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "Error al cargar datos del dashboard: " + e.getMessage());
-        }
-    }
 
-    private void cargarDashboardProduccion(Model model) {
-        try {
-            List<Proyecto> proyectosEnProduccion = new ArrayList<>();
-            try {
-                proyectosEnProduccion = proyectoService.findByEstado("En Producción");
-                if (proyectosEnProduccion == null) {
-                    proyectosEnProduccion = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos en producción: " + e.getMessage());
-                proyectosEnProduccion = new ArrayList<>();
-            }
-            long totalEnProduccion = proyectosEnProduccion.size();
-            
-            List<Proyecto> proyectosListosInstalacion = new ArrayList<>();
-            try {
-                proyectosListosInstalacion = proyectoService.findByEstado("Instalación/Montaje");
-                if (proyectosListosInstalacion == null) {
-                    proyectosListosInstalacion = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos para instalación: " + e.getMessage());
-                proyectosListosInstalacion = new ArrayList<>();
-            }
-            
-            long inventarioDisponible = 0;
-            long inventarioEnUso = 0;
-            long inventarioMantenimiento = 0;
-            try {
-                inventarioDisponible = inventarioService.countByEstadoFisico("Disponible");
-                inventarioEnUso = inventarioService.countByEstadoFisico("En uso");
-                inventarioMantenimiento = inventarioService.countByEstadoFisico("Mantenimiento");
-            } catch (Exception e) {
-                System.err.println("Error al cargar inventario: " + e.getMessage());
-            }
-            
-            model.addAttribute("proyectosEnProduccion", proyectosEnProduccion);
-            model.addAttribute("totalEnProduccion", totalEnProduccion);
-            model.addAttribute("proyectosListosInstalacion", proyectosListosInstalacion);
-            model.addAttribute("inventarioDisponible", inventarioDisponible);
-            model.addAttribute("inventarioEnUso", inventarioEnUso);
-            model.addAttribute("inventarioMantenimiento", inventarioMantenimiento);
-            model.addAttribute("tituloDashboard", "Dashboard - Producción");
-            
-        } catch (Exception e) {
-            System.err.println("Error en cargarDashboardProduccion: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "Error al cargar datos del dashboard: " + e.getMessage());
-        }
-    }
 
-    private void cargarDashboardSoporte(Model model) {
-        try {
-            List<Proyecto> proyectosInstalacion = new ArrayList<>();
-            try {
-                proyectosInstalacion = proyectoService.findByEstado("Instalación/Montaje");
-                if (proyectosInstalacion == null) {
-                    proyectosInstalacion = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos en instalación: " + e.getMessage());
-                proyectosInstalacion = new ArrayList<>();
-            }
-            long totalInstalacion = proyectosInstalacion.size();
-            
-            List<Proyecto> proyectosEntregadosRecientes = new ArrayList<>();
-            try {
-                proyectosEntregadosRecientes = proyectoService.findTopNByEstado("Entregado", 5);
-                if (proyectosEntregadosRecientes == null) {
-                    proyectosEntregadosRecientes = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos entregados: " + e.getMessage());
-                proyectosEntregadosRecientes = new ArrayList<>();
-            }
-            
-            List<ReservaInventario> reservasActivas = new ArrayList<>();
-            try {
-                reservasActivas = inventarioService.findReservasActivas();
-                if (reservasActivas == null) {
-                    reservasActivas = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar reservas activas: " + e.getMessage());
-                reservasActivas = new ArrayList<>();
-            }
-            long totalReservasActivas = reservasActivas.size();
-            
-            model.addAttribute("proyectosInstalacion", proyectosInstalacion);
-            model.addAttribute("totalInstalacion", totalInstalacion);
-            model.addAttribute("proyectosEntregadosRecientes", proyectosEntregadosRecientes);
-            model.addAttribute("reservasActivas", reservasActivas);
-            model.addAttribute("totalReservasActivas", totalReservasActivas);
-            model.addAttribute("tituloDashboard", "Dashboard - Soporte Técnico");
-            
-        } catch (Exception e) {
-            System.err.println("Error en cargarDashboardSoporte: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "Error al cargar datos del dashboard: " + e.getMessage());
-        }
-    }
 
     private Map<String, Long> getProyectosPorMes(int meses) {
         Map<String, Long> resultado = new LinkedHashMap<>();
@@ -492,69 +181,31 @@ public class DashboardController {
         return resultado;
     }
 
-    private Map<String, BigDecimal> getPagosPorMes(int meses) {
-        Map<String, BigDecimal> resultado = new LinkedHashMap<>();
-        LocalDate hoy = LocalDate.now();
-        
-        for (int i = meses - 1; i >= 0; i--) {
-            LocalDate fecha = hoy.minusMonths(i);
-            String mes = fecha.getMonth().toString().substring(0, 3) + " " + fecha.getYear();
-            BigDecimal total = BigDecimal.ZERO;
-            try {
-                total = pagoService.sumByMonthAndYear(
-                    fecha.getMonthValue(), fecha.getYear()
-                );
-                if (total == null) {
-                    total = BigDecimal.ZERO;
-                }
-            } catch (Exception e) {
-                System.err.println("Error al sumar pagos por mes: " + e.getMessage());
-                total = BigDecimal.ZERO;
-            }
-            resultado.put(mes, total);
-        }
-        
-        return resultado;
-    }
 
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
-        switch (estado) {
-            case "Aprobado":
-                return "Aprobado";
-            case "En Diseño":
-                return "En Diseño";
-            case "En Producción":
-                return "En Producción";
-            case "Instalación/Montaje":
-                return "Instalación/Montaje";
-            case "Entregado":
-                return "Entregado";
-            case "Anulado":
-                return "Anulado";
-            default:
-                return estado;
-        }
+        return switch (estado) {
+            case "Aprobado" -> "Aprobado";
+            case "En Diseño" -> "En Diseño";
+            case "En Producción" -> "En Producción";
+            case "Instalación/Montaje" -> "Instalación/Montaje";
+            case "Entregado" -> "Entregado";
+            case "Anulado" -> "Anulado";
+            default -> estado;
+        };
     }
 
     public String getEstadoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";
-        switch (estado) {
-            case "Aprobado":
-                return "status-aprobado";
-            case "En Diseño":
-                return "status-diseno";
-            case "En Producción":
-                return "status-produccion";
-            case "Instalación/Montaje":
-                return "status-instalacion";
-            case "Entregado":
-                return "status-entregado";
-            case "Anulado":
-                return "status-anulado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (estado) {
+            case "Aprobado" -> "status-aprobado";
+            case "En Diseño" -> "status-diseno";
+            case "En Producción" -> "status-produccion";
+            case "Instalación/Montaje" -> "status-instalacion";
+            case "Entregado" -> "status-entregado";
+            case "Anulado" -> "status-anulado";
+            default -> "status-pendiente";
+        };
     }
 
     public String formatearMoneda(BigDecimal monto) {
@@ -564,19 +215,13 @@ public class DashboardController {
 
     public String getColorByEstado(String estado) {
         if (estado == null) return "#6B7280";
-        switch (estado) {
-            case "En Diseño":
-                return "#F59E0B";
-            case "En Producción":
-                return "#3B82F6";
-            case "Instalación/Montaje":
-                return "#8B5CF6";
-            case "Entregado":
-                return "#10B981";
-            case "Anulado":
-                return "#EF4444";
-            default:
-                return "#6B7280";
-        }
+        return switch (estado) {
+            case "En Diseño" -> "#F59E0B";
+            case "En Producción" -> "#3B82F6";
+            case "Instalación/Montaje" -> "#8B5CF6";
+            case "Entregado" -> "#10B981";
+            case "Anulado" -> "#EF4444";
+            default -> "#6B7280";
+        };
     }
 }

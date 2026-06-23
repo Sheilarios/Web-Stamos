@@ -67,75 +67,55 @@ public class LoginController {
 
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
         
-        System.out.println("=== REDIRECCION POR ROL ===");
-        System.out.println("Usuario: " + auth.getName());
-        System.out.println("Authorities:");
-        for (GrantedAuthority a : authorities) {
-            System.out.println("  - " + a.getAuthority());
-        }
+        boolean isAdmin = authorities.stream().anyMatch(a -> 
+            a.getAuthority().equals("ROLE_ADMIN") ||
+            a.getAuthority().equals("ROLE_ADMINISTRADOR") ||
+            a.getAuthority().equals("ROLE_Administrador") ||
+            a.getAuthority().equals("Administrador") ||
+            a.getAuthority().toUpperCase().contains("ADMIN"));
         
-        boolean isAdmin = authorities.stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") ||
-                              a.getAuthority().equals("ROLE_ADMINISTRADOR") ||
-                              a.getAuthority().equals("ROLE_Administrador") ||
-                              a.getAuthority().equals("Administrador") ||
-                              a.getAuthority().toUpperCase().contains("ADMIN"));
+        boolean isVendedor = authorities.stream().anyMatch(a -> 
+            a.getAuthority().equals("ROLE_VENDEDOR") ||
+            a.getAuthority().equals("ROLE_Vendedor") ||
+            a.getAuthority().equals("Vendedor") ||
+            a.getAuthority().toUpperCase().contains("VENDEDOR"));
         
-        boolean isVendedor = authorities.stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_VENDEDOR") ||
-                              a.getAuthority().equals("ROLE_Vendedor") ||
-                              a.getAuthority().equals("Vendedor") ||
-                              a.getAuthority().toUpperCase().contains("VENDEDOR"));
+        boolean isDisenador = authorities.stream().anyMatch(a -> 
+            a.getAuthority().equals("ROLE_DISEÑADOR") ||
+            a.getAuthority().equals("ROLE_Diseñador") ||
+            a.getAuthority().equals("Diseñador") ||
+            a.getAuthority().toUpperCase().contains("DISEÑADOR"));
         
-        boolean isDisenador = authorities.stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_DISEÑADOR") ||
-                              a.getAuthority().equals("ROLE_Diseñador") ||
-                              a.getAuthority().equals("Diseñador") ||
-                              a.getAuthority().toUpperCase().contains("DISEÑADOR"));
+        boolean isProduccion = authorities.stream().anyMatch(a -> 
+            a.getAuthority().equals("ROLE_PRODUCCION") ||
+            a.getAuthority().equals("ROLE_Produccion") ||
+            a.getAuthority().equals("Produccion") ||
+            a.getAuthority().toUpperCase().contains("PRODUCCION"));
         
-        boolean isProduccion = authorities.stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_PRODUCCION") ||
-                              a.getAuthority().equals("ROLE_Produccion") ||
-                              a.getAuthority().equals("Produccion") ||
-                              a.getAuthority().toUpperCase().contains("PRODUCCION"));
+        boolean isSoporte = authorities.stream().anyMatch(a -> 
+            a.getAuthority().equals("ROLE_SOPORTE_TECNICO") ||
+            a.getAuthority().equals("ROLE_Soporte_Tecnico") ||
+            a.getAuthority().equals("SoporteTecnico") ||
+            a.getAuthority().toUpperCase().contains("SOPORTE"));
         
-        boolean isSoporte = authorities.stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_SOPORTE_TECNICO") ||
-                              a.getAuthority().equals("ROLE_Soporte_Tecnico") ||
-                              a.getAuthority().equals("SoporteTecnico") ||
-                              a.getAuthority().toUpperCase().contains("SOPORTE"));
-        
-        boolean isCliente = authorities.stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE") ||
-                              a.getAuthority().equals("ROLE_Cliente") ||
-                              a.getAuthority().equals("Cliente") ||
-                              a.getAuthority().toUpperCase().contains("CLIENTE"));
-
-        System.out.println("isAdmin: " + isAdmin);
-        System.out.println("isVendedor: " + isVendedor);
-        System.out.println("isDisenador: " + isDisenador);
-        System.out.println("isProduccion: " + isProduccion);
-        System.out.println("isSoporte: " + isSoporte);
-        System.out.println("isCliente: " + isCliente);
+        boolean isCliente = authorities.stream().anyMatch(a -> 
+            a.getAuthority().equals("ROLE_CLIENTE") ||
+            a.getAuthority().equals("ROLE_Cliente") ||
+            a.getAuthority().equals("Cliente") ||
+            a.getAuthority().toUpperCase().contains("CLIENTE"));
 
         if (isAdmin || isVendedor || isDisenador || isProduccion || isSoporte) {
-            System.out.println("Redirigiendo a /admin/dashboard");
             return "redirect:/admin/dashboard";
         } else if (isCliente) {
-            System.out.println("Redirigiendo a /cliente/dashboard");
             return "redirect:/cliente/dashboard";
         }
 
-        System.out.println("Sin rol valido, redirigiendo a login");
         SecurityContextHolder.clearContext();
         return "redirect:/login?error=true";
     }
 
     @GetMapping("/login-success")
     public String loginSuccess(Authentication auth, HttpServletRequest request) {
-        System.out.println("=== LOGIN SUCCESS ===");
-        System.out.println("Usuario autenticado: " + (auth != null ? auth.getName() : "null"));
-        
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
             String email = auth.getName();
             try {
@@ -143,13 +123,11 @@ public class LoginController {
                 if (usuario != null) {
                     usuario.setUltimoAcceso(LocalDateTime.now());
                     clienteService.actualizarUsuario(usuario);
-                    System.out.println("Ultimo acceso actualizado para: " + email);
                 }
             } catch (Exception e) {
                 System.err.println("Error al actualizar ultimo acceso: " + e.getMessage());
             }
         }
-
         return redirectByRole(auth);
     }
 
@@ -314,7 +292,6 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        System.out.println("=== LOGOUT ===");
         if (session != null) {
             session.invalidate();
         }

@@ -1,15 +1,385 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Configuración · STAMOS Administración</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        
+        .header i {
+            font-size: 28px;
+            color: var(--yellow-dark);
+        }
+        
+        .header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .header small {
+            font-size: 13px;
+            color: var(--text-3);
+            font-weight: 400;
+            margin-left: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--text-2);
+            margin-bottom: 6px;
+        }
+        
+        label .required {
+            color: var(--red);
+            margin-left: 2px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            background: white;
+            outline: none;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            padding: 12px;
+        }
+        
+        .info-box {
+            background: var(--blue-light);
+            border: 1px solid #B8D4FE;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--blue);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box i {
+            font-size: 18px;
+            margin-top: 2px;
+        }
+        
+        .info-box .texto {
+            line-height: 1.5;
+        }
+        
+        .info-box .texto strong {
+            color: var(--text);
+        }
+        
+        .badge-tipo {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+        
+        .badge-decimal { background: #DBEAFE; color: #2563EB; }
+        .badge-int { background: #FEF3C7; color: #D97706; }
+        .badge-string { background: #EDE9FE; color: #7C3AED; }
+        .badge-boolean { background: var(--green-light); color: var(--green); }
+        .badge-date { background: var(--red-light); color: var(--red); }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        
+        .btn-danger:hover {
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        @media (max-width: 640px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            .form-actions { flex-wrap: wrap; }
+            .form-actions .btn { flex: 1; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <i class="ti ti-settings"></i>
+        <h1>Editar Configuración <small th:text="${configuracion.parametro}">parámetro</small></h1>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+    <div class="info-box" th:if="${configuracion != null}">
+        <i class="ti ti-info-circle"></i>
+        <div class="texto">
+            <strong th:text="${configuracion.parametro}">parametro</strong>
+            <span th:text="' · ' + ${configuracion.descripcion}">descripción</span>
+            <br>
+            <span style="font-size:12px; color:var(--text-3);">
+                Tipo: <span th:text="${configuracion.tipoDato}">string</span>
+                <span class="badge-tipo" 
+                      th:classappend="${configuracion.tipoDato == 'DECIMAL'} ? 'badge-decimal' : 
+                                      (configuracion.tipoDato == 'INT' ? 'badge-int' : 
+                                      (configuracion.tipoDato == 'BOOLEAN' ? 'badge-boolean' : 
+                                      (configuracion.tipoDato == 'DATE' ? 'badge-date' : 'badge-string')))"
+                      th:text="${configuracion.tipoDato}">STRING</span>
+            </span>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/configuracion/actualizar/{id}(id=${configuracion.idConfig})}" 
+          th:object="${configuracion}" method="post">
+        
+        <input type="hidden" th:field="*{idConfig}">
+        <input type="hidden" th:field="*{parametro}">
+        <input type="hidden" th:field="*{tipoDato}">
+
+        <div class="form-group">
+            <label for="parametro">Nombre del parámetro</label>
+            <div class="input-wrapper">
+                <i class="ti ti-tag"></i>
+                <input type="text" id="parametro" th:field="*{parametro}" disabled readonly>
+            </div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;">
+                <i class="ti ti-lock"></i> El nombre del parámetro no se puede modificar
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="valor">Valor <span class="required">*</span></label>
+            <div class="input-wrapper">
+                <i th:if="${configuracion.tipoDato == 'DECIMAL'}" class="ti ti-currency-dollar"></i>
+                <i th:if="${configuracion.tipoDato == 'INT'}" class="ti ti-numbers"></i>
+                <i th:if="${configuracion.tipoDato == 'BOOLEAN'}" class="ti ti-toggle-left"></i>
+                <i th:if="${configuracion.tipoDato == 'DATE'}" class="ti ti-calendar"></i>
+                <i th:if="${configuracion.tipoDato == 'STRING'}" class="ti ti-text"></i>
+                <input type="text" id="valor" th:field="*{valor}" required>
+            </div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;" 
+                 th:if="${configuracion.tipoDato == 'DECIMAL'}">
+                <i class="ti ti-info-circle"></i> Ingresa un número decimal (ej: 18.00)
+            </div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;" 
+                 th:if="${configuracion.tipoDato == 'INT'}">
+                <i class="ti ti-info-circle"></i> Ingresa un número entero (ej: 30)
+            </div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;" 
+                 th:if="${configuracion.tipoDato == 'BOOLEAN'}">
+                <i class="ti ti-info-circle"></i> Ingresa <strong>true</strong> o <strong>false</strong>
+            </div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;" 
+                 th:if="${configuracion.tipoDato == 'DATE'}">
+                <i class="ti ti-info-circle"></i> Ingresa una fecha (ej: 2026-01-01)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <div class="input-wrapper">
+                <i class="ti ti-article"></i>
+                <textarea id="descripcion" th:field="*{descripcion}" rows="2"></textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/admin/configuracion}" class="btn-secondary">
+                <i class="ti ti-arrow-left"></i> Cancelar
+            </a>
+            <button type="submit" class="btn-primary">
+                <i class="ti ti-device-floppy"></i> Guardar Cambios
+            </button>
+        </div>
+    </form>
+
+    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+        <form th:action="@{/admin/configuracion/restaurar/{id}(id=${configuracion.idConfig})}" method="post" 
+              onsubmit="return confirm('¿Restaurar este parámetro a su valor por defecto?');">
+            <button type="submit" class="btn-danger">
+                <i class="ti ti-refresh"></i> Restaurar valor por defecto
+            </button>
+        </form>
+        <div style="font-size:11px; color:var(--text-3); margin-top:6px;">
+            <i class="ti ti-alert-triangle"></i> 
+            Esta acción restaurará el valor original del parámetro.
+        </div>
+    </div>
+
+</div>
+
+</body>
 </html>

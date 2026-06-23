@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Historial de Pagos</title>
+    <title>Historial de Pagos · STAMOS Cliente</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -35,21 +35,15 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
-        }
-        
-        /* ===== LAYOUT ===== */
-        .app {
             display: flex;
             min-height: 100vh;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--card);
             border-right: 1px solid var(--border);
-            padding: 24px 16px;
+            padding: 24px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -61,110 +55,109 @@
         }
         
         .sidebar-brand {
-            font-family: 'Syne', sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-            padding-bottom: 24px;
+            padding: 0 20px 24px;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 20px;
         }
         
-        .sidebar-brand i {
-            color: var(--yellow-dark);
-            font-size: 28px;
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
         }
         
-        .sidebar-brand span {
-            color: var(--yellow-dark);
+        .sidebar-brand h2 span {
+            color: var(--yellow);
         }
         
-        .sidebar-nav {
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
             flex: 1;
         }
         
-        .sidebar-nav a {
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
             color: var(--text-2);
             text-decoration: none;
-            font-weight: 500;
             font-size: 14px;
+            font-weight: 500;
             transition: all 0.15s;
-            margin-bottom: 4px;
         }
         
-        .sidebar-nav a i {
-            font-size: 20px;
-            width: 24px;
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
             text-align: center;
         }
         
-        .sidebar-nav a:hover {
+        .sidebar-menu li a:hover {
             background: var(--yellow-light);
-            color: var(--yellow-dark);
+            color: var(--text);
         }
         
-        .sidebar-nav a.active {
+        .sidebar-menu li a.active {
             background: var(--yellow-light);
             color: var(--yellow-dark);
             font-weight: 600;
-            border-left: 3px solid var(--yellow);
         }
         
-        .sidebar-nav .nav-label {
-            font-size: 11px;
+        .sidebar-menu .menu-label {
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-3);
-            font-weight: 600;
             padding: 16px 16px 8px;
+            font-weight: 600;
         }
         
         .sidebar-footer {
+            padding: 16px 20px;
             border-top: 1px solid var(--border);
-            padding-top: 16px;
             margin-top: auto;
         }
         
         .sidebar-footer a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-2);
+            gap: 10px;
+            color: var(--red);
             text-decoration: none;
+            font-size: 13px;
             font-weight: 500;
-            font-size: 14px;
-            transition: all 0.15s;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
         }
         
         .sidebar-footer a:hover {
-            background: #FEF2F2;
-            color: var(--red);
+            background: var(--red-light);
         }
         
-        .sidebar-footer a i {
-            font-size: 20px;
-            width: 24px;
-            text-align: center;
-        }
-        
-        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 32px 40px;
+            padding: 32px 36px;
+            min-height: 100vh;
         }
         
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -190,30 +183,28 @@
         }
         
         .page-title small {
-            font-family: 'DM Sans', sans-serif;
             font-size: 14px;
             font-weight: 400;
             color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
         
         .user-info {
-            background: var(--yellow-light);
+            background: var(--card);
             padding: 8px 16px;
             border-radius: 30px;
-            border: 1px solid var(--yellow-border);
+            border: 1px solid var(--border);
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--text-2);
         }
         
         .user-info i {
             color: var(--yellow-dark);
         }
         
-        /* ===== RESUMEN DE PAGOS ===== */
         .resumen-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -250,17 +241,9 @@
             margin-top: 8px;
         }
         
-        .resumen-card .value.pendiente {
-            color: var(--red);
-        }
-        
-        .resumen-card .value.pagado {
-            color: var(--green);
-        }
-        
-        .resumen-card .value.total {
-            color: var(--blue);
-        }
+        .resumen-card .value.pendiente { color: var(--red); }
+        .resumen-card .value.pagado { color: var(--green); }
+        .resumen-card .value.total { color: var(--blue); }
         
         .resumen-card .icon {
             float: right;
@@ -269,7 +252,6 @@
             color: var(--yellow-dark);
         }
         
-        /* ===== FILTROS ===== */
         .filters {
             display: flex;
             flex-wrap: wrap;
@@ -288,8 +270,7 @@
             color: var(--text-2);
         }
         
-        .filters select,
-        .filters input {
+        .filters select {
             padding: 8px 14px;
             border-radius: 10px;
             border: 1px solid var(--border);
@@ -301,13 +282,11 @@
             transition: all 0.15s;
         }
         
-        .filters select:focus,
-        .filters input:focus {
+        .filters select:focus {
             border-color: var(--yellow);
             box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
         }
         
-        /* ===== TABLA DE PAGOS ===== */
         .section {
             background: var(--card);
             border: 1px solid var(--border);
@@ -374,7 +353,6 @@
             background: var(--yellow-light);
         }
         
-        /* ===== BADGES ===== */
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -415,7 +393,6 @@
         .metodo-badge.tarjeta { background: #FEF3C7; color: #B45309; }
         .metodo-badge.cheque { background: #FCE4EC; color: #C62828; }
         
-        /* ===== EMPTY STATE ===== */
         .empty-message {
             text-align: center;
             padding: 48px;
@@ -432,7 +409,21 @@
             font-size: 14px;
         }
         
-        /* ===== MODAL DETALLE ===== */
+        .btn-link {
+            background: transparent;
+            border: none;
+            color: var(--yellow-dark);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+        
         .modal-overlay {
             display: none;
             position: fixed;
@@ -463,14 +454,8 @@
         }
         
         @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
         
         .modal-header {
@@ -551,134 +536,84 @@
             font-weight: 500;
             font-size: 13px;
             cursor: pointer;
-            transition: all 0.15s;
             font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
         }
         
         .modal-footer .btn-cerrar:hover {
             background: var(--bg);
         }
         
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 72px;
-                padding: 16px 8px;
-            }
-            .sidebar-brand span,
-            .sidebar-nav a span,
-            .sidebar-nav .nav-label,
-            .sidebar-footer a span {
-                display: none;
-            }
-            .sidebar-nav a {
-                justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-nav a i {
-                font-size: 24px;
-                width: auto;
-            }
-            .sidebar-footer a {
-                justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-footer a i {
-                font-size: 24px;
-                width: auto;
-            }
-            .main-content {
-                margin-left: 72px;
-                padding: 20px;
-            }
+        @media (max-width: 1024px) {
+            .sidebar { width: 72px; padding: 16px 0; }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span { display: none; }
+            .sidebar-menu li a { justify-content: center; padding: 12px; }
+            .sidebar-menu li a i { font-size: 22px; width: auto; }
+            .sidebar-footer a span { display: none; }
+            .sidebar-footer a { justify-content: center; }
+            .main-content { margin-left: 72px; padding: 20px; }
         }
         
-        @media (max-width: 600px) {
-            .sidebar {
-                display: none;
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 16px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .resumen-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+            .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; flex: 1; }
+            .sidebar-menu li { margin-bottom: 0; }
+            .sidebar-menu li a { padding: 6px 10px; font-size: 12px; }
+            .sidebar-menu li a i { font-size: 16px; }
+            .sidebar-menu .menu-label { display: none; }
+            .sidebar-footer { border-top: none; padding: 0; margin: 0; }
+            .main-content { margin-left: 0; padding: 16px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .filters { flex-direction: column; align-items: stretch; }
+            .resumen-grid { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .resumen-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<div class="app">
-    
-    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <i class="ti ti-construction"></i>
-            <span>STAMOS</span>
+            <h2>STAMOS<span>.</span></h2>
+            <small>Área del Cliente</small>
         </div>
         
-        <nav class="sidebar-nav">
-            <div class="nav-label">Cliente</div>
-            
-            <a href="#" th:href="@{/cliente/dashboard}">
-                <i class="ti ti-layout-dashboard"></i>
-                <span>Dashboard</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/proyectos}">
-                <i class="ti ti-folder-open"></i>
-                <span>Mis Proyectos</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/documentos}">
-                <i class="ti ti-file-text"></i>
-                <span>Documentos</span>
-            </a>
-            
-            <a href="#" class="active" th:href="@{/cliente/pagos}">
-                <i class="ti ti-credit-card"></i>
-                <span>Historial de Pagos</span>
-            </a>
-            
-            <a href="#" th:href="@{/cliente/perfil}">
-                <i class="ti ti-user-circle"></i>
-                <span>Mi Perfil</span>
-            </a>
-        </nav>
+        <ul class="sidebar-menu">
+            <li><a href="/cliente/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a href="/cliente/proyectos"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a href="/cliente/pagos" class="active"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a href="/cliente/perfil"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+        </ul>
         
         <div class="sidebar-footer">
-            <a href="#" th:href="@{/logout}">
+            <a href="/logout">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
     </aside>
-    
-    <!-- ===== MAIN CONTENT ===== -->
+
     <main class="main-content">
-        
-        <!-- Header -->
         <div class="header">
             <div class="page-title">
                 <i class="ti ti-credit-card"></i>
-                <span>Historial de Pagos <small>Consulta tus pagos y saldo</small></span>
+                <span>Historial de Pagos</span>
+                <small>Consulta tus pagos y saldo</small>
             </div>
             <div class="user-info">
                 <i class="ti ti-user-circle"></i>
                 <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
             </div>
         </div>
-        
-        <!-- Resumen de Pagos -->
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
         <div class="resumen-grid">
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-file-invoice"></i></div>
@@ -688,21 +623,30 @@
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-credit-card"></i></div>
                 <div class="label">Total Pagado</div>
-                <div class="value pagado" th:text="'S/ ' + ${#numbers.formatDecimal(totalPagado, 0, 2)}">S/ 0.00</div>
+                <div class="value pagado" th:text="${totalPagadoFormateado}">S/ 0.00</div>
             </div>
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-wallet"></i></div>
                 <div class="label">Saldo Pendiente</div>
-                <div class="value pendiente" th:text="'S/ ' + ${#numbers.formatDecimal(saldoPendiente, 0, 2)}">S/ 0.00</div>
+                <div class="value pendiente" th:text="${saldoPendienteFormateado}">S/ 0.00</div>
             </div>
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-clock"></i></div>
-                <div class="label">Pagos Pendientes por Validar</div>
+                <div class="label">Pagos por Validar</div>
                 <div class="value" th:text="${pagosPendientesValidacion}">0</div>
             </div>
+            <div class="resumen-card">
+                <div class="icon"><i class="ti ti-check"></i></div>
+                <div class="label">Pagos Validados</div>
+                <div class="value" th:text="${pagosValidados}">0</div>
+            </div>
+            <div class="resumen-card">
+                <div class="icon"><i class="ti ti-x"></i></div>
+                <div class="label">Pagos Rechazados</div>
+                <div class="value" th:text="${pagosRechazados}">0</div>
+            </div>
         </div>
-        
-        <!-- Filtros -->
+
         <div class="filters">
             <label for="estadoFiltro">Estado:</label>
             <select id="estadoFiltro" onchange="filtrarPagos()">
@@ -712,7 +656,7 @@
                 <option value="Rechazado">Rechazados</option>
             </select>
             
-            <label for="metodoFiltro" style="margin-left:8px;">Método:</label>
+            <label for="metodoFiltro">Método:</label>
             <select id="metodoFiltro" onchange="filtrarPagos()">
                 <option value="todos">Todos los métodos</option>
                 <option value="Efectivo">Efectivo</option>
@@ -721,14 +665,13 @@
                 <option value="Cheque">Cheque</option>
             </select>
             
-            <label for="proyectoFiltro" style="margin-left:8px;">Proyecto:</label>
+            <label for="proyectoFiltro">Proyecto:</label>
             <select id="proyectoFiltro" onchange="filtrarPagos()">
                 <option value="todos">Todos los proyectos</option>
                 <option th:each="p : ${proyectos}" th:value="${p.idProyecto}" th:text="${p.nombreProyecto}">Proyecto</option>
             </select>
         </div>
-        
-        <!-- Tabla de Pagos -->
+
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
@@ -760,24 +703,23 @@
                                 th:data-proyecto="${p.idProyecto}">
                                 <td th:text="${p.idPago}">1</td>
                                 <td th:text="${p.nombreProyecto}">Proyecto</td>
-                                <td th:text="'S/ ' + ${#numbers.formatDecimal(p.monto, 0, 2)}">S/ 0.00</td>
+                                <td th:text="${p.montoFormateado}">S/ 0.00</td>
                                 <td th:text="${#temporals.format(p.fechaPago, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
                                 <td>
-                                    <span class="metodo-badge" th:classappend="${p.metodoPago == 'Efectivo'} ? 'efectivo' :
-                                                                        ${p.metodoPago == 'Transferencia'} ? 'transferencia' :
-                                                                        ${p.metodoPago == 'Tarjeta'} ? 'tarjeta' :
-                                                                        'cheque'"
+                                    <span class="metodo-badge" 
+                                          th:classappend="${p.metodoPago == 'Efectivo'} ? 'efectivo' :
+                                                          (p.metodoPago == 'Transferencia' ? 'transferencia' :
+                                                          (p.metodoPago == 'Tarjeta' ? 'tarjeta' : 'cheque'))"
                                           th:text="${p.metodoPago}">Transferencia</span>
                                 </td>
                                 <td>
-                                    <span class="status-badge" th:classappend="${p.estadoPago == 'Validado'} ? 'status-validado' :
-                                                                        ${p.estadoPago == 'Pendiente'} ? 'status-pendiente' :
-                                                                        'status-rechazado'"
+                                    <span class="status-badge" 
+                                          th:classappend="${p.estadoPago == 'Validado'} ? 'status-validado' :
+                                                          (p.estadoPago == 'Pendiente' ? 'status-pendiente' : 'status-rechazado')"
                                           th:text="${p.estadoPago}">Validado</span>
                                 </td>
                                 <td>
-                                    <button class="btn-link" th:onclick="'verDetalle(' + ${p.idPago} + ')'" 
-                                            style="background:transparent; border:none; color:var(--yellow-dark); cursor:pointer; font-weight:600; font-size:13px;">
+                                    <button class="btn-link" th:onclick="'verDetalle(' + ${p.idPago} + ')'">
                                         <i class="ti ti-eye"></i>
                                     </button>
                                 </td>
@@ -787,7 +729,6 @@
                 </div>
             </div>
             
-            <!-- Empty State -->
             <div th:if="${pagos.isEmpty()}" class="empty-message">
                 <i class="ti ti-credit-card-off"></i>
                 <p>No tienes pagos registrados aún.</p>
@@ -796,140 +737,138 @@
                 </p>
             </div>
         </div>
-        
-    </main>
-</div>
 
-<!-- ===== MODAL DETALLE PAGO ===== -->
-<div class="modal-overlay" id="modalDetallePago">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>
-                <i class="ti ti-receipt"></i>
-                <span>Detalle del Pago</span>
-            </h3>
-            <button class="modal-close" onclick="cerrarDetalle()">&times;</button>
+        <div th:if="${proyectosVencidos != null && !proyectosVencidos.isEmpty()}" 
+             style="margin-top:24px; background:var(--red-light); border:1px solid #FECACA; border-radius:16px; padding:16px 20px;">
+            <div style="display:flex; align-items:center; gap:12px; color:var(--red);">
+                <i class="ti ti-alert-triangle" style="font-size:20px;"></i>
+                <div>
+                    <strong>Tienes pagos vencidos</strong>
+                    <span style="display:block; font-size:13px; color:var(--text-2);">
+                        Contacta con el área de ventas para regularizar tus pagos.
+                    </span>
+                </div>
+            </div>
+            <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;">
+                <span th:each="p : ${proyectosVencidos}" 
+                      style="background:white; padding:4px 12px; border-radius:12px; font-size:12px; border:1px solid var(--border);">
+                    <span th:text="${p.nombreProyecto}">Proyecto</span>
+                    <span style="color:var(--red); font-weight:600;" th:text="' (' + ${p.diasVencidos} + ' días)'">(0 días)</span>
+                </span>
+            </div>
         </div>
-        <div class="modal-body" id="modalDetalleBody">
-            <!-- Contenido dinámico -->
-        </div>
-        <div class="modal-footer">
-            <button class="btn-cerrar" onclick="cerrarDetalle()">Cerrar</button>
+    </main>
+
+    <div class="modal-overlay" id="modalDetallePago">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="ti ti-receipt"></i>
+                    <span>Detalle del Pago</span>
+                </h3>
+                <button class="modal-close" onclick="cerrarDetalle()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalDetalleBody"></div>
+            <div class="modal-footer">
+                <button class="btn-cerrar" onclick="cerrarDetalle()">Cerrar</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    // Datos de pagos desde el backend
-    const pagosData = /*[[${pagos}]]*/ [];
-    
-    // Función para ver detalle del pago
-    function verDetalle(idPago) {
-        const pago = pagosData.find(p => p.idPago === idPago);
-        if (!pago) return;
+    <script>
+        const pagosData = /*[[${pagos}]]*/ [];
         
-        const modal = document.getElementById('modalDetallePago');
-        const body = document.getElementById('modalDetalleBody');
-        
-        const estadoColor = pago.estadoPago === 'Validado' ? 'var(--green)' :
-                           pago.estadoPago === 'Pendiente' ? 'var(--yellow-dark)' : 'var(--red)';
-        
-        body.innerHTML = `
-            <div class="detalle-item">
-                <span class="label">ID del Pago</span>
-                <span class="value">#${pago.idPago}</span>
-            </div>
-            <div class="detalle-item">
-                <span class="label">Proyecto</span>
-                <span class="value">${pago.nombreProyecto || 'N/A'}</span>
-            </div>
-            <div class="detalle-item">
-                <span class="label">Monto</span>
-                <span class="value" style="font-size:18px; color:var(--yellow-dark);">
-                    S/ ${(pago.monto || 0).toFixed(2)}
-                </span>
-            </div>
-            <div class="detalle-item">
-                <span class="label">Fecha</span>
-                <span class="value">${pago.fechaPago ? new Date(pago.fechaPago).toLocaleDateString('es-PE') : 'N/A'}</span>
-            </div>
-            <div class="detalle-item">
-                <span class="label">Método de Pago</span>
-                <span class="value">${pago.metodoPago || 'N/A'}</span>
-            </div>
-            <div class="detalle-item">
-                <span class="label">Estado</span>
-                <span class="value" style="color:${estadoColor}; font-weight:700;">
-                    ${pago.estadoPago || 'N/A'}
-                </span>
-            </div>
-            ${pago.observaciones ? `
-            <div class="detalle-item">
-                <span class="label">Observaciones</span>
-                <span class="value" style="font-weight:400; color:var(--text-2);">${pago.observaciones}</span>
-            </div>` : ''}
-            ${pago.comprobante ? `
-            <div class="detalle-item" style="border-bottom:none; padding-top:12px;">
-                <span class="label">Comprobante</span>
-                <span class="value" style="font-weight:400;">
-                    <a href="${pago.comprobante.archivoUrl}" target="_blank" style="color:var(--yellow-dark); text-decoration:none;">
-                        <i class="ti ti-file"></i> ${pago.comprobante.numeroComprobante || 'Ver'}
-                    </a>
-                </span>
-            </div>` : ''}
-        `;
-        
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    // Función para cerrar detalle
-    function cerrarDetalle() {
-        document.getElementById('modalDetallePago').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    // Cerrar con tecla ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') cerrarDetalle();
-    });
-    
-    // Cerrar clic en overlay
-    document.getElementById('modalDetallePago').addEventListener('click', function(e) {
-        if (e.target === this) cerrarDetalle();
-    });
-    
-    // Función para filtrar pagos
-    function filtrarPagos() {
-        const estadoFiltro = document.getElementById('estadoFiltro').value;
-        const metodoFiltro = document.getElementById('metodoFiltro').value;
-        const proyectoFiltro = document.getElementById('proyectoFiltro').value;
-        
-        const rows = document.querySelectorAll('#tablaPagos tr');
-        
-        rows.forEach(row => {
-            const estado = row.dataset.estado;
-            const metodo = row.dataset.metodo;
-            const proyecto = row.dataset.proyecto;
+        function verDetalle(idPago) {
+            const pago = pagosData.find(p => p.idPago === idPago);
+            if (!pago) return;
             
-            let mostrar = true;
+            const modal = document.getElementById('modalDetallePago');
+            const body = document.getElementById('modalDetalleBody');
             
-            if (estadoFiltro !== 'todos' && estado !== estadoFiltro) {
-                mostrar = false;
-            }
+            const estadoColor = pago.estadoPago === 'Validado' ? 'var(--green)' :
+                               pago.estadoPago === 'Pendiente' ? 'var(--yellow-dark)' : 'var(--red)';
             
-            if (metodoFiltro !== 'todos' && metodo !== metodoFiltro) {
-                mostrar = false;
-            }
+            body.innerHTML = `
+                <div class="detalle-item">
+                    <span class="label">ID del Pago</span>
+                    <span class="value">#${pago.idPago}</span>
+                </div>
+                <div class="detalle-item">
+                    <span class="label">Proyecto</span>
+                    <span class="value">${pago.nombreProyecto || 'N/A'}</span>
+                </div>
+                <div class="detalle-item">
+                    <span class="label">Monto</span>
+                    <span class="value" style="font-size:18px; color:var(--yellow-dark);">
+                        ${pago.montoFormateado || 'S/ 0.00'}
+                    </span>
+                </div>
+                <div class="detalle-item">
+                    <span class="label">Fecha</span>
+                    <span class="value">${pago.fechaPago ? new Date(pago.fechaPago).toLocaleDateString('es-PE') : 'N/A'}</span>
+                </div>
+                <div class="detalle-item">
+                    <span class="label">Método de Pago</span>
+                    <span class="value">${pago.metodoPago || 'N/A'}</span>
+                </div>
+                <div class="detalle-item">
+                    <span class="label">Estado</span>
+                    <span class="value" style="color:${estadoColor}; font-weight:700;">
+                        ${pago.estadoPago || 'N/A'}
+                    </span>
+                </div>
+                ${pago.observaciones ? `
+                <div class="detalle-item">
+                    <span class="label">Observaciones</span>
+                    <span class="value" style="font-weight:400; color:var(--text-2);">${pago.observaciones}</span>
+                </div>` : ''}
+            `;
             
-            if (proyectoFiltro !== 'todos' && proyecto !== proyectoFiltro) {
-                mostrar = false;
-            }
-            
-            row.style.display = mostrar ? '' : 'none';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarDetalle() {
+            document.getElementById('modalDetallePago').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarDetalle();
         });
-    }
-</script>
+
+        document.getElementById('modalDetallePago').addEventListener('click', function(e) {
+            if (e.target === this) cerrarDetalle();
+        });
+
+        function filtrarPagos() {
+            const estadoFiltro = document.getElementById('estadoFiltro').value;
+            const metodoFiltro = document.getElementById('metodoFiltro').value;
+            const proyectoFiltro = document.getElementById('proyectoFiltro').value;
+            
+            const rows = document.querySelectorAll('#tablaPagos tr');
+            
+            rows.forEach(row => {
+                const estado = row.dataset.estado;
+                const metodo = row.dataset.metodo;
+                const proyecto = row.dataset.proyecto;
+                
+                let mostrar = true;
+                
+                if (estadoFiltro !== 'todos' && estado !== estadoFiltro) {
+                    mostrar = false;
+                }
+                if (metodoFiltro !== 'todos' && metodo !== metodoFiltro) {
+                    mostrar = false;
+                }
+                if (proyectoFiltro !== 'todos' && proyecto !== proyectoFiltro) {
+                    mostrar = false;
+                }
+                
+                row.style.display = mostrar ? '' : 'none';
+            });
+        }
+    </script>
 
 </body>
-</html>1
+</html>

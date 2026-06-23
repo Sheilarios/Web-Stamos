@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Administración · Reservas de Equipos</title>
+    <title>Reservas de Equipos · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,33 +24,370 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
         }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); padding: 40px 24px; }
-        .container { max-width: 1400px; margin: 0 auto; background: var(--card); border-radius: 20px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
-        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
-        .page-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .page-title i { color: var(--yellow-dark); font-size: 28px; }
-        .btn-primary { background: var(--yellow); border: none; color: #2A1800; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-primary:hover { background: var(--yellow-mid); }
-        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-2); padding: 10px 20px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow-dark); }
-        .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { text-align: left; padding: 14px 16px; background: var(--yellow-light); color: var(--yellow-dark); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--yellow-border); }
-        td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-2); }
-        tr:last-child td { border-bottom: none; }
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-        .status-reservado { background: var(--yellow-light); color: var(--yellow-dark); }
-        .status-entregado { background: var(--green-light); color: var(--green); }
-        .status-cancelado { background: var(--red-light); color: var(--red); }
-        .action-buttons { display: flex; gap: 8px; }
-        .btn-icon { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); }
-        .btn-icon:hover { border-color: var(--yellow); color: var(--yellow-dark); }
-        .btn-icon.danger:hover { border-color: var(--red); color: var(--red); }
-        .empty-message { text-align: center; padding: 48px; color: var(--text-3); }
-        .empty-message i { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
-        @media (max-width: 768px) { body { padding: 20px; } th, td { padding: 10px 12px; } .action-buttons { flex-direction: column; } .btn-icon { width: 100%; justify-content: center; } }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px;
+        }
+        
+        .filter-group i {
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .filter-group select {
+            border: none;
+            padding: 10px 0;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .filters-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-activa {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        
+        .status-completada {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-cancelada {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s;
+            color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-icon.verde:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
+        .btn-icon.rojo:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .pagination {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .page-link {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+        
+        .page-link:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .page-link.active {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #2A1800;
+            font-weight: 600;
+        }
+        
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+        }
+        
+        .stat-card .numero {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-card .etiqueta {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .stat-card .numero.azul { color: var(--blue); }
+        .stat-card .numero.verde { color: var(--green); }
+        .stat-card .numero.rojo { color: var(--red); }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-group select { width: 100%; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .pagination { flex-direction: column; align-items: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -60,57 +397,158 @@
         <div class="page-title">
             <i class="ti ti-calendar-event"></i>
             <span>Reservas de Equipos</span>
+            <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
         </div>
-        <a th:href="@{/admin/inventario/reservas/nueva}" class="btn-primary">
-            <i class="ti ti-plus"></i> Nueva Reserva
-        </a>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a th:href="@{/admin/inventario/disponibilidad}" class="btn-secondary">
+                <i class="ti ti-calendar"></i> Disponibilidad
+            </a>
+            <a th:href="@{/admin/inventario/reservar}" class="btn-primary">
+                <i class="ti ti-plus"></i> Nueva Reserva
+            </a>
+        </div>
     </div>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="numero azul" th:text="${totalActivas}">0</div>
+            <div class="etiqueta">Activas</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero verde" th:text="${totalCompletadas}">0</div>
+            <div class="etiqueta">Completadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero rojo" th:text="${totalCanceladas}">0</div>
+            <div class="etiqueta">Canceladas</div>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/inventario/reservas}" method="get" class="filters-bar">
+        <div class="filter-group">
+            <i class="ti ti-filter"></i>
+            <select name="estado" onchange="this.form.submit()">
+                <option value="">Todos los estados</option>
+                <option value="Activa" th:selected="${estado == 'Activa'}">Activas</option>
+                <option value="Completada" th:selected="${estado == 'Completada'}">Completadas</option>
+                <option value="Cancelada" th:selected="${estado == 'Cancelada'}">Canceladas</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-secondary">
+            <i class="ti ti-search"></i> Filtrar
+        </button>
+        <a th:href="@{/admin/inventario/reservas}" class="btn-secondary" th:if="${estado != null}">
+            <i class="ti ti-refresh"></i> Limpiar
+        </a>
+    </form>
 
     <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
-                    <th>ID Reserva</th>
+                    <th>ID</th>
                     <th>Equipo</th>
+                    <th>Producto</th>
                     <th>Proyecto</th>
-                    <th>Cantidad</th>
                     <th>Fecha Inicio</th>
                     <th>Fecha Fin</th>
+                    <th>Duración</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="res : ${reservas}">
-                    <td th:text="${res.id}">—</td>
-                    <td th:text="${res.equipo.nombre}">—</td>
-                    <td th:text="${res.proyecto.nombre}">—</td>
-                    <td th:text="${res.cantidad}">—</td>
-                    <td th:text="${#temporals.format(res.fechaInicio, 'dd/MM/yyyy')}">—</td>
-                    <td th:text="${#temporals.format(res.fechaFin, 'dd/MM/yyyy')}">—</td>
+                <tr th:each="reserva : ${reservas}">
+                    <td th:text="${reserva.idReserva}">—</td>
                     <td>
-                        <span th:classappend="${res.estadoReserva == 'reservado'} ? 'status-badge status-reservado' : 
-                                              (res.estadoReserva == 'entregado' ? 'status-badge status-entregado' : 'status-badge status-cancelado')"
-                              th:text="${res.estadoReserva}">—</span>
+                        <span th:text="${reserva.nombreEquipo}">—</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${reserva.codigoSerial}">—</span>
+                    </td>
+                    <td th:text="${reserva.nombreProducto}">—</td>
+                    <td>
+                        <span th:text="${reserva.nombreProyecto}">—</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${reserva.codigoProyecto}">—</span>
+                    </td>
+                    <td th:text="${#temporals.format(reserva.fechaInicio, 'dd/MM/yyyy')}">—</td>
+                    <td th:text="${#temporals.format(reserva.fechaFin, 'dd/MM/yyyy')}">—</td>
+                    <td>
+                        <span th:text="${reserva.duracionFormateada}">—</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${reserva.duracionDias + ' días'}">—</span>
+                    </td>
+                    <td>
+                        <span class="status-badge" 
+                              th:classappend="${reserva.estadoReserva == 'Activa'} ? 'status-activa' : 
+                                              (reserva.estadoReserva == 'Completada' ? 'status-completada' : 'status-cancelada')"
+                              th:text="${reserva.estadoReserva}">—</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:if="${reserva.estaVigente}" th:text="'Vigente'">Vigente</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:unless="${reserva.estaVigente}" th:text="'No vigente'">No vigente</span>
                     </td>
                     <td class="action-buttons">
-                        <form th:action="@{/admin/inventario/reservas/eliminar/{id}(id=${res.id})}" method="post">
-                            <button type="submit" class="btn-icon danger" onclick="return confirm('¿Cancelar esta reserva? Se restituirá el stock.');"><i class="ti ti-x"></i> Cancelar</button>
+                        <a th:href="@{/admin/inventario/editar/{id}(id=${reserva.idInventario})}" class="btn-icon">
+                            <i class="ti ti-eye"></i> Ver equipo
+                        </a>
+                        <form th:action="@{/admin/inventario/reserva/completar/{id}(id=${reserva.idReserva})}" method="post" style="display:inline;" 
+                              th:if="${reserva.estadoReserva == 'Activa'}">
+                            <button type="submit" class="btn-icon verde" onclick="return confirm('¿Completar esta reserva? El equipo volverá a estar disponible.');">
+                                <i class="ti ti-check"></i> Completar
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/inventario/reserva/cancelar/{id}(id=${reserva.idReserva})}" method="post" style="display:inline;" 
+                              th:if="${reserva.estadoReserva == 'Activa'}">
+                            <button type="submit" class="btn-icon rojo" onclick="return confirm('¿Cancelar esta reserva?');">
+                                <i class="ti ti-x"></i> Cancelar
+                            </button>
                         </form>
                     </td>
                 </tr>
-                <tr th:if="${reservas.isEmpty()}">
-                    <td colspan="8">
+                <tr th:if="${reservas == null || reservas.isEmpty()}">
+                    <td colspan="9">
                         <div class="empty-message">
                             <i class="ti ti-calendar-off"></i>
                             <p>No hay reservas registradas.</p>
-                            <a th:href="@{/admin/inventario/reservas/nueva}" class="btn-primary" style="margin-top: 16px;">Crear primera reserva</a>
+                            <a th:href="@{/admin/inventario/reservar}" class="btn-primary" style="margin-top: 16px;">
+                                <i class="ti ti-plus"></i> Crear primera reserva
+                            </a>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div class="pagination" th:if="${reservas != null && !reservas.isEmpty()}">
+        <div class="pagination-info">
+            Mostrando <span th:text="${#lists.size(reservas)}">0</span> de <span th:text="${totalItems}">0</span> reservas
+        </div>
+        <div class="pagination-buttons">
+            <a th:href="@{/admin/inventario/reservas(page=${currentPage - 1}, estado=${estado})}" 
+               class="page-link" 
+               th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                Anterior
+            </a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+               th:href="@{/admin/inventario/reservas(page=${i}, estado=${estado})}" 
+               class="page-link" 
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               th:text="${i + 1}">
+                1
+            </a>
+            <a th:href="@{/admin/inventario/reservas(page=${currentPage + 1}, estado=${estado})}" 
+               class="page-link" 
+               th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                Siguiente
+            </a>
+        </div>
+    </div>
+
 </div>
 
 </body>

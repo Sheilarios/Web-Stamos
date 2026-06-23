@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Administración · Clientes</title>
+    <title>Gestión de Clientes · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,6 +24,8 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -66,6 +68,13 @@
         .page-title i {
             color: var(--yellow-dark);
             font-size: 28px;
+        }
+        
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
         }
         
         .btn-primary {
@@ -139,11 +148,39 @@
             cursor: pointer;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-secondary:hover {
             border-color: var(--yellow);
             color: var(--yellow-dark);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px;
+        }
+        
+        .filter-group i {
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .filter-group select {
+            border: none;
+            padding: 10px 0;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
         }
         
         .table-wrapper {
@@ -179,27 +216,31 @@
             border-bottom: none;
         }
         
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
         .status-badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
         }
         
-        .status-active {
+        .status-activo {
             background: var(--green-light);
             color: var(--green);
         }
         
-        .status-inactive {
+        .status-inactivo {
             background: var(--red-light);
             color: var(--red);
         }
         
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         
@@ -213,9 +254,10 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.15s;
             color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
         }
         
         .btn-icon:hover {
@@ -223,9 +265,19 @@
             color: var(--yellow-dark);
         }
         
-        .btn-icon.danger:hover {
+        .btn-icon.verde:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
+        .btn-icon.rojo:hover {
             border-color: var(--red);
             color: var(--red);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
         }
         
         .empty-message {
@@ -240,11 +292,28 @@
             opacity: 0.5;
         }
         
+        .empty-message p {
+            font-size: 14px;
+        }
+        
         .pagination {
             margin-top: 24px;
             display: flex;
-            justify-content: flex-end;
-            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         
         .page-link {
@@ -254,20 +323,56 @@
             text-decoration: none;
             color: var(--text-2);
             font-size: 13px;
+            transition: all 0.15s;
+        }
+        
+        .page-link:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
         }
         
         .page-link.active {
             background: var(--yellow);
             border-color: var(--yellow);
             color: #2A1800;
+            font-weight: 600;
+        }
+        
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
         }
         
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
-            th, td { padding: 10px 12px; }
-            .action-buttons { flex-direction: column; align-items: flex-start; }
-            .btn-icon { width: 100%; justify-content: center; }
+            .search-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-group select { width: 100%; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .pagination { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
@@ -278,21 +383,33 @@
         <div class="page-title">
             <i class="ti ti-users"></i>
             <span>Gestión de Clientes</span>
+            <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
         </div>
         <a th:href="@{/admin/clientes/nuevo}" class="btn-primary">
             <i class="ti ti-plus"></i> Nuevo Cliente
         </a>
     </div>
 
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
     <form th:action="@{/admin/clientes}" method="get" class="search-bar">
         <div class="search-input">
             <i class="ti ti-search"></i>
             <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre, RUC o teléfono...">
         </div>
+        <div class="filter-group">
+            <i class="ti ti-filter"></i>
+            <select name="estado" onchange="this.form.submit()">
+                <option value="">Todos los estados</option>
+                <option value="Activo" th:selected="${estado == 'Activo'}">Activos</option>
+                <option value="Deshabilitado" th:selected="${estado == 'Deshabilitado'}">Deshabilitados</option>
+            </select>
+        </div>
         <button type="submit" class="btn-secondary">
             <i class="ti ti-search"></i> Buscar
         </button>
-        <a th:href="@{/admin/clientes}" class="btn-secondary" th:if="${search != null}">
+        <a th:href="@{/admin/clientes}" class="btn-secondary" th:if="${search != null or estado != null}">
             <i class="ti ti-refresh"></i> Limpiar
         </a>
     </form>
@@ -301,46 +418,60 @@
         <table>
             <thead>
                 <tr>
-                    <th>Código</th>
-                    <th>Razón Social / Nombre</th>
+                    <th>ID</th>
+                    <th>Nombre / Razón Social</th>
                     <th>RUC</th>
                     <th>Teléfono</th>
-                    <th>Correo</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="cliente : ${clientes}">
-                    <td th:text="${cliente.codCli}">—</td>
-                    <td th:text="${cliente.razonCli}">—</td>
-                    <td th:text="${cliente.rucCli != null ? cliente.rucCli : '-'}">—</td>
-                    <td th:text="${cliente.telefCli}">—</td>
-                    <td th:text="${cliente.correoCli}">—</td>
+                    <td th:text="${cliente.idCliente}">—</td>
+                    <td th:text="${cliente.nombreRazonSocial}">—</td>
+                    <td th:text="${cliente.ruc != null ? cliente.ruc : '-'}">—</td>
+                    <td th:text="${cliente.telefono}">—</td>
+                    <td th:text="${cliente.email}">—</td>
                     <td>
-                        <span th:if="${cliente.activo}" class="status-badge status-active">ACTIVO</span>
-                        <span th:unless="${cliente.activo}" class="status-badge status-inactive">INACTIVO</span>
+                        <span th:text="${cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}">—</span>
+                    </td>
+                    <td>
+                        <span class="status-badge" 
+                              th:classappend="${cliente.estado == 'Activo'} ? 'status-activo' : 'status-inactivo'"
+                              th:text="${cliente.estado}">—</span>
                     </td>
                     <td class="action-buttons">
-                        <a th:href="@{/admin/clientes/editar/{codCli}(codCli=${cliente.codCli})}" class="btn-icon">
+                        <a th:href="@{/admin/clientes/editar/{id}(id=${cliente.idCliente})}" class="btn-icon azul">
                             <i class="ti ti-edit"></i> Editar
                         </a>
-                        <a th:href="@{/admin/clientes/historial/{codCli}(codCli=${cliente.codCli})}" class="btn-icon">
+                        <a th:href="@{/admin/clientes/historial/{id}(id=${cliente.idCliente})}" class="btn-icon">
                             <i class="ti ti-history"></i> Historial
                         </a>
-                        <form th:action="@{/admin/clientes/eliminar/{codCli}(codCli=${cliente.codCli})}" method="post" style="display: inline;">
-                            <button type="submit" class="btn-icon danger" onclick="return confirm('¿Estás seguro de eliminar/deshabilitar este cliente?');">
-                                <i class="ti ti-trash"></i> Eliminar
+                        <form th:action="@{/admin/clientes/deshabilitar/{id}(id=${cliente.idCliente})}" method="post" style="display:inline;" 
+                              th:if="${cliente.estado == 'Activo'}">
+                            <button type="submit" class="btn-icon rojo" onclick="return confirm('¿Deshabilitar este cliente?');">
+                                <i class="ti ti-user-x"></i> Deshabilitar
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/clientes/habilitar/{id}(id=${cliente.idCliente})}" method="post" style="display:inline;" 
+                              th:if="${cliente.estado == 'Deshabilitado'}">
+                            <button type="submit" class="btn-icon verde" onclick="return confirm('¿Habilitar este cliente?');">
+                                <i class="ti ti-user-check"></i> Habilitar
                             </button>
                         </form>
                     </td>
                 </tr>
-                <tr th:if="${clientes.isEmpty()}">
-                    <td colspan="7">
+                <tr th:if="${clientes == null || clientes.isEmpty()}">
+                    <td colspan="8">
                         <div class="empty-message">
                             <i class="ti ti-users-off"></i>
                             <p>No hay clientes registrados.</p>
-                            <a th:href="@{/admin/clientes/nuevo}" class="btn-primary" style="margin-top: 16px;">Registrar primer cliente</a>
+                            <a th:href="@{/admin/clientes/nuevo}" class="btn-primary" style="margin-top: 16px;">
+                                <i class="ti ti-plus"></i> Registrar primer cliente
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -348,12 +479,31 @@
         </table>
     </div>
 
-    <div class="pagination" th:if="${clientes != null and !clientes.isEmpty()}">
-        <a href="#" class="page-link active">1</a>
-        <a href="#" class="page-link">2</a>
-        <a href="#" class="page-link">3</a>
-        <a href="#" class="page-link">Siguiente →</a>
+    <div class="pagination" th:if="${clientes != null && !clientes.isEmpty()}">
+        <div class="pagination-info">
+            Mostrando <span th:text="${#lists.size(clientes)}">0</span> de <span th:text="${totalItems}">0</span> clientes
+        </div>
+        <div class="pagination-buttons">
+            <a th:href="@{/admin/clientes(page=${currentPage - 1}, search=${search}, estado=${estado})}" 
+               class="page-link" 
+               th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                Anterior
+            </a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+               th:href="@{/admin/clientes(page=${i}, search=${search}, estado=${estado})}" 
+               class="page-link" 
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               th:text="${i + 1}">
+                1
+            </a>
+            <a th:href="@{/admin/clientes(page=${currentPage + 1}, search=${search}, estado=${estado})}" 
+               class="page-link" 
+               th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                Siguiente
+            </a>
+        </div>
     </div>
+
 </div>
 
 </body>

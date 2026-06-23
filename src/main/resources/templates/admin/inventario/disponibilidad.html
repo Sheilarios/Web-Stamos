@@ -1,15 +1,554 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilidad de Equipos · STAMOS Administración</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .filters-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            background: var(--bg);
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px;
+        }
+        
+        .filter-group i {
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .filter-group input, .filter-group select {
+            border: none;
+            padding: 10px 0;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .filter-group input[type="date"] {
+            min-width: 130px;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+        }
+        
+        .stat-card .numero {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-card .etiqueta {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .stat-card .numero.verde { color: var(--green); }
+        .stat-card .numero.amarillo { color: var(--yellow-dark); }
+        .stat-card .numero.rojo { color: var(--red); }
+        .stat-card .numero.azul { color: var(--blue); }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-disponible {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-reservado {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-ocupado {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .status-mantenimiento {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s;
+            color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-icon.verde:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .disponible-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .disponible-si {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .disponible-no {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-group input, .filter-group select { width: 100%; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-calendar-event"></i>
+            <span>Disponibilidad de Equipos</span>
+        </div>
+        <a th:href="@{/admin/inventario/reservar}" class="btn-primary">
+            <i class="ti ti-plus"></i> Nueva Reserva
+        </a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+    <form th:action="@{/admin/inventario/disponibilidad}" method="get" class="filters-bar">
+        <div class="filter-group">
+            <i class="ti ti-calendar"></i>
+            <input type="date" name="fechaInicio" th:value="${fechaInicioStr}" required>
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-calendar"></i>
+            <input type="date" name="fechaFin" th:value="${fechaFinStr}" required>
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-package"></i>
+            <select name="productoId">
+                <option value="">Todos los productos</option>
+                <option th:each="p : ${productos}" th:value="${p.idProducto}" 
+                        th:text="${p.nombreItem}" 
+                        th:selected="${productoId != null and productoId == p.idProducto}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn-secondary">
+            <i class="ti ti-search"></i> Consultar
+        </button>
+        <a th:href="@{/admin/inventario/disponibilidad}" class="btn-secondary">
+            <i class="ti ti-refresh"></i> Limpiar
+        </a>
+    </form>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="numero" th:text="${totalEquipos}">0</div>
+            <div class="etiqueta">Total equipos</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero verde" th:text="${totalDisponibles}">0</div>
+            <div class="etiqueta">Disponibles</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero amarillo" th:text="${totalReservados}">0</div>
+            <div class="etiqueta">Reservados</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero azul" th:text="${totalMantenimiento}">0</div>
+            <div class="etiqueta">En mantenimiento</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero" th:text="${porcentajeDisponibilidad} + '%'">0%</div>
+            <div class="etiqueta">Disponibilidad</div>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Código Serial</th>
+                    <th>Estado Físico</th>
+                    <th>Disponible</th>
+                    <th>Reservas Activas</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="equipo : ${equiposDisponibles}">
+                    <td th:text="${equipo.idInventario}">—</td>
+                    <td>
+                        <strong th:text="${equipo.nombreProducto}">—</strong>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${equipo.categoriaProducto}">—</span>
+                    </td>
+                    <td th:text="${equipo.codigoSerial}">—</td>
+                    <td>
+                        <span class="status-badge" 
+                              th:classappend="${equipo.estadoFisico == 'Disponible'} ? 'status-disponible' : 
+                                              (equipo.estadoFisico == 'En uso' ? 'status-reservado' : 
+                                              (equipo.estadoFisico == 'Mantenimiento' ? 'status-mantenimiento' : 'status-ocupado'))"
+                              th:text="${equipo.estadoFisico}">—</span>
+                    </td>
+                    <td>
+                        <span class="disponible-badge" 
+                              th:classappend="${equipo.estaDisponible} ? 'disponible-si' : 'disponible-no'"
+                              th:text="${equipo.estaDisponible} ? 'Sí' : 'No'">Sí</span>
+                    </td>
+                    <td>
+                        <span th:text="${equipo.cantidadReservasActivas != null ? equipo.cantidadReservasActivas : 0}">0</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:if="${equipo.cantidadReservasActivas != null and equipo.cantidadReservasActivas > 0}">
+                            <i class="ti ti-clock"></i> Reservado
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <a th:href="@{/admin/inventario/editar/{id}(id=${equipo.idInventario})}" class="btn-icon">
+                            <i class="ti ti-edit"></i> Editar
+                        </a>
+                        <a th:href="@{/admin/inventario/reservar(equipoId=${equipo.idInventario})}" class="btn-icon verde" 
+                           th:if="${equipo.estaDisponible}">
+                            <i class="ti ti-calendar-plus"></i> Reservar
+                        </a>
+                        <button class="btn-icon azul" th:onclick="'verReservas(' + ${equipo.idInventario} + ')'">
+                            <i class="ti ti-history"></i> Historial
+                        </button>
+                    </td>
+                </tr>
+                <tr th:if="${equiposDisponibles == null || equiposDisponibles.isEmpty()}">
+                    <td colspan="7">
+                        <div class="empty-message">
+                            <i class="ti ti-calendar-off"></i>
+                            <p>No hay equipos disponibles en el rango de fechas seleccionado.</p>
+                            <p style="font-size:12px; color:var(--text-3); margin-top:8px;">
+                                Prueba con otras fechas o verifica el inventario.
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+        <div style="font-size:12px; color:var(--text-3);">
+            <i class="ti ti-info-circle"></i> 
+            <span th:text="'Mostrando ' + ${#lists.size(equiposDisponibles)} + ' equipos disponibles'">Mostrando 0 equipos disponibles</span>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a th:href="@{/admin/inventario}" class="btn-secondary">
+                <i class="ti ti-box"></i> Ver inventario completo
+            </a>
+            <a th:href="@{/admin/inventario/reservas}" class="btn-secondary">
+                <i class="ti ti-calendar-event"></i> Ver reservas
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function verReservas(equipoId) {
+        fetch('/admin/inventario/reservas-equipo/' + equipoId)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    let html = '<div style="padding: 16px;"><h4 style="font-family: Syne, sans-serif; margin-bottom:12px;">Reservas del equipo</h4>';
+                    data.forEach(r => {
+                        const estadoClass = r.estadoReserva == 'Activa' ? 'status-reservado' : 'status-disponible';
+                        html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;">
+                            <span>${r.fechaInicio || 'N/A'} - ${r.fechaFin || 'N/A'}</span>
+                            <span class="status-badge ${estadoClass}">${r.estadoReserva || 'Sin estado'}</span>
+                        </div>`;
+                    });
+                    html += '</div>';
+                    
+                    // Crear modal
+                    const modal = document.createElement('div');
+                    modal.className = 'modal-overlay';
+                    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;';
+                    modal.innerHTML = `<div style="background:white;border-radius:16px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;margin:20px;">
+                        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                            <h3 style="font-family:Syne,sans-serif;font-size:18px;">Historial de Reservas</h3>
+                            <button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-3);">&times;</button>
+                        </div>
+                        <div>${html}</div>
+                    </div>`;
+                    document.body.appendChild(modal);
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === this) this.remove();
+                    });
+                } else {
+                    alert('No hay reservas registradas para este equipo.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar las reservas.');
+            });
+    }
+</script>
+
+</body>
 </html>

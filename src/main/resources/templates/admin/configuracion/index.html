@@ -1,15 +1,450 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración del Sistema · STAMOS Administración</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
+        .badge-tipo {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-decimal { background: #DBEAFE; color: #2563EB; }
+        .badge-int { background: #FEF3C7; color: #D97706; }
+        .badge-string { background: #EDE9FE; color: #7C3AED; }
+        .badge-boolean { background: var(--green-light); color: var(--green); }
+        .badge-date { background: var(--red-light); color: var(--red); }
+        
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s;
+            color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-icon:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .info-box {
+            background: var(--blue-light);
+            border: 1px solid #B8D4FE;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: var(--blue);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .info-box i {
+            font-size: 20px;
+            margin-top: 2px;
+        }
+        
+        .info-box .texto {
+            line-height: 1.6;
+        }
+        
+        .info-box .texto strong {
+            color: var(--text);
+        }
+        
+        .search-bar {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        
+        .search-input i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .search-input input {
+            width: 100%;
+            padding: 10px 10px 10px 42px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .search-input input:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .search-bar { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="page-title">
+            <i class="ti ti-settings"></i>
+            <span>Configuración del Sistema</span>
+            <span class="count" th:text="'(' + ${#lists.size(configuraciones)} + ')'">(0)</span>
+        </div>
+        <a th:href="@{/admin/configuracion/nuevo}" class="btn-primary">
+            <i class="ti ti-plus"></i> Nuevo Parámetro
+        </a>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="info-box">
+        <i class="ti ti-info-circle"></i>
+        <div class="texto">
+            <strong>Parámetros de configuración del sistema</strong><br>
+            Estos valores controlan el comportamiento del sistema. 
+            Modifica solo aquellos parámetros que entiendas completamente.
+            <span style="display:block; font-size:12px; color:var(--text-3); margin-top:4px;">
+                <i class="ti ti-lock"></i> Solo usuarios con rol <strong>Administrador</strong> pueden modificar estos valores.
+            </span>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/configuracion}" method="get" class="search-bar">
+        <div class="search-input">
+            <i class="ti ti-search"></i>
+            <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre o descripción...">
+        </div>
+        <button type="submit" class="btn-secondary">
+            <i class="ti ti-search"></i> Buscar
+        </button>
+        <a th:href="@{/admin/configuracion}" class="btn-secondary" th:if="${search != null}">
+            <i class="ti ti-refresh"></i> Limpiar
+        </a>
+    </form>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Valor</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Última actualización</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="config : ${configuraciones}">
+                    <td>
+                        <strong th:text="${config.parametro}">parametro</strong>
+                        <span th:if="${config.parametro == 'tasa_igv'}" style="display:block; font-size:10px; color:var(--yellow-dark); font-weight:600;">
+                            <i class="ti ti-star"></i> Financiero
+                        </span>
+                        <span th:if="${config.parametro == 'dias_vencimiento_pago'}" style="display:block; font-size:10px; color:var(--yellow-dark); font-weight:600;">
+                            <i class="ti ti-star"></i> Financiero
+                        </span>
+                    </td>
+                    <td>
+                        <strong th:text="${config.valor}">valor</strong>
+                        <span th:if="${config.parametro == 'tasa_igv'}" style="display:block; font-size:11px; color:var(--text-3);">
+                            <i class="ti ti-info-circle"></i> Afecta nuevas cotizaciones
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge-tipo" 
+                              th:classappend="${config.tipoDato == 'DECIMAL'} ? 'badge-decimal' : 
+                                              (config.tipoDato == 'INT' ? 'badge-int' : 
+                                              (config.tipoDato == 'BOOLEAN' ? 'badge-boolean' : 
+                                              (config.tipoDato == 'DATE' ? 'badge-date' : 'badge-string')))"
+                              th:text="${config.tipoDato}">STRING</span>
+                    </td>
+                    <td th:text="${config.descripcion}">—</td>
+                    <td>
+                        <span th:text="${#temporals.format(config.fechaActualizacion, 'dd/MM/yyyy HH:mm')}">—</span>
+                        <br>
+                        <span style="font-size:11px; color:var(--text-3);" th:text="${config.nombreUsuarioActualiza}">—</span>
+                    </td>
+                    <td class="action-buttons">
+                        <a th:href="@{/admin/configuracion/editar/{id}(id=${config.idConfig})}" class="btn-icon azul">
+                            <i class="ti ti-edit"></i> Editar
+                        </a>
+                        <form th:action="@{/admin/configuracion/restaurar/{id}(id=${config.idConfig})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn-icon" onclick="return confirm('¿Restaurar este parámetro a su valor por defecto?');">
+                                <i class="ti ti-refresh"></i> Restaurar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${configuraciones == null || configuraciones.isEmpty()}">
+                    <td colspan="6">
+                        <div class="empty-message">
+                            <i class="ti ti-settings-off"></i>
+                            <p>No hay parámetros de configuración registrados.</p>
+                            <a th:href="@{/admin/configuracion/nuevo}" class="btn-primary" style="margin-top: 16px;">
+                                <i class="ti ti-plus"></i> Crear primer parámetro
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="font-size:12px; color:var(--text-3);">
+                <i class="ti ti-info-circle"></i> 
+                <span th:text="${#lists.size(configuraciones)} + ' parámetros configurados'">0 parámetros configurados</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <span class="badge-tipo badge-decimal">Decimal</span>
+                <span class="badge-tipo badge-int">Entero</span>
+                <span class="badge-tipo badge-string">Texto</span>
+                <span class="badge-tipo badge-boolean">Booleano</span>
+                <span class="badge-tipo badge-date">Fecha</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
 </html>

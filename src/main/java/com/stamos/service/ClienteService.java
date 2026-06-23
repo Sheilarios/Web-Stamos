@@ -39,160 +39,206 @@ public class ClienteService {
     @Lazy
     private PasswordEncoder passwordEncoder;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Cliente registrar(Cliente cliente, String password) {
-        if (usuarioRepository.existsByEmail(cliente.getEmail())) {
-            throw new RuntimeException("El email ya está registrado en el sistema");
+        try {
+            // Validar que el email no esté registrado
+            if (usuarioRepository.existsByEmail(cliente.getEmail())) {
+                throw new RuntimeException("El email ya está registrado en el sistema");
+            }
+
+            // Validar RUC si existe
+            if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
+                clienteRepository.existsByRuc(cliente.getRuc())) {
+                throw new RuntimeException("El RUC ya está registrado en el sistema");
+            }
+
+            // Validar teléfono si existe
+            if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty() &&
+                clienteRepository.existsByTelefono(cliente.getTelefono())) {
+                throw new RuntimeException("El teléfono ya está registrado en el sistema");
+            }
+
+            // Obtener rol Cliente
+            Rol rolCliente = rolRepository.findByNombreRol("Cliente")
+                    .orElseThrow(() -> new RuntimeException("Rol de cliente no encontrado"));
+
+            // Validar contraseña
+            if (password == null || password.length() < 6) {
+                throw new RuntimeException("La contraseña debe tener al menos 6 caracteres");
+            }
+
+            // Crear usuario
+            Usuario usuario = new Usuario();
+            usuario.setIdRol(rolCliente.getIdRol());
+            usuario.setNombreCompleto(cliente.getNombreRazonSocial());
+            usuario.setEmail(cliente.getEmail());
+            usuario.setPasswordHash(passwordEncoder.encode(password));
+            usuario.setTelefono(cliente.getTelefono());
+            usuario.setActivo(true);
+            usuario.setFechaCreacion(LocalDateTime.now());
+            usuario.setFechaActualizacion(LocalDateTime.now());
+
+            Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+            // Crear cliente
+            cliente.setIdUsuario(usuarioGuardado.getIdUsuario());
+            cliente.setIdUsuarioRegis(usuarioGuardado.getIdUsuario());
+            cliente.setEstado("Activo");
+            cliente.setFechaRegistro(LocalDateTime.now());
+            cliente.setFechaActualizacion(LocalDateTime.now());
+
+            return clienteRepository.save(cliente);
+
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al registrar el cliente: " + e.getMessage(), e);
         }
-
-        if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
-            clienteRepository.existsByRuc(cliente.getRuc())) {
-            throw new RuntimeException("El RUC ya está registrado en el sistema");
-        }
-
-        Rol rolCliente = rolRepository.findByNombreRol("Cliente")
-                .orElseThrow(() -> new RuntimeException("Rol de cliente no encontrado"));
-
-        Usuario usuario = new Usuario();
-        usuario.setIdRol(rolCliente.getIdRol());
-        usuario.setNombreCompleto(cliente.getNombreRazonSocial());
-        usuario.setEmail(cliente.getEmail());
-        usuario.setPasswordHash(passwordEncoder.encode(password));
-        usuario.setTelefono(cliente.getTelefono());
-        usuario.setActivo(true);
-        usuario.setFechaCreacion(LocalDateTime.now());
-
-        Usuario usuarioGuardado = usuarioRepository.save(usuario);
-
-        cliente.setIdUsuario(usuarioGuardado.getIdUsuario());
-        cliente.setIdUsuarioRegis(usuarioGuardado.getIdUsuario());
-        cliente.setEstado("Activo");
-        cliente.setFechaRegistro(LocalDateTime.now());
-
-        return clienteRepository.save(cliente);
     }
 
-    @Transactional
-    public void actualizarUltimoAcceso(Integer idUsuario) {
-    Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
-    if (usuario != null) {
-        usuario.setUltimoAcceso(LocalDateTime.now());
-        usuarioRepository.save(usuario);
-    }
-}
-    public Cliente registrar(Cliente cliente) {
-        String password = generateRandomPassword();
-        return registrar(cliente, password);
-    }
-
-    private String generateRandomPassword() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            int index = (int) (Math.random() * chars.length());
-            sb.append(chars.charAt(index));
-        }
-        return sb.toString();
-    }
-
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Cliente actualizar(Cliente cliente) {
-        Cliente existente = clienteRepository.findById(cliente.getIdCliente())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        try {
+            Cliente existente = clienteRepository.findById(cliente.getIdCliente())
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        if (!existente.getEmail().equals(cliente.getEmail()) &&
-            usuarioRepository.existsByEmail(cliente.getEmail())) {
-            throw new RuntimeException("El email ya está registrado en el sistema");
-        }
-
-        if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
-            !existente.getRuc().equals(cliente.getRuc()) &&
-            clienteRepository.existsByRuc(cliente.getRuc())) {
-            throw new RuntimeException("El RUC ya está registrado en el sistema");
-        }
-
-        existente.setTipoPersona(cliente.getTipoPersona());
-        existente.setNombreRazonSocial(cliente.getNombreRazonSocial());
-        existente.setRuc(cliente.getRuc());
-        existente.setTelefono(cliente.getTelefono());
-        existente.setEmail(cliente.getEmail());
-        existente.setDireccion(cliente.getDireccion());
-        existente.setFechaActualizacion(LocalDateTime.now());
-
-        if (existente.getIdUsuario() != null) {
-            Usuario usuario = usuarioRepository.findById(existente.getIdUsuario()).orElse(null);
-            if (usuario != null) {
-                usuario.setNombreCompleto(cliente.getNombreRazonSocial());
-                usuario.setEmail(cliente.getEmail());
-                usuario.setTelefono(cliente.getTelefono());
-                usuario.setFechaActualizacion(LocalDateTime.now());
-                usuarioRepository.save(usuario);
+            // Validar email único
+            if (!existente.getEmail().equals(cliente.getEmail()) &&
+                usuarioRepository.existsByEmail(cliente.getEmail())) {
+                throw new RuntimeException("El email ya está registrado en el sistema");
             }
-        }
 
-        return clienteRepository.save(existente);
+            // Validar RUC único
+            if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
+                !existente.getRuc().equals(cliente.getRuc()) &&
+                clienteRepository.existsByRuc(cliente.getRuc())) {
+                throw new RuntimeException("El RUC ya está registrado en el sistema");
+            }
+
+            // Validar teléfono único
+            if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty() &&
+                !existente.getTelefono().equals(cliente.getTelefono()) &&
+                clienteRepository.existsByTelefono(cliente.getTelefono())) {
+                throw new RuntimeException("El teléfono ya está registrado en el sistema");
+            }
+
+            // Actualizar cliente
+            existente.setTipoPersona(cliente.getTipoPersona());
+            existente.setNombreRazonSocial(cliente.getNombreRazonSocial());
+            existente.setRuc(cliente.getRuc());
+            existente.setTelefono(cliente.getTelefono());
+            existente.setEmail(cliente.getEmail());
+            existente.setDireccion(cliente.getDireccion());
+            existente.setFechaActualizacion(LocalDateTime.now());
+
+            // Actualizar usuario asociado
+            if (existente.getIdUsuario() != null) {
+                Usuario usuario = usuarioRepository.findById(existente.getIdUsuario()).orElse(null);
+                if (usuario != null) {
+                    usuario.setNombreCompleto(cliente.getNombreRazonSocial());
+                    usuario.setEmail(cliente.getEmail());
+                    usuario.setTelefono(cliente.getTelefono());
+                    usuario.setFechaActualizacion(LocalDateTime.now());
+                    usuarioRepository.save(usuario);
+                }
+            }
+
+            return clienteRepository.save(existente);
+
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al actualizar el cliente: " + e.getMessage(), e);
+        }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void cambiarPassword(Integer idUsuario, String newPassword) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        usuario.setPasswordHash(passwordEncoder.encode(newPassword));
-        usuario.setFechaActualizacion(LocalDateTime.now());
-        usuarioRepository.save(usuario);
+        try {
+            if (newPassword == null || newPassword.length() < 6) {
+                throw new RuntimeException("La contraseña debe tener al menos 6 caracteres");
+            }
+
+            Usuario usuario = usuarioRepository.findById(idUsuario)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            usuario.setPasswordHash(passwordEncoder.encode(newPassword));
+            usuario.setFechaActualizacion(LocalDateTime.now());
+            usuarioRepository.save(usuario);
+
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al cambiar la contraseña: " + e.getMessage(), e);
+        }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deshabilitar(Integer idCliente, Integer idUsuarioAdministrador) {
-        Cliente cliente = clienteRepository.findById(idCliente)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        try {
+            Cliente cliente = clienteRepository.findById(idCliente)
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        if (!"Activo".equals(cliente.getEstado())) {
-            throw new RuntimeException("El cliente ya está deshabilitado");
-        }
-
-        cliente.setEstado("Deshabilitado");
-        cliente.setFechaActualizacion(LocalDateTime.now());
-        cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
-        clienteRepository.save(cliente);
-
-        if (cliente.getIdUsuario() != null) {
-            Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
-            if (usuario != null) {
-                usuario.setActivo(false);
-                usuario.setFechaActualizacion(LocalDateTime.now());
-                usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
-                usuarioRepository.save(usuario);
+            if (!"Activo".equals(cliente.getEstado())) {
+                throw new RuntimeException("El cliente ya está deshabilitado");
             }
+
+            cliente.setEstado("Deshabilitado");
+            cliente.setFechaActualizacion(LocalDateTime.now());
+            cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
+            clienteRepository.save(cliente);
+
+            if (cliente.getIdUsuario() != null) {
+                Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
+                if (usuario != null) {
+                    usuario.setActivo(false);
+                    usuario.setFechaActualizacion(LocalDateTime.now());
+                    usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
+                    usuarioRepository.save(usuario);
+                }
+            }
+
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al deshabilitar el cliente: " + e.getMessage(), e);
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void habilitar(Integer idCliente, Integer idUsuarioAdministrador) {
-        Cliente cliente = clienteRepository.findById(idCliente)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        try {
+            Cliente cliente = clienteRepository.findById(idCliente)
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        if ("Activo".equals(cliente.getEstado())) {
-            throw new RuntimeException("El cliente ya está activo");
-        }
-
-        cliente.setEstado("Activo");
-        cliente.setFechaActualizacion(LocalDateTime.now());
-        cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
-        clienteRepository.save(cliente);
-
-        if (cliente.getIdUsuario() != null) {
-            Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
-            if (usuario != null) {
-                usuario.setActivo(true);
-                usuario.setFechaActualizacion(LocalDateTime.now());
-                usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
-                usuarioRepository.save(usuario);
+            if ("Activo".equals(cliente.getEstado())) {
+                throw new RuntimeException("El cliente ya está activo");
             }
+
+            cliente.setEstado("Activo");
+            cliente.setFechaActualizacion(LocalDateTime.now());
+            cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
+            clienteRepository.save(cliente);
+
+            if (cliente.getIdUsuario() != null) {
+                Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
+                if (usuario != null) {
+                    usuario.setActivo(true);
+                    usuario.setFechaActualizacion(LocalDateTime.now());
+                    usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
+                    usuarioRepository.save(usuario);
+                }
+            }
+
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al habilitar el cliente: " + e.getMessage(), e);
         }
     }
 
+    // Métodos de consulta (sin transacción o solo lectura)
     public Cliente findById(Integer idCliente) {
         return clienteRepository.findById(idCliente).orElse(null);
     }
@@ -236,10 +282,6 @@ public class ClienteService {
         return clienteRepository.findActive(pageable);
     }
 
-    public List<Cliente> findDisabled() {
-        return clienteRepository.findDisabled();
-    }
-
     public List<Cliente> findByEstado(String estado) {
         return clienteRepository.findByEstado(estado);
     }
@@ -262,11 +304,6 @@ public class ClienteService {
 
     public Page<Cliente> search(String searchText, Pageable pageable) {
         return clienteRepository.search(searchText, pageable);
-    }
-
-    public List<Cliente> findRegistradosUltimosDias(int days) {
-        LocalDateTime fecha = LocalDateTime.now().minusDays(days);
-        return clienteRepository.findRegistradosUltimosDias(fecha);
     }
 
     public List<Cliente> findClientesWithUsuario() {
@@ -294,16 +331,21 @@ public class ClienteService {
     }
 
     @Transactional
-    public void registrarAcceso(Integer idCliente, Authentication authentication) {
-        Cliente cliente = findById(idCliente);
-        if (cliente == null) {
-            return;
+    public void actualizarUsuario(Usuario usuario) {
+        if (usuario != null && usuario.getIdUsuario() != null) {
+            usuario.setFechaActualizacion(LocalDateTime.now());
+            usuarioRepository.save(usuario);
         }
+    }
 
-        if (cliente.getIdUsuario() != null) {
+    @Transactional
+    public void registrarAcceso(Integer idCliente) {
+        Cliente cliente = findById(idCliente);
+        if (cliente != null && cliente.getIdUsuario() != null) {
             Usuario usuario = findUsuarioById(cliente.getIdUsuario());
             if (usuario != null) {
                 usuario.setUltimoAcceso(LocalDateTime.now());
+                usuario.setFechaActualizacion(LocalDateTime.now());
                 usuarioRepository.save(usuario);
             }
         }
@@ -316,22 +358,6 @@ public class ClienteService {
         }
         Usuario usuario = findUsuarioById(cliente.getIdUsuario());
         return usuario != null ? usuario.getUltimoAcceso() : null;
-    }
-
-    @Transactional
-    public void registrarAccesoConDetalles(Integer idCliente, HttpServletRequest request) {
-        Cliente cliente = findById(idCliente);
-        if (cliente == null) {
-            return;
-        }
-
-        if (cliente.getIdUsuario() != null) {
-            Usuario usuario = findUsuarioById(cliente.getIdUsuario());
-            if (usuario != null) {
-                usuario.setUltimoAcceso(LocalDateTime.now());
-                usuarioRepository.save(usuario);
-            }
-        }
     }
 
     public long count() {
@@ -348,14 +374,6 @@ public class ClienteService {
 
     public long countByEstado(String estado) {
         return clienteRepository.countByEstado(estado);
-    }
-
-    public long countByTipoPersona(String tipoPersona) {
-        return clienteRepository.countByTipoPersona(tipoPersona);
-    }
-
-    public long countActivosByTipoPersona(String tipoPersona) {
-        return clienteRepository.countActivosByTipoPersona(tipoPersona);
     }
 
     public boolean hasProyectos(Integer idCliente) {
@@ -422,13 +440,5 @@ public class ClienteService {
     public boolean isPersonaJuridica(Integer idCliente) {
         Cliente cliente = findById(idCliente);
         return cliente != null && cliente.isPersonaJuridica();
-    }
-
-    public void actualizarUsuario(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void registrarAcceso(Integer idCliente) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

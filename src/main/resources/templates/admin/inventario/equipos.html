@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Administración · Inventario</title>
+    <title>Inventario de Equipos · STAMOS Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,6 +24,8 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -68,6 +70,13 @@
             font-size: 28px;
         }
         
+        .page-title .count {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
         .btn-primary {
             background: var(--yellow);
             border: none;
@@ -87,6 +96,28 @@
         
         .btn-primary:hover {
             background: var(--yellow-mid);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
         }
         
         .search-bar {
@@ -118,7 +149,9 @@
             border: 1px solid var(--border);
             border-radius: 10px;
             font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
             outline: none;
+            transition: all 0.2s;
         }
         
         .search-input input:focus {
@@ -126,22 +159,28 @@
             box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
         }
         
-        .btn-secondary {
-            background: transparent;
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
             border: 1px solid var(--border);
-            color: var(--text-2);
-            padding: 10px 20px;
             border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
-            text-decoration: none;
+            padding: 0 12px;
         }
         
-        .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+        .filter-group i {
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        .filter-group select {
+            border: none;
+            padding: 10px 0;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
         }
         
         .table-wrapper {
@@ -177,27 +216,41 @@
             border-bottom: none;
         }
         
+        tr:hover td {
+            background: var(--yellow-light);
+        }
+        
         .status-badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
         }
         
-        .status-active {
+        .status-disponible {
             background: var(--green-light);
             color: var(--green);
         }
         
-        .status-inactive {
+        .status-en-uso {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        
+        .status-mantenimiento {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-danado {
             background: var(--red-light);
             color: var(--red);
         }
         
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         
@@ -211,9 +264,10 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.15s;
             color: var(--text-2);
+            font-family: 'DM Sans', sans-serif;
         }
         
         .btn-icon:hover {
@@ -221,7 +275,17 @@
             color: var(--yellow-dark);
         }
         
-        .btn-icon.danger:hover {
+        .btn-icon.verde:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
+        .btn-icon.azul:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        .btn-icon.rojo:hover {
             border-color: var(--red);
             color: var(--red);
         }
@@ -238,12 +302,128 @@
             opacity: 0.5;
         }
         
+        .empty-message p {
+            font-size: 14px;
+        }
+        
+        .pagination {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .page-link {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+        
+        .page-link:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .page-link.active {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #2A1800;
+            font-weight: 600;
+        }
+        
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+        }
+        
+        .stat-card .numero {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-card .etiqueta {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-3);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .stat-card .numero.verde { color: var(--green); }
+        .stat-card .numero.amarillo { color: var(--yellow-dark); }
+        .stat-card .numero.rojo { color: var(--red); }
+        .stat-card .numero.azul { color: var(--blue); }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
-            th, td { padding: 10px 12px; }
-            .action-buttons { flex-direction: column; align-items: flex-start; }
-            .btn-icon { width: 100%; justify-content: center; }
+            .search-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-group select { width: 100%; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+            .action-buttons { flex-direction: column; align-items: stretch; }
+            .btn-icon { justify-content: center; }
+            .pagination { flex-direction: column; align-items: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -254,68 +434,173 @@
         <div class="page-title">
             <i class="ti ti-box"></i>
             <span>Inventario de Equipos</span>
+            <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
         </div>
-        <a th:href="@{/admin/inventario/nuevo}" class="btn-primary">
-            <i class="ti ti-plus"></i> Nuevo Equipo
-        </a>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a th:href="@{/admin/inventario/disponibilidad}" class="btn-secondary">
+                <i class="ti ti-calendar-event"></i> Disponibilidad
+            </a>
+            <a th:href="@{/admin/inventario/reservas}" class="btn-secondary">
+                <i class="ti ti-calendar"></i> Reservas
+            </a>
+            <a th:href="@{/admin/inventario/nuevo}" class="btn-primary">
+                <i class="ti ti-plus"></i> Nuevo Equipo
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="numero verde" th:text="${totalDisponibles}">0</div>
+            <div class="etiqueta">Disponibles</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero azul" th:text="${totalEnUso}">0</div>
+            <div class="etiqueta">En uso</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero amarillo" th:text="${totalMantenimiento}">0</div>
+            <div class="etiqueta">Mantenimiento</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero rojo" th:text="${totalDanados}">0</div>
+            <div class="etiqueta">Dañados</div>
+        </div>
+        <div class="stat-card">
+            <div class="numero" th:text="${totalInventario}">0</div>
+            <div class="etiqueta">Total</div>
+        </div>
     </div>
 
     <form th:action="@{/admin/inventario}" method="get" class="search-bar">
         <div class="search-input">
             <i class="ti ti-search"></i>
-            <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre...">
+            <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre, serial o ubicación...">
         </div>
-        <button type="submit" class="btn-secondary">Buscar</button>
-        <a th:href="@{/admin/inventario}" class="btn-secondary" th:if="${search != null}">Limpiar</a>
+        <div class="filter-group">
+            <i class="ti ti-filter"></i>
+            <select name="estado" onchange="this.form.submit()">
+                <option value="">Todos los estados</option>
+                <option value="Disponible" th:selected="${estado == 'Disponible'}">Disponibles</option>
+                <option value="En uso" th:selected="${estado == 'En uso'}">En uso</option>
+                <option value="Mantenimiento" th:selected="${estado == 'Mantenimiento'}">Mantenimiento</option>
+                <option value="Dañado" th:selected="${estado == 'Dañado'}">Dañados</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <i class="ti ti-package"></i>
+            <select name="productoId" onchange="this.form.submit()">
+                <option value="">Todos los productos</option>
+                <option th:each="p : ${productos}" th:value="${p.idProducto}" 
+                        th:text="${p.nombreItem}" 
+                        th:selected="${productoId != null and productoId == p.idProducto}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn-secondary">
+            <i class="ti ti-search"></i> Buscar
+        </button>
+        <a th:href="@{/admin/inventario}" class="btn-secondary" th:if="${search != null or estado != null or productoId != null}">
+            <i class="ti ti-refresh"></i> Limpiar
+        </a>
     </form>
 
     <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
-                    <th>Código</th>
-                    <th>Nombre</th>
-                    <th>Stock Total</th>
-                    <th>Stock Disponible</th>
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Serial</th>
                     <th>Ubicación</th>
                     <th>Estado</th>
-                    <th>Precio/día</th>
+                    <th>Valor Compra</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="eq : ${equipos}">
-                    <td th:text="${eq.codEquipo}">—</td>
-                    <td th:text="${eq.nombre}">—</td>
-                    <td th:text="${eq.stockTotal}">—</td>
-                    <td th:text="${eq.stockDisponible}">—</td>
-                    <td th:text="${eq.ubicacion != null ? eq.ubicacion : '-'}">—</td>
+                <tr th:each="equipo : ${inventario}">
+                    <td th:text="${equipo.idInventario}">—</td>
                     <td>
-                        <span th:if="${eq.estado == 'DISPONIBLE'}" class="status-badge status-active">DISPONIBLE</span>
-                        <span th:if="${eq.estado == 'MANTENIMIENTO'}" class="status-badge status-inactive">MANTENIMIENTO</span>
-                        <span th:if="${eq.estado == 'BAJA'}" class="status-badge status-inactive">BAJA</span>
-                        <span th:unless="${eq.estado == 'DISPONIBLE' or eq.estado == 'MANTENIMIENTO' or eq.estado == 'BAJA'}" th:text="${eq.estado}">—</span>
+                        <strong th:text="${equipo.nombreProducto}">—</strong>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:text="${equipo.categoriaProducto}">—</span>
                     </td>
-                    <td th:text="'S/ ' + ${eq.precioDia}">—</td>
+                    <td th:text="${equipo.codigoSerial}">—</td>
+                    <td th:text="${equipo.ubicacion != null ? equipo.ubicacion : '-'}">—</td>
+                    <td>
+                        <span class="status-badge" 
+                              th:classappend="${equipo.estadoFisico == 'Disponible'} ? 'status-disponible' : 
+                                              (equipo.estadoFisico == 'En uso' ? 'status-en-uso' : 
+                                              (equipo.estadoFisico == 'Mantenimiento' ? 'status-mantenimiento' : 'status-danado'))"
+                              th:text="${equipo.estadoFisico}">—</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:if="${equipo.estaDisponible}" th:text="'✅ Disponible'">✅ Disponible</span>
+                        <span style="display:block; font-size:11px; color:var(--text-3);" 
+                              th:unless="${equipo.estaDisponible}" th:text="'❌ No disponible'">❌ No disponible</span>
+                    </td>
+                    <td th:text="${equipo.valorCompraFormateado}">S/ 0.00</td>
                     <td class="action-buttons">
-                        <a th:href="@{/admin/inventario/editar/{id}(id=${eq.codEquipo})}" class="btn-icon"><i class="ti ti-edit"></i> Editar</a>
-                        <form th:action="@{/admin/inventario/eliminar/{id}(id=${eq.codEquipo})}" method="post" style="display: inline;">
-                            <button type="submit" class="btn-icon danger" onclick="return confirm('¿Eliminar este equipo?');"><i class="ti ti-trash"></i> Eliminar</button>
+                        <a th:href="@{/admin/inventario/editar/{id}(id=${equipo.idInventario})}" class="btn-icon">
+                            <i class="ti ti-edit"></i> Editar
+                        </a>
+                        <a th:href="@{/admin/inventario/reservar(equipoId=${equipo.idInventario})}" class="btn-icon verde" 
+                           th:if="${equipo.estaDisponible}">
+                            <i class="ti ti-calendar-plus"></i> Reservar
+                        </a>
+                        <form th:action="@{/admin/inventario/cambiar-estado/{id}(id=${equipo.idInventario})}" method="post" style="display:inline;">
+                            <select name="estado" onchange="this.form.submit()" style="padding:4px 8px;border-radius:4px;border:1px solid var(--border);font-size:11px;font-family:'DM Sans',sans-serif;">
+                                <option value="">Cambiar estado</option>
+                                <option value="Disponible">Disponible</option>
+                                <option value="En uso">En uso</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                                <option value="Dañado">Dañado</option>
+                            </select>
                         </form>
                     </td>
                 </tr>
-                <tr th:if="${equipos.isEmpty()}">
-                    <td colspan="8">
+                <tr th:if="${inventario == null || inventario.isEmpty()}">
+                    <td colspan="7">
                         <div class="empty-message">
                             <i class="ti ti-box-off"></i>
-                            <p>No hay equipos registrados.</p>
-                            <a th:href="@{/admin/inventario/nuevo}" class="btn-primary" style="margin-top: 16px;">Registrar primer equipo</a>
+                            <p>No hay equipos registrados en el inventario.</p>
+                            <a th:href="@{/admin/inventario/nuevo}" class="btn-primary" style="margin-top: 16px;">
+                                <i class="ti ti-plus"></i> Registrar primer equipo
+                            </a>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div class="pagination" th:if="${inventario != null && !inventario.isEmpty()}">
+        <div class="pagination-info">
+            Mostrando <span th:text="${#lists.size(inventario)}">0</span> de <span th:text="${totalItems}">0</span> equipos
+        </div>
+        <div class="pagination-buttons">
+            <a th:href="@{/admin/inventario(page=${currentPage - 1}, search=${search}, estado=${estado}, productoId=${productoId})}" 
+               class="page-link" 
+               th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                Anterior
+            </a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+               th:href="@{/admin/inventario(page=${i}, search=${search}, estado=${estado}, productoId=${productoId})}" 
+               class="page-link" 
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               th:text="${i + 1}">
+                1
+            </a>
+            <a th:href="@{/admin/inventario(page=${currentPage + 1}, search=${search}, estado=${estado}, productoId=${productoId})}" 
+               class="page-link" 
+               th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                Siguiente
+            </a>
+        </div>
+    </div>
+
 </div>
 
 </body>

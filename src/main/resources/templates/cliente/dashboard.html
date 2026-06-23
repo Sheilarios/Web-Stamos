@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Panel del Cliente</title>
+    <title>Dashboard Cliente · STAMOS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -24,6 +24,8 @@
             --red-light: #FFF0EE;
             --green: #1A7040;
             --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
             --sidebar-width: 260px;
         }
         
@@ -33,21 +35,15 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
-        }
-        
-        /* ===== LAYOUT ===== */
-        .app {
             display: flex;
             min-height: 100vh;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--card);
             border-right: 1px solid var(--border);
-            padding: 24px 16px;
+            padding: 24px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -59,110 +55,113 @@
         }
         
         .sidebar-brand {
-            font-family: 'Syne', sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-            padding-bottom: 24px;
+            padding: 0 20px 24px;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 20px;
         }
         
-        .sidebar-brand i {
-            color: var(--yellow-dark);
-            font-size: 28px;
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
         }
         
-        .sidebar-brand span {
-            color: var(--yellow-dark);
+        .sidebar-brand h2 span {
+            color: var(--yellow);
         }
         
-        .sidebar-nav {
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
             flex: 1;
         }
         
-        .sidebar-nav a {
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
             color: var(--text-2);
             text-decoration: none;
-            font-weight: 500;
             font-size: 14px;
+            font-weight: 500;
             transition: all 0.15s;
-            margin-bottom: 4px;
         }
         
-        .sidebar-nav a i {
-            font-size: 20px;
-            width: 24px;
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
             text-align: center;
         }
         
-        .sidebar-nav a:hover {
+        .sidebar-menu li a:hover {
             background: var(--yellow-light);
-            color: var(--yellow-dark);
+            color: var(--text);
         }
         
-        .sidebar-nav a.active {
+        .sidebar-menu li a.active {
             background: var(--yellow-light);
             color: var(--yellow-dark);
             font-weight: 600;
-            border-left: 3px solid var(--yellow);
         }
         
-        .sidebar-nav .nav-label {
-            font-size: 11px;
+        .sidebar-menu li a.active i {
+            color: var(--yellow-dark);
+        }
+        
+        .sidebar-menu .menu-label {
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-3);
-            font-weight: 600;
             padding: 16px 16px 8px;
+            font-weight: 600;
         }
         
         .sidebar-footer {
+            padding: 16px 20px;
             border-top: 1px solid var(--border);
-            padding-top: 16px;
             margin-top: auto;
         }
         
         .sidebar-footer a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-2);
+            gap: 10px;
+            color: var(--red);
             text-decoration: none;
+            font-size: 13px;
             font-weight: 500;
-            font-size: 14px;
-            transition: all 0.15s;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
         }
         
         .sidebar-footer a:hover {
-            background: #FEF2F2;
-            color: var(--red);
+            background: var(--red-light);
         }
         
-        .sidebar-footer a i {
-            font-size: 20px;
-            width: 24px;
-            text-align: center;
-        }
-        
-        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 32px 40px;
+            padding: 32px 36px;
+            min-height: 100vh;
         }
         
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -188,30 +187,28 @@
         }
         
         .page-title small {
-            font-family: 'DM Sans', sans-serif;
             font-size: 14px;
             font-weight: 400;
             color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
         
         .user-info {
-            background: var(--yellow-light);
+            background: var(--card);
             padding: 8px 16px;
             border-radius: 30px;
-            border: 1px solid var(--yellow-border);
+            border: 1px solid var(--border);
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--text-2);
         }
         
         .user-info i {
             color: var(--yellow-dark);
         }
         
-        /* ===== METRICS ===== */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -261,13 +258,12 @@
             margin-top: 8px;
         }
         
-        /* ===== SECTION ===== */
         .section {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
+            margin-bottom: 28px;
             overflow: hidden;
-            margin-top: 28px;
         }
         
         .section-header {
@@ -297,25 +293,16 @@
             background: transparent;
             border: none;
             color: var(--yellow-dark);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
-            transition: all 0.15s;
         }
         
         .btn-link:hover {
             text-decoration: underline;
-            color: var(--yellow);
         }
         
-        .btn-link i {
-            font-size: 16px;
-            margin-left: 4px;
-            vertical-align: middle;
-        }
-        
-        /* ===== TABLA ===== */
         .table-wrapper {
             overflow-x: auto;
         }
@@ -333,7 +320,6 @@
             color: var(--yellow-dark);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 11px;
             letter-spacing: 0.5px;
             border-bottom: 1px solid var(--yellow-border);
         }
@@ -348,11 +334,6 @@
             border-bottom: none;
         }
         
-        tr:hover td {
-            background: var(--yellow-light);
-        }
-        
-        /* ===== BADGES ===== */
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -361,70 +342,69 @@
             font-weight: 600;
         }
         
-        .status-active {
-            background: var(--green-light);
-            color: var(--green);
-        }
+        .status-aprobado { background: var(--blue-light); color: var(--blue); }
+        .status-diseno { background: #FEF3C7; color: #D97706; }
+        .status-produccion { background: var(--blue-light); color: var(--blue); }
+        .status-instalacion { background: #EDE9FE; color: #7C3AED; }
+        .status-entregado { background: var(--green-light); color: var(--green); }
+        .status-anulado { background: var(--red-light); color: var(--red); }
         
-        .status-pending {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
-        }
+        .status-pago-validado { background: var(--green-light); color: var(--green); }
+        .status-pago-pendiente { background: var(--yellow-light); color: var(--yellow-dark); }
+        .status-pago-rechazado { background: var(--red-light); color: var(--red); }
         
-        .status-completed {
-            background: #E8F0FE;
-            color: #1A56DB;
-        }
-        
-        .status-cancelled {
-            background: var(--red-light);
-            color: var(--red);
-        }
-        
-        /* ===== EMPTY STATE ===== */
         .empty-message {
             text-align: center;
-            padding: 48px;
+            padding: 40px;
             color: var(--text-3);
         }
         
         .empty-message i {
-            font-size: 48px;
+            font-size: 40px;
             margin-bottom: 12px;
             opacity: 0.5;
         }
         
-        .empty-message p {
-            font-size: 14px;
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
         }
         
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        @media (max-width: 1024px) {
             .sidebar {
                 width: 72px;
-                padding: 16px 8px;
+                padding: 16px 0;
             }
-            .sidebar-brand span,
-            .sidebar-nav a span,
-            .sidebar-nav .nav-label,
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
             .sidebar-footer a span {
                 display: none;
             }
-            .sidebar-nav a {
-                justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-nav a i {
-                font-size: 24px;
-                width: auto;
-            }
             .sidebar-footer a {
                 justify-content: center;
-                padding: 12px;
-            }
-            .sidebar-footer a i {
-                font-size: 24px;
-                width: auto;
             }
             .main-content {
                 margin-left: 72px;
@@ -432,82 +412,95 @@
             }
         }
         
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
             .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu .menu-label {
                 display: none;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
             }
             .main-content {
                 margin-left: 0;
                 padding: 16px;
             }
             .metrics-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
+            .page-title {
+                font-size: 22px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="app">
-    
-    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <i class="ti ti-construction"></i>
-            <span>STAMOS</span>
+            <h2>STAMOS<span>.</span></h2>
+            <small>Área del Cliente</small>
         </div>
         
-        <nav class="sidebar-nav">
-            <div class="nav-label">Cliente</div>
-            
-            <!-- Dashboard -->
-            <a href="#" class="active" th:href="@{/cliente/dashboard}">
-                <i class="ti ti-layout-dashboard"></i>
-                <span>Dashboard</span>
-            </a>
-            
-            <!-- Mis Proyectos -->
-            <a href="#" th:href="@{/cliente/proyectos}">
-                <i class="ti ti-folder-open"></i>
-                <span>Mis Proyectos</span>
-            </a>
-            
-            <!-- Documentos -->
-            <a href="#" th:href="@{/cliente/documentos}">
-                <i class="ti ti-file-text"></i>
-                <span>Documentos</span>
-            </a>
-            
-            <!-- Historial de Pagos -->
-            <a href="#" th:href="@{/cliente/pagos}">
-                <i class="ti ti-credit-card"></i>
-                <span>Historial de Pagos</span>
-            </a>
-            
-            <!-- Perfil -->
-            <a href="#" th:href="@{/cliente/perfil}">
-                <i class="ti ti-user-circle"></i>
-                <span>Mi Perfil</span>
-            </a>
-        </nav>
+        <ul class="sidebar-menu">
+            <li><a href="/cliente/dashboard" class="active"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a href="/cliente/proyectos"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a href="/cliente/pagos"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a href="/cliente/perfil"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+        </ul>
         
         <div class="sidebar-footer">
-            <!-- Cerrar Sesión -->
-            <a href="#" th:href="@{/logout}">
+            <a href="/logout">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
     </aside>
-    
-    <!-- ===== MAIN CONTENT ===== -->
+
     <main class="main-content">
-        
-        <!-- Header -->
         <div class="header">
             <div class="page-title">
                 <i class="ti ti-layout-dashboard"></i>
@@ -518,8 +511,9 @@
                 <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
             </div>
         </div>
-        
-        <!-- Métricas -->
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-header">
@@ -533,31 +527,30 @@
                     <span class="metric-label">Total cotizado</span>
                     <i class="ti ti-file-invoice"></i>
                 </div>
-                <div class="metric-value" th:text="'S/ ' + ${totalCotizado}">S/ 0.00</div>
+                <div class="metric-value" th:text="${totalCotizadoFormateado}">S/ 0.00</div>
             </div>
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Total pagado</span>
                     <i class="ti ti-credit-card"></i>
                 </div>
-                <div class="metric-value" th:text="'S/ ' + ${totalPagado}">S/ 0.00</div>
+                <div class="metric-value" th:text="${totalPagadoFormateado}">S/ 0.00</div>
             </div>
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Saldo pendiente</span>
                     <i class="ti ti-wallet"></i>
                 </div>
-                <div class="metric-value" th:text="'S/ ' + ${saldoPendiente}">S/ 0.00</div>
+                <div class="metric-value" th:text="${saldoPendienteFormateado}">S/ 0.00</div>
             </div>
         </div>
-        
-        <!-- Mis Proyectos -->
+
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
                     <i class="ti ti-folder-open"></i> Mis Proyectos
                 </div>
-                <a href="#" th:href="@{/cliente/proyectos}" class="btn-link">
+                <a href="/cliente/proyectos" class="btn-link">
                     Ver todos <i class="ti ti-arrow-right"></i>
                 </a>
             </div>
@@ -577,12 +570,15 @@
                             <td th:text="${p.nombreProyecto}">—</td>
                             <td th:text="${#temporals.format(p.fechaInicio, 'dd/MM/yyyy')}">—</td>
                             <td>
-                                <span th:classappend="${p.estado == 'Aprobado' or p.estado == 'En Diseño' or p.estado == 'En Producción' or p.estado == 'Instalación/Montaje'} ? 'status-badge status-active' : 
-                                      ${p.estado == 'Entregado'} ? 'status-badge status-completed' :
-                                      ${p.estado == 'Anulado'} ? 'status-badge status-cancelled' : 'status-badge status-pending'"
+                                <span class="status-badge" 
+                                      th:classappend="${p.estado == 'Aprobado'} ? 'status-aprobado' : 
+                                                      (p.estado == 'En Diseño' ? 'status-diseno' : 
+                                                      (p.estado == 'En Producción' ? 'status-produccion' : 
+                                                      (p.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                                      (p.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
                                       th:text="${p.estado}">—</span>
                             </td>
-                            <td th:text="'S/ ' + ${#numbers.formatDecimal(p.montoTotal, 0, 2)}">—</td>
+                            <td th:text="${p.montoTotalFormateado}">S/ 0.00</td>
                             <td>
                                 <a th:href="@{/cliente/proyecto/{id}(id=${p.idProyecto})}" class="btn-link">
                                     Ver detalle <i class="ti ti-arrow-right"></i>
@@ -600,9 +596,53 @@
                 </div>
             </div>
         </div>
-        
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-file-text"></i> Últimos Documentos
+                </div>
+                <a href="/cliente/documentos" class="btn-link">
+                    Ver todos <i class="ti ti-arrow-right"></i>
+                </a>
+            </div>
+            <div class="table-wrapper">
+                <table th:if="${ultimosDocumentos != null && !ultimosDocumentos.isEmpty()}">
+                    <thead>
+                        <tr>
+                            <th>Documento</th>
+                            <th>Proyecto</th>
+                            <th>Fecha</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="doc : ${ultimosDocumentos}">
+                            <td th:text="${doc.nombreArchivo}">—</td>
+                            <td th:text="${doc.nombreProyecto}">—</td>
+                            <td th:text="${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">—</td>
+                            <td>
+                                <a th:href="@{/cliente/documentos/ver/{id}(id=${doc.idDocumento})}" class="btn-link" target="_blank">
+                                    <i class="ti ti-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div th:if="${ultimosDocumentos == null || ultimosDocumentos.isEmpty()}" class="empty-message">
+                    <i class="ti ti-file-off"></i>
+                    <p>No hay documentos disponibles.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center;padding:12px;font-size:12px;color:var(--text-3);border-top:1px solid var(--border);margin-top:12px;">
+            <span th:text="${fechaActual}"></span>
+            <span style="margin-left:16px;" th:if="${ultimoAcceso != null}">
+                <i class="ti ti-clock"></i> Último acceso: <span th:text="${#temporals.format(ultimoAcceso, 'dd/MM/yyyy HH:mm')}"></span>
+            </span>
+        </div>
     </main>
-</div>
 
 </body>
 </html>

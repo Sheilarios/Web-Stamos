@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${tituloFormulario} + ' · STAMOS Inventario'">STAMOS · Equipo</title>
+    <title th:text="${titulo} + ' · STAMOS Inventario'">STAMOS · Equipo</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
@@ -13,80 +13,341 @@
             --yellow-light: #FFFBE6;
             --yellow-mid: #FFE566;
             --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
             --border: #E2E6EA;
             --bg: #F5F6F8;
             --card: #FFFFFF;
             --text: #1A1F2E;
             --text-2: #5A6478;
             --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
         }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); padding: 40px 24px; }
-        .container { max-width: 800px; margin: 0 auto; background: var(--card); border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); padding: 32px; }
-        .header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
-        .header i { font-size: 28px; color: var(--yellow-dark); }
-        .header h1 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-2); margin-bottom: 6px; }
-        .input-wrapper { position: relative; }
-        .input-wrapper i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 16px; }
-        input, select, textarea { width: 100%; padding: 12px 12px 12px 42px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; outline: none; transition: 0.2s; background: white; }
-        input:focus, select:focus, textarea:focus { border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(245,196,0,0.15); }
-        textarea { padding: 12px; resize: vertical; min-height: 80px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
-        .btn-primary { background: var(--yellow); border: none; color: #2A1800; padding: 10px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-primary:hover { background: var(--yellow-mid); }
-        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-2); padding: 10px 20px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow-dark); }
-        @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; gap: 0; } }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 24px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        
+        .header i {
+            font-size: 28px;
+            color: var(--yellow-dark);
+        }
+        
+        .header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .header small {
+            font-size: 13px;
+            color: var(--text-3);
+            font-weight: 400;
+            margin-left: 8px;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--text-2);
+            margin-bottom: 6px;
+        }
+        
+        label .required {
+            color: var(--red);
+            margin-left: 2px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            font-size: 16px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            background: white;
+            outline: none;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+        }
+        
+        textarea {
+            padding: 12px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            border: none;
+            color: #2A1800;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+        }
+        
+        .info-box {
+            background: var(--blue-light);
+            border: 1px solid #B8D4FE;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--blue);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .info-box i {
+            font-size: 18px;
+            margin-top: 2px;
+        }
+        
+        @media (max-width: 640px) {
+            body { padding: 20px; }
+            .container { padding: 20px; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .form-actions { flex-wrap: wrap; }
+            .form-actions .btn { flex: 1; justify-content: center; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <i class="ti ti-device-laptop"></i>
-        <h1 th:text="${tituloFormulario}">Formulario Equipo</h1>
+        <i th:if="${accion == 'crear'}" class="ti ti-device-laptop"></i>
+        <i th:unless="${accion == 'crear'}" class="ti ti-edit"></i>
+        <h1 th:text="${titulo}">Formulario Equipo</h1>
+        <small th:if="${inventario != null and inventario.idInventario != null}" 
+               th:text="'ID: ' + ${inventario.idInventario}">ID: 0</small>
     </div>
 
-    <form th:action="@{/admin/inventario/guardar}" th:object="${equipo}" method="post">
-        <input type="hidden" th:field="*{codEquipo}">
-        <div class="form-group">
-            <label for="nombre">Nombre *</label>
-            <div class="input-wrapper"><i class="ti ti-tag"></i><input type="text" id="nombre" th:field="*{nombre}" required></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+    <div class="info-box" th:if="${accion == 'editar'}">
+        <i class="ti ti-info-circle"></i>
+        <div>
+            <strong>Código Serial:</strong> <span th:text="${inventario.codigoSerial}">—</span>
+            <span style="display:block; font-size:12px; color:var(--text-3); margin-top:4px;">
+                <i class="ti ti-lock"></i> El código serial no se puede modificar después de la creación.
+            </span>
         </div>
+    </div>
+
+    <form th:action="@{${accion == 'crear' ? '/admin/inventario/crear' : '/admin/inventario/actualizar/' + inventario.idInventario}}" 
+          th:object="${inventario}" method="post">
+        
+        <input type="hidden" th:field="*{idInventario}">
+
         <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <div class="input-wrapper"><i class="ti ti-article"></i><textarea id="descripcion" th:field="*{descripcion}" rows="2"></textarea></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="stockTotal">Stock Total *</label>
-                <div class="input-wrapper"><i class="ti ti-cubes"></i><input type="number" id="stockTotal" th:field="*{stockTotal}" step="1" min="0" required></div>
-            </div>
-            <div class="form-group">
-                <label for="precioDia">Precio por día (S/) *</label>
-                <div class="input-wrapper"><i class="ti ti-coin"></i><input type="number" id="precioDia" th:field="*{precioDia}" step="0.01" min="0" required></div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ubicacion">Ubicación</label>
-            <div class="input-wrapper"><i class="ti ti-map-pin"></i><input type="text" id="ubicacion" th:field="*{ubicacion}"></div>
-        </div>
-        <div class="form-group">
-            <label for="estado">Estado físico</label>
-            <div class="input-wrapper"><i class="ti ti-status-change"></i>
-                <select id="estado" th:field="*{estado}">
-                    <option value="DISPONIBLE">DISPONIBLE</option>
-                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
-                    <option value="BAJA">BAJA</option>
+            <label for="idProducto">Producto <span class="required">*</span></label>
+            <div class="input-wrapper">
+                <i class="ti ti-package"></i>
+                <select id="idProducto" th:field="*{idProducto}" required>
+                    <option value="">Seleccione un producto</option>
+                    <option th:each="p : ${productos}" th:value="${p.idProducto}" 
+                            th:text="${p.nombreItem + ' (' + p.tipo + ') - ' + p.precioBaseFormateado}" 
+                            th:selected="${inventario.idProducto == p.idProducto}"></option>
                 </select>
             </div>
         </div>
+
+        <div class="form-group">
+            <label for="codigoSerial">Código Serial <span class="required">*</span></label>
+            <div class="input-wrapper">
+                <i class="ti ti-barcode"></i>
+                <input type="text" id="codigoSerial" th:field="*{codigoSerial}" 
+                       th:readonly="${accion == 'editar'}" required 
+                       placeholder="Ingrese el código serial único">
+            </div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;">
+                <i class="ti ti-info-circle"></i> 
+                <span th:if="${accion == 'crear'}">El código serial debe ser único en el sistema.</span>
+                <span th:unless="${accion == 'crear'}">El código serial no se puede modificar.</span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="ubicacion">Ubicación</label>
+                <div class="input-wrapper">
+                    <i class="ti ti-map-pin"></i>
+                    <input type="text" id="ubicacion" th:field="*{ubicacion}" 
+                           placeholder="Almacén, estante, sección...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="estadoFisico">Estado Físico <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <i class="ti ti-status-change"></i>
+                    <select id="estadoFisico" th:field="*{estadoFisico}" required>
+                        <option value="Disponible">Disponible</option>
+                        <option value="En uso">En uso</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                        <option value="Dañado">Dañado</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fechaAdquisicion">Fecha de Adquisición</label>
+                <div class="input-wrapper">
+                    <i class="ti ti-calendar"></i>
+                    <input type="date" id="fechaAdquisicion" th:field="*{fechaAdquisicion}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="valorCompra">Valor de Compra (S/)</label>
+                <div class="input-wrapper">
+                    <i class="ti ti-coin"></i>
+                    <input type="number" id="valorCompra" th:field="*{valorCompra}" 
+                           step="0.01" min="0" placeholder="0.00">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="observaciones">Observaciones</label>
+            <div class="input-wrapper">
+                <i class="ti ti-notes"></i>
+                <textarea id="observaciones" th:field="*{observaciones}" rows="2" 
+                          placeholder="Observaciones adicionales sobre el equipo..."></textarea>
+            </div>
+        </div>
+
         <div class="form-actions">
-            <a th:href="@{/admin/inventario}" class="btn-secondary"><i class="ti ti-arrow-left"></i> Cancelar</a>
-            <button type="submit" class="btn-primary"><i class="ti ti-device-floppy"></i> <span th:text="${textoBoton}">Guardar</span></button>
+            <a th:href="@{/admin/inventario}" class="btn-secondary">
+                <i class="ti ti-arrow-left"></i> Cancelar
+            </a>
+            <button type="submit" class="btn-primary">
+                <i class="ti ti-device-floppy"></i> 
+                <span th:text="${accion == 'crear' ? 'Registrar Equipo' : 'Actualizar Equipo'}">Guardar</span>
+            </button>
         </div>
     </form>
 </div>

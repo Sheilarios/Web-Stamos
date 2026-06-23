@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -40,6 +41,9 @@ public class CotizacionController {
     @Autowired
     private ClienteService clienteService;
 
+    /**
+     * Lista todas las cotizaciones con paginación y filtros
+     */
     @GetMapping
     public String listarCotizaciones(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "10") int size,
@@ -85,6 +89,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Muestra el formulario para crear una nueva cotización
+     */
     @GetMapping("/nuevo")
     public String mostrarFormularioNuevo(@RequestParam(required = false) Integer clienteId,
                                          Model model) {
@@ -105,9 +112,12 @@ public class CotizacionController {
             
             BigDecimal tasaIgv = configuracionService.getIgv();
             
+            // OBTENER SOLO PRODUCTOS ACTIVOS
+            List<Producto> productosActivos = productoService.findActive();
+            
             model.addAttribute("cotizacion", cotizacion);
             model.addAttribute("clientes", clienteService.findAll());
-            model.addAttribute("productos", productoService.findAll());
+            model.addAttribute("productos", productosActivos);
             model.addAttribute("tasaIgv", tasaIgv);
             model.addAttribute("titulo", "Nueva Cotización");
             model.addAttribute("accion", "crear");
@@ -120,6 +130,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Muestra el formulario para editar una cotización existente
+     */
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         try {
@@ -136,13 +149,19 @@ public class CotizacionController {
             }
             
             List<CotizacionDetalle> detalles = cotizacionService.getDetallesByCotizacion(id);
+            if (detalles == null) {
+                detalles = new ArrayList<>();
+            }
             
             BigDecimal tasaIgv = configuracionService.getIgv();
+            
+            // OBTENER SOLO PRODUCTOS ACTIVOS
+            List<Producto> productosActivos = productoService.findActive();
             
             model.addAttribute("cotizacion", cotizacion);
             model.addAttribute("detalles", detalles);
             model.addAttribute("clientes", clienteService.findAll());
-            model.addAttribute("productos", productoService.findAll());
+            model.addAttribute("productos", productosActivos);
             model.addAttribute("tasaIgv", tasaIgv);
             model.addAttribute("titulo", "Editar Cotización");
             model.addAttribute("accion", "editar");
@@ -155,6 +174,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Crea una nueva cotización
+     */
     @PostMapping("/crear")
     @Auditable(value = "Creación de cotización", accion = "CREATE")
     public String crearCotizacion(@Valid @ModelAttribute("cotizacion") Cotizacion cotizacion,
@@ -211,6 +233,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Actualiza una cotización existente creando una nueva versión
+     */
     @PostMapping("/actualizar/{id}")
     @Auditable(value = "Actualización de cotización (nueva versión)", accion = "UPDATE")
     public String actualizarCotizacion(@PathVariable Integer id,
@@ -265,6 +290,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Aprueba una cotización y genera el proyecto automáticamente
+     */
     @PostMapping("/aprobar/{id}")
     @Auditable(value = "Aprobación de cotización y generación de proyecto", accion = "VALIDATE")
     public String aprobarCotizacion(@PathVariable Integer id,
@@ -303,6 +331,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Anula una cotización
+     */
     @PostMapping("/anular/{id}")
     @Auditable(value = "Anulación de cotización", accion = "DELETE")
     public String anularCotizacion(@PathVariable Integer id,
@@ -346,6 +377,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Muestra el historial de versiones de una cotización
+     */
     @GetMapping("/versiones/{id}")
     public String verVersiones(@PathVariable Integer id, Model model) {
         try {
@@ -357,6 +391,7 @@ public class CotizacionController {
 
             List<CotizacionVersion> versiones = cotizacionService.getVersionesByCotizacion(id);
             List<CotizacionDetalle> detallesActuales = cotizacionService.getDetallesByCotizacion(id);
+            
             model.addAttribute("cotizacion", cotizacion);
             model.addAttribute("versiones", versiones);
             model.addAttribute("detallesActuales", detallesActuales);
@@ -369,6 +404,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Obtiene los detalles de una versión específica (API)
+     */
     @GetMapping("/detalle-version/{id}")
     @ResponseBody
     public List<CotizacionDetalle> obtenerDetalleVersion(@PathVariable Integer idVersion) {
@@ -379,6 +417,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Obtiene una versión específica (API)
+     */
     @GetMapping("/version/{id}")
     @ResponseBody
     public CotizacionVersion obtenerVersion(@PathVariable Integer idVersion) {
@@ -389,6 +430,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Obtiene el detalle de una cotización (API)
+     */
     @GetMapping("/detalle/{id}")
     @ResponseBody
     public Cotizacion obtenerDetalleCotizacion(@PathVariable Integer id) {
@@ -399,6 +443,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Verifica si una cotización puede ser editada (API)
+     */
     @GetMapping("/puede-editar/{id}")
     @ResponseBody
     public boolean puedeEditar(@PathVariable Integer id) {
@@ -413,6 +460,9 @@ public class CotizacionController {
         }
     }
 
+    /**
+     * Métodos auxiliares para la vista
+     */
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
         return switch (estado) {

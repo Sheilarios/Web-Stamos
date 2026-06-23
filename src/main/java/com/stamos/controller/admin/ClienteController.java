@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -57,19 +56,12 @@ public class ClienteController {
                 clientesPage = clienteService.findAll(pageable);
             }
             
-            long totalActivos = clienteService.countByEstado("Activo");
-            long totalDeshabilitados = clienteService.countByEstado("Deshabilitado");
-            long totalClientes = clienteService.count();
-            
             model.addAttribute("clientes", clientesPage.getContent());
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", clientesPage.getTotalPages());
             model.addAttribute("totalItems", clientesPage.getTotalElements());
             model.addAttribute("search", search);
             model.addAttribute("estado", estado);
-            model.addAttribute("totalActivos", totalActivos);
-            model.addAttribute("totalDeshabilitados", totalDeshabilitados);
-            model.addAttribute("totalClientes", totalClientes);
             
             return "admin/clientes/lista";
             
@@ -115,11 +107,13 @@ public class ClienteController {
                                Authentication auth,
                                RedirectAttributes redirectAttributes) {
         try {
+            // Validar errores del formulario
             if (result.hasErrors()) {
                 redirectAttributes.addFlashAttribute("error", "Por favor, corrige los errores en el formulario.");
                 return "redirect:/admin/clientes/nuevo";
             }
 
+            // Validar contraseña
             if (password == null || password.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "La contraseña es obligatoria.");
                 return "redirect:/admin/clientes/nuevo";
@@ -135,12 +129,14 @@ public class ClienteController {
                 return "redirect:/admin/clientes/nuevo";
             }
 
+            // Validar email único
             Cliente clienteExistente = clienteService.findByEmail(cliente.getEmail());
             if (clienteExistente != null) {
                 redirectAttributes.addFlashAttribute("error", "Ya existe un cliente con este correo electrónico.");
                 return "redirect:/admin/clientes/nuevo";
             }
 
+            // Validar RUC único
             if (cliente.getRuc() != null && !cliente.getRuc().isEmpty()) {
                 Cliente clienteRucExistente = clienteService.findByRuc(cliente.getRuc());
                 if (clienteRucExistente != null) {
@@ -149,11 +145,22 @@ public class ClienteController {
                 }
             }
 
+            // Validar teléfono único
+            if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty()) {
+                Cliente clienteTelefonoExistente = clienteService.findByTelefono(cliente.getTelefono());
+                if (clienteTelefonoExistente != null) {
+                    redirectAttributes.addFlashAttribute("error", "Ya existe un cliente con este teléfono.");
+                    return "redirect:/admin/clientes/nuevo";
+                }
+            }
+
+            // Obtener usuario administrador
             Usuario usuarioAdmin = clienteService.findUsuarioByEmail(auth.getName());
             if (usuarioAdmin != null) {
                 cliente.setIdUsuarioRegis(usuarioAdmin.getIdUsuario());
             }
 
+            // Registrar cliente
             clienteService.registrar(cliente, password);
             
             redirectAttributes.addFlashAttribute("mensaje", "Cliente creado exitosamente.");
@@ -161,6 +168,9 @@ public class ClienteController {
             
             return "redirect:/admin/clientes";
             
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/clientes/nuevo";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al crear el cliente: " + e.getMessage());
             return "redirect:/admin/clientes/nuevo";
@@ -185,16 +195,27 @@ public class ClienteController {
                 return "redirect:/admin/clientes";
             }
 
+            // Validar email único
             Cliente clienteEmailExistente = clienteService.findByEmail(cliente.getEmail());
             if (clienteEmailExistente != null && !clienteEmailExistente.getIdCliente().equals(id)) {
                 redirectAttributes.addFlashAttribute("error", "Ya existe otro cliente con este correo electrónico.");
                 return "redirect:/admin/clientes/editar/" + id;
             }
 
+            // Validar RUC único
             if (cliente.getRuc() != null && !cliente.getRuc().isEmpty()) {
                 Cliente clienteRucExistente = clienteService.findByRuc(cliente.getRuc());
                 if (clienteRucExistente != null && !clienteRucExistente.getIdCliente().equals(id)) {
                     redirectAttributes.addFlashAttribute("error", "Ya existe otro cliente con este RUC.");
+                    return "redirect:/admin/clientes/editar/" + id;
+                }
+            }
+
+            // Validar teléfono único
+            if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty()) {
+                Cliente clienteTelefonoExistente = clienteService.findByTelefono(cliente.getTelefono());
+                if (clienteTelefonoExistente != null && !clienteTelefonoExistente.getIdCliente().equals(id)) {
+                    redirectAttributes.addFlashAttribute("error", "Ya existe otro cliente con este teléfono.");
                     return "redirect:/admin/clientes/editar/" + id;
                 }
             }
@@ -207,6 +228,9 @@ public class ClienteController {
             
             return "redirect:/admin/clientes";
             
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/clientes/editar/" + id;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al actualizar el cliente: " + e.getMessage());
             return "redirect:/admin/clientes/editar/" + id;
@@ -224,43 +248,8 @@ public class ClienteController {
             
             List<Proyecto> proyectos = proyectoService.findByCliente(id);
             
-            long proyectosActivos = proyectos.stream()
-                    .filter(p -> p.getEstado() != null && 
-                               !p.getEstado().equals("Entregado") && 
-                               !p.getEstado().equals("Anulado"))
-                    .count();
-            
-            long proyectosCompletados = proyectos.stream()
-                    .filter(p -> p.getEstado() != null && p.getEstado().equals("Entregado"))
-                    .count();
-            
-            long proyectosAnulados = proyectos.stream()
-                    .filter(p -> p.getEstado() != null && p.getEstado().equals("Anulado"))
-                    .count();
-            
-            BigDecimal totalFacturado = proyectos.stream()
-                    .map(Proyecto::getMontoTotal)
-                    .filter(monto -> monto != null)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            
-            BigDecimal totalPagado = pagoService.getTotalPagadoByCliente(id);
-            if (totalPagado == null) {
-                totalPagado = BigDecimal.ZERO;
-            }
-            
-            BigDecimal saldoPendiente = totalFacturado.subtract(totalPagado);
-            if (saldoPendiente.compareTo(BigDecimal.ZERO) < 0) {
-                saldoPendiente = BigDecimal.ZERO;
-            }
-            
             model.addAttribute("cliente", cliente);
             model.addAttribute("proyectos", proyectos);
-            model.addAttribute("proyectosActivos", proyectosActivos);
-            model.addAttribute("proyectosCompletados", proyectosCompletados);
-            model.addAttribute("proyectosAnulados", proyectosAnulados);
-            model.addAttribute("totalFacturado", totalFacturado);
-            model.addAttribute("totalPagado", totalPagado);
-            model.addAttribute("saldoPendiente", saldoPendiente);
             
             return "admin/clientes/historial";
             
@@ -301,6 +290,9 @@ public class ClienteController {
             
             return "redirect:/admin/clientes";
             
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/clientes";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al deshabilitar el cliente: " + e.getMessage());
             return "redirect:/admin/clientes";
@@ -338,6 +330,9 @@ public class ClienteController {
             
             return "redirect:/admin/clientes";
             
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/clientes";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al habilitar el cliente: " + e.getMessage());
             return "redirect:/admin/clientes";
@@ -396,13 +391,24 @@ public class ClienteController {
         }
     }
 
-    @GetMapping("/detalle/{id}")
+    @GetMapping("/verificar-telefono")
     @ResponseBody
-    public Cliente obtenerDetalleCliente(@PathVariable Integer id) {
+    public boolean verificarTelefono(@RequestParam("telefono") String telefono,
+                                     @RequestParam(value = "id", required = false) Integer id) {
         try {
-            return clienteService.findById(id);
+            if (telefono == null || telefono.isEmpty()) {
+                return true;
+            }
+            Cliente cliente = clienteService.findByTelefono(telefono);
+            if (cliente == null) {
+                return true;
+            }
+            if (id != null && cliente.getIdCliente().equals(id)) {
+                return true;
+            }
+            return false;
         } catch (Exception e) {
-            return null;
+            return false;
         }
     }
 }
