@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAMOS · Gestión de Usuarios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --sidebar-width: 260px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 24px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-brand {
+            padding: 0 20px 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        
+        .sidebar-brand h2 span {
+            color: var(--yellow);
+        }
+        
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+        
+        .sidebar-menu li a:hover {
+            background: var(--yellow-light);
+            color: var(--text);
+        }
+        
+        .sidebar-menu li a.active {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+        }
+        
+        .sidebar-menu li a.active i {
+            color: var(--yellow-dark);
+        }
+        
+        .sidebar-menu .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-3);
+            padding: 16px 16px 8px;
+            font-weight: 600;
+        }
+        
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--red);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        
+        .sidebar-footer a:hover {
+            background: var(--red-light);
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 36px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .user-info {
+            background: var(--card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-info i {
+            color: var(--yellow-dark);
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        
+        .btn-primary {
+            background: var(--yellow);
+            color: var(--text);
+        }
+        
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+            transform: translateY(-1px);
+        }
+        
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+        
+        .btn-warning {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        
+        .btn-warning:hover {
+            background: #FDE68A;
+        }
+        
+        .btn-danger {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .btn-danger:hover {
+            background: #FECACA;
+        }
+        
+        .btn-success {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .btn-success:hover {
+            background: #A7F3D0;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 4px 12px;
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+        }
+        
+        .search-box i {
+            color: var(--text-3);
+            font-size: 18px;
+        }
+        
+        .search-box input {
+            border: none;
+            padding: 8px 10px;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            color: var(--text);
+        }
+        
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: var(--yellow-dark);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .badge-danger {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .badge-warning {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .badge-secondary {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+        
+        .rol-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .rol-admin { background: #FEE2E2; color: #DC2626; }
+        .rol-vendedor { background: #DBEAFE; color: #2563EB; }
+        .rol-disenador { background: #EDE9FE; color: #7C3AED; }
+        .rol-produccion { background: #FEF3C7; color: #D97706; }
+        .rol-soporte { background: #D1FAE5; color: #059669; }
+        .rol-cliente { background: #F3F4F6; color: #6B7280; }
+        
+        .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-decoration: none;
+            color: var(--text-2);
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+        
+        .pagination .active {
+            background: var(--yellow);
+            color: var(--text);
+            border-color: var(--yellow);
+            font-weight: 600;
+        }
+        
+        .pagination a:hover {
+            background: var(--yellow-light);
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 0;
+            }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu .menu-label {
+                display: none;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .toolbar {
+                flex-direction: column;
+            }
+            .search-box {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Sistema de Gestión</small>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-label">Principal</li>
+            <li><a href="/admin/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            
+            <li class="menu-label">Gestión</li>
+            <li><a href="/admin/clientes"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a href="/admin/cotizaciones"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a href="/admin/proyectos"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a href="/admin/inventario"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a href="/admin/pagos"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            
+            <li class="menu-label">Configuración</li>
+            <li><a href="/admin/configuracion"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a href="/admin/usuarios" class="active"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <a href="/logout">
+                <i class="ti ti-logout"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <i class="ti ti-user-cog"></i>
+                <span>Gestión de Usuarios</span>
+            </div>
+            <div class="user-info">
+                <i class="ti ti-user-circle"></i>
+                <span th:text="${username}">Administrador</span>
+                <span style="color:var(--text-3);font-size:11px;" th:text="${rol}">Admin</span>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <a href="/admin/usuarios/nuevo" class="btn btn-primary">
+                <i class="ti ti-plus"></i> Nuevo Usuario
+            </a>
+            <div class="search-box">
+                <i class="ti ti-search"></i>
+                <input type="text" placeholder="Buscar usuario..." 
+                       id="searchInput" 
+                       th:value="${search}"
+                       onkeyup="if(event.key === 'Enter') this.form.submit()">
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="window.location.href='/admin/usuarios?search='+document.getElementById('searchInput').value">
+                Buscar
+            </button>
+            <a href="/admin/usuarios" class="btn btn-sm btn-warning">Limpiar</a>
+        </div>
+
+        <!-- Tabla de usuarios -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-users"></i> 
+                    <span>Usuarios del sistema</span>
+                    <span style="font-size:13px;font-weight:400;color:var(--text-3);" 
+                          th:text="'(' + ${totalUsuarios} + ' registrados)'">(0)</span>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table th:if="${usuarios != null && !usuarios.isEmpty()}">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Último acceso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${usuarios}">
+                            <td th:text="${u.idUsuario}">1</td>
+                            <td th:text="${u.nombreCompleto}">—</td>
+                            <td>
+                                <span th:text="${u.email}" style="font-size:12px;color:var(--text-3);">—</span>
+                            </td>
+                            <td>
+                                <span class="rol-badge" 
+                                      th:classappend="${u.nombreRol == 'Administrador'} ? 'rol-admin' :
+                                                      (u.nombreRol == 'Vendedor' ? 'rol-vendedor' :
+                                                      (u.nombreRol == 'Diseñador' ? 'rol-disenador' :
+                                                      (u.nombreRol == 'Producción' ? 'rol-produccion' :
+                                                      (u.nombreRol == 'Soporte Técnico' ? 'rol-soporte' :
+                                                      'rol-cliente'))))"
+                                      th:text="${u.nombreRolLegible ?: u.nombreRol}">—</span>
+                            </td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="${u.activo} ? 'badge-success' : 'badge-danger'"
+                                      th:text="${u.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                            </td>
+                            <td th:text="${u.ultimoAccesoFormateado ?: 'Nunca'}">—</td>
+                            <td>
+                                <div class="actions">
+                                    <a th:href="@{/admin/usuarios/editar/{id}(id=${u.idUsuario})}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="ti ti-edit"></i>
+                                    </a>
+                                    <a th:if="${u.activo}" 
+                                       th:href="@{/admin/usuarios/desactivar/{id}(id=${u.idUsuario})}" 
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('¿Desactivar este usuario?')">
+                                        <i class="ti ti-user-x"></i>
+                                    </a>
+                                    <a th:unless="${u.activo}" 
+                                       th:href="@{/admin/usuarios/activar/{id}(id=${u.idUsuario})}" 
+                                       class="btn btn-sm btn-success"
+                                       onclick="return confirm('¿Activar este usuario?')">
+                                        <i class="ti ti-user-check"></i>
+                                    </a>
+                                    <a th:href="@{/admin/usuarios/eliminar/{id}(id=${u.idUsuario})}" 
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('¿Eliminar permanentemente este usuario?')">
+                                        <i class="ti ti-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div th:if="${usuarios == null || usuarios.isEmpty()}" class="empty-message">
+                    <i class="ti ti-user-off"></i>
+                    <p>No hay usuarios registrados.</p>
+                    <a href="/admin/usuarios/nuevo" class="btn btn-primary" style="margin-top:12px;">
+                        <i class="ti ti-plus"></i> Crear primer usuario
+                    </a>
+                </div>
+            </div>
+
+            <!-- Paginación -->
+            <div th:if="${totalPages != null && totalPages > 1}" class="pagination">
+                <a th:if="${currentPage > 0}" 
+                   th:href="@{/admin/usuarios(page=${currentPage - 1}, size=${size}, search=${search})}">
+                    <i class="ti ti-chevron-left"></i>
+                </a>
+                <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <a th:if="${i != currentPage}" 
+                       th:href="@{/admin/usuarios(page=${i}, size=${size}, search=${search})}"
+                       th:text="${i + 1}">1</a>
+                    <span th:if="${i == currentPage}" 
+                          class="active" 
+                          th:text="${i + 1}">1</span>
+                </span>
+                <a th:if="${currentPage < totalPages - 1}" 
+                   th:href="@{/admin/usuarios(page=${currentPage + 1}, size=${size}, search=${search})}">
+                    <i class="ti ti-chevron-right"></i>
+                </a>
+            </div>
+            <div style="padding:8px 24px 16px;font-size:12px;color:var(--text-3);text-align:center;" 
+                 th:if="${totalItems != null}" 
+                 th:text="'Mostrando ' + ${usuarios != null ? usuarios.size() : 0} + ' de ' + ${totalItems} + ' usuarios'">
+            </div>
+        </div>
+
+        <div style="text-align:center;padding:12px;font-size:12px;color:var(--text-3);border-top:1px solid var(--border);margin-top:12px;">
+            <span th:text="${fechaActual}"></span>
+        </div>
+    </main>
+
+    <script>
+        // Permitir buscar con Enter
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                window.location.href = '/admin/usuarios?search=' + encodeURIComponent(this.value);
+            }
+        });
+    </script>
+
+</body>
+</html>

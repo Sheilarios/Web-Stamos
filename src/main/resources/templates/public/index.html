@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${titulo} ?: 'STAMOS · Diseño y producción de stands publicitarios'">STAMOS · Diseño y producción de stands publicitarios</title>
-    <meta name="description" th:content="${descripcion} ?: 'Empresa líder en diseño, producción y alquiler de mobiliario ferial, stands publicitarios y soluciones visuales para eventos corporativos.'">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <title>STAMOS · Diseño y producción de stands publicitarios</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             background: #FFFFFF;
             color: #1A1F2E;
         }
 
         /* ===== NAVBAR ===== */
-        .navbar {
+        .navbar-custom {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -27,25 +33,26 @@
             top: 0;
             z-index: 100;
         }
-        .nav-brand {
+        .navbar-custom .nav-brand {
+            font-family: 'Syne', sans-serif;
             font-size: 24px;
             font-weight: 800;
             color: #FFFFFF;
             letter-spacing: 1px;
             text-decoration: none;
         }
-        .nav-brand span { color: #F5C400; }
-        .nav-links { display: flex; gap: 32px; }
-        .nav-link {
+        .navbar-custom .nav-brand span { color: #F5C400; }
+        .navbar-custom .nav-links { display: flex; gap: 32px; }
+        .navbar-custom .nav-link {
             font-size: 13px;
             color: #C0C0C0;
             text-decoration: none;
             transition: color 0.2s;
             font-weight: 500;
         }
-        .nav-link:hover,
-        .nav-link.active { color: #F5C400; }
-        .nav-cta {
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .nav-link.active { color: #F5C400; }
+        .navbar-custom .nav-cta {
             background: #F5C400;
             border: none;
             color: #000000;
@@ -60,8 +67,8 @@
             align-items: center;
             gap: 8px;
         }
-        .nav-cta:hover { background: #E0B000; }
-        .nav-phone {
+        .navbar-custom .nav-cta:hover { background: #E0B000; }
+        .navbar-custom .nav-phone {
             color: #FFFFFF;
             font-size: 13px;
             font-weight: 600;
@@ -69,9 +76,9 @@
             align-items: center;
             gap: 6px;
         }
-        .nav-phone i { color: #F5C400; }
+        .navbar-custom .nav-phone i { color: #F5C400; }
 
-        /* ===== SLIDER / HERO ===== */
+        /* ===== SLIDER ===== */
         .slider {
             position: relative;
             height: 500px;
@@ -105,6 +112,7 @@
             max-width: 600px;
         }
         .slider-slide h2 {
+            font-family: 'Syne', sans-serif;
             font-size: 42px;
             font-weight: 700;
             color: #FFFFFF;
@@ -159,6 +167,7 @@
             font-weight: 700;
         }
         .section-header h2 {
+            font-family: 'Syne', sans-serif;
             font-size: 36px;
             font-weight: 700;
             color: #000000;
@@ -201,6 +210,7 @@
             font-size: 12px;
         }
         .about-text h3 {
+            font-family: 'Syne', sans-serif;
             font-size: 28px;
             font-weight: 700;
             color: #000000;
@@ -222,6 +232,7 @@
             text-align: center;
         }
         .about-stats .stat .num {
+            font-family: 'Syne', sans-serif;
             font-size: 32px;
             font-weight: 700;
             color: #000000;
@@ -233,72 +244,7 @@
             text-transform: uppercase;
         }
 
-        /* ===== SERVICIOS / PRODUCTOS ===== */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-        .product-card {
-            background: #FFFFFF;
-            border: 1px solid #E0E0E0;
-            border-radius: 14px;
-            overflow: hidden;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: inherit;
-        }
-        .product-card:hover {
-            border-color: #F5C400;
-            box-shadow: 0 8px 30px rgba(245,196,0,0.12);
-            transform: translateY(-4px);
-        }
-        .product-card .img {
-            height: 180px;
-            background-size: cover;
-            background-position: center;
-            background-color: #F0F0F0;
-        }
-        .product-card .body {
-            padding: 16px 20px 20px;
-        }
-        .product-card .body h4 {
-            font-size: 15px;
-            font-weight: 700;
-            color: #000000;
-            margin-bottom: 4px;
-        }
-        .product-card .body p {
-            font-size: 12px;
-            color: #8A8A8A;
-            line-height: 1.5;
-        }
-        .product-card .body .tag {
-            display: inline-block;
-            font-size: 10px;
-            padding: 2px 10px;
-            border-radius: 10px;
-            border: 1px solid #E0C84A;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-        .product-card .body .tag.alquiler {
-            background: #E8F0FE;
-            color: #1A56DB;
-            border-color: #B8D4FE;
-        }
-        .product-card .body .tag.venta {
-            background: #E8FEF0;
-            color: #059669;
-            border-color: #A8E6C4;
-        }
-        .product-card .body .tag.servicio {
-            background: #F3E8FE;
-            color: #7C3AED;
-            border-color: #D8C4F8;
-        }
-
-        /* ===== CATEGORÍAS DESTACADAS ===== */
+        /* ===== CATEGORÍAS ===== */
         .category-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -324,6 +270,7 @@
             display: block;
         }
         .category-card h4 {
+            font-family: 'Syne', sans-serif;
             font-size: 18px;
             font-weight: 700;
             margin-bottom: 6px;
@@ -334,132 +281,233 @@
             line-height: 1.6;
         }
 
+        /* ===== GALERÍA SCROLL HORIZONTAL ===== */
+        .gallery-scroll-section {
+            background: #F8F8F8;
+            padding: 60px 0 80px 0;
+        }
+        .gallery-scroll-section .section-header {
+            padding: 0 56px;
+        }
+        .gallery-scroll-wrapper {
+            position: relative;
+            overflow: hidden;
+            padding: 0 56px;
+        }
+        .gallery-scroll {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 10px 0 20px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .gallery-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .gallery-scroll::-webkit-scrollbar-track {
+            background: #E8E8E8;
+            border-radius: 4px;
+        }
+        .gallery-scroll::-webkit-scrollbar-thumb {
+            background: #F5C400;
+            border-radius: 4px;
+        }
+        .gallery-scroll-item {
+            flex: 0 0 300px;
+            height: 280px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            flex-shrink: 0;
+        }
+        .gallery-scroll-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        .gallery-scroll-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-scroll-item .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            padding: 20px;
+            text-align: center;
+        }
+        .gallery-scroll-item:hover .overlay {
+            opacity: 1;
+        }
+        .gallery-scroll-item .overlay span {
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 700;
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(245,196,0,0.3);
+        }
+        .gallery-scroll-item .overlay span i {
+            color: #F5C400;
+            margin-right: 8px;
+        }
+        .gallery-scroll-item .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #F5C400;
+            color: #000000;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== BOTONES DE NAVEGACIÓN SCROLL ===== */
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #000000;
+            color: #F5C400;
+            border: 2px solid #F5C400;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 5;
+        }
+        .scroll-btn:hover {
+            background: #F5C400;
+            color: #000000;
+        }
+        .scroll-btn-left {
+            left: 8px;
+        }
+        .scroll-btn-right {
+            right: 8px;
+        }
+
+        /* ===== VER TODOS ===== */
+        .ver-todos-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: #F5C400;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            padding: 10px 24px;
+            border: 2px solid #F5C400;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .ver-todos-link:hover {
+            background: #F5C400;
+            color: #000000;
+        }
+        .ver-todos-wrap {
+            text-align: center;
+            padding: 0 56px;
+        }
+
         /* ===== CLIENTES ===== */
+        .clients-section {
+            background: #000000;
+            padding: 60px 56px;
+            text-align: center;
+        }
+        .clients-section .label {
+            font-size: 11px;
+            color: #F5C400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .clients-section h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-top: 8px;
+        }
+        .clients-section h2 span { color: #F5C400; }
+        .clients-section p {
+            font-size: 15px;
+            color: #C0C0C0;
+            max-width: 600px;
+            margin: 8px auto 40px;
+        }
         .clients-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 40px 60px;
-            padding: 20px 0;
         }
         .client-item {
             font-size: 14px;
             font-weight: 600;
-            color: #6B6B6B;
+            color: #8A8A8A;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         .client-item.highlight { color: #F5C400; }
 
-        /* ===== CONTACTO ===== */
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
+        /* ===== CTA CONTACTO ===== */
+        .cta-contact {
             background: #000000;
             border-radius: 16px;
-            padding: 48px;
-            color: #FFFFFF;
-        }
-        .contact-grid h3 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .contact-grid h3 span { color: #F5C400; }
-        .contact-grid p {
-            font-size: 14px;
-            color: #C0C0C0;
-            line-height: 1.7;
-            margin-bottom: 20px;
-        }
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .contact-info .item {
+            padding: 48px 56px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 14px;
-            color: #D4D4D4;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
         }
-        .contact-info .item i {
-            color: #F5C400;
-            font-size: 18px;
-            width: 24px;
-        }
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #333;
-            border-radius: 10px;
-            background: #1A1A1A;
+        .cta-contact h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
             color: #FFFFFF;
-            font-size: 14px;
-            font-family: inherit;
-            margin-bottom: 12px;
-            outline: none;
-            transition: border-color 0.2s;
         }
-        .contact-form input:focus,
-        .contact-form textarea:focus {
-            border-color: #F5C400;
-        }
-        .contact-form input::placeholder,
-        .contact-form textarea::placeholder {
-            color: #6B6B6B;
-        }
-        .contact-form textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .contact-form .btn-submit {
+        .cta-contact h2 span { color: #F5C400; }
+        .cta-contact .btn-contact {
             background: #F5C400;
             color: #000000;
-            padding: 12px 28px;
-            border: none;
+            padding: 14px 36px;
             border-radius: 10px;
-            font-size: 14px;
+            text-decoration: none;
             font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
+            font-size: 16px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-        }
-        .contact-form .btn-submit:hover { background: #E0B000; }
-
-        /* ===== ALERTAS ===== */
-        .alert {
-            display: flex;
-            align-items: center;
             gap: 10px;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            margin-bottom: 16px;
-            border: 1px solid;
+            transition: background 0.2s;
+            white-space: nowrap;
         }
-        .alert-success {
-            background: #F0FFF4;
-            border-color: #C6F7D0;
-            color: #1A7040;
-        }
-        .alert-danger {
-            background: #FFF5F5;
-            border-color: #FFCDCD;
-            color: #C0392B;
-        }
-        .alert i { font-size: 16px; }
+        .cta-contact .btn-contact:hover { background: #E0B000; }
 
         /* ===== FOOTER ===== */
         .footer {
             background: #000000;
             border-top: 1px solid #222;
             padding: 48px 56px 32px;
+            margin-top: 40px;
         }
         .footer-grid {
             display: grid;
@@ -468,6 +516,7 @@
             margin-bottom: 40px;
         }
         .footer-brand {
+            font-family: 'Syne', sans-serif;
             font-size: 20px;
             font-weight: 800;
             color: #FFFFFF;
@@ -496,6 +545,18 @@
             transition: color 0.2s;
         }
         .footer-link:hover { color: #F5C400; }
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #8A8A8A;
+            margin-bottom: 10px;
+        }
+        .footer-contact-item i {
+            color: #F5C400;
+            width: 18px;
+        }
         .footer-bottom {
             border-top: 1px solid #222;
             padding-top: 24px;
@@ -512,33 +573,43 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1000px) {
-            .navbar { padding: 14px 24px; flex-wrap: wrap; gap: 12px; }
-            .nav-links { display: none; }
-            .nav-phone { display: none; }
+            .navbar-custom { padding: 14px 24px; flex-wrap: wrap; gap: 12px; }
+            .navbar-custom .nav-links { display: none; }
+            .navbar-custom .nav-phone { display: none; }
             .slider { height: 350px; }
             .slider-slide { padding: 0 24px; }
             .slider-slide h2 { font-size: 28px; }
             .section { padding: 40px 24px; }
             .about-grid { grid-template-columns: 1fr; }
-            .product-grid { grid-template-columns: repeat(2, 1fr); }
             .category-grid { grid-template-columns: 1fr 1fr; }
-            .contact-grid { grid-template-columns: 1fr; padding: 32px 24px; }
+            .gallery-scroll-wrapper { padding: 0 16px; }
+            .gallery-scroll-item { flex: 0 0 220px; height: 200px; }
+            .clients-section { padding: 40px 24px; }
+            .cta-contact { padding: 32px 24px; flex-direction: column; text-align: center; }
+            .cta-contact h2 { font-size: 26px; }
             .footer-grid { grid-template-columns: 1fr; gap: 24px; }
             .footer { padding: 32px 24px; }
+            .gallery-scroll-section .section-header { padding: 0 24px; }
+            .ver-todos-wrap { padding: 0 24px; }
+            .scroll-btn { display: none; }
         }
         @media (max-width: 600px) {
-            .product-grid { grid-template-columns: 1fr; }
             .category-grid { grid-template-columns: 1fr; }
             .slider { height: 280px; }
             .slider-slide h2 { font-size: 22px; }
             .about-stats { flex-wrap: wrap; gap: 20px; }
+            .clients-section h2 { font-size: 28px; }
+            .cta-contact h2 { font-size: 22px; }
+            .clients-grid { gap: 20px 30px; }
+            .gallery-scroll-item { flex: 0 0 180px; height: 160px; }
+            .gallery-scroll { gap: 12px; }
         }
     </style>
 </head>
 <body>
 
 <!-- ===== NAVBAR ===== -->
-<nav class="navbar">
+<nav class="navbar-custom">
     <a th:href="@{/}" class="nav-brand">STAMOS<span>.</span></a>
     <div class="nav-links">
         <a class="nav-link active" th:href="@{/}">Inicio</a>
@@ -546,53 +617,53 @@
         <a class="nav-link" th:href="@{/galeria}">Galería</a>
         <a class="nav-link" th:href="@{/contacto}">Contacto</a>
     </div>
-    <div class="nav-phone"><i class="ti ti-phone"></i> 01 704-6345</div>
-    <a th:href="@{/login}" class="nav-cta"><i class="ti ti-login"></i> Portal cliente</a>
+    <div class="nav-phone"><i class="bi bi-telephone"></i> 01 704-6345</div>
+    <a th:href="@{/login}" class="nav-cta"><i class="bi bi-box-arrow-in-right"></i> Portal cliente</a>
 </nav>
 
 <!-- ===== SLIDER ===== -->
 <div class="slider">
     <div class="slider-track">
-        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider05.jpg');">
+        <div class="slider-slide" style="background-image: url('/img/slider/slider05.jpg');">
             <div class="content">
                 <h2>Diseño y construcción de <span>stands</span> a medida</h2>
                 <p>Más de 10 años de experiencia en eventos corporativos. Creamos espacios que conquistan ferias.</p>
-                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Solicitar cotización</a>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Solicitar cotización</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider06.jpg');">
+        <div class="slider-slide" style="background-image: url('/img/slider/slider06.jpg');">
             <div class="content">
                 <h2>Video walls y <span>pantallas LED</span> de alto impacto</h2>
                 <p>Alquiler e instalación de pantallas interactivas para eventos y activaciones de marca.</p>
-                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Ver más</a>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Ver más</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider01.jpg');">
+        <div class="slider-slide" style="background-image: url('/img/slider/slider01.jpg');">
             <div class="content">
                 <h2>Mobiliario ferial en <span>alquiler</span></h2>
                 <p>Mesas altas, sillas lounge, módulos de exhibición y mucho más para tu evento.</p>
-                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Cotizar</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider02.jpg');">
+        <div class="slider-slide" style="background-image: url('/img/slider/slider02.jpg');">
             <div class="content">
                 <h2>Pantallas táctiles y <span>software interactivo</span></h2>
                 <p>La tecnología interactiva está cambiando los eventos. Lleva tu marca al siguiente nivel.</p>
-                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Cotizar</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider03.jpg');">
+        <div class="slider-slide" style="background-image: url('/img/slider/slider03.jpg');">
             <div class="content">
                 <h2>Diseño 3D y <span>renders fotorrealistas</span></h2>
                 <p>Visualiza tu stand antes de construirlo. Aprobación sin sorpresas.</p>
-                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Cotizar</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider04.jpg');">
+        <div class="slider-slide" style="background-image: url('/img/slider/slider04.jpg');">
             <div class="content">
                 <h2>Ambientación de tiendas y <span>espacios comerciales</span></h2>
                 <p>Soluciones gráficas, mobiliario y decoración para tu local o evento.</p>
-                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Cotizar</a>
             </div>
         </div>
     </div>
@@ -601,7 +672,7 @@
 <!-- ===== QUIÉNES SOMOS ===== -->
 <section class="section">
     <div class="about-grid">
-        <div class="about-image">
+        <div class="about-image" style="background-image: url('/img/slider/slider01.jpg');">
             <div class="tag">+10 años de experiencia</div>
         </div>
         <div class="about-text">
@@ -618,25 +689,7 @@
     </div>
 </section>
 
-<!-- ===== MISIÓN / VISIÓN ===== -->
-<section class="section" style="padding-top:0;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-        <div style="background:#000000;border-radius:14px;padding:32px 28px;color:#FFFFFF;">
-            <i class="ti ti-target" style="font-size:32px;color:#F5C400;margin-bottom:12px;display:block;"></i>
-            <div style="font-size:11px;color:#F5C400;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Misión</div>
-            <h4 style="font-size:22px;margin:8px 0 12px;">Nuestro propósito</h4>
-            <p style="font-size:14px;color:#C0C0C0;line-height:1.7;">Satisfacer eficazmente las necesidades de exhibición y comunicación de los productos y/o marca del cliente mediante soluciones innovadoras y competitivas adquiridas durante años de experiencia en el ámbito de la publicidad.</p>
-        </div>
-        <div style="background:#000000;border-radius:14px;padding:32px 28px;color:#FFFFFF;">
-            <i class="ti ti-eye" style="font-size:32px;color:#F5C400;margin-bottom:12px;display:block;"></i>
-            <div style="font-size:11px;color:#F5C400;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Visión</div>
-            <h4 style="font-size:22px;margin:8px 0 12px;">Hacia dónde vamos</h4>
-            <p style="font-size:14px;color:#C0C0C0;line-height:1.7;">Ser líderes del mercado a través de innovación, calidad, tiempo y costo para satisfacer con excelencia las necesidades de nuestros clientes y colaboradores, consolidándonos como referentes en el sector de eventos del Perú.</p>
-        </div>
-    </div>
-</section>
-
-<!-- ===== CATEGORÍAS DESTACADAS ===== -->
+<!-- ===== CATEGORÍAS ===== -->
 <section class="section" style="background:#F8F8F8;border-radius:0;padding:60px 56px;max-width:100%;">
     <div style="max-width:1400px;margin:0 auto;">
         <div class="section-header">
@@ -646,32 +699,32 @@
         </div>
         <div class="category-grid">
             <a th:href="@{/servicios}" class="category-card">
-                <i class="ti ti-layout"></i>
+                <i class="bi bi-layout"></i>
                 <h4>Stands publicitarios</h4>
                 <p>Modulares y personalizados para ferias y exposiciones</p>
             </a>
             <a th:href="@{/servicios}" class="category-card">
-                <i class="ti ti-device-tv"></i>
+                <i class="bi bi-tv"></i>
                 <h4>Video walls & LED</h4>
                 <p>Pantallas de gran formato y alta resolución</p>
             </a>
             <a th:href="@{/servicios}" class="category-card">
-                <i class="ti ti-armchair"></i>
+                <i class="bi bi-sofa"></i>
                 <h4>Mobiliario ferial</h4>
                 <p>Alquiler de mesas, sillas, módulos y counters</p>
             </a>
             <a th:href="@{/servicios}" class="category-card">
-                <i class="ti ti-device-tablet"></i>
+                <i class="bi bi-tablet"></i>
                 <h4>Pantallas táctiles</h4>
                 <p>Kioscos interactivos y software a medida</p>
             </a>
             <a th:href="@{/servicios}" class="category-card">
-                <i class="ti ti-3d-cube-sphere"></i>
+                <i class="bi bi-cube"></i>
                 <h4>Diseño 3D</h4>
                 <p>Renders fotorrealistas y planos técnicos</p>
             </a>
             <a th:href="@{/servicios}" class="category-card">
-                <i class="ti ti-crane"></i>
+                <i class="bi bi-truck"></i>
                 <h4>Montaje y logística</h4>
                 <p>Instalación, supervisión y desmontaje en evento</p>
             </a>
@@ -679,119 +732,58 @@
     </div>
 </section>
 
-<!-- ===== PRODUCTOS DESTACADOS (desde backend) ===== -->
-<section class="section" th:if="${productosDestacados != null and !#lists.isEmpty(productosDestacados)}">
+<!-- ===== GALERÍA SCROLL HORIZONTAL ===== -->
+<section class="gallery-scroll-section">
     <div class="section-header">
-        <div class="label">Catálogo</div>
-        <h2>Productos <span>destacados</span></h2>
-        <p>Lo que ofrecemos para tu próximo evento.</p>
+        <div class="label">Nuestros proyectos</div>
+        <h2>Galería de <span>stands</span></h2>
+        <p>Desliza para ver más proyectos. Haz clic en cualquier imagen para ver el detalle.</p>
     </div>
-    <div class="product-grid">
-        <div class="product-card" th:each="producto : ${productosDestacados}">
-            <div class="img" th:style="'background-image: url(' + (${producto.imagenUrl} ?: '/images/placeholder-product.png') + ');'"></div>
-            <div class="body">
-                <h4 th:text="${producto.nombreItem}">Nombre del producto</h4>
-                <p th:text="${producto.descripcion} ?: 'Descripción del producto'">Descripción del producto</p>
-                <span class="tag" th:class="${producto.tipo == 'Alquiler' ? 'alquiler' : producto.tipo == 'Venta' ? 'venta' : 'servicio'}" th:text="${producto.tipo} ?: 'Servicio'">Alquiler</span>
-            </div>
+    
+    <div class="gallery-scroll-wrapper">
+        <button class="scroll-btn scroll-btn-left" id="scrollLeft" onclick="scrollGallery(-1)">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="scroll-btn scroll-btn-right" id="scrollRight" onclick="scrollGallery(1)">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+        
+        <div class="gallery-scroll" id="galleryScroll">
+            <!-- Items generados por JavaScript -->
         </div>
     </div>
-</section>
-
-<!-- Fallback estático si no hay productos desde el backend -->
-<section class="section" th:if="${productosDestacados == null or #lists.isEmpty(productosDestacados)}">
-    <div class="section-header">
-        <div class="label">Catálogo</div>
-        <h2>Productos <span>destacados</span></h2>
-        <p>Lo que ofrecemos para tu próximo evento.</p>
-    </div>
-    <div class="product-grid">
-        <div class="product-card">
-            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider01.jpg');"></div>
-            <div class="body">
-                <h4>Stand modular 3x3</h4>
-                <p>Estructura metálica + paneles + gráfica básica</p>
-                <span class="tag alquiler">Alquiler / Venta</span>
-            </div>
-        </div>
-        <div class="product-card">
-            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider03.jpg');"></div>
-            <div class="body">
-                <h4>Video wall LED</h4>
-                <p>Pantalla de 2x1 m (HD) para alto impacto</p>
-                <span class="tag alquiler">Alquiler</span>
-            </div>
-        </div>
-        <div class="product-card">
-            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider02.jpg');"></div>
-            <div class="body">
-                <h4>Pantalla táctil 55"</h4>
-                <p>Kiosco interactivo con base y software</p>
-                <span class="tag alquiler">Alquiler</span>
-            </div>
-        </div>
-        <div class="product-card">
-            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider04.jpg');"></div>
-            <div class="body">
-                <h4>Mobiliario premium</h4>
-                <p>Mesas altas, sillas lounge y counters</p>
-                <span class="tag alquiler">Alquiler por evento</span>
-            </div>
-        </div>
+    
+    <div class="ver-todos-wrap">
+        <a th:href="@{/galeria}" class="ver-todos-link">
+            <i class="bi bi-image"></i> Ver todos los proyectos
+        </a>
     </div>
 </section>
 
 <!-- ===== CLIENTES ===== -->
-<section class="section" style="background:#000000;border-radius:0;padding:60px 56px;max-width:100%;color:#FFFFFF;">
-    <div style="max-width:1400px;margin:0 auto;">
-        <div class="section-header">
-            <div class="label" style="color:#F5C400;">Confían en nosotros</div>
-            <h2 style="color:#FFFFFF;">Nuestros <span>clientes</span></h2>
-            <p style="color:#C0C0C0;">Empresas que han confiado en STAMOS para sus eventos.</p>
-        </div>
-        <div class="clients-grid">
-            <span class="client-item highlight">BCP Eventos</span>
-            <span class="client-item">Grupo Farmacias SAC</span>
-            <span class="client-item highlight">CAPECO</span>
-            <span class="client-item">Innova Corp</span>
-            <span class="client-item highlight">Alicorp S.A.</span>
-            <span class="client-item">Constructora JL</span>
-            <span class="client-item highlight">Expo Cibus</span>
-            <span class="client-item">Retail Forum</span>
-        </div>
+<section class="clients-section">
+    <div class="label">Confían en nosotros</div>
+    <h2>Nuestros <span>clientes</span></h2>
+    <p>Empresas que han confiado en STAMOS para sus eventos.</p>
+    <div class="clients-grid">
+        <span class="client-item highlight">BCP Eventos</span>
+        <span class="client-item">Grupo Farmacias SAC</span>
+        <span class="client-item highlight">CAPECO</span>
+        <span class="client-item">Innova Corp</span>
+        <span class="client-item highlight">Alicorp S.A.</span>
+        <span class="client-item">Constructora JL</span>
+        <span class="client-item highlight">Expo Cibus</span>
+        <span class="client-item">Retail Forum</span>
     </div>
 </section>
 
-<!-- ===== CONTACTO ===== -->
+<!-- ===== CTA CONTACTO ===== -->
 <section class="section">
-    <div class="contact-grid">
-        <div>
-            <h3>¿Tienes un evento próximo?<br><span>Cotiza en menos de 24h</span></h3>
-            <p>Cuéntanos tu proyecto y te enviamos una propuesta personalizada sin costo. Respondemos dentro de las 24 horas del día del envío.</p>
-            <div class="contact-info">
-                <div class="item"><i class="ti ti-phone"></i> 01 704-6345 · 987 819 456 · 987 181 168</div>
-                <div class="item"><i class="ti ti-mail"></i> info@stamosl.com</div>
-                <div class="item"><i class="ti ti-map-pin"></i> Jr. Antisuyo 438, Zárate — SJL, Lima</div>
-                <div class="item"><i class="ti ti-clock"></i> Lun–Vie 9:00–21:00 · Sáb 9:00–13:00</div>
-            </div>
-        </div>
-        <form class="contact-form" th:action="@{/contacto/enviar}" method="post">
-            <!-- Alertas de Thymeleaf -->
-            <div th:if="${mensaje}" class="alert alert-success">
-                <i class="ti ti-check-circle"></i>
-                <span th:text="${mensaje}">Mensaje enviado correctamente</span>
-            </div>
-            <div th:if="${error}" class="alert alert-danger">
-                <i class="ti ti-alert-circle"></i>
-                <span th:text="${error}">Error al enviar el mensaje</span>
-            </div>
-
-            <input type="text" name="nombre" placeholder="Nombre completo" required>
-            <input type="email" name="email" placeholder="Correo electrónico" required>
-            <input type="text" name="telefono" placeholder="Teléfono / WhatsApp">
-            <textarea name="mensaje" placeholder="Cuéntanos sobre tu evento..." rows="4"></textarea>
-            <button type="submit" class="btn-submit"><i class="ti ti-send"></i> Enviar mensaje</button>
-        </form>
+    <div class="cta-contact">
+        <h2>¿Tienes un próximo evento? <span>¡Cotiza ahora!</span></h2>
+        <a th:href="@{/contacto}" class="btn-contact">
+            <i class="bi bi-send"></i> Contactar
+        </a>
     </div>
 </section>
 
@@ -818,9 +810,9 @@
         </div>
         <div>
             <div class="footer-title">Contacto</div>
-            <div class="footer-desc">Jr. Antisuyo 438, Zárate — SJL, Lima</div>
-            <div class="footer-desc">01 704-6345 · 987 819 456</div>
-            <div class="footer-desc">info@stamosl.com</div>
+            <div class="footer-contact-item"><i class="bi bi-geo-alt"></i> Jr. Antisuyo 438, Zárate — SJL, Lima</div>
+            <div class="footer-contact-item"><i class="bi bi-telephone"></i> 01 704-6345 · 987 819 456</div>
+            <div class="footer-contact-item"><i class="bi bi-envelope"></i> info@stamosl.com</div>
         </div>
     </div>
     <div class="footer-bottom">
@@ -828,6 +820,111 @@
         <div class="footer-ruc">RUC 20549500715</div>
     </div>
 </footer>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // ===== DATOS DE PROYECTOS PARA EL SCROLL CON IMÁGENES LOCALES =====
+    const proyectosScroll = [
+        {
+            nombre: 'Dinet',
+            imagen: '/img/portfolio/small/diseno/01%20(2).jpg',
+            categoria: 'interactivo'
+        },
+        {
+            nombre: 'GSK',
+            imagen: '/img/portfolio/small/diseno/01%20(4).jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'Soldamundo',
+            imagen: '/img/portfolio/small/diseno/1%20(5).jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'Scharff',
+            imagen: '/img/portfolio/small/diseno/1%20(11).jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'Andino',
+            imagen: '/img/portfolio/small/diseno/ANDINO%203MT%20X%202MT%20X%203MT.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'Energigas',
+            imagen: '/img/portfolio/small/diseno/energigas%201%20(1).jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'Brenta',
+            imagen: '/img/portfolio/small/diseno/brenta%202.jpg',
+            categoria: 'interactivo'
+        },
+        {
+            nombre: 'Hunter',
+            imagen: '/img/portfolio/small/diseno/hunter%201%20(1).jpg',
+            categoria: 'mobiliario'
+        },
+        {
+            nombre: 'Petroperú',
+            imagen: '/img/portfolio/small/diseno/petroperu%201%20(1).jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'Bago',
+            imagen: '/img/portfolio/small/diseno/bago%201%20(1).jpg',
+            categoria: 'stand'
+        }
+    ];
+
+    // ===== RENDERIZAR GALERÍA SCROLL =====
+    function renderGalleryScroll() {
+        const container = document.getElementById('galleryScroll');
+        
+        // Duplicar items para efecto de scroll continuo
+        const items = [...proyectosScroll, ...proyectosScroll];
+        
+        container.innerHTML = items.map(p => `
+            <div class="gallery-scroll-item" onclick="verProyecto('${p.nombre}')">
+                <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onerror="this.src='/img/placeholder.jpg'">
+                <span class="badge">${p.categoria.toUpperCase()}</span>
+                <div class="overlay">
+                    <span><i class="bi bi-eye"></i> ${p.nombre}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ===== FUNCIÓN PARA VER PROYECTO =====
+    function verProyecto(nombre) {
+        window.location.href = '/galeria';
+    }
+
+    // ===== SCROLL CON BOTONES =====
+    function scrollGallery(direction) {
+        const container = document.getElementById('galleryScroll');
+        const scrollAmount = 320;
+        container.scrollBy({
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+
+    // ===== SCROLL CON RUEDA DEL MOUSE =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('galleryScroll');
+        
+        container.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            container.scrollLeft += e.deltaY * 0.8;
+        }, { passive: false });
+    });
+
+    // ===== INICIALIZAR =====
+    document.addEventListener('DOMContentLoaded', function() {
+        renderGalleryScroll();
+    });
+</script>
 
 </body>
 </html>

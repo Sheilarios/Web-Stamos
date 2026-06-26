@@ -1,7 +1,589 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head th:replace="~{fragments/head :: head}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Cliente · STAMOS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --sidebar-width: 260px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 24px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 4px; }
+        
+        .sidebar-brand {
+            padding: 0 20px 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        
+        .sidebar-brand h2 span {
+            color: var(--yellow);
+        }
+        
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+        
+        .sidebar-menu li a:hover {
+            background: var(--yellow-light);
+            color: var(--text);
+        }
+        
+        .sidebar-menu li a.active {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+        }
+        
+        .sidebar-menu li a.active i {
+            color: var(--yellow-dark);
+        }
+        
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--red);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        
+        .sidebar-footer a:hover {
+            background: var(--red-light);
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 36px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-title i {
+            color: var(--yellow-dark);
+            font-size: 28px;
+        }
+        
+        .page-title small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .user-info {
+            background: var(--card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-info i {
+            color: var(--yellow-dark);
+        }
+        
+        /* Alertas */
+        .alert {
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .alert-warning {
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            color: var(--yellow-dark);
+        }
+        
+        .alert-warning i {
+            font-size: 24px;
+            color: var(--yellow-dark);
+        }
+        
+        .alert-warning a {
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .metric-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.15s;
+        }
+        
+        .metric-card:hover {
+            border-color: var(--yellow);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .metric-header i {
+            font-size: 28px;
+            color: var(--yellow-dark);
+            opacity: 0.7;
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-3);
+            font-weight: 600;
+        }
+        
+        .metric-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text);
+            margin-top: 8px;
+        }
+        
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: var(--yellow-dark);
+        }
+        
+        .btn-link {
+            background: transparent;
+            border: none;
+            color: var(--yellow-dark);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s;
+        }
+        
+        .btn-link:hover {
+            color: var(--text);
+            text-decoration: underline;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--yellow-border);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: #FAFAFA;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-pendiente {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .status-aprobado {
+            background: #DBEAFE;
+            color: #1A56DB;
+        }
+        
+        .status-diseno {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        
+        .status-produccion {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+        
+        .status-instalacion {
+            background: #EDE9FE;
+            color: #7C3AED;
+        }
+        
+        .status-entregado {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-anulado {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .status-validado {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        
+        .status-rechazado {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-3);
+        }
+        
+        .empty-message i {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        .empty-message p {
+            margin-bottom: 4px;
+        }
+        
+        .empty-message .sub {
+            font-size: 12px;
+            color: var(--text-3);
+        }
+        
+        .footer-bar {
+            text-align: center;
+            padding: 16px 0 8px;
+            font-size: 12px;
+            color: var(--text-3);
+            border-top: 1px solid var(--border);
+            margin-top: 16px;
+        }
+        
+        .footer-bar i {
+            margin-right: 4px;
+        }
+        
+        .footer-bar span {
+            margin-left: 16px;
+        }
+        
+        .footer-bar .clock-icon {
+            margin-right: 4px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 0;
+            }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-brand h2 {
+                font-size: 20px;
+            }
+            .sidebar-brand small {
+                display: block;
+                font-size: 10px;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu li a span {
+                display: inline;
+                font-size: 11px;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .page-title small {
+                font-size: 12px;
+                display: block;
+                margin-top: 2px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-menu li a span {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -42,22 +624,32 @@
             </div>
         </div>
 
-        <div th:replace="~{fragments/mensajes :: mensaje_exito}"></div>
-        <div th:replace="~{fragments/mensajes :: mensaje_error}"></div>
-        <div th:replace="~{fragments/mensajes :: mensaje_advertencia}"></div>
+        <!-- Mensajes de alerta -->
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="ti ti-alert-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+        <div th:if="${mensaje}" class="alert alert-success">
+            <i class="ti ti-check-circle"></i>
+            <span th:text="${mensaje}"></span>
+        </div>
+        <div th:if="${advertencia}" class="alert alert-warning">
+            <i class="ti ti-alert-triangle"></i>
+            <span th:text="${advertencia}"></span>
+        </div>
 
+        <!-- Alerta de pagos vencidos -->
         <div th:if="${tienePagosVencidos != null and tienePagosVencidos}" 
-             class="alert alert-warning" style="display:flex; align-items:center; gap:12px; background:#FFFBE6; border:1px solid #E0C84A; border-radius:12px; padding:14px 20px; margin-bottom:24px;">
-            <i class="ti ti-alert-triangle" style="font-size:24px; color:#9A7500;"></i>
+             class="alert alert-warning">
+            <i class="ti ti-alert-triangle"></i>
             <div>
-                <strong style="color:#9A7500;">¡Atención!</strong>
-                <span style="color:#8A6500;">Tienes <span th:text="${totalVencidos != null ? totalVencidos : 0}">0</span> proyecto(s) con pagos vencidos.</span>
-                <a th:href="@{/cliente/pagos}" style="color:#9A7500;font-weight:600;text-decoration:underline;margin-left:8px;">
-                    Revisar ahora
-                </a>
+                <strong>¡Atención!</strong>
+                <span>Tienes <span th:text="${totalVencidos != null ? totalVencidos : 0}">0</span> proyecto(s) con pagos vencidos.</span>
+                <a th:href="@{/cliente/pagos}">Revisar ahora</a>
             </div>
         </div>
 
+        <!-- Métricas -->
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-header">
@@ -89,6 +681,7 @@
             </div>
         </div>
 
+        <!-- Mis Proyectos -->
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
@@ -122,7 +715,7 @@
                                                 (${p.estado == 'Entregado'} ? 'status-entregado' : 'status-anulado'))))"
                                       th:text="${p.estado}">—</span>
                             </td>
-                            <td th:text="${p.montoTotal != null ? p.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</td>
+                            <td th:text="${p.montoTotalFormateado != null ? p.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</td>
                             <td>
                                 <a th:href="@{/cliente/proyecto/{id}(id=${p.idProyecto})}" class="btn-link">
                                     Ver detalle <i class="ti ti-arrow-right"></i>
@@ -134,13 +727,12 @@
                 <div th:if="${proyectos == null or #lists.isEmpty(proyectos)}" class="empty-message">
                     <i class="ti ti-folder-off"></i>
                     <p>No tienes proyectos registrados aún.</p>
-                    <p style="font-size:12px; color:var(--text-3); margin-top:4px;">
-                        Tus proyectos aparecerán aquí cuando un vendedor los cree desde una cotización aprobada.
-                    </p>
+                    <p class="sub">Tus proyectos aparecerán aquí cuando un vendedor los cree desde una cotización aprobada.</p>
                 </div>
             </div>
         </div>
 
+        <!-- Últimos Documentos -->
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
@@ -162,12 +754,17 @@
                     </thead>
                     <tbody>
                         <tr th:each="doc : ${ultimosDocumentos}">
-                            <td th:text="${doc.nombreArchivo}">—</td>
+                            <td>
+                                <span th:text="${doc.nombreArchivo}">—</span>
+                                <span th:if="${doc.tipoDocumento}" 
+                                      style="display:inline-block;font-size:9px;text-transform:uppercase;color:var(--text-3);margin-left:6px;background:var(--bg);padding:1px 8px;border-radius:4px;"
+                                      th:text="${doc.tipoDocumento}">—</span>
+                            </td>
                             <td th:text="${doc.nombreProyecto}">—</td>
                             <td th:text="${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">—</td>
                             <td>
                                 <a th:href="@{/cliente/documentos/ver/{id}(id=${doc.idDocumento})}" class="btn-link" target="_blank">
-                                    <i class="ti ti-eye"></i>
+                                    <i class="ti ti-eye"></i> Ver
                                 </a>
                             </td>
                         </tr>
@@ -176,19 +773,22 @@
                 <div th:if="${ultimosDocumentos == null or #lists.isEmpty(ultimosDocumentos)}" class="empty-message">
                     <i class="ti ti-file-off"></i>
                     <p>No hay documentos disponibles.</p>
+                    <p class="sub">Los documentos de tus proyectos aparecerán aquí cuando se suban.</p>
                 </div>
             </div>
         </div>
 
-        <div style="text-align:center;padding:16px 0 8px;font-size:12px;color:var(--text-3);border-top:1px solid var(--border);margin-top:16px;">
+        <!-- Footer -->
+        <div class="footer-bar">
             <span th:text="${fechaActual != null ? fechaActual : #temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
-            <span style="margin-left:16px;" th:if="${ultimoAcceso != null}">
-                <i class="ti ti-clock"></i> Último acceso: <span th:text="${#temporals.format(ultimoAcceso, 'dd/MM/yyyy HH:mm')}"></span>
+            <span th:if="${ultimoAcceso != null}">
+                <i class="ti ti-clock clock-icon"></i> Último acceso: <span th:text="${#temporals.format(ultimoAcceso, 'dd/MM/yyyy HH:mm')}"></span>
             </span>
         </div>
 
     </main>
 
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
             integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
             crossorigin="anonymous"></script>
@@ -196,8 +796,139 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script th:replace="~{fragments/scripts :: scripts_global}"></script>
-    <script th:replace="~{fragments/scripts :: scripts_cliente}"></script>
+    <script th:inline="javascript">
+        // ===== CONFIGURACIÓN GLOBAL =====
+        const APP_CONFIG = {
+            baseUrl: /*[[@{/}]]*/ '/',
+            clienteId: /*[[${cliente != null ? cliente.idCliente : null}]]*/ null,
+            usuarioId: /*[[${usuario != null ? usuario.idUsuario : null}]]*/ null
+        };
 
+        // ===== MANEJO DE ALERTAS CON SWEETALERT =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Alertas automáticas desde mensajes flash
+            const errorMsg = /*[[${error}]]*/ null;
+            const successMsg = /*[[${mensaje}]]*/ null;
+            const warningMsg = /*[[${advertencia}]]*/ null;
+
+            if (errorMsg) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMsg,
+                    confirmButtonColor: '#C0392B',
+                    confirmButtonText: 'Entendido'
+                });
+            }
+
+            if (successMsg) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: successMsg,
+                    confirmButtonColor: '#F5C400',
+                    confirmButtonText: 'Perfecto',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+
+            if (warningMsg) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: warningMsg,
+                    confirmButtonColor: '#F5C400',
+                    confirmButtonText: 'Entendido'
+                });
+            }
+
+            // ===== FUNCIÓN PARA CONFIRMAR ACCIONES =====
+            window.confirmarAccion = function(titulo, texto, icono = 'warning', callback) {
+                Swal.fire({
+                    title: titulo,
+                    text: texto,
+                    icon: icono,
+                    showCancelButton: true,
+                    confirmButtonColor: '#F5C400',
+                    cancelButtonColor: '#C0392B',
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed && callback) {
+                        callback();
+                    }
+                });
+            };
+
+            // ===== FUNCIÓN PARA NOTIFICACIONES =====
+            window.mostrarNotificacion = function(titulo, mensaje, icono = 'info', tiempo = 3000) {
+                Swal.fire({
+                    icon: icono,
+                    title: titulo,
+                    text: mensaje,
+                    timer: tiempo,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            };
+        });
+
+        // ===== FUNCIONES DE UTILIDAD =====
+        function formatearMoneda(monto) {
+            if (!monto) return 'S/ 0.00';
+            return 'S/ ' + parseFloat(monto).toFixed(2);
+        }
+
+        function formatearFecha(fecha) {
+            if (!fecha) return '-';
+            const d = new Date(fecha);
+            return d.toLocaleDateString('es-PE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function formatearFechaHora(fecha) {
+            if (!fecha) return '-';
+            const d = new Date(fecha);
+            return d.toLocaleDateString('es-PE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // ===== ESTADO DE LOS PROYECTOS =====
+        const ESTADOS = {
+            APROBADO: { label: 'Aprobado', clase: 'status-aprobado' },
+            EN_DISENO: { label: 'En Diseño', clase: 'status-diseno' },
+            EN_PRODUCCION: { label: 'En Producción', clase: 'status-produccion' },
+            INSTALACION_MONTAJE: { label: 'Instalación/Montaje', clase: 'status-instalacion' },
+            ENTREGADO: { label: 'Entregado', clase: 'status-entregado' },
+            ANULADO: { label: 'Anulado', clase: 'status-anulado' }
+        };
+
+        function getEstadoInfo(estado) {
+            const key = estado?.toUpperCase().replace(/\s+/g, '_').replace('Ó', 'O');
+            return ESTADOS[key] || { label: estado || 'Desconocido', clase: 'status-pendiente' };
+        }
+
+        // ===== EXPORTAR FUNCIONES GLOBALES =====
+        window.formatearMoneda = formatearMoneda;
+        window.formatearFecha = formatearFecha;
+        window.formatearFechaHora = formatearFechaHora;
+        window.getEstadoInfo = getEstadoInfo;
+        window.ESTADOS = ESTADOS;
+
+        console.log('Dashboard Cliente cargado correctamente');
+        console.log('Cliente:', APP_CONFIG.clienteId);
+        console.log('Base URL:', APP_CONFIG.baseUrl);
+    </script>
 </body>
 </html>
