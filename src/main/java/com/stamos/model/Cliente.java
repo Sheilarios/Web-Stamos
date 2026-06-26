@@ -8,27 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * Entidad Cliente.
- * 
- * <p>Esta entidad representa a los clientes de STAMOS S.L., almacenando
- * su información personal, de contacto y estado en el sistema.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-01: Solo personal autorizado puede dar de alta clientes</li>
- *   <li>RN-02: Cliente debe proporcionar nombre, teléfono, email y tipo</li>
- *   <li>RN-03: Clientes con proyectos o deudas no pueden ser eliminados</li>
- *   <li>RF-01: Registrar clientes con nombre, teléfono, email y clasificación</li>
- *   <li>RF-04: Impedir eliminación de clientes con registros asociados</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "Cliente",
        indexes = {
@@ -40,9 +20,6 @@ import java.util.List;
        })
 public class Cliente {
 
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,9 +61,6 @@ public class Cliente {
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
 
-    // ============================================
-    // RELACIONES
-    // ============================================
 
     @Column(name = "id_usuario_regis")
     private Integer idUsuarioRegis;
@@ -94,19 +68,11 @@ public class Cliente {
     @Column(name = "id_usuario")
     private Integer idUsuario;
 
-    // ============================================
-    // CAMPOS DE AUDITORÍA
-    // ============================================
-
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 
     @Column(name = "id_usuario_actualizacion")
     private Integer idUsuarioActualizacion;
-
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
 
     @Transient
     private String nombreUsuario;
@@ -135,10 +101,6 @@ public class Cliente {
     @Transient
     private java.math.BigDecimal saldoPendiente;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public Cliente() {
         this.estado = "Activo";
         this.fechaRegistro = LocalDateTime.now();
@@ -162,10 +124,6 @@ public class Cliente {
         this.email = email;
         this.direccion = direccion;
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdCliente() {
         return idCliente;
@@ -343,74 +301,36 @@ public class Cliente {
         this.saldoPendiente = saldoPendiente;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Verifica si el cliente está activo.
-     * 
-     * @return true si está activo, false en caso contrario
-     */
     public boolean isActivo() {
         return "Activo".equals(this.estado);
     }
 
-    /**
-     * Verifica si el cliente es persona natural.
-     * 
-     * @return true si es persona natural, false en caso contrario
-     */
     public boolean isPersonaNatural() {
         return "Natural".equals(this.tipoPersona);
     }
 
-    /**
-     * Verifica si el cliente es persona jurídica (empresa).
-     * 
-     * @return true si es persona jurídica, false en caso contrario
-     */
     public boolean isPersonaJuridica() {
         return "Juridica".equals(this.tipoPersona);
     }
 
-    /**
-     * Verifica si el cliente tiene RUC.
-     * 
-     * @return true si tiene RUC, false en caso contrario
-     */
     public boolean tieneRuc() {
         return ruc != null && !ruc.trim().isEmpty();
     }
 
-    /**
-     * Verifica si el cliente tiene dirección.
-     * 
-     * @return true si tiene dirección, false en caso contrario
-     */
     public boolean tieneDireccion() {
         return direccion != null && !direccion.trim().isEmpty();
     }
 
-    /**
-     * Activa el cliente.
-     */
     public void activar() {
         this.estado = "Activo";
         this.fechaActualizacion = LocalDateTime.now();
     }
 
-    /**
-     * Desactiva el cliente.
-     */
     public void desactivar() {
         this.estado = "Deshabilitado";
         this.fechaActualizacion = LocalDateTime.now();
     }
 
-    /**
-     * Alterna el estado del cliente (activo/inactivo).
-     */
     public void toggleEstado() {
         if (isActivo()) {
             desactivar();
@@ -419,74 +339,34 @@ public class Cliente {
         }
     }
 
-    /**
-     * Verifica si el cliente tiene proyectos.
-     * 
-     * @return true si tiene proyectos, false en caso contrario
-     */
     public boolean tieneProyectos() {
         return cantidadProyectos != null && cantidadProyectos > 0;
     }
 
-    /**
-     * Verifica si el cliente tiene proyectos activos.
-     * 
-     * @return true si tiene proyectos activos, false en caso contrario
-     */
     public boolean tieneProyectosActivos() {
         return cantidadProyectosActivos != null && cantidadProyectosActivos > 0;
     }
 
-    /**
-     * Verifica si el cliente tiene cotizaciones.
-     * 
-     * @return true si tiene cotizaciones, false en caso contrario
-     */
     public boolean tieneCotizaciones() {
         return cantidadCotizaciones != null && cantidadCotizaciones > 0;
     }
 
-    /**
-     * Verifica si el cliente tiene cotizaciones pendientes.
-     * 
-     * @return true si tiene cotizaciones pendientes, false en caso contrario
-     */
     public boolean tieneCotizacionesPendientes() {
         return cantidadCotizacionesPendientes != null && cantidadCotizacionesPendientes > 0;
     }
 
-    /**
-     * Verifica si el cliente tiene saldo pendiente.
-     * 
-     * @return true si tiene saldo pendiente, false en caso contrario
-     */
     public boolean tieneSaldoPendiente() {
         return saldoPendiente != null && saldoPendiente.compareTo(java.math.BigDecimal.ZERO) > 0;
     }
 
-    /**
-     * Verifica si el cliente puede ser eliminado (RN-03).
-     * 
-     * @return true si puede ser eliminado, false en caso contrario
-     */
     public boolean puedeSerEliminado() {
         return !tieneProyectos() && !tieneCotizaciones() && !tieneSaldoPendiente();
     }
 
-    /**
-     * Obtiene el nombre completo de la persona o razón social.
-     * 
-     * @return Nombre completo
-     */
     public String getNombreCompleto() {
         return nombreRazonSocial;
     }
 
-    /**
-     * Obtiene el nombre del cliente para mostrar en la interfaz.
-     * 
-     * @return Nombre para mostrar
-     */
     public String getNombreDisplay() {
         if (isPersonaJuridica() && tieneRuc()) {
             return nombreRazonSocial + " (" + ruc + ")";
@@ -494,11 +374,6 @@ public class Cliente {
         return nombreRazonSocial;
     }
 
-    /**
-     * Obtiene el RUC formateado (con guiones).
-     * 
-     * @return RUC formateado
-     */
     public String getRucFormateado() {
         if (ruc == null || ruc.isEmpty()) {
             return "";
@@ -510,141 +385,67 @@ public class Cliente {
         return ruc;
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene el estado en formato legible.
-     * 
-     * @return Estado legible
-     */
     public String getEstadoLegible() {
         return "Activo".equals(this.estado) ? "Activo" : "Deshabilitado";
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del estado.
-     * 
-     * @return Clase CSS
-     */
     public String getEstadoBadgeClass() {
         return isActivo() ? "badge-success" : "badge-danger";
     }
 
-    /**
-     * Obtiene el ícono para el estado.
-     * 
-     * @return Ícono CSS
-     */
     public String getEstadoIcono() {
         return isActivo() ? "ti ti-check-circle" : "ti ti-x-circle";
     }
 
-    /**
-     * Obtiene el color para el estado.
-     * 
-     * @return Color en hexadecimal
-     */
     public String getEstadoColor() {
         return isActivo() ? "#10B981" : "#EF4444";
     }
 
-    /**
-     * Obtiene el tipo de persona en formato legible.
-     * 
-     * @return Tipo de persona legible
-     */
     public String getTipoPersonaLegible() {
         if (tipoPersona == null) return "No especificado";
         return "Natural".equals(tipoPersona) ? "Persona Natural" : "Persona Jurídica";
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del tipo de persona.
-     * 
-     * @return Clase CSS
-     */
     public String getTipoPersonaBadgeClass() {
         if (tipoPersona == null) return "badge-secondary";
         return "Natural".equals(tipoPersona) ? "badge-info" : "badge-primary";
     }
 
-    /**
-     * Obtiene el ícono para el tipo de persona.
-     * 
-     * @return Ícono CSS
-     */
     public String getTipoPersonaIcono() {
         if (tipoPersona == null) return "ti ti-user";
         return "Natural".equals(tipoPersona) ? "ti ti-user" : "ti ti-building";
     }
 
-    /**
-     * Obtiene la fecha de registro formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaRegistroFormateada() {
         if (fechaRegistro == null) return "-";
         return fechaRegistro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de registro formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaRegistroSoloFecha() {
         if (fechaRegistro == null) return "-";
         return fechaRegistro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la fecha de actualización formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaActualizacionFormateada() {
         if (fechaActualizacion == null) return "-";
         return fechaActualizacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene el total facturado formateado.
-     * 
-     * @return Total facturado formateado
-     */
     public String getTotalFacturadoFormateado() {
         if (totalFacturado == null) return "S/ 0.00";
         return "S/ " + totalFacturado.setScale(2, java.math.RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el total pagado formateado.
-     * 
-     * @return Total pagado formateado
-     */
     public String getTotalPagadoFormateado() {
         if (totalPagado == null) return "S/ 0.00";
         return "S/ " + totalPagado.setScale(2, java.math.RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el saldo pendiente formateado.
-     * 
-     * @return Saldo pendiente formateado
-     */
     public String getSaldoPendienteFormateado() {
         if (saldoPendiente == null) return "S/ 0.00";
         return "S/ " + saldoPendiente.setScale(2, java.math.RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el color para el saldo pendiente.
-     * 
-     * @return Color en hexadecimal
-     */
     public String getSaldoColor() {
         if (saldoPendiente == null || saldoPendiente.compareTo(java.math.BigDecimal.ZERO) == 0) {
             return "#10B981";
@@ -652,11 +453,6 @@ public class Cliente {
         return "#EF4444";
     }
 
-    /**
-     * Obtiene el resumen del cliente.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append(nombreRazonSocial);
@@ -673,27 +469,12 @@ public class Cliente {
         return sb.toString();
     }
 
-    /**
-     * Trunca el nombre del cliente.
-     * 
-     * @param maxLength Longitud máxima
-     * @return Nombre truncado
-     */
     public String getNombreTruncado(int maxLength) {
         if (nombreRazonSocial == null) return "";
         if (nombreRazonSocial.length() <= maxLength) return nombreRazonSocial;
         return nombreRazonSocial.substring(0, maxLength) + "...";
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -713,10 +494,6 @@ public class Cliente {
         sb.append("}");
         return sb.toString();
     }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -745,43 +522,15 @@ public class Cliente {
         return idCliente != null ? idCliente.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un cliente persona natural.
-     * 
-     * @param nombre Nombre completo
-     * @param telefono Teléfono
-     * @param email Email
-     * @return Cliente
-     */
     public static Cliente crearPersonaNatural(String nombre, String telefono, String email) {
         return new Cliente("Natural", nombre, null, telefono, email, null);
     }
 
-    /**
-     * Crea un cliente persona jurídica (empresa).
-     * 
-     * @param razonSocial Razón social
-     * @param ruc RUC de la empresa
-     * @param telefono Teléfono
-     * @param email Email
-     * @param direccion Dirección
-     * @return Cliente
-     */
     public static Cliente crearPersonaJuridica(String razonSocial, String ruc,
                                                String telefono, String email, String direccion) {
         return new Cliente("Juridica", razonSocial, ruc, telefono, email, direccion);
     }
 
-    /**
-     * Crea un cliente desde un DTO.
-     * 
-     * @param dto DTO del cliente
-     * @return Cliente
-     */
     public static Cliente fromDTO(com.stamos.dto.ClienteDTO dto) {
         if (dto == null) {
             return null;
@@ -802,11 +551,6 @@ public class Cliente {
         return cliente;
     }
 
-    /**
-     * Convierte la entidad a un DTO.
-     * 
-     * @return DTO del cliente
-     */
     public com.stamos.dto.ClienteDTO toDTO() {
         com.stamos.dto.ClienteDTO dto = new com.stamos.dto.ClienteDTO();
         dto.setIdCliente(this.idCliente);

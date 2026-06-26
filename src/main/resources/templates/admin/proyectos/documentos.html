@@ -390,49 +390,50 @@
         <div class="page-title">
             <i class="ti ti-file-text"></i>
             <span>Documentos del Proyecto</span>
-            <small th:text="'#' + ${proyecto.idProyecto}">#0</small>
+            <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto.idProyecto})}" class="btn-primary">
+            <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary">
                 <i class="ti ti-upload"></i> Subir Documento
             </a>
-            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" class="btn-secondary">
+            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
                 <i class="ti ti-arrow-left"></i> Volver al Proyecto
             </a>
         </div>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
     <div class="stats-row">
         <div class="stat-card">
-            <div class="numero" th:text="${totalDocumentos}">0</div>
+            <div class="numero" th:text="${totalDocumentos != null ? totalDocumentos : 0}">0</div>
             <div class="etiqueta">Total</div>
         </div>
         <div class="stat-card">
-            <div class="numero purple" th:text="${renders}">0</div>
+            <div class="numero purple" th:text="${renders != null ? renders : 0}">0</div>
             <div class="etiqueta">Renders</div>
         </div>
         <div class="stat-card">
-            <div class="numero blue" th:text="${planos}">0</div>
+            <div class="numero blue" th:text="${planos != null ? planos : 0}">0</div>
             <div class="etiqueta">Planos</div>
         </div>
         <div class="stat-card">
-            <div class="numero orange" th:text="${bocetos}">0</div>
+            <div class="numero orange" th:text="${bocetos != null ? bocetos : 0}">0</div>
             <div class="etiqueta">Bocetos</div>
         </div>
         <div class="stat-card">
-            <div class="numero green" th:text="${contratos}">0</div>
+            <div class="numero green" th:text="${contratos != null ? contratos : 0}">0</div>
             <div class="etiqueta">Contratos</div>
         </div>
         <div class="stat-card">
-            <div class="numero" th:text="${otros}">0</div>
+            <div class="numero" th:text="${otros != null ? otros : 0}">0</div>
             <div class="etiqueta">Otros</div>
         </div>
     </div>
 
     <form th:action="@{/admin/documentos}" method="get" class="filters-bar">
+        <input type="hidden" name="proyectoId" th:value="${proyecto != null ? proyecto.idProyecto : ''}">
         <div class="filter-group">
             <i class="ti ti-filter"></i>
             <select name="tipo">
@@ -447,12 +448,12 @@
         <button type="submit" class="btn-secondary">
             <i class="ti ti-search"></i> Filtrar
         </button>
-        <a th:href="@{/admin/documentos(proyectoId=${proyecto.idProyecto})}" class="btn-secondary" th:if="${tipo != null}">
+        <a th:href="@{/admin/documentos(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary" th:if="${tipo != null}">
             <i class="ti ti-refresh"></i> Limpiar
         </a>
     </form>
 
-    <div th:if="${documentos != null && !documentos.isEmpty()}">
+    <div th:if="${documentos != null and !#lists.isEmpty(documentos)}">
         <div class="documentos-grid">
             <div th:each="doc : ${documentos}" class="documento-card">
                 <div class="documento-icon" 
@@ -502,10 +503,10 @@
         </div>
     </div>
 
-    <div th:if="${documentos == null || documentos.isEmpty()}" class="empty-message">
+    <div th:if="${documentos == null or #lists.isEmpty(documentos)}" class="empty-message">
         <i class="ti ti-file-off"></i>
         <p>No hay documentos disponibles para este proyecto.</p>
-        <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto.idProyecto})}" class="btn-primary" style="margin-top:16px;">
+        <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary" style="margin-top:16px;">
             <i class="ti ti-upload"></i> Subir primer documento
         </a>
     </div>
@@ -513,13 +514,13 @@
     <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
         <div style="font-size:12px; color:var(--text-3);">
             <i class="ti ti-info-circle"></i> 
-            <span th:text="'Total de documentos: ' + ${totalDocumentos}">Total de documentos: 0</span>
+            <span th:text="'Total de documentos: ' + ${totalDocumentos != null ? totalDocumentos : 0}">Total de documentos: 0</span>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" class="btn-secondary">
+            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
                 <i class="ti ti-arrow-left"></i> Volver al proyecto
             </a>
-            <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto.idProyecto})}" class="btn-primary">
+            <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary">
                 <i class="ti ti-upload"></i> Subir Documento
             </a>
         </div>

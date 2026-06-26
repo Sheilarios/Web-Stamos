@@ -1,6 +1,7 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
 import com.stamos.model.CategoriaProducto;
 import com.stamos.model.Producto;
 import com.stamos.model.Usuario;
@@ -41,13 +42,16 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/admin/productos")
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
-public class ProductoController {
+public class ProductoController extends BaseController {
 
     @Autowired
     private ProductoService productoService;
 
     @Autowired
     private CategoriaProductoService categoriaProductoService;
+
+    @Autowired
+    private ClienteService clienteService;
 
     @Value("${app.upload.productos.dir:./uploads/productos/}")
     private String uploadDir;
@@ -69,19 +73,12 @@ public class ProductoController {
             } else if (categoriaId != null) {
                 productosPage = productoService.findByCategoria(categoriaId, pageable);
             } else if (search != null && !search.isEmpty()) {
-                productosPage = (Page<Producto>) productoService.buscar(search);
+                productosPage = productoService.buscar(search, pageable);
             } else if (activo != null) {
                 productosPage = productoService.findByActivo(activo, pageable);
             } else {
                 productosPage = productoService.findAll(pageable);
             }
-            
-            long totalProductos = productoService.count();
-            long totalAlquiler = productoService.countByTipo("Alquiler");
-            long totalVenta = productoService.countByTipo("Venta");
-            long totalServicio = productoService.countByTipo("Servicio");
-            long totalActivos = productoService.countByActivo(true);
-            long totalInactivos = productoService.countByActivo(false);
             
             model.addAttribute("productos", productosPage.getContent());
             model.addAttribute("currentPage", page);
@@ -92,12 +89,13 @@ public class ProductoController {
             model.addAttribute("search", search);
             model.addAttribute("activo", activo);
             model.addAttribute("categorias", categoriaProductoService.findAll());
-            model.addAttribute("totalProductos", totalProductos);
-            model.addAttribute("totalAlquiler", totalAlquiler);
-            model.addAttribute("totalVenta", totalVenta);
-            model.addAttribute("totalServicio", totalServicio);
-            model.addAttribute("totalActivos", totalActivos);
-            model.addAttribute("totalInactivos", totalInactivos);
+            model.addAttribute("totalProductos", productoService.count());
+            model.addAttribute("totalAlquiler", productoService.countByTipo("Alquiler"));
+            model.addAttribute("totalVenta", productoService.countByTipo("Venta"));
+            model.addAttribute("totalServicio", productoService.countByTipo("Servicio"));
+            model.addAttribute("totalActivos", productoService.countByActivo(true));
+            model.addAttribute("totalInactivos", productoService.countByActivo(false));
+            addCommonAttributes(model);
             
             return "admin/productos/lista";
         } catch (Exception e) {
@@ -114,6 +112,7 @@ public class ProductoController {
             model.addAttribute("tipos", getTiposProducto());
             model.addAttribute("titulo", "Nuevo Producto/Servicio");
             model.addAttribute("accion", "crear");
+            addCommonAttributes(model);
             return "admin/productos/formulario";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
@@ -135,6 +134,7 @@ public class ProductoController {
             model.addAttribute("tipos", getTiposProducto());
             model.addAttribute("titulo", "Editar Producto/Servicio");
             model.addAttribute("accion", "editar");
+            addCommonAttributes(model);
             return "admin/productos/formulario";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
@@ -143,7 +143,7 @@ public class ProductoController {
     }
 
     @PostMapping("/crear")
-    @Auditable(value = "Creación de producto", accion = "CREATE")
+    @Auditable
     public String crearProducto(@Valid @ModelAttribute("producto") Producto producto,
                                 BindingResult result,
                                 @RequestParam("imagen") MultipartFile imagen,
@@ -155,8 +155,7 @@ public class ProductoController {
                 return "redirect:/admin/productos/nuevo";
             }
 
-            CategoriaProducto categoria = categoriaProductoService.findById(producto.getIdCategoria());
-            if (categoria == null) {
+            if (producto.getIdCategoria() == null || categoriaProductoService.findById(producto.getIdCategoria()) == null) {
                 redirectAttributes.addFlashAttribute("error", "Categoría no encontrada.");
                 return "redirect:/admin/productos/nuevo";
             }
@@ -173,26 +172,27 @@ public class ProductoController {
             }
 
             if (imagen != null && !imagen.isEmpty()) {
-                String nombreImagen = guardarImagen(imagen);
-                producto.setImagenUrl("/productos/" + nombreImagen);
+                producto.setImagenUrl("/productos/" + guardarImagen(imagen));
             }
 
             producto.setActivo(true);
             productoService.save(producto);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
-                "Producto creado exitosamente: " + producto.getNombreItem());
+            redirectAttributes.addFlashAttribute("mensaje", "Producto creado exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             
             return "redirect:/admin/productos";
         } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Error al guardar la imagen: " + e.getMessage());
+            return "redirect:/admin/productos/nuevo";
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al crear el producto: " + e.getMessage());
             return "redirect:/admin/productos/nuevo";
         }
     }
 
     @PostMapping("/actualizar/{id}")
-    @Auditable(value = "Actualización de producto", accion = "UPDATE")
+    @Auditable
     public String actualizarProducto(@PathVariable Integer id,
                                      @Valid @ModelAttribute("producto") Producto producto,
                                      BindingResult result,
@@ -211,8 +211,7 @@ public class ProductoController {
                 return "redirect:/admin/productos";
             }
 
-            CategoriaProducto categoria = categoriaProductoService.findById(producto.getIdCategoria());
-            if (categoria == null) {
+            if (producto.getIdCategoria() == null || categoriaProductoService.findById(producto.getIdCategoria()) == null) {
                 redirectAttributes.addFlashAttribute("error", "Categoría no encontrada.");
                 return "redirect:/admin/productos/editar/" + id;
             }
@@ -226,8 +225,7 @@ public class ProductoController {
                 if (existente.getImagenUrl() != null && !existente.getImagenUrl().isEmpty()) {
                     eliminarImagen(existente.getImagenUrl());
                 }
-                String nombreImagen = guardarImagen(imagen);
-                producto.setImagenUrl("/productos/" + nombreImagen);
+                producto.setImagenUrl("/productos/" + guardarImagen(imagen));
             } else {
                 producto.setImagenUrl(existente.getImagenUrl());
             }
@@ -235,12 +233,14 @@ public class ProductoController {
             producto.setIdProducto(id);
             productoService.update(producto);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
-                "Producto actualizado exitosamente.");
+            redirectAttributes.addFlashAttribute("mensaje", "Producto actualizado exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             
             return "redirect:/admin/productos";
         } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Error al guardar la imagen: " + e.getMessage());
+            return "redirect:/admin/productos/editar/" + id;
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al actualizar el producto: " + e.getMessage());
             return "redirect:/admin/productos/editar/" + id;
         }
@@ -255,10 +255,9 @@ public class ProductoController {
                 return "redirect:/admin/productos";
             }
             
-            CategoriaProducto categoria = categoriaProductoService.findById(producto.getIdCategoria());
             model.addAttribute("producto", producto);
-            model.addAttribute("categoria", categoria);
-            
+            model.addAttribute("categoria", categoriaProductoService.findById(producto.getIdCategoria()));
+            addCommonAttributes(model);
             return "admin/productos/detalle";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el detalle: " + e.getMessage());
@@ -267,7 +266,7 @@ public class ProductoController {
     }
 
     @PostMapping("/activar/{id}")
-    @Auditable(value = "Activación de producto", accion = "ENABLE")
+    @Auditable
     public String activarProducto(@PathVariable Integer id,
                                   Authentication auth,
                                   RedirectAttributes redirectAttributes) {
@@ -281,8 +280,7 @@ public class ProductoController {
             producto.setActivo(true);
             productoService.update(producto);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
-                "Producto activado exitosamente.");
+            redirectAttributes.addFlashAttribute("mensaje", "Producto activado exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             
             return "redirect:/admin/productos";
@@ -293,7 +291,7 @@ public class ProductoController {
     }
 
     @PostMapping("/desactivar/{id}")
-    @Auditable(value = "Desactivación de producto", accion = "DISABLE")
+    @Auditable
     public String desactivarProducto(@PathVariable Integer id,
                                      Authentication auth,
                                      RedirectAttributes redirectAttributes) {
@@ -307,8 +305,7 @@ public class ProductoController {
             producto.setActivo(false);
             productoService.update(producto);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
-                "Producto desactivado exitosamente.");
+            redirectAttributes.addFlashAttribute("mensaje", "Producto desactivado exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             
             return "redirect:/admin/productos";
@@ -319,7 +316,7 @@ public class ProductoController {
     }
 
     @PostMapping("/eliminar/{id}")
-    @Auditable(value = "Eliminación de producto", accion = "DELETE")
+    @Auditable
     @PreAuthorize("hasRole('ADMIN')")
     public String eliminarProducto(@PathVariable Integer id,
                                    Authentication auth,
@@ -333,8 +330,7 @@ public class ProductoController {
 
             if (productoService.tieneReferencias(id)) {
                 redirectAttributes.addFlashAttribute("error", 
-                    "No se puede eliminar el producto porque tiene referencias en cotizaciones o inventario. " +
-                    "Desactívalo en su lugar.");
+                    "No se puede eliminar el producto porque tiene referencias. Desactívalo en su lugar.");
                 return "redirect:/admin/productos";
             }
 
@@ -344,8 +340,7 @@ public class ProductoController {
 
             productoService.delete(id);
 
-            redirectAttributes.addFlashAttribute("mensaje", 
-                "Producto eliminado exitosamente.");
+            redirectAttributes.addFlashAttribute("mensaje", "Producto eliminado exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             
             return "redirect:/admin/productos";
@@ -370,8 +365,7 @@ public class ProductoController {
             
             return ResponseEntity.ok()
                     .contentType(mediaType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, 
-                            "inline; filename=\"" + nombre + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + nombre + "\"")
                     .body(resource);
         } catch (MalformedURLException e) {
             return ResponseEntity.notFound().build();
@@ -472,9 +466,6 @@ public class ProductoController {
         return List.of("Alquiler", "Venta", "Servicio");
     }
 
-    @Autowired
-    private ClienteService clienteService;
-
     public String getTipoBadgeClass(String tipo) {
         if (tipo == null) return "";
         return switch (tipo) {
@@ -495,6 +486,7 @@ public class ProductoController {
         };
     }
 
+    @Override
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, java.math.RoundingMode.HALF_UP).toString();

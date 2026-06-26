@@ -11,24 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entidad Usuario.
- * 
- * <p>Esta entidad representa a los usuarios del sistema STAMOS S.L.,
- * incluyendo empleados y clientes, con sus credenciales de acceso
- * y permisos asociados.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RNF-02: Autenticación obligatoria mediante usuario y contraseña</li>
- *   <li>RNF-03: Contraseñas almacenadas cifradas en la base de datos</li>
- *   <li>RNF-04: Control de acceso basado en roles</li>
- *   <li>RN-01: Solo personal autorizado puede dar de alta clientes</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "Usuario",
        indexes = {
@@ -37,10 +19,6 @@ import java.util.List;
            @Index(name = "idx_usuario_activo", columnList = "activo")
        })
 public class Usuario {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,10 +58,6 @@ public class Usuario {
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
 
-    // ============================================
-    // CAMPOS DE AUDITORÍA
-    // ============================================
-
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 
@@ -92,10 +66,6 @@ public class Usuario {
 
     @Column(name = "id_usuario_actualizacion")
     private Integer idUsuarioActualizacion;
-
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
 
     @Transient
     private String nombreRol;
@@ -124,10 +94,6 @@ public class Usuario {
     @Transient
     private List<String> permisos = new ArrayList<>();
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public Usuario() {
         this.activo = true;
         this.fechaCreacion = LocalDateTime.now();
@@ -149,10 +115,6 @@ public class Usuario {
         this(idRol, nombreCompleto, email, passwordHash);
         this.telefono = telefono;
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdUsuario() {
         return idUsuario;
@@ -324,15 +286,7 @@ public class Usuario {
         this.permisos = permisos;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Actualiza los campos transient basados en el estado y rol.
-     */
     private void actualizarCamposTransient() {
-        // Estado del usuario
         if (activo != null) {
             if (activo) {
                 this.estadoLegible = "Activo";
@@ -346,15 +300,9 @@ public class Usuario {
                 this.estadoColor = "#EF4444";
             }
         }
-
-        // El nombre del rol se establece desde el servicio
     }
 
-    /**
-     * Establece el rol y actualiza los campos transient.
-     * 
-     * @param rol Entidad de rol
-     */
+
     public void setRol(Rol rol) {
         if (rol != null) {
             this.idRol = rol.getIdRol();
@@ -366,172 +314,87 @@ public class Usuario {
         }
     }
 
-    /**
-     * Verifica si el usuario está activo.
-     * 
-     * @return true si está activo, false en caso contrario
-     */
+
     public boolean isActivo() {
         return activo != null && activo;
     }
 
-    /**
-     * Activa el usuario.
-     */
     public void activar() {
         this.activo = true;
         this.fechaActualizacion = LocalDateTime.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Desactiva el usuario.
-     */
     public void desactivar() {
         this.activo = false;
         this.fechaActualizacion = LocalDateTime.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Alterna el estado del usuario (activo/inactivo).
-     */
     public void toggleActivo() {
         this.activo = !isActivo();
         this.fechaActualizacion = LocalDateTime.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Registra el último acceso del usuario.
-     */
     public void registrarAcceso() {
         this.ultimoAcceso = LocalDateTime.now();
         this.fechaActualizacion = LocalDateTime.now();
     }
 
-    /**
-     * Verifica si el usuario tiene el rol Administrador.
-     * 
-     * @return true si es Administrador, false en caso contrario
-     */
     public boolean esAdministrador() {
         return Rol.ROL_ADMINISTRADOR.equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario tiene el rol Vendedor.
-     * 
-     * @return true si es Vendedor, false en caso contrario
-     */
+
     public boolean esVendedor() {
         return Rol.ROL_VENDEDOR.equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario tiene el rol Diseñador.
-     * 
-     * @return true si es Diseñador, false en caso contrario
-     */
     public boolean esDiseñador() {
         return Rol.ROL_DISEÑADOR.equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario tiene el rol Producción.
-     * 
-     * @return true si es Producción, false en caso contrario
-     */
     public boolean esProduccion() {
         return Rol.ROL_PRODUCCION.equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario tiene el rol Soporte Técnico.
-     * 
-     * @return true si es Soporte Técnico, false en caso contrario
-     */
     public boolean esSoporteTecnico() {
         return Rol.ROL_SOPORTE_TECNICO.equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario tiene el rol Cliente.
-     * 
-     * @return true si es Cliente, false en caso contrario
-     */
     public boolean esCliente() {
         return Rol.ROL_CLIENTE.equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario es interno (no cliente).
-     * 
-     * @return true si es interno, false en caso contrario
-     */
     public boolean esRolInterno() {
         return !esCliente();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de administración.
-     * 
-     * @return true si tiene permisos de administración, false en caso contrario
-     */
     public boolean tienePermisosAdmin() {
         return esAdministrador();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de ventas.
-     * 
-     * @return true si tiene permisos de ventas, false en caso contrario
-     */
     public boolean tienePermisosVentas() {
         return esAdministrador() || esVendedor();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de diseño.
-     * 
-     * @return true si tiene permisos de diseño, false en caso contrario
-     */
     public boolean tienePermisosDiseno() {
         return esAdministrador() || esDiseñador();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de producción.
-     * 
-     * @return true si tiene permisos de producción, false en caso contrario
-     */
     public boolean tienePermisosProduccion() {
         return esAdministrador() || esProduccion();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de soporte técnico.
-     * 
-     * @return true si tiene permisos de soporte, false en caso contrario
-     */
     public boolean tienePermisosSoporte() {
         return esAdministrador() || esSoporteTecnico();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de cliente.
-     * 
-     * @return true si tiene permisos de cliente, false en caso contrario
-     */
     public boolean tienePermisosCliente() {
         return esAdministrador() || esCliente();
     }
 
-    /**
-     * Agrega un permiso al usuario.
-     * 
-     * @param permiso Permiso a agregar
-     */
     public void agregarPermiso(String permiso) {
         if (permiso != null && this.permisos != null) {
             if (!this.permisos.contains(permiso)) {
@@ -540,30 +403,14 @@ public class Usuario {
         }
     }
 
-    /**
-     * Verifica si el usuario tiene un permiso específico.
-     * 
-     * @param permiso Permiso a verificar
-     * @return true si tiene el permiso, false en caso contrario
-     */
     public boolean tienePermiso(String permiso) {
         return this.permisos != null && this.permisos.contains(permiso);
     }
 
-    /**
-     * Obtiene el nombre de usuario para mostrar.
-     * 
-     * @return Nombre de usuario
-     */
     public String getNombreUsuario() {
         return nombreCompleto;
     }
 
-    /**
-     * Obtiene el nombre del rol para Spring Security.
-     * 
-     * @return Nombre del rol con prefijo ROLE_
-     */
     public String getRolSeguridad() {
         if (nombreRol == null) return "ROLE_USER";
         return "ROLE_" + nombreRol.toUpperCase().replace(" ", "_").replace("Ó", "O");
@@ -573,11 +420,6 @@ public class Usuario {
         return "<i class='" + estadoIcono + "'></i> " + getEstadoLegible();
     }
 
-    /**
-     * Obtiene el rol con ícono.
-     * 
-     * @return Rol con ícono
-     */
     public String getRolConIcono() {
         return "<i class='" + iconoRol + "'></i> " + getNombreRolLegible();
     }
@@ -586,69 +428,37 @@ public class Usuario {
     public String getRolBadgeClass() {
         if (nombreRol == null) return "badge-secondary";
         
-        switch (nombreRol) {
-            case Rol.ROL_ADMINISTRADOR:
-                return "badge-danger";
-            case Rol.ROL_VENDEDOR:
-                return "badge-primary";
-            case Rol.ROL_DISEÑADOR:
-                return "badge-purple";
-            case Rol.ROL_PRODUCCION:
-                return "badge-warning";
-            case Rol.ROL_SOPORTE_TECNICO:
-                return "badge-success";
-            case Rol.ROL_CLIENTE:
-                return "badge-secondary";
-            default:
-                return "badge-secondary";
-        }
+        return switch (nombreRol) {
+            case Rol.ROL_ADMINISTRADOR -> "badge-danger";
+            case Rol.ROL_VENDEDOR -> "badge-primary";
+            case Rol.ROL_DISEÑADOR -> "badge-purple";
+            case Rol.ROL_PRODUCCION -> "badge-warning";
+            case Rol.ROL_SOPORTE_TECNICO -> "badge-success";
+            case Rol.ROL_CLIENTE -> "badge-secondary";
+            default -> "badge-secondary";
+        };
     }
 
-    /**
-     * Obtiene la fecha de creación formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaCreacionFormateada() {
         if (fechaCreacion == null) return "-";
         return fechaCreacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de creación formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaCreacionSoloFecha() {
         if (fechaCreacion == null) return "-";
         return fechaCreacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene el último acceso formateado.
-     * 
-     * @return Último acceso formateado
-     */
     public String getUltimoAccesoFormateado() {
         if (ultimoAcceso == null) return "-";
         return ultimoAcceso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de actualización formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaActualizacionFormateada() {
         if (fechaActualizacion == null) return "-";
         return fechaActualizacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene el resumen del usuario.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append(nombreCompleto);
@@ -659,36 +469,16 @@ public class Usuario {
         return sb.toString();
     }
 
-    /**
-     * Obtiene el nombre del usuario truncado.
-     * 
-     * @param maxLength Longitud máxima
-     * @return Nombre truncado
-     */
     public String getNombreTruncado(int maxLength) {
         if (nombreCompleto == null) return "";
         if (nombreCompleto.length() <= maxLength) return nombreCompleto;
         return nombreCompleto.substring(0, maxLength) + "...";
     }
 
-    /**
-     * Verifica si el usuario tiene teléfono.
-     * 
-     * @return true si tiene teléfono, false en caso contrario
-     */
     public boolean tieneTelefono() {
         return telefono != null && !telefono.trim().isEmpty();
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -707,11 +497,6 @@ public class Usuario {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -743,10 +528,6 @@ public class Usuario {
         return sb.toString();
     }
 
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
-
     @Override
     public String toString() {
         return "Usuario{" +
@@ -772,88 +553,30 @@ public class Usuario {
         return idUsuario != null ? idUsuario.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un usuario Administrador.
-     * 
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param passwordHash Contraseña cifrada
-     * @return Usuario
-     */
     public static Usuario crearAdministrador(String nombreCompleto, String email, String passwordHash) {
         return new Usuario(1, nombreCompleto, email, passwordHash);
     }
 
-    /**
-     * Crea un usuario Vendedor.
-     * 
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param passwordHash Contraseña cifrada
-     * @return Usuario
-     */
     public static Usuario crearVendedor(String nombreCompleto, String email, String passwordHash) {
         return new Usuario(2, nombreCompleto, email, passwordHash);
     }
 
-    /**
-     * Crea un usuario Diseñador.
-     * 
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param passwordHash Contraseña cifrada
-     * @return Usuario
-     */
     public static Usuario crearDiseñador(String nombreCompleto, String email, String passwordHash) {
         return new Usuario(3, nombreCompleto, email, passwordHash);
     }
 
-    /**
-     * Crea un usuario Producción.
-     * 
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param passwordHash Contraseña cifrada
-     * @return Usuario
-     */
     public static Usuario crearProduccion(String nombreCompleto, String email, String passwordHash) {
         return new Usuario(4, nombreCompleto, email, passwordHash);
     }
 
-    /**
-     * Crea un usuario Soporte Técnico.
-     * 
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param passwordHash Contraseña cifrada
-     * @return Usuario
-     */
     public static Usuario crearSoporteTecnico(String nombreCompleto, String email, String passwordHash) {
         return new Usuario(5, nombreCompleto, email, passwordHash);
     }
 
-    /**
-     * Crea un usuario Cliente.
-     * 
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param passwordHash Contraseña cifrada
-     * @return Usuario
-     */
     public static Usuario crearCliente(String nombreCompleto, String email, String passwordHash) {
         return new Usuario(6, nombreCompleto, email, passwordHash);
     }
 
-    /**
-     * Crea un usuario desde un DTO.
-     * 
-     * @param dto DTO del usuario
-     * @return Usuario
-     */
     public static Usuario fromDTO(com.stamos.dto.UsuarioDTO dto) {
         if (dto == null) {
             return null;
@@ -872,11 +595,6 @@ public class Usuario {
         return usuario;
     }
 
-    /**
-     * Convierte el usuario a un DTO.
-     * 
-     * @return DTO del usuario
-     */
     public com.stamos.dto.UsuarioDTO toDTO() {
         com.stamos.dto.UsuarioDTO dto = new com.stamos.dto.UsuarioDTO();
         dto.setIdUsuario(this.idUsuario);
@@ -900,6 +618,6 @@ public class Usuario {
     }
 
     public Object getRol() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

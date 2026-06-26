@@ -1,6 +1,8 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
+import com.stamos.dto.PagoDTO;
 import com.stamos.model.ComprobantePago;
 import com.stamos.model.Pago;
 import com.stamos.model.Proyecto;
@@ -41,13 +43,14 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin/pagos")
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
-public class PagoController {
+public class PagoController extends BaseController {
 
     @Autowired
     private PagoService pagoService;
@@ -84,8 +87,15 @@ public class PagoController {
                 pagosPage = pagoService.findAll(pageable);
             }
             
+            List<PagoDTO> pagosDTO = new ArrayList<>();
             for (Pago pago : pagosPage.getContent()) {
-                enriquecerPago(pago);
+                Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
+                Usuario usuarioRegistro = clienteService.findUsuarioById(pago.getIdUsuarioRegistro());
+                Usuario usuarioValidacion = clienteService.findUsuarioById(pago.getIdUsuarioValidacion());
+                ComprobantePago comprobante = pagoService.findComprobanteByPago(pago.getIdPago());
+                
+                PagoDTO dto = PagoDTO.fromEntityWithComprobante(pago, proyecto, usuarioRegistro, usuarioValidacion, comprobante);
+                pagosDTO.add(dto);
             }
             
             long totalPendientes = pagoService.countByEstadoPago("Pendiente");
@@ -100,7 +110,7 @@ public class PagoController {
             
             List<Proyecto> proyectosVencidos = proyectoService.findProyectosConPagosVencidos();
             
-            model.addAttribute("pagos", pagosPage.getContent());
+            model.addAttribute("pagos", pagosDTO);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", pagosPage.getTotalPages());
             model.addAttribute("totalItems", pagosPage.getTotalElements());
@@ -117,6 +127,7 @@ public class PagoController {
             model.addAttribute("saldoPendienteGeneral", saldoPendienteGeneral);
             model.addAttribute("totalPagosVencidos", proyectosVencidos.size());
             model.addAttribute("proyectosVencidos", proyectosVencidos);
+            addCommonAttributes(model);
             
             return "admin/pagos/lista";
         } catch (Exception e) {
@@ -152,6 +163,7 @@ public class PagoController {
             model.addAttribute("proyectos", proyectoService.findAll());
             model.addAttribute("metodosPago", getMetodosPago());
             model.addAttribute("titulo", "Registrar Pago");
+            addCommonAttributes(model);
             
             return "admin/pagos/registrar";
         } catch (Exception e) {
@@ -161,7 +173,7 @@ public class PagoController {
     }
 
     @PostMapping("/registrar")
-    @Auditable(value = "Registro de pago", accion = "CREATE")
+    @Auditable
     public String registrarPago(@Valid @ModelAttribute("pago") Pago pago,
                                 BindingResult result,
                                 @RequestParam("comprobante") MultipartFile comprobante,
@@ -181,12 +193,22 @@ public class PagoController {
                 return "redirect:/admin/pagos/registrar";
             }
 
-            if (pago.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
+            if (!proyecto.puedeRecibirPagos()) {
+                redirectAttributes.addFlashAttribute("error", 
+                    "El proyecto no puede recibir pagos en su estado actual: " + proyecto.getEstado());
+                return "redirect:/admin/pagos/registrar?proyectoId=" + pago.getIdProyecto();
+            }
+
+            if (pago.getMonto() == null || pago.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
                 redirectAttributes.addFlashAttribute("error", "El monto debe ser mayor a cero.");
                 return "redirect:/admin/pagos/registrar?proyectoId=" + pago.getIdProyecto();
             }
 
             BigDecimal totalPagado = pagoService.getTotalPagadoByProyecto(pago.getIdProyecto());
+            if (totalPagado == null) {
+                totalPagado = BigDecimal.ZERO;
+            }
+            
             BigDecimal nuevoTotal = totalPagado.add(pago.getMonto());
             
             if (nuevoTotal.compareTo(proyecto.getMontoTotal()) > 0) {
@@ -224,6 +246,11 @@ public class PagoController {
             comprobantePago.setValidado(false);
             
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario == null) {
+                redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
+                return "redirect:/admin/pagos/registrar?proyectoId=" + pago.getIdProyecto();
+            }
+            
             pago.setFechaPago(LocalDateTime.now());
             pago.setEstadoPago("Pendiente");
             
@@ -237,11 +264,14 @@ public class PagoController {
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("error", "Error al registrar el pago: " + e.getMessage());
             return "redirect:/admin/pagos/registrar?proyectoId=" + pago.getIdProyecto();
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al registrar el pago: " + e.getMessage());
+            return "redirect:/admin/pagos/registrar?proyectoId=" + pago.getIdProyecto();
         }
     }
 
     @PostMapping("/validar/{id}")
-    @Auditable(value = "Validación de pago", accion = "VALIDATE")
+    @Auditable
     @PreAuthorize("hasRole('ADMIN')")
     public String validarPago(@PathVariable Integer id,
                               Authentication auth,
@@ -260,6 +290,11 @@ public class PagoController {
             }
 
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario == null) {
+                redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
+                return "redirect:/admin/pagos";
+            }
+            
             pagoService.validarPago(id, usuario.getIdUsuario());
 
             redirectAttributes.addFlashAttribute("mensaje", 
@@ -274,7 +309,7 @@ public class PagoController {
     }
 
     @PostMapping("/rechazar/{id}")
-    @Auditable(value = "Rechazo de pago", accion = "VALIDATE")
+    @Auditable
     @PreAuthorize("hasRole('ADMIN')")
     public String rechazarPago(@PathVariable Integer id,
                                @RequestParam(required = false) String motivo,
@@ -294,6 +329,11 @@ public class PagoController {
             }
 
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario == null) {
+                redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
+                return "redirect:/admin/pagos";
+            }
+            
             pagoService.rechazarPago(id, motivo, usuario.getIdUsuario());
 
             redirectAttributes.addFlashAttribute("mensaje", 
@@ -316,12 +356,16 @@ public class PagoController {
                 return "redirect:/admin/pagos";
             }
             
-            enriquecerPago(pago);
+            Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
+            Usuario usuarioRegistro = clienteService.findUsuarioById(pago.getIdUsuarioRegistro());
+            Usuario usuarioValidacion = clienteService.findUsuarioById(pago.getIdUsuarioValidacion());
+            ComprobantePago comprobante = pagoService.findComprobanteByPago(pago.getIdPago());
             
-            ComprobantePago comprobante = pagoService.findComprobanteByPago(id);
+            PagoDTO pagoDTO = PagoDTO.fromEntityWithComprobante(pago, proyecto, usuarioRegistro, usuarioValidacion, comprobante);
             
-            model.addAttribute("pago", pago);
+            model.addAttribute("pago", pagoDTO);
             model.addAttribute("comprobante", comprobante);
+            addCommonAttributes(model);
             
             return "admin/pagos/detalle";
         } catch (Exception e) {
@@ -371,16 +415,30 @@ public class PagoController {
         try {
             List<Proyecto> proyectosVencidos = proyectoService.findProyectosConPagosVencidos();
             
+            List<ResumenProyectoVencido> resumenes = new ArrayList<>();
             for (Proyecto proyecto : proyectosVencidos) {
                 BigDecimal totalPagado = pagoService.getTotalPagadoByProyecto(proyecto.getIdProyecto());
                 BigDecimal saldoPendiente = proyecto.getMontoTotal().subtract(totalPagado);
-                proyecto.setSaldoPendiente(saldoPendiente);
-                proyecto.setDiasVencidos((int) java.time.temporal.ChronoUnit.DAYS.between(
-                    proyecto.getFechaVencimiento(), LocalDate.now()));
+                int diasVencidos = 0;
+                if (proyecto.getFechaVencimiento() != null) {
+                    diasVencidos = (int) java.time.temporal.ChronoUnit.DAYS.between(
+                        proyecto.getFechaVencimiento(), LocalDate.now());
+                }
+                
+                ResumenProyectoVencido resumen = new ResumenProyectoVencido();
+                resumen.setIdProyecto(proyecto.getIdProyecto());
+                resumen.setNombreProyecto(proyecto.getNombreProyecto());
+                resumen.setMontoTotal(proyecto.getMontoTotal());
+                resumen.setTotalPagado(totalPagado);
+                resumen.setSaldoPendiente(saldoPendiente);
+                resumen.setFechaVencimiento(proyecto.getFechaVencimiento());
+                resumen.setDiasVencidos(Math.max(0, diasVencidos));
+                resumenes.add(resumen);
             }
             
-            model.addAttribute("proyectosVencidos", proyectosVencidos);
-            model.addAttribute("totalVencidos", proyectosVencidos.size());
+            model.addAttribute("proyectosVencidos", resumenes);
+            model.addAttribute("totalVencidos", resumenes.size());
+            addCommonAttributes(model);
             
             return "admin/pagos/vencidos";
         } catch (Exception e) {
@@ -434,20 +492,6 @@ public class PagoController {
         return List.of("Efectivo", "Transferencia", "Tarjeta", "Cheque");
     }
 
-    private void enriquecerPago(Pago pago) {
-        if (pago == null) return;
-        
-        if (pago.getNombreProyecto() == null && pago.getIdProyecto() != null) {
-            Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
-            if (proyecto != null) {
-                pago.setNombreProyecto(proyecto.getNombreProyecto());
-                pago.setCodigoProyecto(proyecto.getCodigoProyecto());
-                pago.setMontoTotalProyecto(proyecto.getMontoTotal());
-                pago.setNombreCliente(proyecto.getNombreCliente());
-            }
-        }
-    }
-
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
         return switch (estado) {
@@ -482,5 +526,36 @@ public class PagoController {
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, RoundingMode.HALF_UP).toString();
+    }
+
+    public static class ResumenProyectoVencido {
+        private Integer idProyecto;
+        private String nombreProyecto;
+        private BigDecimal montoTotal;
+        private BigDecimal totalPagado;
+        private BigDecimal saldoPendiente;
+        private LocalDate fechaVencimiento;
+        private Integer diasVencidos;
+
+        public Integer getIdProyecto() { return idProyecto; }
+        public void setIdProyecto(Integer idProyecto) { this.idProyecto = idProyecto; }
+
+        public String getNombreProyecto() { return nombreProyecto; }
+        public void setNombreProyecto(String nombreProyecto) { this.nombreProyecto = nombreProyecto; }
+
+        public BigDecimal getMontoTotal() { return montoTotal; }
+        public void setMontoTotal(BigDecimal montoTotal) { this.montoTotal = montoTotal; }
+
+        public BigDecimal getTotalPagado() { return totalPagado; }
+        public void setTotalPagado(BigDecimal totalPagado) { this.totalPagado = totalPagado; }
+
+        public BigDecimal getSaldoPendiente() { return saldoPendiente; }
+        public void setSaldoPendiente(BigDecimal saldoPendiente) { this.saldoPendiente = saldoPendiente; }
+
+        public LocalDate getFechaVencimiento() { return fechaVencimiento; }
+        public void setFechaVencimiento(LocalDate fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
+
+        public Integer getDiasVencidos() { return diasVencidos; }
+        public void setDiasVencidos(Integer diasVencidos) { this.diasVencidos = diasVencidos; }
     }
 }

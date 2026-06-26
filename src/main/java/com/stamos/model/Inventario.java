@@ -10,24 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Entidad Inventario.
- * 
- * <p>Esta entidad representa los equipos físicos y mobiliario ferial
- * disponibles en el inventario de STAMOS S.L., incluyendo su estado,
- * ubicación y datos de adquisición.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-13: Todo equipo o mobiliario destinado al alquiler debe estar registrado</li>
- *   <li>RN-14: No se puede asignar un equipo si no hay disponibilidad</li>
- *   <li>RF-16: Registrar equipos y mobiliario indicando stock, ubicación y estado</li>
- *   <li>RF-17: Actualizar la disponibilidad de equipos según su uso o devolución</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
+
 @Entity
 @Table(name = "Inventario",
        indexes = {
@@ -38,18 +21,12 @@ import java.time.format.DateTimeFormatter;
        })
 public class Inventario {
 
-    // ============================================
-    // CONSTANTES PARA ESTADOS FÍSICOS
-    // ============================================
 
     public static final String ESTADO_DISPONIBLE = "Disponible";
     public static final String ESTADO_EN_USO = "En uso";
     public static final String ESTADO_MANTENIMIENTO = "Mantenimiento";
     public static final String ESTADO_DANADO = "Dañado";
 
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,9 +60,6 @@ public class Inventario {
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
 
-    // ============================================
-    // CAMPOS DE AUDITORÍA
-    // ============================================
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDate fechaRegistro;
@@ -98,10 +72,6 @@ public class Inventario {
 
     @Column(name = "id_usuario_actualizacion")
     private Integer idUsuarioActualizacion;
-
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
 
     @Transient
     private String nombreProducto;
@@ -133,10 +103,6 @@ public class Inventario {
     @Transient
     private String iconoEstado;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public Inventario() {
         this.estadoFisico = ESTADO_DISPONIBLE;
         this.fechaRegistro = LocalDate.now();
@@ -162,10 +128,6 @@ public class Inventario {
         this.valorCompra = valorCompra;
         actualizarCamposTransient();
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdInventario() {
         return idInventario;
@@ -344,172 +306,103 @@ public class Inventario {
         this.iconoEstado = iconoEstado;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Actualiza los campos transient basados en el estado físico.
-     */
     private void actualizarCamposTransient() {
         if (estadoFisico != null) {
             switch (estadoFisico) {
-                case ESTADO_DISPONIBLE:
+                case ESTADO_DISPONIBLE -> {
                     this.estadoFisicoLegible = "Disponible";
                     this.colorEstado = "#10B981";
                     this.iconoEstado = "ti ti-check-circle";
                     this.estaDisponible = true;
-                    break;
-                case ESTADO_EN_USO:
+                }
+                case ESTADO_EN_USO -> {
                     this.estadoFisicoLegible = "En uso";
                     this.colorEstado = "#3B82F6";
                     this.iconoEstado = "ti ti-clock";
                     this.estaDisponible = false;
-                    break;
-                case ESTADO_MANTENIMIENTO:
+                }
+                case ESTADO_MANTENIMIENTO -> {
                     this.estadoFisicoLegible = "En mantenimiento";
                     this.colorEstado = "#F59E0B";
                     this.iconoEstado = "ti ti-tools";
                     this.estaDisponible = false;
-                    break;
-                case ESTADO_DANADO:
+                }
+                case ESTADO_DANADO -> {
                     this.estadoFisicoLegible = "Dañado";
                     this.colorEstado = "#EF4444";
                     this.iconoEstado = "ti ti-alert-triangle";
                     this.estaDisponible = false;
-                    break;
-                default:
+                }
+                default -> {
                     this.estadoFisicoLegible = estadoFisico;
                     this.colorEstado = "#6B7280";
                     this.iconoEstado = "ti ti-circle";
                     this.estaDisponible = false;
-                    break;
+                }
             }
         }
     }
 
-    /**
-     * Verifica si el equipo está disponible.
-     * 
-     * @return true si está disponible, false en caso contrario
-     */
     public boolean isDisponible() {
         return ESTADO_DISPONIBLE.equals(this.estadoFisico);
     }
 
-    /**
-     * Verifica si el equipo está en uso.
-     * 
-     * @return true si está en uso, false en caso contrario
-     */
     public boolean isEnUso() {
         return ESTADO_EN_USO.equals(this.estadoFisico);
     }
 
-    /**
-     * Verifica si el equipo está en mantenimiento.
-     * 
-     * @return true si está en mantenimiento, false en caso contrario
-     */
     public boolean isEnMantenimiento() {
         return ESTADO_MANTENIMIENTO.equals(this.estadoFisico);
     }
 
-    /**
-     * Verifica si el equipo está dañado.
-     * 
-     * @return true si está dañado, false en caso contrario
-     */
     public boolean isDanado() {
         return ESTADO_DANADO.equals(this.estadoFisico);
     }
 
-    /**
-     * Verifica si el equipo está en buen estado (Disponible o En uso).
-     * 
-     * @return true si está en buen estado, false en caso contrario
-     */
     public boolean isEnBuenEstado() {
         return isDisponible() || isEnUso();
     }
 
-    /**
-     * Cambia el estado del equipo a Disponible.
-     */
     public void marcarDisponible() {
         this.estadoFisico = ESTADO_DISPONIBLE;
         this.fechaActualizacion = LocalDate.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Cambia el estado del equipo a En uso.
-     */
     public void marcarEnUso() {
         this.estadoFisico = ESTADO_EN_USO;
         this.fechaActualizacion = LocalDate.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Cambia el estado del equipo a Mantenimiento.
-     */
     public void marcarMantenimiento() {
         this.estadoFisico = ESTADO_MANTENIMIENTO;
         this.fechaActualizacion = LocalDate.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Cambia el estado del equipo a Dañado.
-     */
     public void marcarDanado() {
         this.estadoFisico = ESTADO_DANADO;
         this.fechaActualizacion = LocalDate.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Verifica si el equipo tiene código serial.
-     * 
-     * @return true si tiene código serial, false en caso contrario
-     */
     public boolean tieneCodigoSerial() {
         return codigoSerial != null && !codigoSerial.trim().isEmpty();
     }
 
-    /**
-     * Verifica si el equipo tiene ubicación.
-     * 
-     * @return true si tiene ubicación, false en caso contrario
-     */
     public boolean tieneUbicacion() {
         return ubicacion != null && !ubicacion.trim().isEmpty();
     }
 
-    /**
-     * Verifica si el equipo tiene valor de compra.
-     * 
-     * @return true si tiene valor de compra, false en caso contrario
-     */
     public boolean tieneValorCompra() {
         return valorCompra != null && valorCompra.compareTo(BigDecimal.ZERO) > 0;
     }
 
-    /**
-     * Verifica si el equipo tiene observaciones.
-     * 
-     * @return true si tiene observaciones, false en caso contrario
-     */
     public boolean tieneObservaciones() {
         return observaciones != null && !observaciones.trim().isEmpty();
     }
 
-    /**
-     * Obtiene la antigüedad del equipo en años.
-     * 
-     * @return Antigüedad en años, o null si no tiene fecha de adquisición
-     */
     public Integer getAntiguedad() {
         if (fechaAdquisicion == null) {
             return null;
@@ -517,106 +410,51 @@ public class Inventario {
         return java.time.Period.between(fechaAdquisicion, LocalDate.now()).getYears();
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene el estado físico en formato legible.
-     * 
-     * @return Estado físico legible
-     */
     public String getEstadoLegible() {
         return estadoFisicoLegible != null ? estadoFisicoLegible : estadoFisico;
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del estado físico.
-     * 
-     * @return Clase CSS
-     */
     public String getEstadoBadgeClass() {
         if (estadoFisico == null) return "status-pendiente";
         
-        switch (estadoFisico) {
-            case ESTADO_DISPONIBLE:
-                return "status-validado";
-            case ESTADO_EN_USO:
-                return "status-produccion";
-            case ESTADO_MANTENIMIENTO:
-                return "status-pendiente";
-            case ESTADO_DANADO:
-                return "status-rechazado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (estadoFisico) {
+            case ESTADO_DISPONIBLE -> "status-validado";
+            case ESTADO_EN_USO -> "status-produccion";
+            case ESTADO_MANTENIMIENTO -> "status-pendiente";
+            case ESTADO_DANADO -> "status-rechazado";
+            default -> "status-pendiente";
+        };
     }
 
-    /**
-     * Obtiene el color del estado en hexadecimal.
-     * 
-     * @return Color en hexadecimal
-     */
     public String getColorEstadoHex() {
         return colorEstado != null ? colorEstado : "#6B7280";
     }
 
-    /**
-     * Obtiene el ícono del estado.
-     * 
-     * @return Ícono CSS
-     */
     public String getIconoEstadoHtml() {
         return iconoEstado != null ? iconoEstado : "ti ti-circle";
     }
 
-    /**
-     * Obtiene la fecha de adquisición formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaAdquisicionFormateada() {
         if (fechaAdquisicion == null) return "-";
         return fechaAdquisicion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la fecha de registro formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaRegistroFormateada() {
         if (fechaRegistro == null) return "-";
         return fechaRegistro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene el valor de compra formateado.
-     * 
-     * @return Valor de compra formateado
-     */
     public String getValorCompraFormateado() {
         if (valorCompra == null) return "S/ 0.00";
         return "S/ " + valorCompra.setScale(2, java.math.RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el código serial truncado.
-     * 
-     * @param maxLength Longitud máxima
-     * @return Código serial truncado
-     */
     public String getCodigoSerialTruncado(int maxLength) {
         if (codigoSerial == null) return "";
         if (codigoSerial.length() <= maxLength) return codigoSerial;
         return codigoSerial.substring(0, maxLength) + "...";
     }
 
-    /**
-     * Obtiene el resumen del equipo.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append(codigoSerial);
@@ -630,11 +468,6 @@ public class Inventario {
         return sb.toString();
     }
 
-    /**
-     * Obtiene el nombre completo del producto con código serial.
-     * 
-     * @return Nombre completo
-     */
     public String getNombreCompleto() {
         if (nombreProducto != null && codigoSerial != null) {
             return nombreProducto + " (" + codigoSerial + ")";
@@ -645,11 +478,6 @@ public class Inventario {
         return codigoSerial != null ? codigoSerial : "Sin nombre";
     }
 
-    /**
-     * Obtiene la antigüedad formateada.
-     * 
-     * @return Antigüedad formateada
-     */
     public String getAntiguedadFormateada() {
         Integer antiguedad = getAntiguedad();
         if (antiguedad == null) return "-";
@@ -658,15 +486,6 @@ public class Inventario {
         return antiguedad + " años";
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -687,11 +506,6 @@ public class Inventario {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -723,10 +537,6 @@ public class Inventario {
         return sb.toString();
     }
 
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
-
     @Override
     public String toString() {
         return "Inventario{" +
@@ -752,31 +562,10 @@ public class Inventario {
         return idInventario != null ? idInventario.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un inventario desde un producto.
-     * 
-     * @param idProducto ID del producto
-     * @param codigoSerial Código serial único
-     * @param ubicacion Ubicación física
-     * @return Inventario
-     */
     public static Inventario fromProducto(Integer idProducto, String codigoSerial, String ubicacion) {
         return new Inventario(idProducto, codigoSerial, ubicacion);
     }
 
-    /**
-     * Crea un inventario desde un producto con valor de compra.
-     * 
-     * @param idProducto ID del producto
-     * @param codigoSerial Código serial único
-     * @param ubicacion Ubicación física
-     * @param valorCompra Valor de compra
-     * @return Inventario
-     */
     public static Inventario fromProductoConValor(Integer idProducto, String codigoSerial, 
                                                   String ubicacion, BigDecimal valorCompra) {
         Inventario inventario = new Inventario(idProducto, codigoSerial, ubicacion);
@@ -785,12 +574,6 @@ public class Inventario {
         return inventario;
     }
 
-    /**
-     * Crea un inventario desde un DTO.
-     * 
-     * @param dto DTO de inventario
-     * @return Inventario
-     */
     public static Inventario fromDTO(com.stamos.dto.InventarioDTO dto) {
         if (dto == null) {
             return null;
@@ -808,11 +591,7 @@ public class Inventario {
         return inventario;
     }
 
-    /**
-     * Convierte la entidad a un DTO.
-     * 
-     * @return DTO de inventario
-     */
+
     public com.stamos.dto.InventarioDTO toDTO() {
         com.stamos.dto.InventarioDTO dto = new com.stamos.dto.InventarioDTO();
         dto.setIdInventario(this.idInventario);

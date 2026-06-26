@@ -8,33 +8,14 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/**
- * Entidad CotizacionDetalle (DetalleVersionCotizacion).
- * 
- * <p>Esta entidad representa los detalles de una cotización, incluyendo
- * los productos o servicios, cantidades, precios y descuentos aplicados.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-04: Toda cotización debe incluir al menos un producto o servicio</li>
- *   <li>RF-05: Crear cotizaciones con al menos un ítem</li>
- *   <li>RF-07: Permitir registro de precios base o negociados</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "DetalleVersionCotizacion",
        indexes = {
            @Index(name = "idx_detalle_version", columnList = "id_version"),
            @Index(name = "idx_detalle_producto", columnList = "id_producto")
        })
-public class CotizacionDetalle {
+public final class CotizacionDetalle {
 
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,10 +48,6 @@ public class CotizacionDetalle {
     @Column(name = "subtotal_linea", nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotalLinea;
 
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
-
     @Transient
     private String nombreProducto;
 
@@ -101,10 +78,6 @@ public class CotizacionDetalle {
     @Transient
     private Integer idCategoriaProducto;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public CotizacionDetalle() {
         this.cantidad = 1;
         this.precioUnitario = BigDecimal.ZERO;
@@ -121,17 +94,12 @@ public class CotizacionDetalle {
         this.precioUnitario = precioUnitario;
         calcularSubtotal();
     }
-
     public CotizacionDetalle(Integer idVersion, Integer idProducto, Integer cantidad, 
                             BigDecimal precioUnitario, BigDecimal descuento) {
         this(idVersion, idProducto, cantidad, precioUnitario);
         this.descuento = descuento != null ? descuento : BigDecimal.ZERO;
         calcularSubtotal();
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdDetalleVersion() {
         return idDetalleVersion;
@@ -272,31 +240,20 @@ public class CotizacionDetalle {
         this.idCategoriaProducto = idCategoriaProducto;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Calcula el subtotal de la línea basado en cantidad, precio unitario y descuento.
-     * Fórmula: (cantidad * precioUnitario) - descuento
-     */
     public void calcularSubtotal() {
         if (cantidad != null && precioUnitario != null) {
             BigDecimal subtotal = precioUnitario.multiply(new BigDecimal(cantidad));
             if (descuento != null) {
                 subtotal = subtotal.subtract(descuento);
             }
-            // Asegurar que el subtotal no sea negativo
             if (subtotal.compareTo(BigDecimal.ZERO) < 0) {
                 subtotal = BigDecimal.ZERO;
             }
             this.subtotalLinea = subtotal.setScale(2, RoundingMode.HALF_UP);
             
-            // Calcular subtotal bruto (sin descuento)
             this.subtotalBruto = precioUnitario.multiply(new BigDecimal(cantidad))
                     .setScale(2, RoundingMode.HALF_UP);
             
-            // Calcular porcentaje de descuento
             if (this.subtotalBruto != null && this.subtotalBruto.compareTo(BigDecimal.ZERO) > 0) {
                 this.porcentajeDescuento = descuento != null ? 
                     descuento.multiply(new BigDecimal("100"))
@@ -311,11 +268,6 @@ public class CotizacionDetalle {
         }
     }
 
-    /**
-     * Calcula el precio unitario con IGV.
-     * 
-     * @param tasaIgv Tasa de IGV (ej: 18.00 para 18%)
-     */
     public void calcularPrecioConIgv(BigDecimal tasaIgv) {
         if (precioUnitario != null && tasaIgv != null) {
             BigDecimal igv = precioUnitario.multiply(tasaIgv)
@@ -326,12 +278,6 @@ public class CotizacionDetalle {
         }
     }
 
-    /**
-     * Calcula el total de la línea con IGV.
-     * 
-     * @param tasaIgv Tasa de IGV
-     * @return Total con IGV
-     */
     public BigDecimal getTotalConIgv(BigDecimal tasaIgv) {
         if (subtotalLinea == null || tasaIgv == null) {
             return BigDecimal.ZERO;
@@ -341,11 +287,6 @@ public class CotizacionDetalle {
         return subtotalLinea.add(igv);
     }
 
-    /**
-     * Aplica un descuento porcentual al precio unitario.
-     * 
-     * @param porcentajeDescuento Porcentaje de descuento (ej: 10.0 para 10%)
-     */
     public void aplicarDescuentoPorcentual(BigDecimal porcentajeDescuento) {
         if (porcentajeDescuento != null && porcentajeDescuento.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal descuentoCalculado = precioUnitario
@@ -356,179 +297,91 @@ public class CotizacionDetalle {
         }
     }
 
-    /**
-     * Verifica si el detalle tiene descuento aplicado.
-     * 
-     * @return true si tiene descuento, false en caso contrario
-     */
     public boolean tieneDescuento() {
         return descuento != null && descuento.compareTo(BigDecimal.ZERO) > 0;
     }
 
-    /**
-     * Verifica si el detalle es válido.
-     * 
-     * @return true si es válido, false en caso contrario
-     */
     public boolean esValido() {
         return idProducto != null && 
                cantidad != null && cantidad > 0 &&
                precioUnitario != null && precioUnitario.compareTo(BigDecimal.ZERO) >= 0;
     }
 
-    /**
-     * Verifica si el producto es de tipo Alquiler.
-     * 
-     * @return true si es Alquiler, false en caso contrario
-     */
     public boolean esAlquiler() {
         return "Alquiler".equals(this.tipoProducto);
     }
 
-    /**
-     * Verifica si el producto es de tipo Venta.
-     * 
-     * @return true si es Venta, false en caso contrario
-     */
     public boolean esVenta() {
         return "Venta".equals(this.tipoProducto);
     }
 
-    /**
-     * Verifica si el producto es de tipo Servicio.
-     * 
-     * @return true si es Servicio, false en caso contrario
-     */
     public boolean esServicio() {
         return "Servicio".equals(this.tipoProducto);
     }
 
-    /**
-     * Obtiene el subtotal de la línea formateado.
-     * 
-     * @return Subtotal formateado
-     */
     public String getSubtotalFormateado() {
         if (subtotalLinea == null) return "S/ 0.00";
         return "S/ " + subtotalLinea.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el precio unitario formateado.
-     * 
-     * @return Precio unitario formateado
-     */
     public String getPrecioUnitarioFormateado() {
         if (precioUnitario == null) return "S/ 0.00";
         return "S/ " + precioUnitario.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el descuento formateado.
-     * 
-     * @return Descuento formateado
-     */
     public String getDescuentoFormateado() {
         if (descuento == null) return "S/ 0.00";
         return "S/ " + descuento.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el total con IGV formateado.
-     * 
-     * @param tasaIgv Tasa de IGV
-     * @return Total con IGV formateado
-     */
     public String getTotalConIgvFormateado(BigDecimal tasaIgv) {
         BigDecimal total = getTotalConIgv(tasaIgv);
         return "S/ " + total.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el precio base formateado.
-     * 
-     * @return Precio base formateado
-     */
     public String getPrecioBaseFormateado() {
         if (precioBase == null) return "S/ 0.00";
         return "S/ " + precioBase.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el porcentaje de descuento formateado.
-     * 
-     * @return Porcentaje de descuento formateado
-     */
     public String getPorcentajeDescuentoFormateado() {
         if (porcentajeDescuento == null) return "0%";
         return porcentajeDescuento.setScale(0, RoundingMode.HALF_UP).toString() + "%";
     }
 
-    /**
-     * Obtiene el tipo de producto en formato legible.
-     * 
-     * @return Tipo de producto legible
-     */
     public String getTipoProductoLegible() {
         if (tipoProducto == null) return "No especificado";
         
-        switch (tipoProducto) {
-            case "Alquiler":
-                return "Alquiler";
-            case "Venta":
-                return "Venta";
-            case "Servicio":
-                return "Servicio";
-            default:
-                return tipoProducto;
-        }
+        return switch (tipoProducto) {
+            case "Alquiler" -> "Alquiler";
+            case "Venta" -> "Venta";
+            case "Servicio" -> "Servicio";
+            default -> tipoProducto;
+        };
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del tipo de producto.
-     * 
-     * @return Clase CSS
-     */
     public String getTipoProductoBadgeClass() {
         if (tipoProducto == null) return "badge-secondary";
         
-        switch (tipoProducto) {
-            case "Alquiler":
-                return "badge-alquiler";
-            case "Venta":
-                return "badge-venta";
-            case "Servicio":
-                return "badge-servicio";
-            default:
-                return "badge-secondary";
-        }
+        return switch (tipoProducto) {
+            case "Alquiler" -> "badge-alquiler";
+            case "Venta" -> "badge-venta";
+            case "Servicio" -> "badge-servicio";
+            default -> "badge-secondary";
+        };
     }
 
-    /**
-     * Obtiene el ícono para el tipo de producto.
-     * 
-     * @return Ícono CSS
-     */
     public String getTipoProductoIcono() {
         if (tipoProducto == null) return "ti ti-box";
         
-        switch (tipoProducto) {
-            case "Alquiler":
-                return "ti ti-calendar";
-            case "Venta":
-                return "ti ti-shopping-cart";
-            case "Servicio":
-                return "ti ti-tools";
-            default:
-                return "ti ti-box";
-        }
+        return switch (tipoProducto) {
+            case "Alquiler" -> "ti ti-calendar";
+            case "Venta" -> "ti ti-shopping-cart";
+            case "Servicio" -> "ti ti-tools";
+            default -> "ti ti-box";
+        };
     }
 
-    /**
-     * Obtiene el resumen del detalle.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append(cantidad).append("x ");
@@ -540,25 +393,10 @@ public class CotizacionDetalle {
         return sb.toString();
     }
 
-    /**
-     * Verifica si el producto está activo.
-     * 
-     * @return true si está activo, false en caso contrario
-     */
     public boolean isProductoActivo() {
-        // Este campo no está en la entidad, pero puede ser poblado desde el producto
-        return true; // Por defecto
+        return true; 
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -574,11 +412,6 @@ public class CotizacionDetalle {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -598,10 +431,6 @@ public class CotizacionDetalle {
         sb.append("}");
         return sb.toString();
     }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -630,18 +459,6 @@ public class CotizacionDetalle {
         return idDetalleVersion != null ? idDetalleVersion.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un detalle desde un producto.
-     * 
-     * @param idVersion ID de la versión
-     * @param producto Producto
-     * @param cantidad Cantidad solicitada
-     * @return Detalle de cotización
-     */
     public static CotizacionDetalle fromProducto(Integer idVersion, Producto producto, Integer cantidad) {
         if (producto == null) {
             return null;
@@ -654,7 +471,6 @@ public class CotizacionDetalle {
         detalle.setPrecioUnitario(producto.getPrecioBase());
         detalle.setDescuento(BigDecimal.ZERO);
         
-        // Poblar campos transient
         detalle.setNombreProducto(producto.getNombreItem());
         detalle.setDescripcionProducto(producto.getDescripcion());
         detalle.setTipoProducto(producto.getTipo());
@@ -665,15 +481,6 @@ public class CotizacionDetalle {
         return detalle;
     }
 
-    /**
-     * Crea un detalle desde un producto con precio negociado.
-     * 
-     * @param idVersion ID de la versión
-     * @param producto Producto
-     * @param cantidad Cantidad solicitada
-     * @param precioNegociado Precio negociado
-     * @return Detalle de cotización
-     */
     public static CotizacionDetalle fromProductoConPrecioNegociado(Integer idVersion, Producto producto,
                                                                   Integer cantidad, BigDecimal precioNegociado) {
         CotizacionDetalle detalle = fromProducto(idVersion, producto, cantidad);
@@ -684,15 +491,6 @@ public class CotizacionDetalle {
         return detalle;
     }
 
-    /**
-     * Crea un detalle desde un producto con descuento.
-     * 
-     * @param idVersion ID de la versión
-     * @param producto Producto
-     * @param cantidad Cantidad solicitada
-     * @param descuento Descuento aplicado
-     * @return Detalle de cotización
-     */
     public static CotizacionDetalle fromProductoConDescuento(Integer idVersion, Producto producto,
                                                             Integer cantidad, BigDecimal descuento) {
         CotizacionDetalle detalle = fromProducto(idVersion, producto, cantidad);
@@ -703,12 +501,7 @@ public class CotizacionDetalle {
         return detalle;
     }
 
-    /**
-     * Crea un detalle desde un DTO.
-     * 
-     * @param dto DTO del detalle
-     * @return Detalle de cotización
-     */
+
     public static CotizacionDetalle fromDTO(com.stamos.dto.CotizacionDetalleDTO dto) {
         if (dto == null) {
             return null;
@@ -724,7 +517,6 @@ public class CotizacionDetalle {
         detalle.setPrecioUnitario(dto.getPrecioUnitario());
         detalle.setDescuento(dto.getDescuento());
         
-        // Poblar campos transient
         detalle.setNombreProducto(dto.getNombreProducto());
         detalle.setDescripcionProducto(dto.getDescripcionProducto());
         detalle.setCategoriaProducto(dto.getCategoriaProducto());
@@ -735,12 +527,7 @@ public class CotizacionDetalle {
         detalle.calcularSubtotal();
         return detalle;
     }
-
-    /**
-     * Convierte el detalle a un DTO.
-     * 
-     * @return DTO del detalle
-     */
+    
     public com.stamos.dto.CotizacionDetalleDTO toDTO() {
         com.stamos.dto.CotizacionDetalleDTO dto = new com.stamos.dto.CotizacionDetalleDTO();
         dto.setIdDetalleVersion(this.idDetalleVersion);

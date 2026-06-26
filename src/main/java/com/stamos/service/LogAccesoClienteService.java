@@ -269,113 +269,80 @@ public class LogAccesoClienteService {
         if (tipoDispositivo == null) {
             return "ti ti-device-laptop";
         }
-        switch (tipoDispositivo) {
-            case "Móvil":
-                return "ti ti-device-mobile";
-            case "Tablet":
-                return "ti ti-device-tablet";
-            case "Escritorio":
-                return "ti ti-device-laptop";
-            default:
-                return "ti ti-device-laptop";
-        }
+        return switch (tipoDispositivo) {
+            case "Móvil" -> "ti ti-device-mobile";
+            case "Tablet" -> "ti ti-device-tablet";
+            case "Escritorio" -> "ti ti-device-laptop";
+            default -> "ti ti-device-laptop";
+        };
     }
 
     public String getDispositivoColor(String tipoDispositivo) {
         if (tipoDispositivo == null) {
             return "#6B7280";
         }
-        switch (tipoDispositivo) {
-            case "Móvil":
-                return "#3B82F6";
-            case "Tablet":
-                return "#8B5CF6";
-            case "Escritorio":
-                return "#10B981";
-            default:
-                return "#6B7280";
-        }
+        return switch (tipoDispositivo) {
+            case "Móvil" -> "#3B82F6";
+            case "Tablet" -> "#8B5CF6";
+            case "Escritorio" -> "#10B981";
+            default -> "#6B7280";
+        };
     }
 
     public String getNavegadorIcono(String navegador) {
         if (navegador == null) {
             return "ti ti-world";
         }
-        switch (navegador) {
-            case "Chrome":
-                return "ti ti-brand-chrome";
-            case "Firefox":
-                return "ti ti-brand-firefox";
-            case "Safari":
-                return "ti ti-brand-safari";
-            case "Edge":
-                return "ti ti-brand-edge";
-            case "Opera":
-                return "ti ti-brand-opera";
-            case "Brave":
-                return "ti ti-brand-brave";
-            default:
-                return "ti ti-world";
-        }
+        return switch (navegador) {
+            case "Chrome" -> "ti ti-brand-chrome";
+            case "Firefox" -> "ti ti-brand-firefox";
+            case "Safari" -> "ti ti-brand-safari";
+            case "Edge" -> "ti ti-brand-edge";
+            case "Opera" -> "ti ti-brand-opera";
+            case "Brave" -> "ti ti-brand-brave";
+            default -> "ti ti-world";
+        };
     }
 
     public String getNavegadorColor(String navegador) {
         if (navegador == null) {
             return "#6B7280";
         }
-        switch (navegador) {
-            case "Chrome":
-                return "#4285F4";
-            case "Firefox":
-                return "#FF7139";
-            case "Safari":
-                return "#1A74E6";
-            case "Edge":
-                return "#0078D7";
-            case "Opera":
-                return "#FF1B2D";
-            case "Brave":
-                return "#FB542B";
-            default:
-                return "#6B7280";
-        }
+        return switch (navegador) {
+            case "Chrome" -> "#4285F4";
+            case "Firefox" -> "#FF7139";
+            case "Safari" -> "#1A74E6";
+            case "Edge" -> "#0078D7";
+            case "Opera" -> "#FF1B2D";
+            case "Brave" -> "#FB542B";
+            default -> "#6B7280";
+        };
     }
 
     public String getDispositivoBadgeClass(String tipoDispositivo) {
         if (tipoDispositivo == null) {
             return "badge-secondary";
         }
-        switch (tipoDispositivo) {
-            case "Móvil":
-                return "badge-info";
-            case "Tablet":
-                return "badge-warning";
-            case "Escritorio":
-                return "badge-success";
-            default:
-                return "badge-secondary";
-        }
+        return switch (tipoDispositivo) {
+            case "Móvil" -> "badge-info";
+            case "Tablet" -> "badge-warning";
+            case "Escritorio" -> "badge-success";
+            default -> "badge-secondary";
+        };
     }
 
     public String getNavegadorBadgeClass(String navegador) {
         if (navegador == null) {
             return "badge-secondary";
         }
-        switch (navegador) {
-            case "Chrome":
-                return "badge-primary";
-            case "Firefox":
-                return "badge-danger";
-            case "Safari":
-                return "badge-info";
-            case "Edge":
-                return "badge-primary";
-            case "Opera":
-                return "badge-danger";
-            case "Brave":
-                return "badge-warning";
-            default:
-                return "badge-secondary";
-        }
+        return switch (navegador) {
+            case "Chrome" -> "badge-primary";
+            case "Firefox" -> "badge-danger";
+            case "Safari" -> "badge-info";
+            case "Edge" -> "badge-primary";
+            case "Opera" -> "badge-danger";
+            case "Brave" -> "badge-warning";
+            default -> "badge-secondary";
+        };
     }
 }

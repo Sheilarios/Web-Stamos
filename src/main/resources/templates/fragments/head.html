@@ -1,0 +1,65 @@
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title th:text="${#strings.defaultString(titulo, 'STAMOS · Soluciones en Stands y Mobiliario Ferial')}">STAMOS · Soluciones en Stands y Mobiliario Ferial</title>
+
+    <meta name="description" th:content="${#strings.defaultString(descripcion, 'Empresa líder en diseño, producción y alquiler de mobiliario ferial...')}">
+    <meta name="keywords" th:content="${#strings.defaultString(keywords, 'stands, mobiliario ferial, eventos corporativos...')}">
+    <meta name="author" th:content="${#strings.defaultString(empresa, 'STAMOS LINARES S.R.L.')}">
+
+    <meta property="og:title" th:content="${#strings.defaultString(ogTitle, #strings.defaultString(titulo, 'STAMOS · Soluciones en Stands y Mobiliario Ferial'))}">
+    <meta property="og:description" th:content="${#strings.defaultString(ogDescription, #strings.defaultString(descripcion, 'Empresa líder en diseño...'))}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" th:content="${#strings.defaultString(ogUrl, 'https://stamosl.com')}">
+    <meta property="og:image" th:content="${#strings.defaultString(ogImage, 'https://stamosl.com/img/og-image.jpg')}">
+    <meta property="og:site_name" th:content="${#strings.defaultString(empresa, 'STAMOS LINARES S.R.L.')}">
+    <meta property="og:locale" content="es_ES">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" th:content="${#strings.defaultString(twitterTitle, #strings.defaultString(titulo, 'STAMOS · Soluciones en Stands y Mobiliario Ferial'))}">
+    <meta name="twitter:description" th:content="${#strings.defaultString(twitterDescription, #strings.defaultString(descripcion, 'Empresa líder en diseño...'))}">
+    <meta name="twitter:image" th:content="${#strings.defaultString(twitterImage, 'https://stamosl.com/img/og-image.jpg')}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon-16x16.png}">
+    <link rel="manifest" th:href="@{/site.webmanifest}">
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+    <!-- Estilos globales -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', 'Segoe UI', Roboto, sans-serif; background: #FFFFFF; color: #1A1F2E; -webkit-font-smoothing: antialiased; }
+        ::selection { background: #F5C400; color: #000000; }
+        ::-moz-selection { background: #F5C400; color: #000000; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1A1A1A; }
+        ::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+        .text-stamos-yellow { color: #F5C400; }
+        .bg-stamos-black { background: #000000; }
+        .badge-success { background: #E8FEF0; color: #059669; border: 1px solid #A8E6C4; }
+        .badge-warning { background: #FFFBE6; color: #9A7500; border: 1px solid #E0C84A; }
+        .badge-danger { background: #FFF5F5; color: #C0392B; border: 1px solid #FFCDCD; }
+        .badge-info { background: #E8F4FF; color: #1565C0; border: 1px solid #B8D4FE; }
+        .badge-secondary { background: #F0F0F0; color: #5A5A5A; border: 1px solid #E0E0E0; }
+        .badge-purple { background: #F3E8FE; color: #7C3AED; border: 1px solid #D8C4F8; }
+    </style>
+
+    <script>
+        console.log('STAMOS LINARES S.R.L.');
+        console.log('Bienvenido al sistema de gestión de STAMOS');
+    </script>
+</head>

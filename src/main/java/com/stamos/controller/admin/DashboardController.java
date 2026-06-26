@@ -1,6 +1,9 @@
 package com.stamos.controller.admin;
 
-import com.stamos.model.*;
+import com.stamos.controller.BaseController;
+import com.stamos.dto.CotizacionDTO;
+import com.stamos.dto.ProyectoDTO;
+import com.stamos.model.Usuario;
 import com.stamos.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -21,7 +23,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin")
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'DISEÑADOR', 'PRODUCCION', 'SOPORTE_TECNICO', 'ADMINISTRADOR')")
-public class DashboardController {
+public class DashboardController extends BaseController {
 
     @Autowired
     private ProyectoService proyectoService;
@@ -41,25 +43,17 @@ public class DashboardController {
     @Autowired
     private UsuarioService usuarioService;
 
-
-
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        System.out.println("=== Dashboard Admin GET ===");
-        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
-            System.out.println("Usuario no autenticado, redirigiendo a login");
             return "redirect:/login";
         }
 
         try {
             String email = auth.getName();
-            System.out.println("Usuario autenticado: " + email);
-            
             Usuario usuarioActual = usuarioService.findByEmail(email);
             if (usuarioActual == null) {
-                System.out.println("Usuario no encontrado: " + email);
                 return "redirect:/login";
             }
             
@@ -67,7 +61,6 @@ public class DashboardController {
             if (rol == null) {
                 rol = "Administrador";
             }
-            System.out.println("Rol del usuario: " + rol);
             
             model.addAttribute("usuario", usuarioActual);
             model.addAttribute("rol", rol);
@@ -77,48 +70,36 @@ public class DashboardController {
             model.addAttribute("fechaActual", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
             model.addAttribute("titulo", "Dashboard - " + rol);
 
-            long totalClientes = 0;
-            long totalProyectos = 0;
-            long proyectosActivos = 0;
-            long cotizacionesPendientes = 0;
-            long totalEquipos = 0;
-            long pagosPendientesValidacion = 0;
+            long totalClientes = clienteService.count();
+            long totalProyectos = proyectoService.count();
+            long proyectosActivos = proyectoService.countByEstadoNotIn(Arrays.asList("Entregado", "Anulado"));
+            long cotizacionesPendientes = cotizacionService.countByEstado("Pendiente");
+            long totalEquipos = inventarioService.count();
+            long pagosPendientesValidacion = pagoService.countByEstado("Pendiente");
 
-            try {
-                totalClientes = clienteService.count();
-            } catch (Exception e) {
-                System.err.println("Error al contar clientes: " + e.getMessage());
+            List<CotizacionDTO> ultimasCotizaciones = new ArrayList<>();
+            List<com.stamos.model.Cotizacion> cotizaciones = cotizacionService.findTopN(5);
+            for (com.stamos.model.Cotizacion cotizacion : cotizaciones) {
+                CotizacionDTO dto = new CotizacionDTO();
+                dto.setIdCotizacion(cotizacion.getIdCotizacion());
+                dto.setNombreCliente(cotizacion.getNombreCliente());
+                dto.setTotal(cotizacion.getTotal());
+                dto.setEstado(cotizacion.getEstado());
+                dto.setFechaEmision(cotizacion.getFechaEmision());
+                ultimasCotizaciones.add(dto);
             }
 
-            try {
-                totalProyectos = proyectoService.count();
-            } catch (Exception e) {
-                System.err.println("Error al contar proyectos: " + e.getMessage());
-            }
-
-            try {
-                proyectosActivos = proyectoService.countByEstadoNotIn(Arrays.asList("Entregado", "Anulado"));
-            } catch (Exception e) {
-                System.err.println("Error al contar proyectos activos: " + e.getMessage());
-                proyectosActivos = totalProyectos;
-            }
-
-            try {
-                cotizacionesPendientes = cotizacionService.countByEstado("Pendiente");
-            } catch (Exception e) {
-                System.err.println("Error al contar cotizaciones pendientes: " + e.getMessage());
-            }
-
-            try {
-                totalEquipos = inventarioService.count();
-            } catch (Exception e) {
-                System.err.println("Error al contar inventario: " + e.getMessage());
-            }
-
-            try {
-                pagosPendientesValidacion = pagoService.countByEstado("Pendiente");
-            } catch (Exception e) {
-                System.err.println("Error al contar pagos pendientes: " + e.getMessage());
+            List<ProyectoDTO> ultimosProyectos = new ArrayList<>();
+            List<com.stamos.model.Proyecto> proyectos = proyectoService.findTop10ByOrderByFechaInicioDesc();
+            for (com.stamos.model.Proyecto proyecto : proyectos) {
+                ProyectoDTO dto = new ProyectoDTO();
+                dto.setIdProyecto(proyecto.getIdProyecto());
+                dto.setNombreProyecto(proyecto.getNombreProyecto());
+                dto.setNombreCliente(proyecto.getNombreCliente());
+                dto.setEstado(proyecto.getEstado());
+                dto.setMontoTotal(proyecto.getMontoTotal());
+                dto.setFechaInicio(proyecto.getFechaInicio());
+                ultimosProyectos.add(dto);
             }
 
             model.addAttribute("username", usuarioActual.getNombreCompleto() != null ? 
@@ -129,23 +110,24 @@ public class DashboardController {
             model.addAttribute("cotizacionesPendientes", cotizacionesPendientes);
             model.addAttribute("totalEquipos", totalEquipos);
             model.addAttribute("pagosPendientesValidacion", pagosPendientesValidacion);
-            model.addAttribute("ultimasCotizaciones", new ArrayList<>());
-            model.addAttribute("ultimosProyectos", new ArrayList<>());
+            model.addAttribute("ultimasCotizaciones", ultimasCotizaciones);
+            model.addAttribute("ultimosProyectos", ultimosProyectos);
+            addCommonAttributes(model);
 
             return "admin/dashboard";
 
         } catch (Exception e) {
-            System.err.println("Error en dashboard admin: " + e.getMessage());
             model.addAttribute("error", "Error al cargar el dashboard: " + e.getMessage());
             model.addAttribute("username", "Administrador");
-            model.addAttribute("totalClientes", 0);
-            model.addAttribute("totalProyectos", 0);
-            model.addAttribute("proyectosActivos", 0);
-            model.addAttribute("cotizacionesPendientes", 0);
-            model.addAttribute("totalEquipos", 0);
-            model.addAttribute("pagosPendientesValidacion", 0);
+            model.addAttribute("totalClientes", 0L);
+            model.addAttribute("totalProyectos", 0L);
+            model.addAttribute("proyectosActivos", 0L);
+            model.addAttribute("cotizacionesPendientes", 0L);
+            model.addAttribute("totalEquipos", 0L);
+            model.addAttribute("pagosPendientesValidacion", 0L);
             model.addAttribute("ultimasCotizaciones", new ArrayList<>());
             model.addAttribute("ultimosProyectos", new ArrayList<>());
+            addCommonAttributes(model);
             return "admin/dashboard";
         }
     }
@@ -154,33 +136,6 @@ public class DashboardController {
     public String redirectToDashboard() {
         return "redirect:/admin/dashboard";
     }
-
-
-
-
-
-    private Map<String, Long> getProyectosPorMes(int meses) {
-        Map<String, Long> resultado = new LinkedHashMap<>();
-        LocalDate hoy = LocalDate.now();
-        
-        for (int i = meses - 1; i >= 0; i--) {
-            LocalDate fecha = hoy.minusMonths(i);
-            String mes = fecha.getMonth().toString().substring(0, 3) + " " + fecha.getYear();
-            long cantidad = 0;
-            try {
-                cantidad = proyectoService.countByFechaInicioMonthAndYear(
-                    fecha.getMonthValue(), fecha.getYear()
-                );
-            } catch (Exception e) {
-                System.err.println("Error al contar proyectos por mes: " + e.getMessage());
-                cantidad = 0;
-            }
-            resultado.put(mes, cantidad);
-        }
-        
-        return resultado;
-    }
-
 
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
@@ -195,6 +150,7 @@ public class DashboardController {
         };
     }
 
+    @Override
     public String getEstadoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";
         return switch (estado) {
@@ -208,6 +164,7 @@ public class DashboardController {
         };
     }
 
+    @Override
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, RoundingMode.HALF_UP).toString();

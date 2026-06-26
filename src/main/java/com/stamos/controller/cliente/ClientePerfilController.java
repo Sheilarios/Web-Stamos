@@ -1,5 +1,6 @@
 package com.stamos.controller.cliente;
 
+import com.stamos.controller.BaseController;
 import com.stamos.model.Cliente;
 import com.stamos.model.Usuario;
 import com.stamos.service.ClienteService;
@@ -23,7 +24,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/cliente")
-public class ClientePerfilController {
+public class ClientePerfilController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
@@ -92,15 +93,16 @@ public class ClientePerfilController {
             model.addAttribute("totalPagado", totalPagado);
             model.addAttribute("saldoPendiente", saldoPendiente);
             model.addAttribute("ultimoAcceso", ultimoAcceso);
+            addCommonAttributes(model);
 
             return "cliente/perfil";
 
         } catch (RuntimeException e) {
             model.addAttribute("error", "Error al cargar el perfil: " + e.getMessage());
+            addCommonAttributes(model);
             return "cliente/dashboard";
         }
     }
-
 
     @PostMapping("/perfil/actualizar")
     public String actualizarPerfil(@Valid @ModelAttribute("cliente") Cliente cliente,
@@ -294,7 +296,7 @@ public class ClientePerfilController {
 
             Cliente clienteExistente = clienteService.findByRuc(ruc);
             if (clienteExistente == null) {
-                return true; // RUC no está en uso
+                return true;
             }
 
             return clienteExistente.getIdCliente().equals(cliente.getIdCliente());
@@ -369,38 +371,29 @@ public class ClientePerfilController {
 
             return estadisticas;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             EstadisticasCliente estadisticas = new EstadisticasCliente();
             estadisticas.setError(e.getMessage());
             return estadisticas;
         }
     }
 
-
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
-        
-        switch (estado) {
-            case "Activo":
-                return "Activo";
-            case "Deshabilitado":
-                return "Deshabilitado";
-            default:
-                return estado;
-        }
+        return switch (estado) {
+            case "Activo" -> "Activo";
+            case "Deshabilitado" -> "Deshabilitado";
+            default -> estado;
+        };
     }
 
     public String getEstadoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";
-        
-        switch (estado) {
-            case "Activo":
-                return "status-validado";
-            case "Deshabilitado":
-                return "status-rechazado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (estado) {
+            case "Activo" -> "status-validado";
+            case "Deshabilitado" -> "status-rechazado";
+            default -> "status-pendiente";
+        };
     }
 
     public String formatearTelefono(String telefono) {
@@ -429,9 +422,9 @@ public class ClientePerfilController {
 
     public String getSaldoColor(BigDecimal saldoPendiente) {
         if (saldoPendiente == null || saldoPendiente.compareTo(BigDecimal.ZERO) == 0) {
-            return "#10B981"; // Verde
+            return "#10B981";
         }
-        return "#EF4444"; // Rojo
+        return "#EF4444";
     }
 
     public String getSaldoMensaje(BigDecimal saldoPendiente) {
@@ -443,7 +436,6 @@ public class ClientePerfilController {
 
     public String getTipoPersonaLegible(String tipoPersona) {
         if (tipoPersona == null) return "No especificado";
-        
         return switch (tipoPersona) {
             case "Natural" -> "Persona Natural";
             case "Juridica" -> "Persona Jurídica";

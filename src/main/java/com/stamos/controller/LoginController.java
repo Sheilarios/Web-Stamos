@@ -3,7 +3,6 @@ package com.stamos.controller;
 import com.stamos.model.Usuario;
 import com.stamos.service.ClienteService;
 import com.stamos.service.EmailService;
-import com.stamos.service.LogAccesoClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,18 +17,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
-public class LoginController {
+public class LoginController extends BaseController {
     
     @Autowired
     private ClienteService clienteService;
     
     @Autowired
     private EmailService emailService;
+
+    private static final Map<String, String> ROLE_REDIRECT_MAP = new HashMap<>();
     
-    @Autowired
-    private LogAccesoClienteService logAccesoClienteService;
+    static {
+        ROLE_REDIRECT_MAP.put("ADMINISTRADOR", "/admin/dashboard");
+        ROLE_REDIRECT_MAP.put("VENDEDOR", "/admin/dashboard");
+        ROLE_REDIRECT_MAP.put("DISEÑADOR", "/admin/dashboard");
+        ROLE_REDIRECT_MAP.put("PRODUCCION", "/admin/dashboard");
+        ROLE_REDIRECT_MAP.put("SOPORTE_TECNICO", "/admin/dashboard");
+        ROLE_REDIRECT_MAP.put("CLIENTE", "/cliente/dashboard");
+    }
 
     @GetMapping("/login")
     public String mostrarLogin(@RequestParam(value = "error", required = false) String error,
@@ -67,51 +76,28 @@ public class LoginController {
 
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
         
-        boolean isAdmin = authorities.stream().anyMatch(a -> 
-            a.getAuthority().equals("ROLE_ADMIN") ||
-            a.getAuthority().equals("ROLE_ADMINISTRADOR") ||
-            a.getAuthority().equals("ROLE_Administrador") ||
-            a.getAuthority().equals("Administrador") ||
-            a.getAuthority().toUpperCase().contains("ADMIN"));
-        
-        boolean isVendedor = authorities.stream().anyMatch(a -> 
-            a.getAuthority().equals("ROLE_VENDEDOR") ||
-            a.getAuthority().equals("ROLE_Vendedor") ||
-            a.getAuthority().equals("Vendedor") ||
-            a.getAuthority().toUpperCase().contains("VENDEDOR"));
-        
-        boolean isDisenador = authorities.stream().anyMatch(a -> 
-            a.getAuthority().equals("ROLE_DISEÑADOR") ||
-            a.getAuthority().equals("ROLE_Diseñador") ||
-            a.getAuthority().equals("Diseñador") ||
-            a.getAuthority().toUpperCase().contains("DISEÑADOR"));
-        
-        boolean isProduccion = authorities.stream().anyMatch(a -> 
-            a.getAuthority().equals("ROLE_PRODUCCION") ||
-            a.getAuthority().equals("ROLE_Produccion") ||
-            a.getAuthority().equals("Produccion") ||
-            a.getAuthority().toUpperCase().contains("PRODUCCION"));
-        
-        boolean isSoporte = authorities.stream().anyMatch(a -> 
-            a.getAuthority().equals("ROLE_SOPORTE_TECNICO") ||
-            a.getAuthority().equals("ROLE_Soporte_Tecnico") ||
-            a.getAuthority().equals("SoporteTecnico") ||
-            a.getAuthority().toUpperCase().contains("SOPORTE"));
-        
-        boolean isCliente = authorities.stream().anyMatch(a -> 
-            a.getAuthority().equals("ROLE_CLIENTE") ||
-            a.getAuthority().equals("ROLE_Cliente") ||
-            a.getAuthority().equals("Cliente") ||
-            a.getAuthority().toUpperCase().contains("CLIENTE"));
-
-        if (isAdmin || isVendedor || isDisenador || isProduccion || isSoporte) {
-            return "redirect:/admin/dashboard";
-        } else if (isCliente) {
-            return "redirect:/cliente/dashboard";
+        for (GrantedAuthority authority : authorities) {
+            String role = authority.getAuthority();
+            String roleName = role.startsWith("ROLE_") ? role.substring(5) : role;
+            
+            if (ROLE_REDIRECT_MAP.containsKey(roleName)) {
+                return "redirect:" + ROLE_REDIRECT_MAP.get(roleName);
+            }
+            
+            if (ROLE_REDIRECT_MAP.containsKey(role)) {
+                return "redirect:" + ROLE_REDIRECT_MAP.get(role);
+            }
         }
 
         SecurityContextHolder.clearContext();
         return "redirect:/login?error=true";
+    }
+
+    private boolean hasRole(Authentication auth, String roleName) {
+        if (auth == null) return false;
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_" + roleName) || 
+                              a.getAuthority().equals(roleName));
     }
 
     @GetMapping("/login-success")
@@ -304,5 +290,33 @@ public class LoginController {
         model.addAttribute("mensaje", "Ha ocurrido un error inesperado.");
         model.addAttribute("errorClass", "alert-danger");
         return "public/error";
+    }
+
+    public boolean isAdmin(Authentication auth) {
+        return hasRole(auth, "ADMINISTRADOR");
+    }
+
+    public boolean isVendedor(Authentication auth) {
+        return hasRole(auth, "VENDEDOR");
+    }
+
+    public boolean isDisenador(Authentication auth) {
+        return hasRole(auth, "DISEÑADOR");
+    }
+
+    public boolean isProduccion(Authentication auth) {
+        return hasRole(auth, "PRODUCCION");
+    }
+
+    public boolean isSoporteTecnico(Authentication auth) {
+        return hasRole(auth, "SOPORTE_TECNICO");
+    }
+
+    public boolean isCliente(Authentication auth) {
+        return hasRole(auth, "CLIENTE");
+    }
+
+    public boolean isRolInterno(Authentication auth) {
+        return !isCliente(auth);
     }
 }

@@ -2,7 +2,6 @@ package com.stamos.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
@@ -12,27 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entidad Cotizacion.
- * 
- * <p>Esta entidad representa las cotizaciones generadas para los clientes
- * de STAMOS S.L., incluyendo productos, servicios, precios y estados.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-04: Toda cotización debe incluir al menos un producto o servicio</li>
- *   <li>RN-05: Solo personal autorizado puede emitir, modificar o anular cotizaciones</li>
- *   <li>RN-06: Cotización aprobada no puede modificarse, se crea nueva versión</li>
- *   <li>RN-20: Una cotización aprobada genera exactamente un proyecto</li>
- *   <li>RF-05: Crear cotizaciones con al menos un ítem</li>
- *   <li>RF-08: Registrar versiones de cotizaciones modificadas</li>
- *   <li>RF-09: Bloquear modificación de cotizaciones aprobadas</li>
- *   <li>RF-10: Generar proyecto automáticamente al aprobar cotización</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "Cotizacion",
        indexes = {
@@ -43,10 +21,6 @@ import java.util.List;
            @Index(name = "idx_cotizacion_validez", columnList = "fecha_validez")
        })
 public class Cotizacion {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,8 +42,7 @@ public class Cotizacion {
     private LocalDate fechaValidez;
 
     @Column(name = "estado", nullable = false)
-    private String estado; // 'Pendiente', 'Aprobada', 'Anulada'
-
+    private String estado; 
     @Column(name = "version_actual", nullable = false)
     private Integer versionActual = 1;
 
@@ -79,10 +52,6 @@ public class Cotizacion {
 
     @Column(name = "fecha_actualizacion", nullable = false)
     private LocalDateTime fechaActualizacion;
-
-    // ============================================
-    // CAMPOS DE AUDITORÍA
-    // ============================================
 
     @Column(name = "fecha_aprobacion")
     private LocalDateTime fechaAprobacion;
@@ -95,10 +64,6 @@ public class Cotizacion {
 
     @Column(name = "id_usuario_anulacion")
     private Integer idUsuarioAnulacion;
-
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
 
     @Transient
     private String nombreCliente;
@@ -142,10 +107,6 @@ public class Cotizacion {
     @Transient
     private Integer idProyectoAsociado;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public Cotizacion() {
         this.estado = "Pendiente";
         this.versionActual = 1;
@@ -168,10 +129,6 @@ public class Cotizacion {
         this(idCliente, idUsuarioVendedor);
         this.fechaValidez = fechaValidez;
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdCotizacion() {
         return idCotizacion;
@@ -389,42 +346,18 @@ public class Cotizacion {
         this.idProyectoAsociado = idProyectoAsociado;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Verifica si la cotización está pendiente.
-     * 
-     * @return true si está pendiente, false en caso contrario
-     */
     public boolean isPendiente() {
         return "Pendiente".equals(this.estado);
     }
 
-    /**
-     * Verifica si la cotización está aprobada.
-     * 
-     * @return true si está aprobada, false en caso contrario
-     */
     public boolean isAprobada() {
         return "Aprobada".equals(this.estado);
     }
 
-    /**
-     * Verifica si la cotización está anulada.
-     * 
-     * @return true si está anulada, false en caso contrario
-     */
     public boolean isAnulada() {
         return "Anulada".equals(this.estado);
     }
 
-    /**
-     * Verifica si la cotización está vencida.
-     * 
-     * @return true si está vencida, false en caso contrario
-     */
     public boolean isVencida() {
         if (fechaValidez == null) {
             return false;
@@ -432,56 +365,26 @@ public class Cotizacion {
         return LocalDate.now().isAfter(fechaValidez);
     }
 
-    /**
-     * Verifica si la cotización puede ser editada.
-     * 
-     * @return true si se puede editar, false en caso contrario
-     */
     public boolean puedeEditar() {
         return isPendiente();
     }
 
-    /**
-     * Verifica si la cotización puede ser aprobada.
-     * 
-     * @return true si se puede aprobar, false en caso contrario
-     */
     public boolean puedeAprobar() {
         return isPendiente() && !isVencida() && tieneDetalles();
     }
 
-    /**
-     * Verifica si la cotización puede ser anulada.
-     * 
-     * @return true si se puede anular, false en caso contrario
-     */
     public boolean puedeAnular() {
         return isPendiente();
     }
 
-    /**
-     * Verifica si la cotización tiene detalles.
-     * 
-     * @return true si tiene detalles, false en caso contrario
-     */
     public boolean tieneDetalles() {
         return detalles != null && !detalles.isEmpty();
     }
 
-    /**
-     * Verifica si la cotización tiene observaciones.
-     * 
-     * @return true si tiene observaciones, false en caso contrario
-     */
     public boolean tieneObservaciones() {
         return observaciones != null && !observaciones.trim().isEmpty();
     }
 
-    /**
-     * Aprueba la cotización.
-     * 
-     * @param idUsuario ID del usuario que aprueba
-     */
     public void aprobar(Integer idUsuario) {
         this.estado = "Aprobada";
         this.fechaAprobacion = LocalDateTime.now();
@@ -489,11 +392,6 @@ public class Cotizacion {
         this.fechaActualizacion = LocalDateTime.now();
     }
 
-    /**
-     * Anula la cotización.
-     * 
-     * @param idUsuario ID del usuario que anula
-     */
     public void anular(Integer idUsuario) {
         this.estado = "Anulada";
         this.fechaAnulacion = LocalDateTime.now();
@@ -501,17 +399,11 @@ public class Cotizacion {
         this.fechaActualizacion = LocalDateTime.now();
     }
 
-    /**
-     * Incrementa la versión de la cotización.
-     */
     public void incrementarVersion() {
         this.versionActual++;
         this.fechaActualizacion = LocalDateTime.now();
     }
 
-    /**
-     * Recalcula subtotal, IGV y total basado en los detalles.
-     */
     public void recalcularTotales() {
         if (detalles == null || detalles.isEmpty()) {
             this.subtotal = BigDecimal.ZERO;
@@ -537,11 +429,6 @@ public class Cotizacion {
         this.cantidadItems = detalles.size();
     }
 
-    /**
-     * Agrega un detalle a la cotización y recalcula totales.
-     * 
-     * @param detalle Detalle a agregar
-     */
     public void agregarDetalle(CotizacionDetalle detalle) {
         if (detalle != null) {
             this.detalles.add(detalle);
@@ -549,11 +436,6 @@ public class Cotizacion {
         }
     }
 
-    /**
-     * Elimina un detalle de la cotización y recalcula totales.
-     * 
-     * @param index Índice del detalle a eliminar
-     */
     public void eliminarDetalle(int index) {
         if (index >= 0 && index < this.detalles.size()) {
             this.detalles.remove(index);
@@ -561,91 +443,50 @@ public class Cotizacion {
         }
     }
 
-    /**
-     * Obtiene el estado en formato legible.
-     * 
-     * @return Estado legible
-     */
     public String getEstadoLegible() {
         if (estado == null) return "Sin estado";
         
-        switch (estado) {
-            case "Pendiente":
-                return "Pendiente";
-            case "Aprobada":
-                return "Aprobada";
-            case "Anulada":
-                return "Anulada";
-            default:
-                return estado;
-        }
+        return switch (estado) {
+            case "Pendiente" -> "Pendiente";
+            case "Aprobada" -> "Aprobada";
+            case "Anulada" -> "Anulada";
+            default -> estado;
+        };
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del estado.
-     * 
-     * @return Clase CSS
-     */
     public String getEstadoBadgeClass() {
         if (estado == null) return "status-pendiente";
         
-        switch (estado) {
-            case "Pendiente":
-                return "status-pendiente";
-            case "Aprobada":
-                return "status-validado";
-            case "Anulada":
-                return "status-rechazado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (estado) {
+            case "Pendiente" -> "status-pendiente";
+            case "Aprobada" -> "status-validado";
+            case "Anulada" -> "status-rechazado";
+            default -> "status-pendiente";
+        };
     }
 
-    /**
-     * Obtiene el ícono para el estado.
-     * 
-     * @return Ícono CSS
-     */
     public String getEstadoIcono() {
         if (estado == null) return "ti ti-circle";
         
-        switch (estado) {
-            case "Pendiente":
-                return "ti ti-clock";
-            case "Aprobada":
-                return "ti ti-check-circle";
-            case "Anulada":
-                return "ti ti-x-circle";
-            default:
-                return "ti ti-circle";
-        }
+        return switch (estado) {
+            case "Pendiente" -> "ti ti-clock";
+            case "Aprobada" -> "ti ti-check-circle";
+            case "Anulada" -> "ti ti-x-circle";
+            default -> "ti ti-circle";
+        };
     }
 
-    /**
-     * Obtiene el color para el estado.
-     * 
-     * @return Color en hexadecimal
-     */
     public String getEstadoColor() {
         if (estado == null) return "#6B7280";
         
-        switch (estado) {
-            case "Pendiente":
-                return "#F59E0B";
-            case "Aprobada":
-                return "#10B981";
-            case "Anulada":
-                return "#EF4444";
-            default:
-                return "#6B7280";
-        }
+        return switch (estado) {
+            case "Pendiente" -> "#F59E0B";
+            case "Aprobada" -> "#10B981";
+            case "Anulada" -> "#EF4444";
+            default -> "#6B7280";
+        };
     }
 
-    /**
-     * Obtiene el código de la cotización en formato legible.
-     * 
-     * @return Código de cotización
-     */
     public String getCodigoCotizacion() {
         if (idCotizacion == null) {
             return "COT-00000";
@@ -653,105 +494,51 @@ public class Cotizacion {
         return "COT-" + String.format("%05d", idCotizacion);
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene la fecha de emisión formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaEmisionFormateada() {
         if (fechaEmision == null) return "-";
         return fechaEmision.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de emisión formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaEmisionSoloFecha() {
         if (fechaEmision == null) return "-";
         return fechaEmision.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la fecha de validez formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaValidezFormateada() {
         if (fechaValidez == null) return "-";
         return fechaValidez.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la fecha de actualización formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaActualizacionFormateada() {
         if (fechaActualizacion == null) return "-";
         return fechaActualizacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de aprobación formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaAprobacionFormateada() {
         if (fechaAprobacion == null) return "-";
         return fechaAprobacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de anulación formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaAnulacionFormateada() {
         if (fechaAnulacion == null) return "-";
         return fechaAnulacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene el subtotal formateado.
-     * 
-     * @return Subtotal formateado
-     */
     public String getSubtotalFormateado() {
         if (subtotal == null) return "S/ 0.00";
         return "S/ " + subtotal.setScale(2, java.math.RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el IGV formateado.
-     * 
-     * @return IGV formateado
-     */
     public String getIgvFormateado() {
         if (igv == null) return "S/ 0.00";
         return "S/ " + igv.setScale(2, java.math.RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el total formateado.
-     * 
-     * @return Total formateado
-     */
     public String getTotalFormateado() {
         if (total == null) return "S/ 0.00";
         return "S/ " + total.setScale(2, java.math.RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el vendedor en formato legible.
-     * 
-     * @return Vendedor legible
-     */
     public String getVendedorLegible() {
         if (nombreVendedor != null && !nombreVendedor.isEmpty()) {
             return nombreVendedor;
@@ -762,11 +549,6 @@ public class Cotizacion {
         return "Vendedor ID: " + idUsuarioVendedor;
     }
 
-    /**
-     * Obtiene el cliente en formato legible.
-     * 
-     * @return Cliente legible
-     */
     public String getClienteLegible() {
         if (nombreCliente != null && !nombreCliente.isEmpty()) {
             if (rucCliente != null && !rucCliente.isEmpty()) {
@@ -777,11 +559,6 @@ public class Cotizacion {
         return "Cliente ID: " + idCliente;
     }
 
-    /**
-     * Obtiene el resumen de la cotización.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append(getCodigoCotizacion());
@@ -791,15 +568,6 @@ public class Cotizacion {
         return sb.toString();
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -812,10 +580,6 @@ public class Cotizacion {
         sb.append("}");
         return sb.toString();
     }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {

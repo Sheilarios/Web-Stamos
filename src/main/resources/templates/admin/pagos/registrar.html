@@ -286,10 +286,11 @@
     <div class="header">
         <i class="ti ti-credit-card-plus"></i>
         <h1>Registrar Pago</h1>
+        <small th:text="'Pendiente de validación'">Pendiente de validación</small>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
     <div th:if="${warning}" class="alert alert-warning" th:text="${warning}"></div>
 
     <div class="info-box">
@@ -308,15 +309,15 @@
         </div>
         <div>
             <div class="label">Monto total</div>
-            <div class="value" th:text="${proyectoSeleccionado.montoTotalFormateado}">S/ 0.00</div>
+            <div class="value" th:text="${proyectoSeleccionado.montoTotalFormateado != null ? proyectoSeleccionado.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</div>
         </div>
         <div>
             <div class="label">Total pagado</div>
-            <div class="value" th:text="${totalPagadoFormateado}">S/ 0.00</div>
+            <div class="value" th:text="${totalPagadoFormateado != null ? totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</div>
         </div>
         <div>
             <div class="label">Saldo pendiente</div>
-            <div class="value" th:text="${saldoPendienteFormateado}">S/ 0.00</div>
+            <div class="value" th:text="${saldoPendienteFormateado != null ? saldoPendienteFormateado : 'S/ 0.00'}">S/ 0.00</div>
         </div>
     </div>
 
@@ -332,7 +333,7 @@
                     <option value="">Seleccione un proyecto</option>
                     <option th:each="p : ${proyectos}" th:value="${p.idProyecto}" 
                             th:text="${p.nombreProyecto} + ' - ' + ${p.nombreCliente}" 
-                            th:selected="${pago.idProyecto == p.idProyecto}"></option>
+                            th:selected="${pago != null and pago.idProyecto == p.idProyecto}"></option>
                 </select>
             </div>
         </div>
@@ -419,17 +420,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const proyectoSelect = document.getElementById('idProyecto');
-        const montoInput = document.getElementById('monto');
+        var proyectoSelect = document.getElementById('idProyecto');
+        var montoInput = document.getElementById('monto');
         
         proyectoSelect.addEventListener('change', function() {
-            const proyectoId = this.value;
+            var proyectoId = this.value;
             if (proyectoId) {
                 fetch('/admin/pagos/saldo-proyecto/' + proyectoId)
-                    .then(response => response.json())
-                    .then(data => {
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
                         if (data && data.saldoPendiente) {
-                            const saldo = parseFloat(data.saldoPendiente);
+                            var saldo = parseFloat(data.saldoPendiente);
                             if (saldo > 0) {
                                 montoInput.max = saldo;
                                 montoInput.placeholder = 'Máx: ' + saldo.toFixed(2);
@@ -440,7 +441,7 @@
                             }
                         }
                     })
-                    .catch(() => {});
+                    .catch(function() {});
             }
         });
     });

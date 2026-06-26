@@ -1,6 +1,7 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
 import com.stamos.model.DocumentoProyecto;
 import com.stamos.model.Proyecto;
 import com.stamos.model.Usuario;
@@ -35,7 +36,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/admin/documentos")
 @PreAuthorize("hasAnyRole('ADMIN', 'DISEÑADOR')")
-public class DocumentoController {
+public class DocumentoController extends BaseController {
 
     @Autowired
     private DocumentoService documentoService;
@@ -101,6 +102,7 @@ public class DocumentoController {
             model.addAttribute("bocetos", bocetos);
             model.addAttribute("contratos", contratos);
             model.addAttribute("otros", otros);
+            addCommonAttributes(model);
             
             return "admin/documentos/lista";
             
@@ -109,7 +111,6 @@ public class DocumentoController {
             return "admin/documentos/lista";
         }
     }
-
 
     @GetMapping("/subir")
     public String mostrarFormularioSubir(@RequestParam(required = false) Integer proyectoId,
@@ -128,6 +129,7 @@ public class DocumentoController {
             model.addAttribute("proyectos", proyectoService.findAll());
             model.addAttribute("tipos", getTiposDocumento());
             model.addAttribute("titulo", "Subir Documento");
+            addCommonAttributes(model);
             
             return "admin/documentos/formulario";
             
@@ -137,9 +139,8 @@ public class DocumentoController {
         }
     }
 
-
     @PostMapping("/subir")
-    @Auditable(value = "Subida de documento", accion = "CREATE")
+    @Auditable
     public String subirDocumento(@ModelAttribute("documento") DocumentoProyecto documento,
                                  @RequestParam("archivo") MultipartFile archivo,
                                  Authentication auth,
@@ -231,6 +232,7 @@ public class DocumentoController {
             }
             
             model.addAttribute("documento", documento);
+            addCommonAttributes(model);
             
             return "admin/documentos/detalle";
             
@@ -311,9 +313,8 @@ public class DocumentoController {
         }
     }
 
-
     @PostMapping("/eliminar/{id}")
-    @Auditable(value = "Eliminación de documento", accion = "DELETE")
+    @Auditable
     @PreAuthorize("hasRole('ADMIN')")
     public String eliminarDocumento(@PathVariable Integer id,
                                     Authentication auth,
@@ -406,7 +407,6 @@ public class DocumentoController {
             default -> "otro";
         };
     }
-
 
     private String getFileExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) {

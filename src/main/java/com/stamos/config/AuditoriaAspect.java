@@ -2,6 +2,7 @@ package com.stamos.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stamos.annotation.Auditable;
 import com.stamos.model.Auditoria;
 import com.stamos.model.Usuario;
 import com.stamos.repository.AuditoriaRepository;
@@ -12,6 +13,7 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +22,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,24 +51,17 @@ public class AuditoriaAspect {
               "execution(* com.stamos.service.*.registrar*(..)) || " +
               "execution(* com.stamos.service.*.deshabilitar*(..)) || " +
               "execution(* com.stamos.service.*.habilitar*(..)) || " +
-              "execution(* com.stamos.service.*.validar*(..))")
+              "execution(* com.stamos.service.*.validar*(..)) || " +
+              "execution(* com.stamos.service.*.aprobar*(..)) || " +
+              "execution(* com.stamos.service.*.anular*(..))")
     public void modifyingMethod() {}
 
-    @Before("auditableMethod()")
+    @Before("auditableMethod() || modifyingMethod()")
     public void auditBefore(JoinPoint joinPoint) {
         try {
             Auditoria auditoria = crearAuditoriaBase(joinPoint);
             auditoria.setAccion("EJECUTAR");
-            
-            Map<String, Object> datos = new HashMap<>();
-            datos.put("metodo", joinPoint.getSignature().getName());
-            datos.put("mensaje", "Inicio de ejecución");
-            try {
-                auditoria.setDatosNuevos(objectMapper.writeValueAsString(datos));
-            } catch (JsonProcessingException e) {
-                auditoria.setDatosNuevos("{}");
-            }
-            
+            auditoria.setDatosNuevos(obtenerDatosMetodo(joinPoint, "Inicio de ejecución"));
             auditoriaRepository.save(auditoria);
         } catch (Exception e) {
             System.err.println("Error en auditoría BEFORE: " + e.getMessage());
@@ -81,16 +76,9 @@ public class AuditoriaAspect {
             
             if (result != null) {
                 try {
-                    String json = objectMapper.writeValueAsString(result);
-                    auditoria.setDatosNuevos(json);
+                    auditoria.setDatosNuevos(objectMapper.writeValueAsString(result));
                 } catch (JsonProcessingException e) {
-                    Map<String, Object> datos = new HashMap<>();
-                    datos.put("resultado", result.toString());
-                    try {
-                        auditoria.setDatosNuevos(objectMapper.writeValueAsString(datos));
-                    } catch (JsonProcessingException ex) {
-                        auditoria.setDatosNuevos("{}");
-                    }
+                    auditoria.setDatosNuevos(obtenerDatosMetodo(joinPoint, "Resultado: " + result.toString()));
                 }
             }
             
@@ -137,30 +125,28 @@ public class AuditoriaAspect {
 
     private Auditoria crearAuditoriaBase(JoinPoint joinPoint) {
         Auditoria auditoria = new Auditoria();
-        try {
-            auditoria.setIdUsuario(getUsuarioActualId());
-        } catch (Exception e) {
-            auditoria.setIdUsuario(null);
-        }
-        String clase = joinPoint.getTarget().getClass().getSimpleName();
-        auditoria.setEntidad(clase);
-        try {
-            auditoria.setIpOrigen(getClientIP());
-        } catch (Exception e) {
-            auditoria.setIpOrigen(null);
-        }
+        auditoria.setIdUsuario(getUsuarioActualId());
+        auditoria.setEntidad(getEntidad(joinPoint));
+        auditoria.setIpOrigen(getClientIP());
         auditoria.setFechaHora(LocalDateTime.now());
         return auditoria;
+    }
+
+    private String getEntidad(JoinPoint joinPoint) {
+        String clase = joinPoint.getTarget().getClass().getSimpleName();
+        return clase.replace("Service", "");
     }
 
     private Integer getUsuarioActualId() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
+            if (authentication == null || !authentication.isAuthenticated() || 
+                authentication.getName().equals("anonymousUser")) {
                 return null;
             }
+            
             String email = authentication.getName();
-            if (email == null || email.equals("anonymousUser")) {
+            if (email == null) {
                 return null;
             }
             
@@ -207,6 +193,17 @@ public class AuditoriaAspect {
         return null;
     }
 
+    private String obtenerDatosMetodo(JoinPoint joinPoint, String mensaje) {
+        try {
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("metodo", joinPoint.getSignature().getName());
+            datos.put("mensaje", mensaje);
+            return objectMapper.writeValueAsString(datos);
+        } catch (JsonProcessingException e) {
+            return "{}";
+        }
+    }
+
     private String determinarAccion(JoinPoint joinPoint) {
         String metodo = joinPoint.getSignature().getName().toLowerCase();
         
@@ -243,6 +240,14 @@ public class AuditoriaAspect {
 
     private Integer obtenerIdRegistro(JoinPoint joinPoint, Object result) {
         try {
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            Method method = signature.getMethod();
+            Auditable auditable = method.getAnnotation(Auditable.class);
+            
+            if (auditable != null && !auditable.entidad().isEmpty()) {
+                return null;
+            }
+            
             Object[] args = joinPoint.getArgs();
             for (Object arg : args) {
                 if (arg instanceof Integer integer) {
@@ -251,16 +256,26 @@ public class AuditoriaAspect {
                 if (arg instanceof Number number) {
                     return number.intValue();
                 }
+                if (arg != null) {
+                    try {
+                        java.lang.reflect.Method getId = arg.getClass().getMethod("getId");
+                        Object id = getId.invoke(arg);
+                        if (id instanceof Number number) {
+                            return number.intValue();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
             
             if (result != null) {
                 try {
-                    java.lang.reflect.Method method = result.getClass().getMethod("getId");
-                    Object id = method.invoke(result);
+                    java.lang.reflect.Method getId = result.getClass().getMethod("getId");
+                    Object id = getId.invoke(result);
                     if (id instanceof Number number) {
                         return number.intValue();
                     }
-                } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
+                } catch (Exception e) {
                 }
             }
             

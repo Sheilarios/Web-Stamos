@@ -1,5 +1,6 @@
 package com.stamos.controller.cliente;
 
+import com.stamos.controller.BaseController;
 import com.stamos.model.Cliente;
 import com.stamos.model.DocumentoProyecto;
 import com.stamos.model.Proyecto;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/cliente")
-public class ClienteDocumentoController {
+public class ClienteDocumentoController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
@@ -61,7 +62,6 @@ public class ClienteDocumentoController {
             }
 
             List<Proyecto> proyectos = proyectoService.findByCliente(cliente.getIdCliente());
-            
             List<DocumentoProyecto> documentos = documentoService.findByCliente(cliente.getIdCliente());
             
             for (DocumentoProyecto doc : documentos) {
@@ -71,40 +71,31 @@ public class ClienteDocumentoController {
                 }
             }
 
-            long totalDocumentos = documentos.size();
-            long renders = documentos.stream()
-                    .filter(d -> "Render".equals(d.getTipoDocumento()))
-                    .count();
-            long planos = documentos.stream()
-                    .filter(d -> "Plano".equals(d.getTipoDocumento()))
-                    .count();
-            long bocetos = documentos.stream()
-                    .filter(d -> "Boceto".equals(d.getTipoDocumento()))
-                    .count();
-            long contratos = documentos.stream()
-                    .filter(d -> "Contrato".equals(d.getTipoDocumento()))
-                    .count();
-            long otros = documentos.stream()
-                    .filter(d -> !"Render".equals(d.getTipoDocumento()) && 
+            long renders = documentos.stream().filter(d -> "Render".equals(d.getTipoDocumento())).count();
+            long planos = documentos.stream().filter(d -> "Plano".equals(d.getTipoDocumento())).count();
+            long bocetos = documentos.stream().filter(d -> "Boceto".equals(d.getTipoDocumento())).count();
+            long contratos = documentos.stream().filter(d -> "Contrato".equals(d.getTipoDocumento())).count();
+            long otros = documentos.stream().filter(d -> !"Render".equals(d.getTipoDocumento()) && 
                                 !"Plano".equals(d.getTipoDocumento()) &&
                                 !"Boceto".equals(d.getTipoDocumento()) &&
-                                !"Contrato".equals(d.getTipoDocumento()))
-                    .count();
+                                !"Contrato".equals(d.getTipoDocumento())).count();
 
             model.addAttribute("cliente", cliente);
             model.addAttribute("documentos", documentos);
             model.addAttribute("proyectos", proyectos);
-            model.addAttribute("totalDocumentos", totalDocumentos);
+            model.addAttribute("totalDocumentos", documentos.size());
             model.addAttribute("renders", renders);
             model.addAttribute("planos", planos);
             model.addAttribute("bocetos", bocetos);
             model.addAttribute("contratos", contratos);
             model.addAttribute("otros", otros);
+            addCommonAttributes(model);
 
             return "cliente/documentos";
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             model.addAttribute("error", "Error al cargar los documentos: " + e.getMessage());
+            addCommonAttributes(model);
             return "cliente/dashboard";
         }
     }
@@ -130,14 +121,13 @@ public class ClienteDocumentoController {
             }
 
             List<DocumentoProyecto> documentos = documentoService.findByProyecto(idProyecto);
-            
             for (DocumentoProyecto doc : documentos) {
                 doc.setNombreProyecto(proyecto.getNombreProyecto());
             }
 
             return documentos;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return List.of();
         }
     }
@@ -159,7 +149,6 @@ public class ClienteDocumentoController {
             }
 
             List<DocumentoProyecto> documentos = documentoService.findByCliente(cliente.getIdCliente());
-            
             for (DocumentoProyecto doc : documentos) {
                 Proyecto proyecto = proyectoService.findById(doc.getIdProyecto());
                 if (proyecto != null) {
@@ -185,11 +174,10 @@ public class ClienteDocumentoController {
 
             return documentos;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return List.of();
         }
     }
-
 
     @GetMapping("/documentos/ver/{id}")
     public ResponseEntity<Resource> verDocumento(@PathVariable("id") Integer idDocumento, 
@@ -240,9 +228,7 @@ public class ClienteDocumentoController {
 
         } catch (AccessDeniedException e) {
             throw e;
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Error al cargar el documento: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (MalformedURLException | RuntimeException e) {
             throw new RuntimeException("Error al cargar el documento: " + e.getMessage());
         }
     }
@@ -293,45 +279,31 @@ public class ClienteDocumentoController {
 
         } catch (AccessDeniedException e) {
             throw e;
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Error al cargar el documento: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (MalformedURLException | RuntimeException e) {
             throw new RuntimeException("Error al cargar el documento: " + e.getMessage());
         }
     }
 
     public String getIconoByTipo(String tipoDocumento) {
         if (tipoDocumento == null) return "ti ti-file";
-        
-        switch (tipoDocumento) {
-            case "Render":
-                return "ti ti-photo";
-            case "Plano":
-                return "ti ti-ruler-2";
-            case "Boceto":
-                return "ti ti-pencil";
-            case "Contrato":
-                return "ti ti-file-contract";
-            default:
-                return "ti ti-file";
-        }
+        return switch (tipoDocumento) {
+            case "Render" -> "ti ti-photo";
+            case "Plano" -> "ti ti-ruler-2";
+            case "Boceto" -> "ti ti-pencil";
+            case "Contrato" -> "ti ti-file-contract";
+            default -> "ti ti-file";
+        };
     }
 
     public String getBadgeClassByTipo(String tipoDocumento) {
         if (tipoDocumento == null) return "otro";
-        
-        switch (tipoDocumento) {
-            case "Render":
-                return "render";
-            case "Plano":
-                return "plano";
-            case "Boceto":
-                return "boceto";
-            case "Contrato":
-                return "contrato";
-            default:
-                return "otro";
-        }
+        return switch (tipoDocumento) {
+            case "Render" -> "render";
+            case "Plano" -> "plano";
+            case "Boceto" -> "boceto";
+            case "Contrato" -> "contrato";
+            default -> "otro";
+        };
     }
 
     private String getFileExtension(String nombreArchivo) {
@@ -342,23 +314,15 @@ public class ClienteDocumentoController {
     }
 
     private MediaType getMediaType(String extension) {
-        switch (extension) {
-            case "jpg":
-            case "jpeg":
-                return MediaType.IMAGE_JPEG;
-            case "png":
-                return MediaType.IMAGE_PNG;
-            case "gif":
-                return MediaType.IMAGE_GIF;
-            case "webp":
-                return MediaType.valueOf("image/webp");
-            case "svg":
-                return MediaType.valueOf("image/svg+xml");
-            case "pdf":
-                return MediaType.APPLICATION_PDF;
-            default:
-                return MediaType.APPLICATION_OCTET_STREAM;
-        }
+        return switch (extension) {
+            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
+            case "png" -> MediaType.IMAGE_PNG;
+            case "gif" -> MediaType.IMAGE_GIF;
+            case "webp" -> MediaType.valueOf("image/webp");
+            case "svg" -> MediaType.valueOf("image/svg+xml");
+            case "pdf" -> MediaType.APPLICATION_PDF;
+            default -> MediaType.APPLICATION_OCTET_STREAM;
+        };
     }
 
     public boolean isImageExtension(String extension) {
@@ -377,7 +341,6 @@ public class ClienteDocumentoController {
 
     public String formatearTamaño(Long bytes) {
         if (bytes == null || bytes == 0) return "-";
-        
         double kb = bytes / 1024.0;
         if (kb < 1024) {
             return String.format("%.0f KB", kb);

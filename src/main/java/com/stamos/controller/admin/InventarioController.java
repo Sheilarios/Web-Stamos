@@ -1,6 +1,7 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
 import com.stamos.model.Inventario;
 import com.stamos.model.Producto;
 import com.stamos.model.Proyecto;
@@ -28,13 +29,16 @@ import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/inventario")
 @PreAuthorize("hasAnyRole('ADMIN', 'SOPORTE_TECNICO', 'PRODUCCION')")
-public class InventarioController {
+public class InventarioController extends BaseController {
+
+    private static final int MAX_DIAS_RESERVA = 30;
 
     @Autowired
     private InventarioService inventarioService;
@@ -88,6 +92,7 @@ public class InventarioController {
             model.addAttribute("totalMantenimiento", totalMantenimiento);
             model.addAttribute("totalDanados", totalDanados);
             model.addAttribute("totalInventario", totalInventario);
+            addCommonAttributes(model);
 
             return "admin/inventario/equipos";
 
@@ -104,6 +109,7 @@ public class InventarioController {
             model.addAttribute("productos", productoService.findAll());
             model.addAttribute("titulo", "Nuevo Equipo");
             model.addAttribute("accion", "crear");
+            addCommonAttributes(model);
             return "admin/inventario/formulario_equipo";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
@@ -124,6 +130,7 @@ public class InventarioController {
             model.addAttribute("productos", productoService.findAll());
             model.addAttribute("titulo", "Editar Equipo");
             model.addAttribute("accion", "editar");
+            addCommonAttributes(model);
             return "admin/inventario/formulario_equipo";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
@@ -132,7 +139,7 @@ public class InventarioController {
     }
 
     @PostMapping("/crear")
-    @Auditable(value = "Registro de equipo en inventario", accion = "CREATE")
+    @Auditable
     public String crearEquipo(@Valid @ModelAttribute("inventario") Inventario inventario,
                               BindingResult result,
                               Authentication auth,
@@ -177,7 +184,7 @@ public class InventarioController {
     }
 
     @PostMapping("/actualizar/{id}")
-    @Auditable(value = "Actualización de equipo en inventario", accion = "UPDATE")
+    @Auditable
     public String actualizarEquipo(@PathVariable Integer id,
                                    @Valid @ModelAttribute("inventario") Inventario inventario,
                                    BindingResult result,
@@ -223,7 +230,7 @@ public class InventarioController {
     }
 
     @PostMapping("/cambiar-estado/{id}")
-    @Auditable(value = "Cambio de estado de equipo", accion = "STATE_CHANGE")
+    @Auditable
     public String cambiarEstadoEquipo(@PathVariable Integer id,
                                       @RequestParam String estado,
                                       @RequestParam(required = false) String observaciones,
@@ -290,6 +297,7 @@ public class InventarioController {
             model.addAttribute("equipos", equiposDisponibles);
             model.addAttribute("proyectos", proyectoService.findAll());
             model.addAttribute("titulo", "Asignar Equipo a Proyecto");
+            addCommonAttributes(model);
 
             return "admin/inventario/formulario_reserva";
         } catch (Exception e) {
@@ -299,7 +307,7 @@ public class InventarioController {
     }
 
     @PostMapping("/reservar")
-    @Auditable(value = "Asignación de equipo a proyecto", accion = "CREATE")
+    @Auditable
     public String asignarEquipo(@Valid @ModelAttribute("reserva") ReservaInventario reserva,
                                 BindingResult result,
                                 Authentication auth,
@@ -307,6 +315,12 @@ public class InventarioController {
         try {
             if (result.hasErrors()) {
                 redirectAttributes.addFlashAttribute("error", "Por favor, corrige los errores.");
+                return "redirect:/admin/inventario/reservar";
+            }
+
+            if (reserva.getFechaInicio() == null || reserva.getFechaFin() == null) {
+                redirectAttributes.addFlashAttribute("error",
+                    "Las fechas de inicio y fin son obligatorias.");
                 return "redirect:/admin/inventario/reservar";
             }
 
@@ -319,6 +333,13 @@ public class InventarioController {
             if (reserva.getFechaInicio().isBefore(LocalDate.now())) {
                 redirectAttributes.addFlashAttribute("error",
                     "La fecha de inicio no puede ser anterior a la fecha actual.");
+                return "redirect:/admin/inventario/reservar";
+            }
+
+            long dias = ChronoUnit.DAYS.between(reserva.getFechaInicio(), reserva.getFechaFin());
+            if (dias > MAX_DIAS_RESERVA) {
+                redirectAttributes.addFlashAttribute("error",
+                    "La reserva no puede exceder los " + MAX_DIAS_RESERVA + " días.");
                 return "redirect:/admin/inventario/reservar";
             }
 
@@ -344,6 +365,12 @@ public class InventarioController {
             Proyecto proyecto = proyectoService.findById(reserva.getIdProyecto());
             if (proyecto == null) {
                 redirectAttributes.addFlashAttribute("error", "Proyecto no encontrado.");
+                return "redirect:/admin/inventario/reservar";
+            }
+
+            if (!proyecto.isActivo()) {
+                redirectAttributes.addFlashAttribute("error",
+                    "El proyecto no está activo. No se puede asignar equipos.");
                 return "redirect:/admin/inventario/reservar";
             }
 
@@ -414,6 +441,7 @@ public class InventarioController {
             model.addAttribute("totalActivas", totalActivas);
             model.addAttribute("totalCompletadas", totalCompletadas);
             model.addAttribute("totalCanceladas", totalCanceladas);
+            addCommonAttributes(model);
 
             return "admin/inventario/reservas";
         } catch (Exception e) {
@@ -423,7 +451,7 @@ public class InventarioController {
     }
 
     @PostMapping("/reserva/completar/{id}")
-    @Auditable(value = "Completar reserva de equipo", accion = "UPDATE")
+    @Auditable
     public String completarReserva(@PathVariable Integer id,
                                    @RequestParam(required = false) String notas,
                                    Authentication auth,
@@ -466,7 +494,7 @@ public class InventarioController {
     }
 
     @PostMapping("/reserva/cancelar/{id}")
-    @Auditable(value = "Cancelar reserva de equipo", accion = "DELETE")
+    @Auditable
     public String cancelarReserva(@PathVariable Integer id,
                                   @RequestParam(required = false) String motivo,
                                   Authentication auth,
@@ -556,6 +584,7 @@ public class InventarioController {
             model.addAttribute("totalMantenimiento", totalMantenimiento);
             model.addAttribute("porcentajeDisponibilidad", totalEquipos > 0 ?
                 (totalDisponibles * 100 / totalEquipos) : 0);
+            addCommonAttributes(model);
 
             return "admin/inventario/disponibilidad";
         } catch (Exception e) {

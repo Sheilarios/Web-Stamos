@@ -3,614 +3,803 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Diseño y producción de stands publicitarios</title>
+    <title th:text="${titulo} ?: 'STAMOS · Diseño y producción de stands publicitarios'">STAMOS · Diseño y producción de stands publicitarios</title>
+    <meta name="description" th:content="${descripcion} ?: 'Empresa líder en diseño, producción y alquiler de mobiliario ferial, stands publicitarios y soluciones visuales para eventos corporativos.'">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        :root {
-            --yellow:        #F5C400;
-            --yellow-mid:    #FFD740;
-            --border:        #2C2C2C;
-            --bg:            #141414;
-            --card:          #1E1E1E;
-            --card2:         #252525;
-            --text:          #F0EEE8;
-            --text-2:        #9A9590;
-            --text-3:        #555050;
-            --white:         #FFFFFF;
-            --black:         #0D0D0D;
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #FFFFFF;
+            color: #1A1F2E;
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
-
-        /* NAVBAR */
+        /* ===== NAVBAR ===== */
         .navbar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 56px; height: 64px;
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0;
-            background: rgba(13,13,13,0.97);
-            backdrop-filter: blur(12px); z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 56px;
+            background: #000000;
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .nav-brand {
-            font-family: 'Bebas Neue', sans-serif; font-size: 24px;
-            letter-spacing: 3px; color: var(--white);
-            display: flex; align-items: center; gap: 10px; text-decoration: none;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: 1px;
+            text-decoration: none;
         }
-        .nav-squares { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; width: 20px; }
-        .ns { width: 8px; height: 8px; border-radius: 1px; }
-        .ns1 { background: var(--yellow); }
-        .ns2 { background: #444; }
-        .ns3 { background: #333; }
-        .ns4 { background: #111; border: 1px solid #333; }
+        .nav-brand span { color: #F5C400; }
         .nav-links { display: flex; gap: 32px; }
         .nav-link {
-            font-size: 13px; color: var(--text-2);
-            transition: color 0.15s; text-decoration: none;
-            font-weight: 500; letter-spacing: 0.3px;
+            font-size: 13px;
+            color: #C0C0C0;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 500;
         }
-        .nav-link:hover, .nav-link.active { color: var(--white); }
-        .nav-link.active { color: var(--yellow); }
+        .nav-link:hover,
+        .nav-link.active { color: #F5C400; }
         .nav-cta {
-            background: var(--yellow); border: none; color: #1A1000;
-            padding: 8px 22px; border-radius: 6px; font-size: 12px;
-            font-weight: 700; font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s; text-decoration: none;
-            display: inline-flex; align-items: center; gap: 7px;
+            background: #F5C400;
+            border: none;
+            color: #000000;
+            padding: 8px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
-        .nav-cta:hover { background: var(--yellow-mid); }
+        .nav-cta:hover { background: #E0B000; }
+        .nav-phone {
+            color: #FFFFFF;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-phone i { color: #F5C400; }
 
-        /* HERO */
-        .hero {
-            position: relative; min-height: 88vh;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            text-align: center; padding: 100px 60px 80px; overflow: hidden;
+        /* ===== SLIDER / HERO ===== */
+        .slider {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
         }
-        .hero-bg {
-            position: absolute; inset: 0;
-            background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80');
-            background-size: cover; background-position: center 35%; opacity: 0.2;
+        .slider-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            animation: slide 18s infinite;
         }
-        .hero-overlay {
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at center, rgba(13,13,13,0.3) 0%, rgba(13,13,13,0.85) 100%);
+        .slider-slide {
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 56px;
+            position: relative;
         }
-        .hero-content { position: relative; z-index: 2; }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(245,196,0,0.1); border: 1px solid rgba(245,196,0,0.3);
-            border-radius: 30px; padding: 6px 18px; font-size: 11px;
-            color: var(--yellow); margin-bottom: 28px; font-weight: 600;
-            letter-spacing: 1px; text-transform: uppercase;
+        .slider-slide::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
         }
-        .hero-title {
-            font-family: 'Bebas Neue', sans-serif; font-size: 96px;
-            color: var(--white); line-height: 0.92; margin-bottom: 28px; letter-spacing: 2px;
+        .slider-slide .content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
         }
-        .hero-title span { color: var(--yellow); }
-        .hero-desc {
-            font-size: 17px; color: var(--text-2); line-height: 1.75;
-            max-width: 640px; margin: 0 auto 44px; font-weight: 300;
+        .slider-slide h2 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #FFFFFF;
+            line-height: 1.2;
+            margin-bottom: 12px;
         }
-        .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-        .btn-primary {
-            background: var(--yellow); border: none; color: #1A1000;
-            padding: 14px 32px; border-radius: 7px; font-size: 14px;
-            font-weight: 700; font-family: 'DM Sans', sans-serif;
-            display: inline-flex; align-items: center; gap: 8px;
-            transition: all 0.15s; text-decoration: none;
+        .slider-slide h2 span { color: #F5C400; }
+        .slider-slide p {
+            font-size: 16px;
+            color: #D4D4D4;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
-        .btn-primary:hover { background: var(--yellow-mid); transform: translateY(-2px); }
-        .btn-secondary {
-            background: transparent; border: 1px solid var(--border);
-            color: var(--text-2); padding: 14px 32px; border-radius: 7px;
-            font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
-            display: inline-flex; align-items: center; gap: 8px;
-            transition: all 0.15s; text-decoration: none;
+        .slider-slide .btn-slider {
+            background: #F5C400;
+            color: #000000;
+            padding: 12px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
         }
-        .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow); }
-        .hero-stats {
-            display: flex; gap: 56px; justify-content: center;
-            margin-top: 72px; padding-top: 40px; border-top: 1px solid var(--border);
-        }
-        .stat-item { text-align: center; }
-        .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--white); letter-spacing: 1px; }
-        .stat-val span { color: var(--yellow); }
-        .stat-label { font-size: 11px; color: var(--text-3); margin-top: 6px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; }
+        .slider-slide .btn-slider:hover { background: #E0B000; }
 
-        /* CLIENTS BAR */
-        .clients-bar {
-            padding: 20px 0; border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            background: var(--black); overflow: hidden;
+        @keyframes slide {
+            0%, 16% { transform: translateX(0); }
+            20%, 36% { transform: translateX(-100%); }
+            40%, 56% { transform: translateX(-200%); }
+            60%, 76% { transform: translateX(-300%); }
+            80%, 96% { transform: translateX(-400%); }
+            100% { transform: translateX(0); }
         }
-        .marquee-wrap {
-            display: flex; gap: 60px;
-            animation: marquee 22s linear infinite;
-            white-space: nowrap; width: max-content;
-        }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .client-name { font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--text-3); letter-spacing: 2.5px; text-transform: uppercase; flex-shrink: 0; }
-        .client-name.highlight { color: var(--yellow); }
 
-        /* SECTIONS */
-        .section { padding: 88px 60px; }
-        .section-header { text-align: center; margin-bottom: 56px; }
-        .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2.5px; color: var(--yellow); margin-bottom: 14px; font-weight: 700; }
-        .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--white); line-height: 1; margin-bottom: 18px; letter-spacing: 1px; }
-        .section-title span { color: var(--yellow); }
-        .section-sub { font-size: 15px; color: var(--text-2); line-height: 1.75; max-width: 580px; margin: 0 auto; font-weight: 300; }
+        /* ===== SECCIONES ===== */
+        .section {
+            padding: 60px 56px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .section-header .label {
+            font-size: 11px;
+            color: #F5C400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #000000;
+            margin-top: 8px;
+        }
+        .section-header h2 span { color: #F5C400; }
+        .section-header p {
+            font-size: 15px;
+            color: #6B6B6B;
+            max-width: 600px;
+            margin: 8px auto 0;
+        }
 
-        /* QUIÉNES SOMOS */
-        .about-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 500px; }
-        .about-img-col { position: relative; overflow: hidden; background: var(--card); }
-        .about-img-col img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.8; transition: transform 0.6s ease, opacity 0.3s; }
-        .about-img-col:hover img { transform: scale(1.04); opacity: 0.9; }
-        .about-img-tag { position: absolute; bottom: 24px; left: 24px; background: var(--yellow); color: #1A1000; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 14px; border-radius: 3px; }
-        .about-txt-col { background: var(--card2); padding: 64px 56px; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid var(--border); }
-        .about-txt-col .section-label { text-align: left; }
-        .about-heading { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--white); letter-spacing: 1px; line-height: 1; margin-bottom: 22px; }
-        .about-body { font-size: 14px; color: var(--text-2); line-height: 1.85; font-weight: 300; margin-bottom: 36px; }
-        .about-stats { display: flex; gap: 36px; padding-top: 32px; border-top: 1px solid var(--border); }
-        .about-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 44px; color: var(--yellow); line-height: 1; }
-        .about-stat-desc { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600; }
+        /* ===== QUIÉNES SOMOS ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+        .about-image {
+            background: #000000;
+            border-radius: 16px;
+            height: 380px;
+            background-image: url('https://stamosl.com/img/slider/slider01.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-image .tag {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: #F5C400;
+            color: #000000;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .about-text h3 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 16px;
+        }
+        .about-text h3 span { color: #F5C400; }
+        .about-text p {
+            font-size: 14px;
+            color: #6B6B6B;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+        .about-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        .about-stats .stat {
+            text-align: center;
+        }
+        .about-stats .stat .num {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000000;
+        }
+        .about-stats .stat .num span { color: #F5C400; }
+        .about-stats .stat .label {
+            font-size: 11px;
+            color: #8A8A8A;
+            text-transform: uppercase;
+        }
 
-        /* MISIÓN / VISIÓN */
-        .mv-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-        .mv-card { background: var(--card); padding: 48px 52px; border-top: 4px solid var(--yellow); }
-        .mv-icon { width: 48px; height: 48px; background: rgba(245,196,0,0.1); border: 1px solid rgba(245,196,0,0.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; }
-        .mv-icon i { font-size: 22px; color: var(--yellow); }
-        .mv-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--yellow); margin-bottom: 12px; }
-        .mv-heading { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--white); letter-spacing: 1px; margin-bottom: 14px; }
-        .mv-text { font-size: 14px; color: var(--text-2); line-height: 1.8; font-weight: 300; }
+        /* ===== SERVICIOS / PRODUCTOS ===== */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .product-card {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .product-card:hover {
+            border-color: #F5C400;
+            box-shadow: 0 8px 30px rgba(245,196,0,0.12);
+            transform: translateY(-4px);
+        }
+        .product-card .img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            background-color: #F0F0F0;
+        }
+        .product-card .body {
+            padding: 16px 20px 20px;
+        }
+        .product-card .body h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+        .product-card .body p {
+            font-size: 12px;
+            color: #8A8A8A;
+            line-height: 1.5;
+        }
+        .product-card .body .tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            border: 1px solid #E0C84A;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .product-card .body .tag.alquiler {
+            background: #E8F0FE;
+            color: #1A56DB;
+            border-color: #B8D4FE;
+        }
+        .product-card .body .tag.venta {
+            background: #E8FEF0;
+            color: #059669;
+            border-color: #A8E6C4;
+        }
+        .product-card .body .tag.servicio {
+            background: #F3E8FE;
+            color: #7C3AED;
+            border-color: #D8C4F8;
+        }
 
-        /* SERVICIOS */
-        .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .svc-card {
-            position: relative; border-radius: 14px; overflow: hidden;
-            text-decoration: none; display: block; cursor: pointer;
-            min-height: 340px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* ===== CATEGORÍAS DESTACADAS ===== */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
         }
-        .svc-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        .category-card {
+            background: #000000;
+            border-radius: 14px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #FFFFFF;
         }
-        .svc-card.stands .svc-card-bg { background: linear-gradient(145deg, #1c1500 0%, #2e2200 50%, #1a1000 100%); }
-        .svc-card.videos .svc-card-bg { background: linear-gradient(145deg, #0d1520 0%, #112236 50%, #0a1018 100%); }
-        .svc-card.mobiliario .svc-card-bg { background: linear-gradient(145deg, #14180d 0%, #202e10 50%, #111408 100%); }
-        .svc-card-bg {
-            position: absolute; inset: 0;
-            transition: transform 0.5s ease;
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
         }
-        .svc-card:hover .svc-card-bg { transform: scale(1.05); }
-        .svc-card-bg::before {
-            content: ''; position: absolute; inset: 0; opacity: 0.04;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 24px, rgba(245,196,0,0.6) 24px, rgba(245,196,0,0.6) 25px);
+        .category-card i {
+            font-size: 40px;
+            color: #F5C400;
+            margin-bottom: 12px;
+            display: block;
         }
-        .svc-card-bg::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+        .category-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
-        .svc-card-body {
-            position: relative; z-index: 2;
-            padding: 36px 32px 40px;
-            min-height: 340px;
-            display: flex; flex-direction: column;
+        .category-card p {
+            font-size: 13px;
+            color: #C0C0C0;
+            line-height: 1.6;
         }
-        .svc-icon-wrap {
-            width: 54px; height: 54px;
-            background: rgba(245,196,0,0.1);
-            border: 1px solid rgba(245,196,0,0.22);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 24px;
-            transition: background 0.25s, border-color 0.25s, transform 0.25s;
-        }
-        .svc-card:hover .svc-icon-wrap {
-            background: rgba(245,196,0,0.2);
-            border-color: rgba(245,196,0,0.5);
-            transform: scale(1.1);
-        }
-        .svc-icon-wrap i { font-size: 24px; color: var(--yellow); }
-        .svc-num { font-family: 'Bebas Neue', sans-serif; font-size: 11px; letter-spacing: 2px; color: rgba(245,196,0,0.4); margin-bottom: 8px; }
-        .svc-name { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--white); letter-spacing: 0.5px; line-height: 1.05; margin-bottom: 12px; transition: color 0.2s; }
-        .svc-card:hover .svc-name { color: var(--yellow); }
-        .svc-desc { font-size: 13px; color: var(--text-2); line-height: 1.7; font-weight: 300; margin-bottom: auto; }
-        .svc-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
-        .svc-tag { font-size: 10px; padding: 4px 10px; border-radius: 3px; background: rgba(245,196,0,0.07); border: 1px solid rgba(245,196,0,0.18); color: var(--yellow); font-weight: 600; letter-spacing: 0.5px; transition: background 0.2s; }
-        .svc-card:hover .svc-tag { background: rgba(245,196,0,0.14); }
-        .svc-arrow {
-            position: absolute; bottom: 28px; right: 28px;
-            width: 42px; height: 42px;
-            background: var(--yellow); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; transform: scale(0.7) translateY(6px);
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            z-index: 3;
-        }
-        .svc-arrow i { font-size: 18px; color: #1A1000; }
-        .svc-card:hover .svc-arrow { opacity: 1; transform: scale(1) translateY(0); }
-        .svc-card::after {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-            height: 3px; background: var(--yellow);
-            transform: scaleX(0); transform-origin: left;
-            transition: transform 0.35s ease; z-index: 4;
-        }
-        .svc-card:hover::after { transform: scaleX(1); }
 
-        /* PROCESO */
-        .process-steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; margin-top: 56px; position: relative; }
-        .process-steps::before { content: ''; position: absolute; top: 29px; left: 10%; right: 10%; height: 1px; background: var(--border); z-index: 0; }
-        .ps { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; padding: 0 8px; position: relative; z-index: 1; }
-        .ps-num { width: 58px; height: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; border: 1px solid var(--border); background: var(--card); color: var(--text-3); }
-        .ps-num.active { background: var(--yellow); border-color: var(--yellow); color: #1A1000; }
-        .ps-label { font-size: 11px; color: var(--text-3); line-height: 1.4; font-weight: 500; }
-        .ps-label.active-l { color: var(--yellow); font-weight: 700; }
-
-        /* GALERÍA */
-        .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 220px; gap: 4px; }
-        .gitem { position: relative; overflow: hidden; border-radius: 4px; text-decoration: none; display: block; }
-        .gitem.large { grid-column: span 2; grid-row: span 2; }
-        .gitem:nth-child(1) .gitem-bg { background: linear-gradient(145deg, #1c1500 0%, #2e2200 60%, #1a1000 100%); }
-        .gitem:nth-child(2) .gitem-bg { background: linear-gradient(145deg, #0d1520 0%, #0f2236 60%, #0a1018 100%); }
-        .gitem:nth-child(3) .gitem-bg { background: linear-gradient(145deg, #1a120d 0%, #2e1e10 60%, #1a120d 100%); }
-        .gitem:nth-child(4) .gitem-bg { background: linear-gradient(145deg, #121a0d 0%, #1a2e10 60%, #121a0d 100%); }
-        .gitem:nth-child(5) .gitem-bg { background: linear-gradient(145deg, #1a0d1a 0%, #2e1030 60%, #1a0d1a 100%); }
-        .gitem-bg { position: absolute; inset: 0; transition: transform 0.55s ease; }
-        .gitem:hover .gitem-bg { transform: scale(1.1); }
-        .gitem-bg::after { content: ''; position: absolute; inset: 0; opacity: 0.04; background-image: repeating-linear-gradient(-45deg, transparent, transparent 14px, rgba(245,196,0,0.7) 14px, rgba(245,196,0,0.7) 15px); }
-        .gitem-icon-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; transition: opacity 0.3s; }
-        .gitem-icon-wrap i { font-size: 44px; opacity: 0.16; color: var(--yellow); }
-        .gitem:hover .gitem-icon-wrap { opacity: 0; }
-        .gitem-hover {
-            position: absolute; inset: 0;
-            background: rgba(10,10,10,0.88);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            text-align: center; padding: 24px;
-            opacity: 0; transition: opacity 0.3s ease;
+        /* ===== CLIENTES ===== */
+        .clients-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px 60px;
+            padding: 20px 0;
         }
-        .gitem:hover .gitem-hover { opacity: 1; }
-        .gitem-hover-icon { width: 52px; height: 52px; background: rgba(245,196,0,0.12); border: 1px solid rgba(245,196,0,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
-        .gitem-hover-icon i { font-size: 24px; color: var(--yellow); }
-        .gitem-hover h4 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--white); letter-spacing: 0.5px; margin-bottom: 8px; }
-        .gitem.large .gitem-hover h4 { font-size: 30px; }
-        .gitem-hover p { font-size: 12px; color: var(--text-2); line-height: 1.6; font-weight: 300; margin-bottom: 16px; }
-        .gitem-hover-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: var(--yellow); color: #1A1000;
-            font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
-            text-transform: uppercase; padding: 8px 18px; border-radius: 4px;
-            transform: translateY(10px);
-            transition: transform 0.28s ease 0.08s;
+        .client-item {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6B6B6B;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .gitem:hover .gitem-hover-btn { transform: translateY(0); }
-        .gitem-label {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 30px 14px 12px;
-            background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
-            font-size: 11px; color: rgba(255,255,255,0.65);
-            letter-spacing: 0.5px; font-weight: 500;
-            transition: opacity 0.3s;
+        .client-item.highlight { color: #F5C400; }
+
+        /* ===== CONTACTO ===== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            background: #000000;
+            border-radius: 16px;
+            padding: 48px;
+            color: #FFFFFF;
         }
-        .gitem:hover .gitem-label { opacity: 0; }
+        .contact-grid h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .contact-grid h3 span { color: #F5C400; }
+        .contact-grid p {
+            font-size: 14px;
+            color: #C0C0C0;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .contact-info .item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #D4D4D4;
+        }
+        .contact-info .item i {
+            color: #F5C400;
+            font-size: 18px;
+            width: 24px;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: #1A1A1A;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: #F5C400;
+        }
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder {
+            color: #6B6B6B;
+        }
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .contact-form .btn-submit {
+            background: #F5C400;
+            color: #000000;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .contact-form .btn-submit:hover { background: #E0B000; }
 
-        /* CTA BANNER */
-        .cta-banner { background: var(--yellow); padding: 72px 60px; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
-        .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: #1A1000; line-height: 1; letter-spacing: 1px; }
-        .cta-title span { color: rgba(0,0,0,0.4); }
-        .cta-sub { font-size: 14px; color: rgba(0,0,0,0.55); margin-top: 12px; font-weight: 300; }
-        .btn-primary-dark { background: #1A1000; color: var(--yellow); padding: 16px 36px; border-radius: 7px; font-size: 13px; font-weight: 700; font-family: 'DM Sans', sans-serif; display: inline-flex; align-items: center; gap: 8px; transition: all 0.15s; text-decoration: none; white-space: nowrap; }
-        .btn-primary-dark:hover { background: #000; }
+        /* ===== ALERTAS ===== */
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            border: 1px solid;
+        }
+        .alert-success {
+            background: #F0FFF4;
+            border-color: #C6F7D0;
+            color: #1A7040;
+        }
+        .alert-danger {
+            background: #FFF5F5;
+            border-color: #FFCDCD;
+            color: #C0392B;
+        }
+        .alert i { font-size: 16px; }
 
-        /* FOOTER */
-        .footer { background: var(--black); border-top: 1px solid var(--border); padding: 56px 56px 32px; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 48px; }
-        .footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2.5px; color: var(--white); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-        .footer-brand span { color: var(--yellow); }
-        .footer-desc { font-size: 13px; color: var(--text-3); line-height: 1.7; font-weight: 300; }
-        .footer-title { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 18px; font-weight: 700; }
-        .footer-link { display: block; font-size: 13px; color: #555; margin-bottom: 10px; text-decoration: none; transition: color 0.15s; font-weight: 300; }
-        .footer-link:hover { color: var(--yellow); }
-        .footer-contact { display: flex; flex-direction: column; gap: 10px; }
-        .footer-contact-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #555; line-height: 1.5; font-weight: 300; }
-        .footer-contact-item i { color: var(--yellow); margin-top: 2px; flex-shrink: 0; }
-        .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-        .footer-copy, .footer-ruc { font-size: 11px; color: var(--text-3); }
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #000000;
+            border-top: 1px solid #222;
+            padding: 48px 56px 32px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 12px;
+        }
+        .footer-brand span { color: #F5C400; }
+        .footer-desc {
+            font-size: 13px;
+            color: #8A8A8A;
+            line-height: 1.6;
+        }
+        .footer-title {
+            font-size: 11px;
+            color: #6B6B6B;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+        .footer-link {
+            display: block;
+            font-size: 13px;
+            color: #8A8A8A;
+            margin-bottom: 10px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-link:hover { color: #F5C400; }
+        .footer-bottom {
+            border-top: 1px solid #222;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .footer-copy,
+        .footer-ruc {
+            font-size: 11px;
+            color: #6B6B6B;
+        }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 1000px) {
-            .navbar { padding: 0 24px; }
+            .navbar { padding: 14px 24px; flex-wrap: wrap; gap: 12px; }
             .nav-links { display: none; }
-            .hero { padding: 80px 24px 60px; }
-            .hero-title { font-size: 60px; }
-            .hero-stats { gap: 28px; flex-wrap: wrap; }
-            .about-split { grid-template-columns: 1fr; }
-            .about-img-col { height: 300px; }
-            .about-txt-col { padding: 40px 24px; }
-            .mv-row { grid-template-columns: 1fr; }
-            .svc-grid { grid-template-columns: 1fr; gap: 12px; }
-            .process-steps { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-            .process-steps::before { display: none; }
-            .gallery-grid { grid-template-columns: 1fr 1fr; }
-            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-            .cta-banner { flex-direction: column; text-align: center; padding: 48px 24px; }
-            .cta-title { font-size: 40px; }
-            .section { padding: 56px 24px; }
-            .footer { padding: 48px 24px 28px; }
+            .nav-phone { display: none; }
+            .slider { height: 350px; }
+            .slider-slide { padding: 0 24px; }
+            .slider-slide h2 { font-size: 28px; }
+            .section { padding: 40px 24px; }
+            .about-grid { grid-template-columns: 1fr; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+            .category-grid { grid-template-columns: 1fr 1fr; }
+            .contact-grid { grid-template-columns: 1fr; padding: 32px 24px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+            .footer { padding: 32px 24px; }
         }
-        @media (min-width: 1400px) {
-            .hero, .section, .cta-banner, .footer { padding-left: 9%; padding-right: 9%; }
-            .navbar { padding: 0 9%; }
+        @media (max-width: 600px) {
+            .product-grid { grid-template-columns: 1fr; }
+            .category-grid { grid-template-columns: 1fr; }
+            .slider { height: 280px; }
+            .slider-slide h2 { font-size: 22px; }
+            .about-stats { flex-wrap: wrap; gap: 20px; }
         }
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- ===== NAVBAR ===== -->
 <nav class="navbar">
-    <a th:href="@{/}" class="nav-brand">
-        <div class="nav-squares">
-            <div class="ns ns1"></div><div class="ns ns2"></div>
-            <div class="ns ns3"></div><div class="ns ns4"></div>
-        </div>
-        STAMOS
-    </a>
+    <a th:href="@{/}" class="nav-brand">STAMOS<span>.</span></a>
     <div class="nav-links">
         <a class="nav-link active" th:href="@{/}">Inicio</a>
         <a class="nav-link" th:href="@{/servicios}">Servicios</a>
         <a class="nav-link" th:href="@{/galeria}">Galería</a>
         <a class="nav-link" th:href="@{/contacto}">Contacto</a>
     </div>
-    <a th:href="@{/login}" class="nav-cta">
-        <i class="ti ti-login"></i> Portal cliente
-    </a>
+    <div class="nav-phone"><i class="ti ti-phone"></i> 01 704-6345</div>
+    <a th:href="@{/login}" class="nav-cta"><i class="ti ti-login"></i> Portal cliente</a>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <div class="hero-badge"><i class="ti ti-award"></i> +10 años de experiencia en Lima</div>
-        <h1 class="hero-title">Diseñamos stands que<br><span>conquistan</span> ferias</h1>
-        <p class="hero-desc">Producción y alquiler de stands publicitarios, video walls, mobiliario ferial y soluciones interactivas para eventos corporativos en Lima y todo el Perú.</p>
-        <div class="hero-btns">
-            <a th:href="@{/contacto}" class="btn-primary"><i class="ti ti-file-invoice"></i> Solicitar cotización gratis</a>
-            <a th:href="@{/galeria}" class="btn-secondary"><i class="ti ti-photo"></i> Ver galería de proyectos</a>
+<!-- ===== SLIDER ===== -->
+<div class="slider">
+    <div class="slider-track">
+        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider05.jpg');">
+            <div class="content">
+                <h2>Diseño y construcción de <span>stands</span> a medida</h2>
+                <p>Más de 10 años de experiencia en eventos corporativos. Creamos espacios que conquistan ferias.</p>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Solicitar cotización</a>
+            </div>
         </div>
-        <div class="hero-stats">
-            <div class="stat-item"><div class="stat-val">+<span>350</span></div><div class="stat-label">Proyectos entregados</div></div>
-            <div class="stat-item"><div class="stat-val">+<span>120</span></div><div class="stat-label">Clientes satisfechos</div></div>
-            <div class="stat-item"><div class="stat-val"><span>10</span>+</div><div class="stat-label">Años en el mercado</div></div>
-            <div class="stat-item"><div class="stat-val"><span>48</span>h</div><div class="stat-label">Tiempo de respuesta</div></div>
+        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider06.jpg');">
+            <div class="content">
+                <h2>Video walls y <span>pantallas LED</span> de alto impacto</h2>
+                <p>Alquiler e instalación de pantallas interactivas para eventos y activaciones de marca.</p>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Ver más</a>
+            </div>
         </div>
-    </div>
-</section>
-
-<!-- CLIENTES MARQUEE -->
-<div class="clients-bar">
-    <div class="marquee-wrap">
-        <span class="client-name highlight">BCP Eventos</span><span class="client-name">·</span>
-        <span class="client-name">Grupo Farmacias SAC</span><span class="client-name">·</span>
-        <span class="client-name highlight">CAPECO</span><span class="client-name">·</span>
-        <span class="client-name">Innova Corp</span><span class="client-name">·</span>
-        <span class="client-name highlight">Alicorp S.A.</span><span class="client-name">·</span>
-        <span class="client-name">Constructora JL</span><span class="client-name">·</span>
-        <span class="client-name highlight">Expo Cibus</span><span class="client-name">·</span>
-        <span class="client-name">Retail Forum</span>
-        <span class="client-name highlight">BCP Eventos</span><span class="client-name">·</span>
-        <span class="client-name">Grupo Farmacias SAC</span><span class="client-name">·</span>
-        <span class="client-name highlight">CAPECO</span><span class="client-name">·</span>
-        <span class="client-name">Innova Corp</span>
-    </div>
-</div>
-
-<!-- QUIÉNES SOMOS -->
-<div class="about-split">
-    <div class="about-img-col">
-        <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?w=900&q=80" alt="Instalación STAMOS en feria corporativa">
-        <div class="about-img-tag">+10 años en el mercado</div>
-    </div>
-    <div class="about-txt-col">
-        <div class="section-label">¿Quiénes somos?</div>
-        <h2 class="about-heading">STAMOS<br>LINARES S.R.L.</h2>
-        <p class="about-body">
-            Somos una empresa peruana dedicada al diseño y producción de stands publicitarios, módulos para ferias, escenografías y soluciones visuales para eventos corporativos. Más de 10 años transformando espacios en experiencias que conquistan ferias.<br><br>
-            Nuestra creatividad no tiene límites: implantamos creaciones versátiles e innovadoras nutriéndonos de las últimas tendencias nacionales e internacionales, con el único fin de lograr la satisfacción integral de cada cliente.
-        </p>
-        <div class="about-stats">
-            <div><div class="about-stat-num">+350</div><div class="about-stat-desc">Proyectos</div></div>
-            <div><div class="about-stat-num">+120</div><div class="about-stat-desc">Clientes</div></div>
-            <div><div class="about-stat-num">4.9★</div><div class="about-stat-desc">Puntuación media</div></div>
+        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider01.jpg');">
+            <div class="content">
+                <h2>Mobiliario ferial en <span>alquiler</span></h2>
+                <p>Mesas altas, sillas lounge, módulos de exhibición y mucho más para tu evento.</p>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+            </div>
+        </div>
+        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider02.jpg');">
+            <div class="content">
+                <h2>Pantallas táctiles y <span>software interactivo</span></h2>
+                <p>La tecnología interactiva está cambiando los eventos. Lleva tu marca al siguiente nivel.</p>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+            </div>
+        </div>
+        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider03.jpg');">
+            <div class="content">
+                <h2>Diseño 3D y <span>renders fotorrealistas</span></h2>
+                <p>Visualiza tu stand antes de construirlo. Aprobación sin sorpresas.</p>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+            </div>
+        </div>
+        <div class="slider-slide" style="background-image: url('https://stamosl.com/img/slider/slider04.jpg');">
+            <div class="content">
+                <h2>Ambientación de tiendas y <span>espacios comerciales</span></h2>
+                <p>Soluciones gráficas, mobiliario y decoración para tu local o evento.</p>
+                <a th:href="@{/contacto}" class="btn-slider"><i class="ti ti-send"></i> Cotizar</a>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- MISIÓN / VISIÓN -->
-<div class="mv-row">
-    <div class="mv-card">
-        <div class="mv-icon"><i class="ti ti-target"></i></div>
-        <div class="mv-label">Misión</div>
-        <div class="mv-heading">NUESTRO PROPÓSITO</div>
-        <p class="mv-text">Satisfacer eficazmente las necesidades de exhibición y comunicación de los productos y/o marca del cliente mediante soluciones innovadoras y competitivas adquiridas durante años de experiencia en el ámbito de la publicidad.</p>
-    </div>
-    <div class="mv-card">
-        <div class="mv-icon"><i class="ti ti-eye"></i></div>
-        <div class="mv-label">Visión</div>
-        <div class="mv-heading">HACIA DÓNDE VAMOS</div>
-        <p class="mv-text">Ser líderes del mercado a través de innovación, calidad, tiempo y costo para satisfacer con excelencia las necesidades de nuestros clientes y colaboradores, consolidándonos como referentes en el sector de eventos del Perú.</p>
-    </div>
-</div>
-
-<!-- SERVICIOS -->
-<section class="section" style="background: var(--bg);">
-    <div class="section-header">
-        <div class="section-label">Nuestros servicios</div>
-        <div class="section-title">Soluciones completas para<br><span>cada tipo de evento</span></div>
-        <div class="section-sub">Desde el diseño 3D hasta el montaje final, nos encargamos de todo para que tu marca brille.</div>
-    </div>
-    <div class="svc-grid">
-        <a class="svc-card stands" th:href="@{/servicios}">
-            <div class="svc-card-bg"></div>
-            <div class="svc-card-body">
-                <div class="svc-icon-wrap"><i class="ti ti-layout"></i></div>
-                <div class="svc-num">01</div>
-                <div class="svc-name">Stands publicitarios</div>
-                <div class="svc-desc">Diseño y fabricación de stands modulares y personalizados para ferias, expos y eventos corporativos en Lima y provincias.</div>
-                <div class="svc-tags">
-                    <span class="svc-tag">Modular</span>
-                    <span class="svc-tag">Personalizado</span>
-                    <span class="svc-tag">Alquiler / Venta</span>
-                </div>
+<!-- ===== QUIÉNES SOMOS ===== -->
+<section class="section">
+    <div class="about-grid">
+        <div class="about-image">
+            <div class="tag">+10 años de experiencia</div>
+        </div>
+        <div class="about-text">
+            <div style="font-size:11px;color:#F5C400;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Quiénes somos</div>
+            <h3>STAMOS <span>LINARES S.R.L.</span></h3>
+            <p>Somos una empresa peruana con más de 10 años de experiencia en eventos corporativos. Nos caracterizamos por brindar un servicio puntual y responsable a nuestros clientes. Nuestra creatividad no tiene límites, estamos comprometidos en cambiar el concepto tradicional de eventos, implantando creaciones versátiles e innovadoras.</p>
+            <p>Nos alimentamos de nuevas tendencias del mercado nacional e internacional, con la única finalidad de lograr la satisfacción integral de cada uno de nuestros clientes.</p>
+            <div class="about-stats">
+                <div class="stat"><div class="num">+<span>350</span></div><div class="label">Proyectos</div></div>
+                <div class="stat"><div class="num">+<span>120</span></div><div class="label">Clientes</div></div>
+                <div class="stat"><div class="num"><span>10</span>+</div><div class="label">Años</div></div>
             </div>
-            <div class="svc-arrow"><i class="ti ti-arrow-right"></i></div>
-        </a>
-        <a class="svc-card videos" th:href="@{/servicios}">
-            <div class="svc-card-bg"></div>
-            <div class="svc-card-body">
-                <div class="svc-icon-wrap"><i class="ti ti-device-tv"></i></div>
-                <div class="svc-num">02</div>
-                <div class="svc-name">Video walls &amp; pantallas</div>
-                <div class="svc-desc">Alquiler e instalación de video walls LED, pantallas táctiles de 55" y soluciones interactivas para eventos y activaciones de marca.</div>
-                <div class="svc-tags">
-                    <span class="svc-tag">Video wall LED</span>
-                    <span class="svc-tag">Pantalla táctil</span>
-                    <span class="svc-tag">Interactivo</span>
-                </div>
-            </div>
-            <div class="svc-arrow"><i class="ti ti-arrow-right"></i></div>
-        </a>
-        <a class="svc-card mobiliario" th:href="@{/servicios}">
-            <div class="svc-card-bg"></div>
-            <div class="svc-card-body">
-                <div class="svc-icon-wrap"><i class="ti ti-armchair"></i></div>
-                <div class="svc-num">03</div>
-                <div class="svc-name">Mobiliario ferial</div>
-                <div class="svc-desc">Catálogo completo de mesas altas, sillas lounge y módulos de exhibición disponibles en alquiler por evento para Lima y todo el país.</div>
-                <div class="svc-tags">
-                    <span class="svc-tag">Alquiler por evento</span>
-                    <span class="svc-tag">Lima y provincias</span>
-                </div>
-            </div>
-            <div class="svc-arrow"><i class="ti ti-arrow-right"></i></div>
-        </a>
+        </div>
     </div>
 </section>
 
-<!-- PROCESO -->
-<section class="section" style="background: var(--card);">
-    <div class="section-header">
-        <div class="section-label">¿Cómo trabajamos?</div>
-        <div class="section-title">Tu proyecto en <span>6 pasos</span></div>
-        <div class="section-sub">Proceso claro y transparente desde el primer contacto hasta la entrega final.</div>
-    </div>
-    <div class="process-steps">
-        <div class="ps"><div class="ps-num active">1</div><div class="ps-label active-l">Contacto y requerimientos</div></div>
-        <div class="ps"><div class="ps-num">2</div><div class="ps-label">Cotización formal</div></div>
-        <div class="ps"><div class="ps-num">3</div><div class="ps-label">Diseño 3D y aprobación</div></div>
-        <div class="ps"><div class="ps-num">4</div><div class="ps-label">Producción</div></div>
-        <div class="ps"><div class="ps-num">5</div><div class="ps-label">Montaje en evento</div></div>
-        <div class="ps"><div class="ps-num">6</div><div class="ps-label">Entrega final</div></div>
+<!-- ===== MISIÓN / VISIÓN ===== -->
+<section class="section" style="padding-top:0;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div style="background:#000000;border-radius:14px;padding:32px 28px;color:#FFFFFF;">
+            <i class="ti ti-target" style="font-size:32px;color:#F5C400;margin-bottom:12px;display:block;"></i>
+            <div style="font-size:11px;color:#F5C400;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Misión</div>
+            <h4 style="font-size:22px;margin:8px 0 12px;">Nuestro propósito</h4>
+            <p style="font-size:14px;color:#C0C0C0;line-height:1.7;">Satisfacer eficazmente las necesidades de exhibición y comunicación de los productos y/o marca del cliente mediante soluciones innovadoras y competitivas adquiridas durante años de experiencia en el ámbito de la publicidad.</p>
+        </div>
+        <div style="background:#000000;border-radius:14px;padding:32px 28px;color:#FFFFFF;">
+            <i class="ti ti-eye" style="font-size:32px;color:#F5C400;margin-bottom:12px;display:block;"></i>
+            <div style="font-size:11px;color:#F5C400;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Visión</div>
+            <h4 style="font-size:22px;margin:8px 0 12px;">Hacia dónde vamos</h4>
+            <p style="font-size:14px;color:#C0C0C0;line-height:1.7;">Ser líderes del mercado a través de innovación, calidad, tiempo y costo para satisfacer con excelencia las necesidades de nuestros clientes y colaboradores, consolidándonos como referentes en el sector de eventos del Perú.</p>
+        </div>
     </div>
 </section>
 
-<!-- GALERÍA -->
-<section class="section" style="background: var(--bg);">
-    <div class="section-header">
-        <div class="section-label">Galería de proyectos</div>
-        <div class="section-title">Trabajos que <span>hablan por sí solos</span></div>
-        <div class="section-sub">Una selección de nuestros proyectos recientes en ferias y eventos corporativos.</div>
-    </div>
-    <div class="gallery-grid">
-        <a class="gitem large" th:href="@{/galeria}">
-            <div class="gitem-bg"></div>
-            <div class="gitem-icon-wrap"><i class="ti ti-layout"></i></div>
-            <div class="gitem-hover">
-                <div class="gitem-hover-icon"><i class="ti ti-layout"></i></div>
-                <h4>Stand Expo Salud 2026</h4>
-                <p>Diseño modular de 200 m² con zonas de demo interactiva y mobiliario premium personalizado.</p>
-                <div class="gitem-hover-btn"><i class="ti ti-photo"></i> Ver galería</div>
-            </div>
-            <div class="gitem-label">Stand Expo Salud 2026</div>
-        </a>
-        <a class="gitem" th:href="@{/galeria}">
-            <div class="gitem-bg"></div>
-            <div class="gitem-icon-wrap"><i class="ti ti-device-tv"></i></div>
-            <div class="gitem-hover">
-                <div class="gitem-hover-icon"><i class="ti ti-device-tv"></i></div>
-                <h4>Video Wall LED</h4>
-                <p>Pantalla curva 8×3 m con contenido dinámico para eventos corporativos de alto impacto.</p>
-                <div class="gitem-hover-btn"><i class="ti ti-photo"></i> Ver galería</div>
-            </div>
-            <div class="gitem-label">Video Wall</div>
-        </a>
-        <a class="gitem" th:href="@{/galeria}">
-            <div class="gitem-bg"></div>
-            <div class="gitem-icon-wrap"><i class="ti ti-armchair"></i></div>
-            <div class="gitem-hover">
-                <div class="gitem-hover-icon"><i class="ti ti-armchair"></i></div>
-                <h4>Mobiliario Premium</h4>
-                <p>Colección lounge con acabados en madera y cuero ecológico para eventos de alto nivel.</p>
-                <div class="gitem-hover-btn"><i class="ti ti-photo"></i> Ver galería</div>
-            </div>
-            <div class="gitem-label">Mobiliario Premium</div>
-        </a>
-        <a class="gitem" th:href="@{/galeria}">
-            <div class="gitem-bg"></div>
-            <div class="gitem-icon-wrap"><i class="ti ti-3d-cube-sphere"></i></div>
-            <div class="gitem-hover">
-                <div class="gitem-hover-icon"><i class="ti ti-3d-cube-sphere"></i></div>
+<!-- ===== CATEGORÍAS DESTACADAS ===== -->
+<section class="section" style="background:#F8F8F8;border-radius:0;padding:60px 56px;max-width:100%;">
+    <div style="max-width:1400px;margin:0 auto;">
+        <div class="section-header">
+            <div class="label">Soluciones completas</div>
+            <h2>¿Qué <span>ofrecemos</span>?</h2>
+            <p>Diseño, producción, alquiler y montaje para tu evento corporativo.</p>
+        </div>
+        <div class="category-grid">
+            <a th:href="@{/servicios}" class="category-card">
+                <i class="ti ti-layout"></i>
+                <h4>Stands publicitarios</h4>
+                <p>Modulares y personalizados para ferias y exposiciones</p>
+            </a>
+            <a th:href="@{/servicios}" class="category-card">
+                <i class="ti ti-device-tv"></i>
+                <h4>Video walls & LED</h4>
+                <p>Pantallas de gran formato y alta resolución</p>
+            </a>
+            <a th:href="@{/servicios}" class="category-card">
+                <i class="ti ti-armchair"></i>
+                <h4>Mobiliario ferial</h4>
+                <p>Alquiler de mesas, sillas, módulos y counters</p>
+            </a>
+            <a th:href="@{/servicios}" class="category-card">
+                <i class="ti ti-device-tablet"></i>
+                <h4>Pantallas táctiles</h4>
+                <p>Kioscos interactivos y software a medida</p>
+            </a>
+            <a th:href="@{/servicios}" class="category-card">
+                <i class="ti ti-3d-cube-sphere"></i>
                 <h4>Diseño 3D</h4>
-                <p>Renders fotorrealistas y planos técnicos para visualizar el stand antes de producir.</p>
-                <div class="gitem-hover-btn"><i class="ti ti-photo"></i> Ver galería</div>
-            </div>
-            <div class="gitem-label">Diseño 3D</div>
-        </a>
-        <a class="gitem" th:href="@{/galeria}">
-            <div class="gitem-bg"></div>
-            <div class="gitem-icon-wrap"><i class="ti ti-device-tablet"></i></div>
-            <div class="gitem-hover">
-                <div class="gitem-hover-icon"><i class="ti ti-device-tablet"></i></div>
-                <h4>Pantalla Táctil 55"</h4>
-                <p>Interfaz interactiva con catálogo digital y juegos promocionales para activaciones de marca.</p>
-                <div class="gitem-hover-btn"><i class="ti ti-photo"></i> Ver galería</div>
-            </div>
-            <div class="gitem-label">Pantalla Táctil 55"</div>
-        </a>
-    </div>
-    <div style="text-align: center; margin-top: 40px;">
-        <a th:href="@{/galeria}" class="btn-secondary">Ver galería completa →</a>
+                <p>Renders fotorrealistas y planos técnicos</p>
+            </a>
+            <a th:href="@{/servicios}" class="category-card">
+                <i class="ti ti-crane"></i>
+                <h4>Montaje y logística</h4>
+                <p>Instalación, supervisión y desmontaje en evento</p>
+            </a>
+        </div>
     </div>
 </section>
 
-<!-- CTA BANNER -->
-<div class="cta-banner">
-    <div>
-        <div class="cta-title">¿Tienes un evento próximo?<br><span>Cotiza en menos de 24h</span></div>
-        <div class="cta-sub">Cuéntanos tu proyecto y te enviamos una propuesta personalizada sin costo.</div>
+<!-- ===== PRODUCTOS DESTACADOS (desde backend) ===== -->
+<section class="section" th:if="${productosDestacados != null and !#lists.isEmpty(productosDestacados)}">
+    <div class="section-header">
+        <div class="label">Catálogo</div>
+        <h2>Productos <span>destacados</span></h2>
+        <p>Lo que ofrecemos para tu próximo evento.</p>
     </div>
-    <div>
-        <a th:href="@{/contacto}" class="btn-primary-dark"><i class="ti ti-send"></i> Solicitar cotización</a>
+    <div class="product-grid">
+        <div class="product-card" th:each="producto : ${productosDestacados}">
+            <div class="img" th:style="'background-image: url(' + (${producto.imagenUrl} ?: '/images/placeholder-product.png') + ');'"></div>
+            <div class="body">
+                <h4 th:text="${producto.nombreItem}">Nombre del producto</h4>
+                <p th:text="${producto.descripcion} ?: 'Descripción del producto'">Descripción del producto</p>
+                <span class="tag" th:class="${producto.tipo == 'Alquiler' ? 'alquiler' : producto.tipo == 'Venta' ? 'venta' : 'servicio'}" th:text="${producto.tipo} ?: 'Servicio'">Alquiler</span>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
-<!-- FOOTER -->
+<!-- Fallback estático si no hay productos desde el backend -->
+<section class="section" th:if="${productosDestacados == null or #lists.isEmpty(productosDestacados)}">
+    <div class="section-header">
+        <div class="label">Catálogo</div>
+        <h2>Productos <span>destacados</span></h2>
+        <p>Lo que ofrecemos para tu próximo evento.</p>
+    </div>
+    <div class="product-grid">
+        <div class="product-card">
+            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider01.jpg');"></div>
+            <div class="body">
+                <h4>Stand modular 3x3</h4>
+                <p>Estructura metálica + paneles + gráfica básica</p>
+                <span class="tag alquiler">Alquiler / Venta</span>
+            </div>
+        </div>
+        <div class="product-card">
+            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider03.jpg');"></div>
+            <div class="body">
+                <h4>Video wall LED</h4>
+                <p>Pantalla de 2x1 m (HD) para alto impacto</p>
+                <span class="tag alquiler">Alquiler</span>
+            </div>
+        </div>
+        <div class="product-card">
+            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider02.jpg');"></div>
+            <div class="body">
+                <h4>Pantalla táctil 55"</h4>
+                <p>Kiosco interactivo con base y software</p>
+                <span class="tag alquiler">Alquiler</span>
+            </div>
+        </div>
+        <div class="product-card">
+            <div class="img" style="background-image: url('https://stamosl.com/img/slider/slider04.jpg');"></div>
+            <div class="body">
+                <h4>Mobiliario premium</h4>
+                <p>Mesas altas, sillas lounge y counters</p>
+                <span class="tag alquiler">Alquiler por evento</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CLIENTES ===== -->
+<section class="section" style="background:#000000;border-radius:0;padding:60px 56px;max-width:100%;color:#FFFFFF;">
+    <div style="max-width:1400px;margin:0 auto;">
+        <div class="section-header">
+            <div class="label" style="color:#F5C400;">Confían en nosotros</div>
+            <h2 style="color:#FFFFFF;">Nuestros <span>clientes</span></h2>
+            <p style="color:#C0C0C0;">Empresas que han confiado en STAMOS para sus eventos.</p>
+        </div>
+        <div class="clients-grid">
+            <span class="client-item highlight">BCP Eventos</span>
+            <span class="client-item">Grupo Farmacias SAC</span>
+            <span class="client-item highlight">CAPECO</span>
+            <span class="client-item">Innova Corp</span>
+            <span class="client-item highlight">Alicorp S.A.</span>
+            <span class="client-item">Constructora JL</span>
+            <span class="client-item highlight">Expo Cibus</span>
+            <span class="client-item">Retail Forum</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CONTACTO ===== -->
+<section class="section">
+    <div class="contact-grid">
+        <div>
+            <h3>¿Tienes un evento próximo?<br><span>Cotiza en menos de 24h</span></h3>
+            <p>Cuéntanos tu proyecto y te enviamos una propuesta personalizada sin costo. Respondemos dentro de las 24 horas del día del envío.</p>
+            <div class="contact-info">
+                <div class="item"><i class="ti ti-phone"></i> 01 704-6345 · 987 819 456 · 987 181 168</div>
+                <div class="item"><i class="ti ti-mail"></i> info@stamosl.com</div>
+                <div class="item"><i class="ti ti-map-pin"></i> Jr. Antisuyo 438, Zárate — SJL, Lima</div>
+                <div class="item"><i class="ti ti-clock"></i> Lun–Vie 9:00–21:00 · Sáb 9:00–13:00</div>
+            </div>
+        </div>
+        <form class="contact-form" th:action="@{/contacto/enviar}" method="post">
+            <!-- Alertas de Thymeleaf -->
+            <div th:if="${mensaje}" class="alert alert-success">
+                <i class="ti ti-check-circle"></i>
+                <span th:text="${mensaje}">Mensaje enviado correctamente</span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger">
+                <i class="ti ti-alert-circle"></i>
+                <span th:text="${error}">Error al enviar el mensaje</span>
+            </div>
+
+            <input type="text" name="nombre" placeholder="Nombre completo" required>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="text" name="telefono" placeholder="Teléfono / WhatsApp">
+            <textarea name="mensaje" placeholder="Cuéntanos sobre tu evento..." rows="4"></textarea>
+            <button type="submit" class="btn-submit"><i class="ti ti-send"></i> Enviar mensaje</button>
+        </form>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="footer-grid">
         <div>
-            <div class="footer-brand">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;width:16px">
-                    <div style="width:6px;height:6px;background:#F5C400;border-radius:1px"></div>
-                    <div style="width:6px;height:6px;background:#444;border-radius:1px"></div>
-                    <div style="width:6px;height:6px;background:#333;border-radius:1px"></div>
-                    <div style="width:6px;height:6px;background:#111;border:1px solid #333;border-radius:1px"></div>
-                </div>
-                STAMOS<span>.</span>
-            </div>
+            <div class="footer-brand">STAMOS<span>.</span></div>
             <div class="footer-desc">Diseño, producción y alquiler de stands publicitarios, mobiliario ferial y soluciones interactivas para eventos corporativos en Lima, Perú.</div>
         </div>
         <div>
@@ -622,19 +811,16 @@
         </div>
         <div>
             <div class="footer-title">Empresa</div>
-            <a class="footer-link" th:href="@{/}">Nosotros</a>
+            <a class="footer-link" th:href="@{/}">Inicio</a>
             <a class="footer-link" th:href="@{/galeria}">Galería</a>
             <a class="footer-link" th:href="@{/contacto}">Contacto</a>
             <a class="footer-link" th:href="@{/login}">Portal del cliente</a>
         </div>
         <div>
             <div class="footer-title">Contacto</div>
-            <div class="footer-contact">
-                <div class="footer-contact-item"><i class="ti ti-map-pin"></i>Jr. Antisuyo 438, Zárate — SJL, Lima</div>
-                <div class="footer-contact-item"><i class="ti ti-phone"></i>01 704-6345 · 987 819 456</div>
-                <div class="footer-contact-item"><i class="ti ti-mail"></i>info@stamosl.com</div>
-                <div class="footer-contact-item"><i class="ti ti-clock"></i>Lun–Vie 9:00–18:00 · Sáb 9:00–13:00</div>
-            </div>
+            <div class="footer-desc">Jr. Antisuyo 438, Zárate — SJL, Lima</div>
+            <div class="footer-desc">01 704-6345 · 987 819 456</div>
+            <div class="footer-desc">info@stamosl.com</div>
         </div>
     </div>
     <div class="footer-bottom">

@@ -611,6 +611,25 @@
             background: var(--bg);
         }
         
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
         @media (max-width: 1024px) {
             .sidebar { width: 72px; padding: 16px 0; }
             .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span { display: none; }
@@ -661,7 +680,7 @@
         </ul>
         
         <div class="sidebar-footer">
-            <a href="/logout">
+            <a th:href="@{/logout}">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
@@ -677,35 +696,35 @@
             </div>
             <div class="user-info">
                 <i class="ti ti-user-circle"></i>
-                <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
+                <span th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Cliente</span>
             </div>
         </div>
 
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:replace="fragments/mensajes :: mensaje_error"></div>
 
         <div class="stats-row">
             <div class="stat-card">
-                <div class="numero" th:text="${totalDocumentos}">0</div>
+                <div class="numero" th:text="${totalDocumentos != null ? totalDocumentos : 0}">0</div>
                 <div class="etiqueta">Total</div>
             </div>
             <div class="stat-card">
-                <div class="numero purple" th:text="${renders}">0</div>
+                <div class="numero purple" th:text="${renders != null ? renders : 0}">0</div>
                 <div class="etiqueta">Renders</div>
             </div>
             <div class="stat-card">
-                <div class="numero blue" th:text="${planos}">0</div>
+                <div class="numero blue" th:text="${planos != null ? planos : 0}">0</div>
                 <div class="etiqueta">Planos</div>
             </div>
             <div class="stat-card">
-                <div class="numero orange" th:text="${bocetos}">0</div>
+                <div class="numero orange" th:text="${bocetos != null ? bocetos : 0}">0</div>
                 <div class="etiqueta">Bocetos</div>
             </div>
             <div class="stat-card">
-                <div class="numero green" th:text="${contratos}">0</div>
+                <div class="numero green" th:text="${contratos != null ? contratos : 0}">0</div>
                 <div class="etiqueta">Contratos</div>
             </div>
             <div class="stat-card">
-                <div class="numero" th:text="${otros}">0</div>
+                <div class="numero" th:text="${otros != null ? otros : 0}">0</div>
                 <div class="etiqueta">Otros</div>
             </div>
         </div>
@@ -737,7 +756,7 @@
             </button>
         </div>
 
-        <div th:if="${documentos != null && !documentos.isEmpty()}">
+        <div th:if="${documentos != null and !#lists.isEmpty(documentos)}">
             <div class="documentos-grid" id="documentosGrid">
                 <div th:each="doc : ${documentos}" class="documento-card" 
                      th:data-tipo="${doc.tipoDocumento}"
@@ -777,12 +796,15 @@
                         <button class="btn-icon azul" th:onclick="'abrirVisualizador(' + ${doc.idDocumento} + ')'">
                             <i class="ti ti-eye"></i> Visualizar
                         </button>
+                        <a class="btn-icon" th:href="${doc.urlArchivo}" th:download="${doc.nombreArchivo}">
+                            <i class="ti ti-download"></i> Descargar
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div th:if="${documentos == null || documentos.isEmpty()}" class="empty-message">
+        <div th:if="${documentos == null or #lists.isEmpty(documentos)}" class="empty-message">
             <i class="ti ti-file-off"></i>
             <h3>No hay documentos disponibles</h3>
             <p>Aún no se han subido renders, planos o bocetos para tus proyectos. 
@@ -815,48 +837,31 @@
     </div>
 
     <script>
-        const documentosData = /*[[${documentos}]]*/ [];
-        
+        var documentosData = /*[[${documentos}]]*/ [];
+
         function abrirVisualizador(idDocumento) {
-            const doc = documentosData.find(d => d.idDocumento === idDocumento);
+            var doc = documentosData.find(function(d) { return d.idDocumento === idDocumento; });
             if (!doc) return;
             
-            const modal = document.getElementById('modalVisualizador');
-            const modalBody = document.getElementById('modalBody');
-            const modalTitulo = document.getElementById('modalTitulo');
-            const btnDescargar = document.getElementById('btnDescargar');
+            var modal = document.getElementById('modalVisualizador');
+            var modalBody = document.getElementById('modalBody');
+            var modalTitulo = document.getElementById('modalTitulo');
+            var btnDescargar = document.getElementById('btnDescargar');
             
             modalTitulo.textContent = doc.nombreArchivo || 'Documento';
             btnDescargar.href = doc.urlArchivo || '#';
             btnDescargar.download = doc.nombreArchivo || 'documento';
             
-            const extension = (doc.nombreArchivo || '').split('.').pop().toLowerCase();
-            const esImagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension);
-            const esPdf = extension === 'pdf';
+            var extension = (doc.nombreArchivo || '').split('.').pop().toLowerCase();
+            var esImagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].indexOf(extension) !== -1;
+            var esPdf = extension === 'pdf';
             
             if (esImagen) {
-                modalBody.innerHTML = `<img src="${doc.urlArchivo}" alt="${doc.nombreArchivo}" loading="lazy">`;
+                modalBody.innerHTML = '<img src="' + doc.urlArchivo + '" alt="' + doc.nombreArchivo + '" loading="lazy">';
             } else if (esPdf) {
-                modalBody.innerHTML = `
-                    <div class="pdf-container">
-                        <iframe src="${doc.urlArchivo}#toolbar=0" allowfullscreen></iframe>
-                    </div>
-                `;
+                modalBody.innerHTML = '<div class="pdf-container"><iframe src="' + doc.urlArchivo + '#toolbar=0" allowfullscreen></iframe></div>';
             } else {
-                modalBody.innerHTML = `
-                    <div class="no-preview">
-                        <i class="ti ti-file"></i>
-                        <p>Vista previa no disponible para este tipo de archivo</p>
-                        <p style="font-size:12px; margin-top:8px; color:var(--text-3);">
-                            ${doc.nombreArchivo || 'Archivo'}
-                        </p>
-                        <div style="margin-top:16px;">
-                            <a href="${doc.urlArchivo}" download="${doc.nombreArchivo}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 24px; background:var(--yellow); border-radius:10px; text-decoration:none; color:var(--text); font-weight:600;">
-                                <i class="ti ti-download"></i> Descargar archivo
-                            </a>
-                        </div>
-                    </div>
-                `;
+                modalBody.innerHTML = '<div class="no-preview"><i class="ti ti-file"></i><p>Vista previa no disponible para este tipo de archivo</p><p style="font-size:12px;margin-top:8px;color:var(--text-3);">' + (doc.nombreArchivo || 'Archivo') + '</p><div style="margin-top:16px;"><a href="' + doc.urlArchivo + '" download="' + doc.nombreArchivo + '" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--yellow);border-radius:10px;text-decoration:none;color:var(--text);font-weight:600;"><i class="ti ti-download"></i> Descargar archivo</a></div></div>';
             }
             
             modal.classList.add('active');
@@ -877,14 +882,14 @@
         });
 
         function filtrarDocumentos() {
-            const tipoFiltro = document.getElementById('tipoFiltro').value;
-            const proyectoFiltro = document.getElementById('proyectoFiltro').value;
-            const cards = document.querySelectorAll('.documento-card');
+            var tipoFiltro = document.getElementById('tipoFiltro').value;
+            var proyectoFiltro = document.getElementById('proyectoFiltro').value;
+            var cards = document.querySelectorAll('.documento-card');
             
-            cards.forEach(card => {
-                const tipo = card.dataset.tipo;
-                const proyecto = card.dataset.proyecto;
-                let mostrar = true;
+            cards.forEach(function(card) {
+                var tipo = card.dataset.tipo;
+                var proyecto = card.dataset.proyecto;
+                var mostrar = true;
                 
                 if (tipoFiltro !== 'todos' && tipo !== tipoFiltro) {
                     mostrar = false;

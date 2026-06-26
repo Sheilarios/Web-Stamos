@@ -1,5 +1,6 @@
 package com.stamos.controller.cliente;
 
+import com.stamos.controller.BaseController;
 import com.stamos.model.*;
 import com.stamos.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/cliente")
-public class ClienteProyectoController {
+public class ClienteProyectoController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
@@ -100,11 +101,13 @@ public class ClienteProyectoController {
             model.addAttribute("proyectosActivos", proyectosActivos);
             model.addAttribute("proyectosCompletados", proyectosCompletados);
             model.addAttribute("proyectosAnulados", proyectosAnulados);
+            addCommonAttributes(model);
 
             return "cliente/mis-proyectos";
 
         } catch (RuntimeException e) {
             model.addAttribute("error", "Error al cargar los proyectos: " + e.getMessage());
+            addCommonAttributes(model);
             return "cliente/dashboard";
         }
     }
@@ -139,11 +142,8 @@ public class ClienteProyectoController {
             }
 
             List<CotizacionDetalle> detallesCotizacion = cotizacionService.getDetallesByCotizacion(proyecto.getIdCotizacion());
-
             List<DocumentoProyecto> documentos = documentoService.findByProyecto(idProyecto);
-
             List<Pago> pagos = pagoService.findByProyecto(idProyecto);
-
             List<CambioEstadoProyecto> historialEstados = cambioEstadoProyectoService.findByProyecto(idProyecto);
 
             BigDecimal totalPagado = pagoService.getTotalPagadoByProyecto(idProyecto);
@@ -191,6 +191,7 @@ public class ClienteProyectoController {
             model.addAttribute("saldoPendiente", saldoPendiente);
             model.addAttribute("porcentajePagado", porcentajePagado);
             model.addAttribute("tienePagosVencidos", tienePagosVencidos);
+            addCommonAttributes(model);
 
             return "cliente/detalle-proyecto";
 
@@ -198,6 +199,7 @@ public class ClienteProyectoController {
             throw e;
         } catch (RuntimeException e) {
             model.addAttribute("error", "Error al cargar el detalle del proyecto: " + e.getMessage());
+            addCommonAttributes(model);
             return "cliente/proyectos";
         }
     }
@@ -348,7 +350,6 @@ public class ClienteProyectoController {
 
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
-        
         return switch (estado) {
             case "Aprobado" -> "Aprobado";
             case "En Diseño" -> "En Diseño";
@@ -362,7 +363,6 @@ public class ClienteProyectoController {
 
     public String getEstadoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";
-        
         return switch (estado) {
             case "Aprobado" -> "status-aprobado";
             case "En Diseño" -> "status-diseno";
@@ -376,7 +376,6 @@ public class ClienteProyectoController {
 
     public String getEstadoColor(String estado) {
         if (estado == null) return "#6B7280";
-        
         return switch (estado) {
             case "Aprobado" -> "#1A56DB";
             case "En Diseño" -> "#F59E0B";
@@ -390,7 +389,6 @@ public class ClienteProyectoController {
 
     public String getEstadoIcono(String estado) {
         if (estado == null) return "ti ti-circle";
-        
         return switch (estado) {
             case "Aprobado" -> "ti ti-check-circle";
             case "En Diseño" -> "ti ti-pencil";
@@ -404,7 +402,6 @@ public class ClienteProyectoController {
 
     public int getEstadoOrden(String estado) {
         if (estado == null) return 0;
-        
         return switch (estado) {
             case "Aprobado" -> 1;
             case "En Diseño" -> 2;
@@ -423,11 +420,9 @@ public class ClienteProyectoController {
 
     public boolean isEstadoCompletado(String estado, String estadoActual) {
         if (estado == null || estadoActual == null) return false;
-        
         if (estadoActual.equals("Anulado") || estadoActual.equals("Entregado")) {
             return true;
         }
-        
         int ordenEstado = getEstadoOrden(estado);
         int ordenActual = getEstadoOrden(estadoActual);
         return ordenEstado < ordenActual;

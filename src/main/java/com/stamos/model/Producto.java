@@ -286,26 +286,26 @@ public class Producto {
     private void actualizarCamposTransient() {
         if (tipo != null) {
             switch (tipo) {
-                case TIPO_ALQUILER:
+                case TIPO_ALQUILER -> {
                     this.tipoLegible = "Alquiler";
                     this.colorTipo = "#3B82F6";
                     this.iconoTipo = "ti ti-calendar";
-                    break;
-                case TIPO_VENTA:
+                }
+                case TIPO_VENTA -> {
                     this.tipoLegible = "Venta";
                     this.colorTipo = "#10B981";
                     this.iconoTipo = "ti ti-shopping-cart";
-                    break;
-                case TIPO_SERVICIO:
+                }
+                case TIPO_SERVICIO -> {
                     this.tipoLegible = "Servicio";
                     this.colorTipo = "#8B5CF6";
                     this.iconoTipo = "ti ti-tools";
-                    break;
-                default:
+                }
+                default -> {
                     this.tipoLegible = tipo;
                     this.colorTipo = "#6B7280";
                     this.iconoTipo = "ti ti-box";
-                    break;
+                }
             }
         }
     }
@@ -364,16 +364,12 @@ public class Producto {
 
     public String getTipoBadgeClass() {
         if (tipo == null) return "badge-secondary";
-        switch (tipo) {
-            case TIPO_ALQUILER:
-                return "badge-alquiler";
-            case TIPO_VENTA:
-                return "badge-venta";
-            case TIPO_SERVICIO:
-                return "badge-servicio";
-            default:
-                return "badge-secondary";
-        }
+        return switch (tipo) {
+            case TIPO_ALQUILER -> "badge-alquiler";
+            case TIPO_VENTA -> "badge-venta";
+            case TIPO_SERVICIO -> "badge-servicio";
+            default -> "badge-secondary";
+        };
     }
 
     public String getTipoConIcono() {

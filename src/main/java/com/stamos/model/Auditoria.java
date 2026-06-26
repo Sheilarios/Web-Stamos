@@ -1,5 +1,6 @@
 package com.stamos.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -170,7 +171,7 @@ public class Auditoria {
             }
             map.put(key, value);
             this.datosAnteriores = mapper.writeValueAsString(map);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             this.datosAnteriores = "{}";
         }
     }
@@ -184,7 +185,7 @@ public class Auditoria {
             }
             map.put(key, value);
             this.datosNuevos = mapper.writeValueAsString(map);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             this.datosNuevos = "{}";
         }
     }
@@ -197,7 +198,7 @@ public class Auditoria {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             java.util.Map<String, Object> map = mapper.readValue(datosAnteriores, java.util.Map.class);
             return map.get(key);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return null;
         }
     }
@@ -210,7 +211,7 @@ public class Auditoria {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             java.util.Map<String, Object> map = mapper.readValue(datosNuevos, java.util.Map.class);
             return map.get(key);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return null;
         }
     }
@@ -261,80 +262,54 @@ public class Auditoria {
 
     public String getAccionLegible() {
         if (accion == null) return "Sin acción";
-        switch (accion) {
-            case "CREATE": return "Creación";
-            case "INSERT": return "Inserción";
-            case "UPDATE": return "Actualización";
-            case "MODIFY": return "Modificación";
-            case "DELETE": return "Eliminación";
-            case "REMOVE": return "Remoción";
-            case "STATE_CHANGE": return "Cambio de Estado";
-            case "VALIDATE": return "Validación";
-            case "LOGIN": return "Inicio de Sesión";
-            case "LOGOUT": return "Cierre de Sesión";
-            case "DISABLE": return "Deshabilitación";
-            case "ENABLE": return "Habilitación";
-            case "EXECUTE": return "Ejecución";
-            default: return accion;
-        }
+        return switch (accion) {
+            case "CREATE" -> "Creación";
+            case "INSERT" -> "Inserción";
+            case "UPDATE" -> "Actualización";
+            case "MODIFY" -> "Modificación";
+            case "DELETE" -> "Eliminación";
+            case "REMOVE" -> "Remoción";
+            case "STATE_CHANGE" -> "Cambio de Estado";
+            case "VALIDATE" -> "Validación";
+            case "LOGIN" -> "Inicio de Sesión";
+            case "LOGOUT" -> "Cierre de Sesión";
+            case "DISABLE" -> "Deshabilitación";
+            case "ENABLE" -> "Habilitación";
+            case "EXECUTE" -> "Ejecución";
+            default -> accion;
+        };
     }
 
     public String getAccionBadgeClass() {
         if (accion == null) return "badge-secondary";
-        switch (accion) {
-            case "CREATE":
-            case "INSERT":
-                return "badge-success";
-            case "UPDATE":
-            case "MODIFY":
-                return "badge-warning";
-            case "DELETE":
-            case "REMOVE":
-                return "badge-danger";
-            case "STATE_CHANGE":
-                return "badge-info";
-            case "VALIDATE":
-                return "badge-primary";
-            case "LOGIN":
-                return "badge-success";
-            case "LOGOUT":
-                return "badge-secondary";
-            case "DISABLE":
-                return "badge-danger";
-            case "ENABLE":
-                return "badge-success";
-            default:
-                return "badge-secondary";
-        }
+        return switch (accion) {
+            case "CREATE", "INSERT" -> "badge-success";
+            case "UPDATE", "MODIFY" -> "badge-warning";
+            case "DELETE", "REMOVE" -> "badge-danger";
+            case "STATE_CHANGE" -> "badge-info";
+            case "VALIDATE" -> "badge-primary";
+            case "LOGIN" -> "badge-success";
+            case "LOGOUT" -> "badge-secondary";
+            case "DISABLE" -> "badge-danger";
+            case "ENABLE" -> "badge-success";
+            default -> "badge-secondary";
+        };
     }
 
     public String getAccionIcono() {
         if (accion == null) return "ti ti-circle";
-        switch (accion) {
-            case "CREATE":
-            case "INSERT":
-                return "ti ti-plus-circle";
-            case "UPDATE":
-            case "MODIFY":
-                return "ti ti-edit";
-            case "DELETE":
-            case "REMOVE":
-                return "ti ti-trash";
-            case "STATE_CHANGE":
-                return "ti ti-arrows-exchange";
-            case "VALIDATE":
-                return "ti ti-check-circle";
-            case "LOGIN":
-                return "ti ti-login";
-            case "LOGOUT":
-                return "ti ti-logout";
-            case "DISABLE":
-                return "ti ti-ban";
-            case "ENABLE":
-                return "ti ti-check";
-            default:
-                return "ti ti-circle";
-        }
+        return switch (accion) {
+            case "CREATE", "INSERT" -> "ti ti-plus-circle";
+            case "UPDATE", "MODIFY" -> "ti ti-edit";
+            case "DELETE", "REMOVE" -> "ti ti-trash";
+            case "STATE_CHANGE" -> "ti ti-arrows-exchange";
+            case "VALIDATE" -> "ti ti-check-circle";
+            case "LOGIN" -> "ti ti-login";
+            case "LOGOUT" -> "ti ti-logout";
+            case "DISABLE" -> "ti ti-ban";
+            case "ENABLE" -> "ti ti-check";
+            default -> "ti ti-circle";
+        };
     }
 
     public String getFechaHoraFormateada() {
@@ -354,34 +329,34 @@ public class Auditoria {
 
     public String getEntidadLegible() {
         if (entidad == null) return "Sin entidad";
-        switch (entidad) {
-            case "Cliente": return "Cliente";
-            case "Proyecto": return "Proyecto";
-            case "Cotizacion": return "Cotización";
-            case "Pago": return "Pago";
-            case "Inventario": return "Inventario";
-            case "Producto": return "Producto";
-            case "Usuario": return "Usuario";
-            case "Documento": return "Documento";
-            case "Configuracion": return "Configuración";
-            default: return entidad;
-        }
+        return switch (entidad) {
+            case "Cliente" -> "Cliente";
+            case "Proyecto" -> "Proyecto";
+            case "Cotizacion" -> "Cotización";
+            case "Pago" -> "Pago";
+            case "Inventario" -> "Inventario";
+            case "Producto" -> "Producto";
+            case "Usuario" -> "Usuario";
+            case "Documento" -> "Documento";
+            case "Configuracion" -> "Configuración";
+            default -> entidad;
+        };
     }
 
     public String getEntidadColor() {
         if (entidad == null) return "#6B7280";
-        switch (entidad) {
-            case "Cliente": return "#3B82F6";
-            case "Proyecto": return "#8B5CF6";
-            case "Cotizacion": return "#F59E0B";
-            case "Pago": return "#10B981";
-            case "Inventario": return "#EF4444";
-            case "Producto": return "#EC4899";
-            case "Usuario": return "#6366F1";
-            case "Documento": return "#14B8A6";
-            case "Configuracion": return "#F97316";
-            default: return "#6B7280";
-        }
+        return switch (entidad) {
+            case "Cliente" -> "#3B82F6";
+            case "Proyecto" -> "#8B5CF6";
+            case "Cotizacion" -> "#F59E0B";
+            case "Pago" -> "#10B981";
+            case "Inventario" -> "#EF4444";
+            case "Producto" -> "#EC4899";
+            case "Usuario" -> "#6366F1";
+            case "Documento" -> "#14B8A6";
+            case "Configuracion" -> "#F97316";
+            default -> "#6B7280";
+        };
     }
 
     public String getUsuarioLegible() {
@@ -501,7 +476,7 @@ public class Auditoria {
             auditoria.setDatosAnteriores(mapper.writeValueAsString(anteriores));
             auditoria.setDatosNuevos(mapper.writeValueAsString(nuevos));
             return auditoria;
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             Auditoria auditoria = new Auditoria(idUsuario, "STATE_CHANGE", entidad, idRegistro, ipOrigen);
             auditoria.setDatosAnteriores("{}");
             auditoria.setDatosNuevos("{}");
@@ -519,7 +494,7 @@ public class Auditoria {
             Auditoria auditoria = new Auditoria(idUsuario, "LOGIN", "Usuario", null, ipOrigen);
             auditoria.setDatosNuevos(mapper.writeValueAsString(nuevos));
             return auditoria;
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return new Auditoria(idUsuario, "LOGIN", "Usuario", null, ipOrigen);
         }
     }
@@ -533,7 +508,7 @@ public class Auditoria {
             Auditoria auditoria = new Auditoria(idUsuario, "LOGOUT", "Usuario", null, ipOrigen);
             auditoria.setDatosNuevos(mapper.writeValueAsString(nuevos));
             return auditoria;
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return new Auditoria(idUsuario, "LOGOUT", "Usuario", null, ipOrigen);
         }
     }
@@ -550,7 +525,7 @@ public class Auditoria {
             Auditoria auditoria = new Auditoria(idUsuario, "DISABLE", entidad, idRegistro, ipOrigen);
             auditoria.setDatosNuevos(mapper.writeValueAsString(nuevos));
             return auditoria;
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return new Auditoria(idUsuario, "DISABLE", entidad, idRegistro, ipOrigen);
         }
     }
@@ -565,7 +540,7 @@ public class Auditoria {
             Auditoria auditoria = new Auditoria(idUsuario, "ENABLE", entidad, idRegistro, ipOrigen);
             auditoria.setDatosNuevos(mapper.writeValueAsString(nuevos));
             return auditoria;
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return new Auditoria(idUsuario, "ENABLE", entidad, idRegistro, ipOrigen);
         }
     }

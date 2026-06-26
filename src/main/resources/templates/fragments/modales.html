@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modales · STAMOS</title>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_confirmacion_eliminar                        -->
+<!-- ============================================================ -->
+<div th:fragment="modal_confirmacion_eliminar" class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #E8E8E8;">
+            <div class="modal-header" style="border-bottom:1px solid #E8E8E8; padding:20px 24px;">
+                <h5 class="modal-title fw-bold" style="display:flex; align-items:center; gap:10px;">
+                    <i class="ti ti-alert-triangle" style="color:#EF4444; font-size:24px;"></i>
+                    Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <p style="font-size:15px; color:#1A1F2E; margin-bottom:4px;">
+                    ¿Estás seguro de eliminar este registro?
+                </p>
+                <p style="font-size:13px; color:#8A8A8A;">
+                    Esta acción no se puede deshacer. Todos los datos asociados se perderán permanentemente.
+                </p>
+                <div th:if="${nombreRegistro != null}" style="background:#F5F6F8; border-radius:10px; padding:12px 16px; margin-top:12px;">
+                    <span style="font-size:12px; color:#6B6B6B;">Registro:</span>
+                    <strong style="font-size:14px; color:#1A1F2E; display:block;" th:text="${nombreRegistro}">Nombre del registro</strong>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #E8E8E8; padding:16px 24px; gap:12px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 24px; font-weight:600;">
+                    <i class="ti ti-x"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar" style="border-radius:10px; padding:10px 24px; font-weight:600;">
+                    <i class="ti ti-trash"></i> Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_confirmar_accion                             -->
+<!-- ============================================================ -->
+<div th:fragment="modal_confirmar_accion" class="modal fade" id="modalConfirmar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #E8E8E8;">
+            <div class="modal-header" style="border-bottom:1px solid #E8E8E8; padding:20px 24px;">
+                <h5 class="modal-title fw-bold" style="display:flex; align-items:center; gap:10px;">
+                    <i class="ti ti-question-circle" style="color:#F5C400; font-size:24px;"></i>
+                    <span th:text="${tituloModal} ?: 'Confirmar acción'">Confirmar acción</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <p style="font-size:15px; color:#1A1F2E;" th:text="${mensajeModal} ?: '¿Estás seguro de realizar esta acción?'">
+                    ¿Estás seguro de realizar esta acción?
+                </p>
+                <div th:if="${detalleModal != null}" style="background:#F5F6F8; border-radius:10px; padding:12px 16px; margin-top:12px;">
+                    <span style="font-size:12px; color:#6B6B6B;">Detalle:</span>
+                    <p style="font-size:13px; color:#1A1F2E; margin:4px 0 0;" th:text="${detalleModal}">Detalle adicional</p>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #E8E8E8; padding:16px 24px; gap:12px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 24px; font-weight:600;">
+                    <i class="ti ti-x"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnConfirmar" style="border-radius:10px; padding:10px 24px; font-weight:600; background:#F5C400; border-color:#F5C400; color:#000000;">
+                    <i class="ti ti-check"></i> <span th:text="${textoBoton} ?: 'Confirmar'">Confirmar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_detalle                                      -->
+<!-- ============================================================ -->
+<div th:fragment="modal_detalle" class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #E8E8E8;">
+            <div class="modal-header" style="border-bottom:1px solid #E8E8E8; padding:20px 24px;">
+                <h5 class="modal-title fw-bold" style="display:flex; align-items:center; gap:10px;">
+                    <i class="ti ti-file-description" style="color:#F5C400; font-size:24px;"></i>
+                    <span th:text="${tituloDetalle} ?: 'Detalle del registro'">Detalle del registro</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <!-- Contenido dinámico -->
+                <div th:replace="${contenidoDetalle} ?: 'fragments/modales :: detalle_vacio'"></div>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #E8E8E8; padding:16px 24px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 24px; font-weight:600;">
+                    <i class="ti ti-x"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: detalle_vacio (para modal_detalle)                -->
+<!-- ============================================================ -->
+<div th:fragment="detalle_vacio" style="text-align:center; padding:20px 0;">
+    <i class="ti ti-file" style="font-size:48px; color:#D0D0D0; display:block; margin-bottom:16px;"></i>
+    <p style="color:#8A8A8A;">No hay información disponible para mostrar.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_formulario                                   -->
+<!-- ============================================================ -->
+<div th:fragment="modal_formulario" class="modal fade" id="modalFormulario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #E8E8E8;">
+            <div class="modal-header" style="border-bottom:1px solid #E8E8E8; padding:20px 24px;">
+                <h5 class="modal-title fw-bold" style="display:flex; align-items:center; gap:10px;">
+                    <i class="ti ti-edit" style="color:#F5C400; font-size:24px;"></i>
+                    <span th:text="${tituloFormulario} ?: 'Completar formulario'">Completar formulario</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form th:action="${actionFormulario}" th:method="${metodoFormulario} ?: 'post'">
+                <div class="modal-body" style="padding:24px;">
+                    <!-- Contenido del formulario -->
+                    <div th:replace="${contenidoFormulario} ?: 'fragments/modales :: formulario_vacio'"></div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #E8E8E8; padding:16px 24px; gap:12px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 24px; font-weight:600;">
+                        <i class="ti ti-x"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="border-radius:10px; padding:10px 24px; font-weight:600; background:#F5C400; border-color:#F5C400; color:#000000;">
+                        <i class="ti ti-device-floppy"></i> <span th:text="${textoBotonFormulario} ?: 'Guardar'">Guardar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: formulario_vacio                                   -->
+<!-- ============================================================ -->
+<div th:fragment="formulario_vacio" style="text-align:center; padding:20px 0;">
+    <i class="ti ti-edit" style="font-size:48px; color:#D0D0D0; display:block; margin-bottom:16px;"></i>
+    <p style="color:#8A8A8A;">No hay campos definidos para este formulario.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_exito                                        -->
+<!-- ============================================================ -->
+<div th:fragment="modal_exito" class="modal fade" id="modalExito" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #10B981;">
+            <div class="modal-body" style="padding:40px 32px; text-align:center;">
+                <div style="width:72px; height:72px; background:#E8FEF0; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                    <i class="ti ti-circle-check" style="font-size:40px; color:#10B981;"></i>
+                </div>
+                <h5 class="fw-bold" style="font-size:20px; color:#1A1F2E; margin-bottom:8px;" th:text="${tituloExito} ?: '¡Operación exitosa!'">¡Operación exitosa!</h5>
+                <p style="font-size:14px; color:#8A8A8A; max-width:360px; margin:0 auto;" th:text="${mensajeExito} ?: 'La operación se realizó correctamente.'">La operación se realizó correctamente.</p>
+                <button type="button" class="btn btn-success mt-4" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 32px; font-weight:600; background:#10B981; border-color:#10B981;">
+                    <i class="ti ti-check"></i> Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_error                                        -->
+<!-- ============================================================ -->
+<div th:fragment="modal_error" class="modal fade" id="modalError" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #EF4444;">
+            <div class="modal-body" style="padding:40px 32px; text-align:center;">
+                <div style="width:72px; height:72px; background:#FFF5F5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                    <i class="ti ti-alert-circle" style="font-size:40px; color:#EF4444;"></i>
+                </div>
+                <h5 class="fw-bold" style="font-size:20px; color:#1A1F2E; margin-bottom:8px;" th:text="${tituloError} ?: '¡Ocurrió un error!'">¡Ocurrió un error!</h5>
+                <p style="font-size:14px; color:#8A8A8A; max-width:360px; margin:0 auto;" th:text="${mensajeError} ?: 'Hubo un problema al realizar la operación. Por favor, intenta nuevamente.'">Hubo un problema al realizar la operación. Por favor, intenta nuevamente.</p>
+                <button type="button" class="btn btn-danger mt-4" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 32px; font-weight:600; background:#EF4444; border-color:#EF4444;">
+                    <i class="ti ti-x"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_cargando                                     -->
+<!-- ============================================================ -->
+<div th:fragment="modal_cargando" class="modal fade" id="modalCargando" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #E8E8E8;">
+            <div class="modal-body" style="padding:40px 32px; text-align:center;">
+                <div class="spinner-border text-warning" role="status" style="width:48px; height:48px; border-color:#F5C400; border-right-color:transparent;">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p style="font-size:14px; color:#8A8A8A; margin-top:16px;" th:text="${mensajeCargando} ?: 'Procesando, por favor espera...'">Procesando, por favor espera...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_info                                         -->
+<!-- ============================================================ -->
+<div th:fragment="modal_info" class="modal fade" id="modalInfo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #3B82F6;">
+            <div class="modal-body" style="padding:40px 32px; text-align:center;">
+                <div style="width:72px; height:72px; background:#E8F4FF; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                    <i class="ti ti-info-circle" style="font-size:40px; color:#3B82F6;"></i>
+                </div>
+                <h5 class="fw-bold" style="font-size:20px; color:#1A1F2E; margin-bottom:8px;" th:text="${tituloInfo} ?: 'Información'">Información</h5>
+                <p style="font-size:14px; color:#8A8A8A; max-width:360px; margin:0 auto;" th:text="${mensajeInfo} ?: 'Información adicional sobre el proceso.'">Información adicional sobre el proceso.</p>
+                <button type="button" class="btn btn-primary mt-4" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 32px; font-weight:600; background:#3B82F6; border-color:#3B82F6;">
+                    <i class="ti ti-check"></i> Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_advertencia                                  -->
+<!-- ============================================================ -->
+<div th:fragment="modal_advertencia" class="modal fade" id="modalAdvertencia" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #F59E0B;">
+            <div class="modal-body" style="padding:40px 32px; text-align:center;">
+                <div style="width:72px; height:72px; background:#FFFBE6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                    <i class="ti ti-alert-triangle" style="font-size:40px; color:#F59E0B;"></i>
+                </div>
+                <h5 class="fw-bold" style="font-size:20px; color:#1A1F2E; margin-bottom:8px;" th:text="${tituloAdvertencia} ?: '¡Atención!'">¡Atención!</h5>
+                <p style="font-size:14px; color:#8A8A8A; max-width:360px; margin:0 auto;" th:text="${mensajeAdvertencia} ?: 'Por favor, revisa la información antes de continuar.'">Por favor, revisa la información antes de continuar.</p>
+                <button type="button" class="btn btn-warning mt-4" data-bs-dismiss="modal" style="border-radius:10px; padding:10px 32px; font-weight:600; background:#F59E0B; border-color:#F59E0B; color:#000000;">
+                    <i class="ti ti-check"></i> Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: modal_imagen                                       -->
+<!-- ============================================================ -->
+<div th:fragment="modal_imagen" class="modal fade" id="modalImagen" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:1px solid #E8E8E8; background:transparent; box-shadow:none;">
+            <div style="position:relative; background:#000000; border-radius:16px; overflow:hidden;">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute; top:16px; right:16px; z-index:10; background:rgba(0,0,0,0.6); border-radius:50%; padding:12px; opacity:1; filter:invert(1);"></button>
+                <img id="imagenModal" src="" alt="Vista ampliada" style="width:100%; height:auto; max-height:80vh; object-fit:contain; display:block;">
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

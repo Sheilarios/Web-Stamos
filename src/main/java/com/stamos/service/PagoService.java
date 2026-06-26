@@ -70,8 +70,7 @@ public class PagoService {
         pago.setIdUsuarioRegistro(idUsuarioRegistro);
         pago.setIdUsuarioActualizacion(idUsuarioRegistro);
         pago.setNombreProyecto(proyecto.getNombreProyecto());
-        pago.setCodigoProyecto(proyecto.getCodigoProyecto());
-        pago.setMontoTotalProyecto(proyecto.getMontoTotal());
+        
         Pago pagoGuardado = pagoRepository.save(pago);
 
         if (comprobante != null) {
@@ -79,17 +78,12 @@ public class PagoService {
             comprobante.setValidado(false);
             comprobante.setFechaRegistro(LocalDateTime.now());
             comprobante.setFechaActualizacion(LocalDateTime.now());
-            
             comprobante.setMetodoPago(pago.getMetodoPago());
-            comprobante.setNombreProyecto(proyecto.getNombreProyecto());
-            comprobante.setNombreCliente(proyecto.getNombreCliente());
-            
             comprobanteRepository.save(comprobante);
         }
 
         return pagoGuardado;
     }
-
 
     @Transactional
     public Pago registrarPagoConComprobante(Pago pago, String tipoComprobante, String numeroComprobante,
@@ -117,7 +111,6 @@ public class PagoService {
 
         return registrarPago(pago, comprobante, idUsuarioRegistro);
     }
-
 
     @Transactional
     public Pago validarPago(Integer idPago, Integer idUsuarioValidacion) {
@@ -230,41 +223,33 @@ public class PagoService {
         return pagoRepository.findTopNByProyecto(idProyecto, limit);
     }
 
-
     public BigDecimal getTotalPagadoByProyecto(Integer idProyecto) {
         return pagoRepository.sumMontoByProyecto(idProyecto);
     }
-
 
     public BigDecimal getTotalPagadoConPendientesByProyecto(Integer idProyecto) {
         return pagoRepository.sumMontoTotalByProyecto(idProyecto);
     }
 
-
     public BigDecimal getTotalPagadoByCliente(Integer idCliente) {
         return pagoRepository.sumMontoByCliente(idCliente);
     }
-
 
     public BigDecimal getTotalPagadoGeneral() {
         return pagoRepository.sumTotalPagadoGeneral();
     }
 
-
     public BigDecimal getTotalPagadoConPendientesGeneral() {
         return pagoRepository.sumTotalPagadoConPendientes();
     }
-
 
     public BigDecimal getTotalPendiente() {
         return pagoRepository.sumTotalPendiente();
     }
 
-
     public BigDecimal getTotalFacturado() {
         return proyectoRepository.sumMontoTotal();
     }
-
 
     public BigDecimal getTotalFacturadoActivos() {
         return proyectoRepository.sumMontoTotalActivos();
@@ -277,7 +262,6 @@ public class PagoService {
         return saldo.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : saldo;
     }
 
-
     public BigDecimal getSaldoPendienteByProyecto(Integer idProyecto) {
         Proyecto proyecto = proyectoRepository.findById(idProyecto).orElse(null);
         if (proyecto == null) {
@@ -288,14 +272,12 @@ public class PagoService {
         return saldo.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : saldo;
     }
 
- 
     public BigDecimal getSaldoPendienteByCliente(Integer idCliente) {
         BigDecimal totalFacturado = proyectoRepository.sumMontoTotalByCliente(idCliente);
         BigDecimal totalPagado = getTotalPagadoByCliente(idCliente);
         BigDecimal saldo = totalFacturado.subtract(totalPagado);
         return saldo.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : saldo;
     }
-
 
     public int getPorcentajeCobranzaGeneral() {
         BigDecimal totalFacturado = getTotalFacturado();
@@ -308,7 +290,6 @@ public class PagoService {
         return Math.min(porcentaje.intValue(), 100);
     }
 
-
     public int getPorcentajeCobranzaByProyecto(Integer idProyecto) {
         Proyecto proyecto = proyectoRepository.findById(idProyecto).orElse(null);
         if (proyecto == null || proyecto.getMontoTotal().compareTo(BigDecimal.ZERO) == 0) {
@@ -319,7 +300,6 @@ public class PagoService {
                 .divide(proyecto.getMontoTotal(), 0, RoundingMode.HALF_UP);
         return Math.min(porcentaje.intValue(), 100);
     }
-
 
     public int getPorcentajeCobranzaByCliente(Integer idCliente) {
         BigDecimal totalFacturado = proyectoRepository.sumMontoTotalByCliente(idCliente);
@@ -336,15 +316,17 @@ public class PagoService {
         return pagoRepository.count();
     }
 
-  
     public long countByEstadoPago(String estadoPago) {
+        return pagoRepository.countByEstadoPago(estadoPago);
+    }
+
+    public long countByEstado(String estadoPago) {
         return pagoRepository.countByEstadoPago(estadoPago);
     }
 
     public long countByProyecto(Integer idProyecto) {
         return pagoRepository.countByIdProyecto(idProyecto);
     }
-
 
     public long countByMetodoPago(String metodoPago) {
         return pagoRepository.countByMetodoPago(metodoPago);
@@ -358,7 +340,6 @@ public class PagoService {
         return pagoRepository.countByMonthAndYear(month, year);
     }
 
-
     public List<Object[]> getEstadisticasDashboard() {
         return pagoRepository.getEstadisticasDashboard();
     }
@@ -367,26 +348,21 @@ public class PagoService {
         return pagoRepository.getEstadisticasDashboardByProyecto(idProyecto);
     }
 
-
     public List<Object[]> getEstadisticasDashboardByCliente(Integer idCliente) {
         return pagoRepository.getEstadisticasDashboardByCliente(idCliente);
     }
-
 
     public boolean hasPagos(Integer idProyecto) {
         return pagoRepository.existsByIdProyecto(idProyecto);
     }
 
-
     public boolean hasPagosValidados(Integer idProyecto) {
         return pagoRepository.hasPagosValidados(idProyecto);
     }
 
-
     public boolean hasPagosPendientes(Integer idProyecto) {
         return pagoRepository.hasPagosPendientes(idProyecto);
     }
-
 
     public boolean canValidar(Integer idPago) {
         return pagoRepository.canValidar(idPago);
@@ -395,7 +371,6 @@ public class PagoService {
     public boolean canRechazar(Integer idPago) {
         return pagoRepository.canValidar(idPago);
     }
-
 
     private String guardarComprobante(MultipartFile archivo) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
@@ -411,14 +386,12 @@ public class PagoService {
         return nombreUnico;
     }
 
-
     private String getFileExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) {
             return "";
         }
         return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
     }
-
 
     private boolean isValidFileType(String extension) {
         String[] validExtensions = {"jpg", "jpeg", "png", "gif", "pdf"};
@@ -429,7 +402,6 @@ public class PagoService {
         }
         return false;
     }
-
 
     public String getEstadoLegible(String estadoPago) {
         if (estadoPago == null) {
@@ -443,7 +415,6 @@ public class PagoService {
         };
     }
 
-
     public String getEstadoBadgeClass(String estadoPago) {
         if (estadoPago == null) {
             return "status-pendiente";
@@ -455,7 +426,6 @@ public class PagoService {
             default -> "status-pendiente";
         };
     }
-
 
     public String getEstadoColor(String estadoPago) {
         if (estadoPago == null) {
@@ -469,7 +439,6 @@ public class PagoService {
         };
     }
 
-
     public String getMetodoLegible(String metodoPago) {
         if (metodoPago == null) {
             return "No especificado";
@@ -482,7 +451,6 @@ public class PagoService {
             default -> metodoPago;
         };
     }
-
 
     public String getMetodoBadgeClass(String metodoPago) {
         if (metodoPago == null) {
@@ -510,7 +478,6 @@ public class PagoService {
         };
     }
 
-
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) {
             return "S/ 0.00";
@@ -522,26 +489,15 @@ public class PagoService {
         return "Efectivo".equals(metodoPago);
     }
 
-
     public boolean esTransferencia(String metodoPago) {
         return "Transferencia".equals(metodoPago);
     }
-
 
     public boolean esTarjeta(String metodoPago) {
         return "Tarjeta".equals(metodoPago);
     }
 
-
     public boolean esCheque(String metodoPago) {
         return "Cheque".equals(metodoPago);
-    }
-
-    public BigDecimal sumByMonthAndYear(int monthValue, int year) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public long countByEstado(String pendiente) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

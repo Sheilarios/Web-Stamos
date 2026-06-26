@@ -465,15 +465,15 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li><a href="/cliente/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
-            <li><a href="/cliente/proyectos" class="active"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
-            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
-            <li><a href="/cliente/pagos"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
-            <li><a href="/cliente/perfil"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+            <li><a th:href="@{/cliente/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/cliente/proyectos}" class="active"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a th:href="@{/cliente/documentos}"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a th:href="@{/cliente/pagos}"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a th:href="@{/cliente/perfil}"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
         </ul>
         
         <div class="sidebar-footer">
-            <a href="/logout">
+            <a th:href="@{/logout}">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
@@ -489,27 +489,28 @@
             </div>
             <div class="user-info">
                 <i class="ti ti-user-circle"></i>
-                <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
+                <span th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Cliente</span>
             </div>
         </div>
 
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:replace="fragments/mensajes :: mensaje_error"></div>
+        <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
         <div class="stats-row">
             <div class="stat-card">
-                <div class="numero azul" th:text="${proyectosActivos}">0</div>
+                <div class="numero azul" th:text="${proyectosActivos != null ? proyectosActivos : 0}">0</div>
                 <div class="etiqueta">Activos</div>
             </div>
             <div class="stat-card">
-                <div class="numero verde" th:text="${proyectosCompletados}">0</div>
+                <div class="numero verde" th:text="${proyectosCompletados != null ? proyectosCompletados : 0}">0</div>
                 <div class="etiqueta">Completados</div>
             </div>
             <div class="stat-card">
-                <div class="numero rojo" th:text="${proyectosAnulados}">0</div>
+                <div class="numero rojo" th:text="${proyectosAnulados != null ? proyectosAnulados : 0}">0</div>
                 <div class="etiqueta">Anulados</div>
             </div>
             <div class="stat-card">
-                <div class="numero" th:text="${totalProyectos}">0</div>
+                <div class="numero" th:text="${totalProyectos != null ? totalProyectos : 0}">0</div>
                 <div class="etiqueta">Total</div>
             </div>
         </div>
@@ -534,11 +535,11 @@
                 </div>
                 <span style="font-size:12px; color:var(--text-3);">
                     <i class="ti ti-info-circle"></i> 
-                    <span th:text="${totalProyectos} + ' proyectos'">0 proyectos</span>
+                    <span th:text="${totalProyectos != null ? totalProyectos + ' proyectos' : '0 proyectos'}">0 proyectos</span>
                 </span>
             </div>
             
-            <div th:if="${!proyectos.isEmpty()}">
+            <div th:if="${proyectos != null and !#lists.isEmpty(proyectos)}">
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -561,11 +562,11 @@
                                     <strong th:text="${p.nombreProyecto}">—</strong>
                                 </td>
                                 <td th:text="${#temporals.format(p.fechaInicio, 'dd/MM/yyyy')}">—</td>
-                                <td th:text="${p.montoTotalFormateado}">S/ 0.00</td>
+                                <td th:text="${p.montoTotalFormateado != null ? p.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</td>
                                 <td>
-                                    <span th:text="${p.totalPagadoFormateado}">S/ 0.00</span>
+                                    <span th:text="${p.totalPagadoFormateado != null ? p.totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</span>
                                     <div class="progress-bar">
-                                        <div class="fill" th:style="'width:' + ${p.porcentajePagado} + '%;'"></div>
+                                        <div class="fill" th:style="'width:' + ${p.porcentajePagado != null ? p.porcentajePagado : 0} + '%;'"></div>
                                     </div>
                                 </td>
                                 <td>
@@ -578,9 +579,9 @@
                                           th:text="${p.estado}">Aprobado</span>
                                 </td>
                                 <td>
-                                    <span th:text="${p.progreso} + '%'">0%</span>
+                                    <span th:text="${p.progreso != null ? p.progreso + '%' : '0%'}">0%</span>
                                     <div class="progress-bar">
-                                        <div class="fill" th:style="'width:' + ${p.progreso} + '%;'"></div>
+                                        <div class="fill" th:style="'width:' + ${p.progreso != null ? p.progreso : 0} + '%;'"></div>
                                     </div>
                                 </td>
                                 <td>
@@ -594,26 +595,26 @@
                 </div>
             </div>
             
-            <div th:if="${proyectos.isEmpty()}" class="empty-message">
+            <div th:if="${proyectos == null or #lists.isEmpty(proyectos)}" class="empty-message">
                 <i class="ti ti-folder-off"></i>
                 <p>No tienes proyectos registrados aún.</p>
                 <p style="font-size:12px; color:var(--text-3); margin-top:4px;">
                     Tus proyectos aparecerán aquí cuando un vendedor los cree desde una cotización aprobada.
                 </p>
-                <a href="/cliente/dashboard" class="btn-link" style="margin-top:12px; display:inline-block;">
+                <a th:href="@{/cliente/dashboard}" class="btn-link" style="margin-top:12px; display:inline-block;">
                     <i class="ti ti-arrow-left"></i> Volver al Dashboard
                 </a>
             </div>
         </div>
 
         <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
-            <a href="/cliente/dashboard" class="btn-link">
+            <a th:href="@{/cliente/dashboard}" class="btn-link">
                 <i class="ti ti-arrow-left"></i> Volver al Dashboard
             </a>
-            <a href="/cliente/documentos" class="btn-link">
+            <a th:href="@{/cliente/documentos}" class="btn-link">
                 <i class="ti ti-file-text"></i> Ver Documentos
             </a>
-            <a href="/cliente/pagos" class="btn-link">
+            <a th:href="@{/cliente/pagos}" class="btn-link">
                 <i class="ti ti-credit-card"></i> Ver Pagos
             </a>
         </div>
@@ -621,12 +622,12 @@
 
     <script>
         function filtrarProyectos() {
-            const estadoFiltro = document.getElementById('estadoFiltro').value;
-            const rows = document.querySelectorAll('#tablaProyectos tr');
+            var estadoFiltro = document.getElementById('estadoFiltro').value;
+            var rows = document.querySelectorAll('#tablaProyectos tr');
             
-            rows.forEach(row => {
-                const estado = row.dataset.estado;
-                let mostrar = true;
+            rows.forEach(function(row) {
+                var estado = row.dataset.estado;
+                var mostrar = true;
                 
                 if (estadoFiltro !== 'todos' && estado !== estadoFiltro) {
                     mostrar = false;

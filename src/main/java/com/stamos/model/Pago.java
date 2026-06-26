@@ -46,7 +46,6 @@ public class Pago {
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
 
-    // Campos de auditoría (deben existir en la BD o eliminarlos)
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
 
@@ -65,7 +64,6 @@ public class Pago {
     @Column(name = "fecha_validacion")
     private LocalDateTime fechaValidacion;
 
-    // Campos Transient para la vista
     @Transient
     private String nombreProyecto;
 
@@ -92,7 +90,6 @@ public class Pago {
         this.metodoPago = metodoPago;
     }
 
-    // Getters y Setters
     public Integer getIdPago() {
         return idPago;
     }
@@ -231,7 +228,6 @@ public class Pago {
         this.colorEstado = colorEstado;
     }
 
-    // Métodos de actualización
     private void actualizarMetodoPagoLegible(String metodo) {
         if (metodo == null) {
             this.metodoPagoLegible = "No especificado";
@@ -263,26 +259,25 @@ public class Pago {
             return;
         }
         switch (estado) {
-            case ESTADO_PENDIENTE:
+            case ESTADO_PENDIENTE -> {
                 this.estadoPagoLegible = "Pendiente";
                 this.colorEstado = "#F59E0B";
-                break;
-            case ESTADO_VALIDADO:
+            }
+            case ESTADO_VALIDADO -> {
                 this.estadoPagoLegible = "Validado";
                 this.colorEstado = "#10B981";
-                break;
-            case ESTADO_RECHAZADO:
+            }
+            case ESTADO_RECHAZADO -> {
                 this.estadoPagoLegible = "Rechazado";
                 this.colorEstado = "#EF4444";
-                break;
-            default:
+            }
+            default -> {
                 this.estadoPagoLegible = estado;
                 this.colorEstado = "#6B7280";
-                break;
+            }
         }
     }
 
-    // Métodos de negocio
     public boolean isPendiente() {
         return ESTADO_PENDIENTE.equals(this.estadoPago);
     }
@@ -311,7 +306,6 @@ public class Pago {
         actualizarEstadoPagoLegible(this.estadoPago);
     }
 
-    // Métodos de formato
     public String getMontoFormateado() {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, RoundingMode.HALF_UP).toString();
@@ -330,16 +324,12 @@ public class Pago {
     public String getEstadoBadgeClass() {
         if (estadoPago == null) return "badge-warning";
         
-        switch (estadoPago) {
-            case ESTADO_PENDIENTE:
-                return "badge-warning";
-            case ESTADO_VALIDADO:
-                return "badge-success";
-            case ESTADO_RECHAZADO:
-                return "badge-danger";
-            default:
-                return "badge-secondary";
-        }
+        return switch (estadoPago) {
+            case ESTADO_PENDIENTE -> "badge-warning";
+            case ESTADO_VALIDADO -> "badge-success";
+            case ESTADO_RECHAZADO -> "badge-danger";
+            default -> "badge-secondary";
+        };
     }
 
     public String getEstadoLegible() {
@@ -371,45 +361,5 @@ public class Pago {
     @Override
     public int hashCode() {
         return idPago != null ? idPago.hashCode() : 0;
-    }
-
-    public String getCodigoProyecto() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getNombreCliente() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getEmailCliente() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getRucCliente() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getNombreUsuarioRegistro() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getNombreUsuarioValidacion() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public BigDecimal getMontoTotalProyecto() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setMontoTotalProyecto(BigDecimal montoTotal) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setNombreCliente(String nombreCliente) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setCodigoProyecto(String codigoProyecto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

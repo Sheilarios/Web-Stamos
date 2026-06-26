@@ -1,5 +1,6 @@
 package com.stamos.controller.publics;
 
+import com.stamos.controller.BaseController;
 import com.stamos.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,14 +16,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-
 @Controller
 @RequestMapping("/contacto")
-public class ContactoController {
+public class ContactoController extends BaseController {
 
     @Autowired
     private EmailService emailService;
-
 
     @GetMapping
     public String mostrarContacto(Model model) {
@@ -37,7 +36,7 @@ public class ContactoController {
         model.addAttribute("horarioSabado", "Sábado: 9:00 AM - 1:00 PM");
         model.addAttribute("mapaLatitud", "-12.0453");
         model.addAttribute("mapaLongitud", "-77.0312");
-        
+        addCommonAttributes(model);
         return "public/contacto";
     }
 
@@ -70,19 +69,11 @@ public class ContactoController {
             }
 
             String cuerpoMensaje = construirMensajeContacto(nombre, email, telefono, asunto, mensaje);
-            
             String asuntoCorreo = "Nuevo mensaje de contacto - " + asunto;
-            emailService.enviarCorreoContacto(
-                "info@stamos.com",    
-                asuntoCorreo,          
-                cuerpoMensaje         
-            );
-
-            emailService.enviarCorreoContacto(
-                email,                
-                "Confirmación - STAMOS S.L.", 
-                construirMensajeConfirmacion(nombre, asunto)
-            );
+            
+            emailService.enviarCorreoContacto("info@stamos.com", asuntoCorreo, cuerpoMensaje);
+            emailService.enviarCorreoContacto(email, "Confirmación - STAMOS S.L.", 
+                construirMensajeConfirmacion(nombre, asunto));
 
             redirectAttributes.addFlashAttribute("mensaje", 
                 "¡Gracias por contactarnos! Hemos recibido tu mensaje y te responderemos a la brevedad.");
@@ -91,13 +82,11 @@ public class ContactoController {
             return "redirect:/contacto#formulario";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", 
-                "Error al enviar el mensaje: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error al enviar el mensaje: " + e.getMessage());
             return "redirect:/contacto";
         }
     }
 
-    
     private String construirMensajeContacto(String nombre, String email, String telefono, String asunto, String mensaje) {
         StringBuilder sb = new StringBuilder();
         sb.append("========================================\n");
@@ -131,7 +120,6 @@ public class ContactoController {
         return sb.toString();
     }
 
-
     private String construirMensajeConfirmacion(String nombre, String asunto) {
         StringBuilder sb = new StringBuilder();
         sb.append("Estimado(a) ").append(nombre).append(",\n\n");
@@ -154,34 +142,6 @@ public class ContactoController {
         return sb.toString();
     }
 
-    public boolean validarMensaje(String nombre, String email, String asunto, String mensaje) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            return false;
-        }
-        if (nombre.trim().length() > 100) {
-            return false;
-        }
-
-        if (email == null || email.trim().isEmpty()) {
-            return false;
-        }
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            return false;
-        }
-
-        if (asunto == null || asunto.trim().isEmpty()) {
-            return false;
-        }
-        if (asunto.trim().length() > 100) {
-            return false;
-        }
-
-        if (mensaje == null || mensaje.trim().isEmpty()) {
-            return false;
-        }
-        return mensaje.trim().length() <= 1000;
-    }
-
     @GetMapping("/info")
     public String getInfoEmpresa(Model model) {
         model.addAttribute("empresa", "STAMOS LINARES S.R.L.");
@@ -193,7 +153,7 @@ public class ContactoController {
         model.addAttribute("email", "info@stamos.com");
         model.addAttribute("horario", "Lunes a Viernes: 9:00 AM - 6:00 PM");
         model.addAttribute("horarioSabado", "Sábado: 9:00 AM - 1:00 PM");
-        
+        addCommonAttributes(model);
         return "public/contacto :: info";
     }
 
@@ -208,7 +168,6 @@ public class ContactoController {
     public String getCelulares() {
         return "987819456 / 987181168";
     }
-
 
     public String getDireccion() {
         return "Jr. Antisuyo 438, Urbanización Zárate, San Juan de Lurigancho, Lima, Perú";
@@ -267,19 +226,14 @@ public class ContactoController {
                 mensajeContacto.getMensaje()
             );
             
-            emailService.enviarCorreoContacto(
-                "info@stamos.com",
+            emailService.enviarCorreoContacto("info@stamos.com",
                 "Nuevo mensaje de contacto - " + mensajeContacto.getAsunto(),
                 cuerpoMensaje
             );
 
-            emailService.enviarCorreoContacto(
-                mensajeContacto.getEmail(),
+            emailService.enviarCorreoContacto(mensajeContacto.getEmail(),
                 "Confirmación - STAMOS S.L.",
-                construirMensajeConfirmacion(
-                    mensajeContacto.getNombre(),
-                    mensajeContacto.getAsunto()
-                )
+                construirMensajeConfirmacion(mensajeContacto.getNombre(), mensajeContacto.getAsunto())
             );
 
             redirectAttributes.addFlashAttribute("mensaje", 
@@ -289,8 +243,7 @@ public class ContactoController {
             return "redirect:/contacto#formulario";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", 
-                "Error al enviar el mensaje: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error al enviar el mensaje: " + e.getMessage());
             return "redirect:/contacto";
         }
     }

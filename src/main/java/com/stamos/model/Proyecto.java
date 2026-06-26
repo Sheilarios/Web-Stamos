@@ -2,6 +2,7 @@ package com.stamos.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -61,6 +62,9 @@ public class Proyecto {
     private String colorEstado;
 
     @Transient
+    private String iconoEstado;
+
+    @Transient
     private String nombreCliente;
 
     @Transient
@@ -81,13 +85,32 @@ public class Proyecto {
     @Transient
     private Integer porcentajePagado;
 
-    // Constructor por defecto
+    @Transient
+    private Integer diasTranscurridos;
+
+    @Transient
+    private Integer diasRestantes;
+
+    @Transient
+    private Boolean estaVencido;
+
+    @Transient
+    private String estado;
+
+    @Transient
+    private String observaciones;
+
     public Proyecto() {
         this.montoTotal = BigDecimal.ZERO;
         this.fechaCreacion = LocalDateTime.now();
+        this.totalPagado = BigDecimal.ZERO;
+        this.saldoPendiente = BigDecimal.ZERO;
+        this.porcentajePagado = 0;
+        this.diasTranscurridos = 0;
+        this.diasRestantes = 0;
+        this.estaVencido = false;
     }
 
-    // Getters y Setters principales
     public Integer getIdProyecto() {
         return idProyecto;
     }
@@ -201,13 +224,13 @@ public class Proyecto {
         this.idUsuarioActualizacion = idUsuarioActualizacion;
     }
 
-    // Getters y Setters Transient
     public String getNombreEstado() {
         return nombreEstado;
     }
 
     public void setNombreEstado(String nombreEstado) {
         this.nombreEstado = nombreEstado;
+        this.estado = nombreEstado;
     }
 
     public String getColorEstado() {
@@ -216,6 +239,14 @@ public class Proyecto {
 
     public void setColorEstado(String colorEstado) {
         this.colorEstado = colorEstado;
+    }
+
+    public String getIconoEstado() {
+        return iconoEstado;
+    }
+
+    public void setIconoEstado(String iconoEstado) {
+        this.iconoEstado = iconoEstado;
     }
 
     public String getNombreCliente() {
@@ -255,7 +286,7 @@ public class Proyecto {
     }
 
     public void setTotalPagado(BigDecimal totalPagado) {
-        this.totalPagado = totalPagado;
+        this.totalPagado = totalPagado != null ? totalPagado : BigDecimal.ZERO;
     }
 
     public BigDecimal getSaldoPendiente() {
@@ -263,7 +294,7 @@ public class Proyecto {
     }
 
     public void setSaldoPendiente(BigDecimal saldoPendiente) {
-        this.saldoPendiente = saldoPendiente;
+        this.saldoPendiente = saldoPendiente != null ? saldoPendiente : BigDecimal.ZERO;
     }
 
     public Integer getPorcentajePagado() {
@@ -271,42 +302,99 @@ public class Proyecto {
     }
 
     public void setPorcentajePagado(Integer porcentajePagado) {
-        this.porcentajePagado = porcentajePagado;
+        this.porcentajePagado = porcentajePagado != null ? porcentajePagado : 0;
     }
 
-    // Métodos de negocio
+    public Integer getDiasTranscurridos() {
+        return diasTranscurridos;
+    }
+
+    public void setDiasTranscurridos(Integer diasTranscurridos) {
+        this.diasTranscurridos = diasTranscurridos != null ? diasTranscurridos : 0;
+    }
+
+    public Integer getDiasRestantes() {
+        return diasRestantes;
+    }
+
+    public void setDiasRestantes(Integer diasRestantes) {
+        this.diasRestantes = diasRestantes != null ? diasRestantes : 0;
+    }
+
+    public Boolean getEstaVencido() {
+        return estaVencido;
+    }
+
+    public void setEstaVencido(Boolean estaVencido) {
+        this.estaVencido = estaVencido != null ? estaVencido : false;
+    }
+
+    public String getEstado() {
+        if (estado == null && nombreEstado != null) {
+            estado = nombreEstado;
+        }
+        return estado != null ? estado : "Sin estado";
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+        this.nombreEstado = estado;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
     private void actualizarEstadoPorId(Integer idEstado) {
         if (idEstado == null) return;
         
         switch (idEstado) {
-            case 1:
+            case 1 -> {
                 this.nombreEstado = "Aprobado";
                 this.colorEstado = "#1A56DB";
-                break;
-            case 2:
+                this.iconoEstado = "ti ti-check-circle";
+                this.estado = "Aprobado";
+            }
+            case 2 -> {
                 this.nombreEstado = "En Diseño";
                 this.colorEstado = "#F59E0B";
-                break;
-            case 3:
+                this.iconoEstado = "ti ti-pencil";
+                this.estado = "En Diseño";
+            }
+            case 3 -> {
                 this.nombreEstado = "En Producción";
                 this.colorEstado = "#3B82F6";
-                break;
-            case 4:
+                this.iconoEstado = "ti ti-tools";
+                this.estado = "En Producción";
+            }
+            case 4 -> {
                 this.nombreEstado = "Instalación/Montaje";
                 this.colorEstado = "#8B5CF6";
-                break;
-            case 5:
+                this.iconoEstado = "ti ti-truck";
+                this.estado = "Instalación/Montaje";
+            }
+            case 5 -> {
                 this.nombreEstado = "Entregado";
                 this.colorEstado = "#10B981";
-                break;
-            case 6:
+                this.iconoEstado = "ti ti-check";
+                this.estado = "Entregado";
+            }
+            case 6 -> {
                 this.nombreEstado = "Anulado";
                 this.colorEstado = "#EF4444";
-                break;
-            default:
+                this.iconoEstado = "ti ti-x-circle";
+                this.estado = "Anulado";
+            }
+            default -> {
                 this.nombreEstado = "Desconocido";
                 this.colorEstado = "#6B7280";
-                break;
+                this.iconoEstado = "ti ti-circle";
+                this.estado = "Desconocido";
+            }
         }
     }
 
@@ -322,7 +410,19 @@ public class Proyecto {
         return idEstadoActual != null && idEstadoActual != 5 && idEstadoActual != 6;
     }
 
-    // Métodos de formato
+    public boolean esEntregado() {
+        return isEntregado();
+    }
+
+    public boolean esAnulado() {
+        return isAnulado();
+    }
+
+    public boolean puedeRecibirPagos() {
+        if (idEstadoActual == null) return false;
+        return idEstadoActual >= 1 && idEstadoActual <= 4;
+    }
+
     public String getCodigoProyecto() {
         if (idProyecto == null) return "PRO-00000";
         return "PRO-" + String.format("%05d", idProyecto);
@@ -331,25 +431,43 @@ public class Proyecto {
     public String getEstadoBadgeClass() {
         if (idEstadoActual == null) return "status-pendiente";
         
-        switch (idEstadoActual) {
-            case 1: return "status-aprobado";
-            case 2: return "status-diseno";
-            case 3: return "status-produccion";
-            case 4: return "status-instalacion";
-            case 5: return "status-entregado";
-            case 6: return "status-anulado";
-            default: return "status-pendiente";
-        }
+        return switch (idEstadoActual) {
+            case 1 -> "status-aprobado";
+            case 2 -> "status-diseno";
+            case 3 -> "status-produccion";
+            case 4 -> "status-instalacion";
+            case 5 -> "status-entregado";
+            case 6 -> "status-anulado";
+            default -> "status-pendiente";
+        };
     }
 
     public String getEstadoConIcono() {
         if (nombreEstado == null) return "-";
+        if (iconoEstado != null) {
+            return "<i class='" + iconoEstado + "'></i> " + nombreEstado;
+        }
         return nombreEstado;
     }
 
     public String getMontoTotalFormateado() {
         if (montoTotal == null) return "S/ 0.00";
-        return "S/ " + montoTotal.setScale(2, java.math.RoundingMode.HALF_UP).toString();
+        return "S/ " + montoTotal.setScale(2, RoundingMode.HALF_UP).toString();
+    }
+
+    public String getTotalPagadoFormateado() {
+        if (totalPagado == null) return "S/ 0.00";
+        return "S/ " + totalPagado.setScale(2, RoundingMode.HALF_UP).toString();
+    }
+
+    public String getSaldoPendienteFormateado() {
+        if (saldoPendiente == null) return "S/ 0.00";
+        return "S/ " + saldoPendiente.setScale(2, RoundingMode.HALF_UP).toString();
+    }
+
+    public String getPorcentajePagadoFormateado() {
+        if (porcentajePagado == null) return "0%";
+        return porcentajePagado + "%";
     }
 
     public String getFechaInicioFormateada() {
@@ -385,16 +503,91 @@ public class Proyecto {
     public int getProgreso() {
         if (idEstadoActual == null) return 0;
         
-        switch (idEstadoActual) {
-            case 1: return 10;
-            case 2: return 30;
-            case 3: return 60;
-            case 4: return 85;
-            case 5: return 100;
-            case 6: return 0;
-            default: return 0;
-        }
+        return switch (idEstadoActual) {
+            case 1 -> 10;
+            case 2 -> 30;
+            case 3 -> 60;
+            case 4 -> 85;
+            case 5 -> 100;
+            case 6 -> 0;
+            default -> 0;
+        };
     }
+
+    public String getProgresoColor() {
+        int progreso = getProgreso();
+        if (progreso >= 100) return "#10B981";
+        if (progreso >= 60) return "#3B82F6";
+        if (progreso >= 30) return "#F59E0B";
+        return "#EF4444";
+    }
+
+    public String getProgresoMensaje() {
+        int progreso = getProgreso();
+        if (progreso >= 100) return "Proyecto completado";
+        if (progreso >= 60) return "En fase avanzada";
+        if (progreso >= 30) return "En proceso";
+        return "Recién iniciado";
+    }
+
+    public boolean isVencido() {
+        if (estaVencido != null) {
+            return estaVencido;
+        }
+        if (fechaVencimiento != null && !isEntregado() && !isAnulado()) {
+            return LocalDate.now().isAfter(fechaVencimiento);
+        }
+        return false;
+    }
+
+    public String getEstadoColorHex() {
+        return colorEstado != null ? colorEstado : "#6B7280";
+    }
+
+    public String getIconoEstadoHtml() {
+        return iconoEstado != null ? iconoEstado : "ti ti-circle";
+    }
+
+    public String getSaldoColor() {
+        if (saldoPendiente == null || saldoPendiente.compareTo(BigDecimal.ZERO) == 0) {
+            return "#10B981";
+        }
+        if (saldoPendiente.compareTo(montoTotal) == 0) {
+            return "#EF4444";
+        }
+        return "#F59E0B";
+    }
+
+    public String getSaldoMensaje() {
+        if (saldoPendiente == null || saldoPendiente.compareTo(BigDecimal.ZERO) == 0) {
+            return "Completamente pagado";
+        }
+        if (saldoPendiente.compareTo(montoTotal) == 0) {
+            return "Sin pagos registrados";
+        }
+        return "Pago parcial";
+    }
+
+    public boolean tienePagos() {
+        return totalPagado != null && totalPagado.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public boolean estaCompletamentePagado() {
+        return saldoPendiente != null && saldoPendiente.compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    public void setDiasRestantes(int dias) {
+        this.diasRestantes = dias;
+    }
+
+    public void setDiasTranscurridos(int dias) {
+        this.diasTranscurridos = dias;
+    }
+
+    public void setEstaVencido(boolean vencido) {
+        this.estaVencido = vencido;
+    }
+
 
     @Override
     public String toString() {
@@ -417,49 +610,5 @@ public class Proyecto {
     @Override
     public int hashCode() {
         return idProyecto != null ? idProyecto.hashCode() : 0;
-    }
-
-    public String getEstado() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setDiasVencidos(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getObservaciones() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setDiasRestantes(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setDiasTranscurridos(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setEstaVencido(boolean after) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public boolean esEntregado() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setIconoEstado(String icono) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setEstado(String nombreEstado) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public boolean esAnulado() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public boolean puedeRecibirPagos() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

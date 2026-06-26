@@ -4,12 +4,10 @@ import com.stamos.model.Inventario;
 import com.stamos.model.Producto;
 import com.stamos.model.Proyecto;
 import com.stamos.model.ReservaInventario;
-import com.stamos.model.Usuario;
 import com.stamos.repository.InventarioRepository;
 import com.stamos.repository.ProductoRepository;
 import com.stamos.repository.ProyectoRepository;
 import com.stamos.repository.ReservaInventarioRepository;
-import com.stamos.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,8 +34,6 @@ public class InventarioService {
     @Autowired
     private ReservaInventarioRepository reservaRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @Transactional
     public Inventario registrar(Inventario inventario) {

@@ -1,11 +1,11 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
 import com.stamos.model.Cliente;
 import com.stamos.model.Usuario;
 import com.stamos.model.Proyecto;
 import com.stamos.service.ClienteService;
-import com.stamos.service.PagoService;
 import com.stamos.service.ProyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,24 +19,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin/clientes")
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
-public class ClienteController {
+public class ClienteController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
 
     @Autowired
     private ProyectoService proyectoService;
-
-    @Autowired
-    private PagoService pagoService;
 
     @GetMapping
     public String listarClientes(@RequestParam(defaultValue = "0") int page,
@@ -62,6 +57,7 @@ public class ClienteController {
             model.addAttribute("totalItems", clientesPage.getTotalElements());
             model.addAttribute("search", search);
             model.addAttribute("estado", estado);
+            addCommonAttributes(model);
             
             return "admin/clientes/lista";
             
@@ -76,6 +72,7 @@ public class ClienteController {
         model.addAttribute("cliente", new Cliente());
         model.addAttribute("titulo", "Nuevo Cliente");
         model.addAttribute("accion", "crear");
+        addCommonAttributes(model);
         return "admin/clientes/formulario";
     }
 
@@ -91,6 +88,7 @@ public class ClienteController {
             model.addAttribute("cliente", cliente);
             model.addAttribute("titulo", "Editar Cliente");
             model.addAttribute("accion", "editar");
+            addCommonAttributes(model);
             return "admin/clientes/formulario";
             
         } catch (Exception e) {
@@ -107,19 +105,12 @@ public class ClienteController {
                                Authentication auth,
                                RedirectAttributes redirectAttributes) {
         try {
-            // Validar errores del formulario
             if (result.hasErrors()) {
                 redirectAttributes.addFlashAttribute("error", "Por favor, corrige los errores en el formulario.");
                 return "redirect:/admin/clientes/nuevo";
             }
 
-            // Validar contraseña
-            if (password == null || password.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "La contraseña es obligatoria.");
-                return "redirect:/admin/clientes/nuevo";
-            }
-            
-            if (password.length() < 6) {
+            if (password == null || password.isEmpty() || password.length() < 6) {
                 redirectAttributes.addFlashAttribute("error", "La contraseña debe tener al menos 6 caracteres.");
                 return "redirect:/admin/clientes/nuevo";
             }
@@ -129,38 +120,11 @@ public class ClienteController {
                 return "redirect:/admin/clientes/nuevo";
             }
 
-            // Validar email único
-            Cliente clienteExistente = clienteService.findByEmail(cliente.getEmail());
-            if (clienteExistente != null) {
-                redirectAttributes.addFlashAttribute("error", "Ya existe un cliente con este correo electrónico.");
-                return "redirect:/admin/clientes/nuevo";
-            }
-
-            // Validar RUC único
-            if (cliente.getRuc() != null && !cliente.getRuc().isEmpty()) {
-                Cliente clienteRucExistente = clienteService.findByRuc(cliente.getRuc());
-                if (clienteRucExistente != null) {
-                    redirectAttributes.addFlashAttribute("error", "Ya existe un cliente con este RUC.");
-                    return "redirect:/admin/clientes/nuevo";
-                }
-            }
-
-            // Validar teléfono único
-            if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty()) {
-                Cliente clienteTelefonoExistente = clienteService.findByTelefono(cliente.getTelefono());
-                if (clienteTelefonoExistente != null) {
-                    redirectAttributes.addFlashAttribute("error", "Ya existe un cliente con este teléfono.");
-                    return "redirect:/admin/clientes/nuevo";
-                }
-            }
-
-            // Obtener usuario administrador
             Usuario usuarioAdmin = clienteService.findUsuarioByEmail(auth.getName());
             if (usuarioAdmin != null) {
                 cliente.setIdUsuarioRegis(usuarioAdmin.getIdUsuario());
             }
 
-            // Registrar cliente
             clienteService.registrar(cliente, password);
             
             redirectAttributes.addFlashAttribute("mensaje", "Cliente creado exitosamente.");
@@ -178,7 +142,7 @@ public class ClienteController {
     }
 
     @PostMapping("/actualizar/{id}")
-    @Auditable(value = "Actualización de cliente", accion = "UPDATE")
+    @Auditable
     public String actualizarCliente(@PathVariable Integer id,
                                     @Valid @ModelAttribute("cliente") Cliente cliente,
                                     BindingResult result,
@@ -195,14 +159,12 @@ public class ClienteController {
                 return "redirect:/admin/clientes";
             }
 
-            // Validar email único
             Cliente clienteEmailExistente = clienteService.findByEmail(cliente.getEmail());
             if (clienteEmailExistente != null && !clienteEmailExistente.getIdCliente().equals(id)) {
                 redirectAttributes.addFlashAttribute("error", "Ya existe otro cliente con este correo electrónico.");
                 return "redirect:/admin/clientes/editar/" + id;
             }
 
-            // Validar RUC único
             if (cliente.getRuc() != null && !cliente.getRuc().isEmpty()) {
                 Cliente clienteRucExistente = clienteService.findByRuc(cliente.getRuc());
                 if (clienteRucExistente != null && !clienteRucExistente.getIdCliente().equals(id)) {
@@ -211,7 +173,6 @@ public class ClienteController {
                 }
             }
 
-            // Validar teléfono único
             if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty()) {
                 Cliente clienteTelefonoExistente = clienteService.findByTelefono(cliente.getTelefono());
                 if (clienteTelefonoExistente != null && !clienteTelefonoExistente.getIdCliente().equals(id)) {
@@ -250,7 +211,7 @@ public class ClienteController {
             
             model.addAttribute("cliente", cliente);
             model.addAttribute("proyectos", proyectos);
-            
+            addCommonAttributes(model);
             return "admin/clientes/historial";
             
         } catch (Exception e) {
@@ -260,7 +221,7 @@ public class ClienteController {
     }
 
     @PostMapping("/deshabilitar/{id}")
-    @Auditable(value = "Deshabilitación de cliente", accion = "DISABLE")
+    @Auditable
     @PreAuthorize("hasRole('ADMIN')")
     public String deshabilitarCliente(@PathVariable Integer id,
                                       Authentication auth,
@@ -300,7 +261,7 @@ public class ClienteController {
     }
 
     @PostMapping("/habilitar/{id}")
-    @Auditable(value = "Habilitación de cliente", accion = "ENABLE")
+    @Auditable
     @PreAuthorize("hasRole('ADMIN')")
     public String habilitarCliente(@PathVariable Integer id,
                                    Authentication auth,
@@ -361,10 +322,7 @@ public class ClienteController {
             if (cliente == null) {
                 return true;
             }
-            if (id != null && cliente.getIdCliente().equals(id)) {
-                return true;
-            }
-            return false;
+            return id != null && cliente.getIdCliente().equals(id);
         } catch (Exception e) {
             return false;
         }
@@ -382,10 +340,7 @@ public class ClienteController {
             if (cliente == null) {
                 return true;
             }
-            if (id != null && cliente.getIdCliente().equals(id)) {
-                return true;
-            }
-            return false;
+            return id != null && cliente.getIdCliente().equals(id);
         } catch (Exception e) {
             return false;
         }
@@ -403,10 +358,7 @@ public class ClienteController {
             if (cliente == null) {
                 return true;
             }
-            if (id != null && cliente.getIdCliente().equals(id)) {
-                return true;
-            }
-            return false;
+            return id != null && cliente.getIdCliente().equals(id);
         } catch (Exception e) {
             return false;
         }

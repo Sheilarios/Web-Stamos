@@ -3,21 +3,7 @@ package com.stamos.dto;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/**
- * DTO (Data Transfer Object) para los detalles de una cotización.
- * 
- * <p>Este DTO se utiliza para transferir datos de los detalles de cotización
- * entre la capa de servicio y la capa de presentación, permitiendo una mejor
- * organización y manejo de los datos de cada ítem en la cotización.</p>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
-public class CotizacionDetalleDTO {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
+public final class CotizacionDetalleDTO {
 
     private Integer idDetalleVersion;
     private Integer idVersion;
@@ -31,24 +17,11 @@ public class CotizacionDetalleDTO {
     private BigDecimal precioUnitario;
     private BigDecimal descuento;
     private BigDecimal subtotalLinea;
-
-    // ============================================
-    // CAMPOS ADICIONALES PARA LA VISTA
-    // ============================================
-
     private String imagenUrl;
     private BigDecimal precioBase;
     private boolean activo;
     private String unidadMedida;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
-    /**
-     * Constructor por defecto.
-     * Inicializa los valores por defecto.
-     */
     public CotizacionDetalleDTO() {
         this.cantidad = 1;
         this.precioUnitario = BigDecimal.ZERO;
@@ -58,14 +31,6 @@ public class CotizacionDetalleDTO {
         this.unidadMedida = "Unidad";
     }
 
-    /**
-     * Constructor con los campos principales.
-     * 
-     * @param idProducto ID del producto
-     * @param nombreProducto Nombre del producto
-     * @param cantidad Cantidad solicitada
-     * @param precioUnitario Precio unitario
-     */
     public CotizacionDetalleDTO(Integer idProducto, String nombreProducto, 
                                Integer cantidad, BigDecimal precioUnitario) {
         this();
@@ -76,18 +41,6 @@ public class CotizacionDetalleDTO {
         calcularSubtotal();
     }
 
-    /**
-     * Constructor completo.
-     * 
-     * @param idProducto ID del producto
-     * @param nombreProducto Nombre del producto
-     * @param descripcionProducto Descripción del producto
-     * @param categoriaProducto Categoría del producto
-     * @param tipoProducto Tipo de producto (Alquiler, Venta, Servicio)
-     * @param cantidad Cantidad solicitada
-     * @param precioUnitario Precio unitario
-     * @param descuento Descuento aplicado
-     */
     public CotizacionDetalleDTO(Integer idProducto, String nombreProducto, 
                                String descripcionProducto, String categoriaProducto,
                                String tipoProducto, Integer cantidad, 
@@ -103,10 +56,6 @@ public class CotizacionDetalleDTO {
         this.descuento = descuento != null ? descuento : BigDecimal.ZERO;
         calcularSubtotal();
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdDetalleVersion() {
         return idDetalleVersion;
@@ -239,21 +188,12 @@ public class CotizacionDetalleDTO {
         this.unidadMedida = unidadMedida;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Calcula el subtotal de la línea basado en cantidad, precio unitario y descuento.
-     * Fórmula: (cantidad * precioUnitario) - descuento
-     */
     public void calcularSubtotal() {
         if (cantidad != null && precioUnitario != null) {
             BigDecimal subtotal = precioUnitario.multiply(new BigDecimal(cantidad));
             if (descuento != null) {
                 subtotal = subtotal.subtract(descuento);
             }
-            // Asegurar que el subtotal no sea negativo
             if (subtotal.compareTo(BigDecimal.ZERO) < 0) {
                 subtotal = BigDecimal.ZERO;
             }
@@ -263,11 +203,6 @@ public class CotizacionDetalleDTO {
         }
     }
 
-    /**
-     * Aplica un descuento porcentual al precio unitario.
-     * 
-     * @param porcentajeDescuento Porcentaje de descuento (ej: 10.0 para 10%)
-     */
     public void aplicarDescuentoPorcentual(BigDecimal porcentajeDescuento) {
         if (porcentajeDescuento != null && porcentajeDescuento.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal descuentoCalculado = precioUnitario
@@ -278,20 +213,10 @@ public class CotizacionDetalleDTO {
         }
     }
 
-    /**
-     * Verifica si el detalle tiene descuento aplicado.
-     * 
-     * @return true si tiene descuento, false en caso contrario
-     */
     public boolean tieneDescuento() {
         return descuento != null && descuento.compareTo(BigDecimal.ZERO) > 0;
     }
 
-    /**
-     * Verifica si el detalle es válido.
-     * 
-     * @return true si es válido, false en caso contrario
-     */
     public boolean esValido() {
         return idProducto != null && 
                nombreProducto != null && !nombreProducto.trim().isEmpty() &&
@@ -299,12 +224,6 @@ public class CotizacionDetalleDTO {
                precioUnitario != null && precioUnitario.compareTo(BigDecimal.ZERO) >= 0;
     }
 
-    /**
-     * Obtiene el total de la línea incluyendo IGV (si se aplica).
-     * 
-     * @param tasaIgv Tasa de IGV (ej: 18.00 para 18%)
-     * @return Total con IGV
-     */
     public BigDecimal getTotalConIgv(BigDecimal tasaIgv) {
         if (subtotalLinea == null || tasaIgv == null) {
             return BigDecimal.ZERO;
@@ -314,12 +233,6 @@ public class CotizacionDetalleDTO {
         return subtotalLinea.add(igv);
     }
 
-    /**
-     * Obtiene el IGV de la línea.
-     * 
-     * @param tasaIgv Tasa de IGV (ej: 18.00 para 18%)
-     * @return IGV calculado
-     */
     public BigDecimal getIgvLinea(BigDecimal tasaIgv) {
         if (subtotalLinea == null || tasaIgv == null) {
             return BigDecimal.ZERO;
@@ -328,11 +241,6 @@ public class CotizacionDetalleDTO {
                 .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
     }
 
-    /**
-     * Clona el detalle actual.
-     * 
-     * @return Nueva instancia con los mismos valores
-     */
     public CotizacionDetalleDTO clonar() {
         CotizacionDetalleDTO clone = new CotizacionDetalleDTO();
         clone.setIdDetalleVersion(this.idDetalleVersion);
@@ -354,166 +262,56 @@ public class CotizacionDetalleDTO {
         return clone;
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene el subtotal formateado como moneda.
-     * 
-     * @return Subtotal formateado
-     */
-    public String getSubtotalFormateado() {
-        if (subtotalLinea == null) {
-            return "S/ 0.00";
-        }
-        return "S/ " + subtotalLinea.setScale(2, RoundingMode.HALF_UP).toString();
+    public static CotizacionDetalleDTO fromProducto(com.stamos.model.Producto producto, Integer cantidad) {
+        CotizacionDetalleDTO dto = new CotizacionDetalleDTO();
+        dto.setIdProducto(producto.getIdProducto());
+        dto.setNombreProducto(producto.getNombreItem());
+        dto.setDescripcionProducto(producto.getDescripcion());
+        dto.setTipoProducto(producto.getTipo());
+        dto.setPrecioUnitario(producto.getPrecioBase());
+        dto.setPrecioBase(producto.getPrecioBase());
+        dto.setImagenUrl(producto.getImagenUrl());
+        dto.setActivo(producto.isActivo());
+        dto.setCantidad(cantidad != null ? cantidad : 1);
+        dto.setDescuento(BigDecimal.ZERO);
+        dto.calcularSubtotal();
+        return dto;
     }
 
-    /**
-     * Obtiene el precio unitario formateado como moneda.
-     * 
-     * @return Precio unitario formateado
-     */
-    public String getPrecioUnitarioFormateado() {
-        if (precioUnitario == null) {
-            return "S/ 0.00";
-        }
-        return "S/ " + precioUnitario.setScale(2, RoundingMode.HALF_UP).toString();
-    }
-
-    /**
-     * Obtiene el descuento formateado como moneda.
-     * 
-     * @return Descuento formateado
-     */
-    public String getDescuentoFormateado() {
-        if (descuento == null) {
-            return "S/ 0.00";
-        }
-        return "S/ " + descuento.setScale(2, RoundingMode.HALF_UP).toString();
-    }
-
-    /**
-     * Obtiene el total con IGV formateado como moneda.
-     * 
-     * @param tasaIgv Tasa de IGV
-     * @return Total con IGV formateado
-     */
-    public String getTotalConIgvFormateado(BigDecimal tasaIgv) {
-        BigDecimal total = getTotalConIgv(tasaIgv);
-        return "S/ " + total.setScale(2, RoundingMode.HALF_UP).toString();
-    }
-
-    /**
-     * Obtiene el tipo de producto en formato legible.
-     * 
-     * @return Tipo de producto legible
-     */
-    public String getTipoProductoLegible() {
-        if (tipoProducto == null) return "No especificado";
+    public static CotizacionDetalleDTO fromEntity(com.stamos.model.CotizacionDetalle detalle, 
+                                                   com.stamos.model.Producto producto) {
+        CotizacionDetalleDTO dto = new CotizacionDetalleDTO();
+        dto.setIdDetalleVersion(detalle.getIdDetalleVersion());
+        dto.setIdVersion(detalle.getIdVersion());
+        dto.setIdProducto(detalle.getIdProducto());
+        dto.setCantidad(detalle.getCantidad());
+        dto.setPrecioUnitario(detalle.getPrecioUnitario());
+        dto.setDescuento(detalle.getDescuento());
+        dto.setSubtotalLinea(detalle.getSubtotalLinea());
         
-        switch (tipoProducto) {
-            case "Alquiler":
-                return "Alquiler";
-            case "Venta":
-                return "Venta";
-            case "Servicio":
-                return "Servicio";
-            default:
-                return tipoProducto;
+        if (producto != null) {
+            dto.setNombreProducto(producto.getNombreItem());
+            dto.setDescripcionProducto(producto.getDescripcion());
+            dto.setTipoProducto(producto.getTipo());
+            dto.setPrecioBase(producto.getPrecioBase());
+            dto.setImagenUrl(producto.getImagenUrl());
+            dto.setActivo(producto.isActivo());
         }
-    }
-
-    /**
-     * Obtiene la clase CSS para el badge del tipo de producto.
-     * 
-     * @return Clase CSS
-     */
-    public String getTipoProductoBadgeClass() {
-        if (tipoProducto == null) return "badge-secondary";
         
-        switch (tipoProducto) {
-            case "Alquiler":
-                return "badge-alquiler";
-            case "Venta":
-                return "badge-venta";
-            case "Servicio":
-                return "badge-servicio";
-            default:
-                return "badge-secondary";
-        }
+        return dto;
     }
 
-    /**
-     * Obtiene el ícono para el tipo de producto.
-     * 
-     * @return Ícono CSS
-     */
-    public String getTipoProductoIcono() {
-        if (tipoProducto == null) return "ti ti-box";
-        
-        switch (tipoProducto) {
-            case "Alquiler":
-                return "ti ti-calendar";
-            case "Venta":
-                return "ti ti-shopping-cart";
-            case "Servicio":
-                return "ti ti-tools";
-            default:
-                return "ti ti-box";
-        }
+    public com.stamos.model.CotizacionDetalle toEntity() {
+        com.stamos.model.CotizacionDetalle detalle = new com.stamos.model.CotizacionDetalle();
+        detalle.setIdDetalleVersion(this.idDetalleVersion);
+        detalle.setIdVersion(this.idVersion);
+        detalle.setIdProducto(this.idProducto);
+        detalle.setCantidad(this.cantidad);
+        detalle.setPrecioUnitario(this.precioUnitario);
+        detalle.setDescuento(this.descuento);
+        detalle.setSubtotalLinea(this.subtotalLinea);
+        return detalle;
     }
-
-    /**
-     * Obtiene el subtotal sin descuento.
-     * 
-     * @return Subtotal bruto
-     */
-    public BigDecimal getSubtotalBruto() {
-        if (cantidad != null && precioUnitario != null) {
-            return precioUnitario.multiply(new BigDecimal(cantidad))
-                    .setScale(2, RoundingMode.HALF_UP);
-        }
-        return BigDecimal.ZERO;
-    }
-
-    /**
-     * Obtiene el subtotal bruto formateado.
-     * 
-     * @return Subtotal bruto formateado
-     */
-    public String getSubtotalBrutoFormateado() {
-        return "S/ " + getSubtotalBruto().setScale(2, RoundingMode.HALF_UP).toString();
-    }
-
-    /**
-     * Calcula el porcentaje de descuento aplicado.
-     * 
-     * @return Porcentaje de descuento
-     */
-    public BigDecimal getPorcentajeDescuento() {
-        if (descuento == null || precioUnitario == null || 
-            precioUnitario.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO;
-        }
-        return descuento.multiply(new BigDecimal("100"))
-                .divide(precioUnitario, 2, RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Obtiene el porcentaje de descuento formateado.
-     * 
-     * @return Porcentaje de descuento formateado
-     */
-    public String getPorcentajeDescuentoFormateado() {
-        BigDecimal porcentaje = getPorcentajeDescuento();
-        return porcentaje.setScale(0, RoundingMode.HALF_UP).toString() + "%";
-    }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -544,79 +342,5 @@ public class CotizacionDetalleDTO {
     public int hashCode() {
         return idDetalleVersion != null ? idDetalleVersion.hashCode() : 
                (idProducto != null ? idProducto.hashCode() : 0);
-    }
-
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un DTO de detalle desde un producto.
-     * 
-     * @param producto Producto
-     * @param cantidad Cantidad solicitada
-     * @return DTO de detalle
-     */
-    public static CotizacionDetalleDTO fromProducto(com.stamos.model.Producto producto, Integer cantidad) {
-        CotizacionDetalleDTO dto = new CotizacionDetalleDTO();
-        dto.setIdProducto(producto.getIdProducto());
-        dto.setNombreProducto(producto.getNombreItem());
-        dto.setDescripcionProducto(producto.getDescripcion());
-        dto.setTipoProducto(producto.getTipo());
-        dto.setPrecioUnitario(producto.getPrecioBase());
-        dto.setPrecioBase(producto.getPrecioBase());
-        dto.setImagenUrl(producto.getImagenUrl());
-        dto.setActivo(producto.isActivo());
-        dto.setCantidad(cantidad != null ? cantidad : 1);
-        dto.setDescuento(BigDecimal.ZERO);
-        dto.calcularSubtotal();
-        return dto;
-    }
-
-    /**
-     * Crea un DTO de detalle desde una entidad de detalle de cotización.
-     * 
-     * @param detalle Entidad de detalle
-     * @param producto Producto asociado
-     * @return DTO de detalle
-     */
-    public static CotizacionDetalleDTO fromEntity(com.stamos.model.CotizacionDetalle detalle, 
-                                                   com.stamos.model.Producto producto) {
-        CotizacionDetalleDTO dto = new CotizacionDetalleDTO();
-        dto.setIdDetalleVersion(detalle.getIdDetalleVersion());
-        dto.setIdVersion(detalle.getIdVersion());
-        dto.setIdProducto(detalle.getIdProducto());
-        dto.setCantidad(detalle.getCantidad());
-        dto.setPrecioUnitario(detalle.getPrecioUnitario());
-        dto.setDescuento(detalle.getDescuento());
-        dto.setSubtotalLinea(detalle.getSubtotalLinea());
-        
-        if (producto != null) {
-            dto.setNombreProducto(producto.getNombreItem());
-            dto.setDescripcionProducto(producto.getDescripcion());
-            dto.setTipoProducto(producto.getTipo());
-            dto.setPrecioBase(producto.getPrecioBase());
-            dto.setImagenUrl(producto.getImagenUrl());
-            dto.setActivo(producto.isActivo());
-        }
-        
-        return dto;
-    }
-
-    /**
-     * Convierte el DTO a una entidad de detalle.
-     * 
-     * @return Entidad de detalle
-     */
-    public com.stamos.model.CotizacionDetalle toEntity() {
-        com.stamos.model.CotizacionDetalle detalle = new com.stamos.model.CotizacionDetalle();
-        detalle.setIdDetalleVersion(this.idDetalleVersion);
-        detalle.setIdVersion(this.idVersion);
-        detalle.setIdProducto(this.idProducto);
-        detalle.setCantidad(this.cantidad);
-        detalle.setPrecioUnitario(this.precioUnitario);
-        detalle.setDescuento(this.descuento);
-        detalle.setSubtotalLinea(this.subtotalLinea);
-        return detalle;
     }
 }

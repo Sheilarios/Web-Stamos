@@ -1,5 +1,6 @@
 package com.stamos.controller.cliente;
 
+import com.stamos.controller.BaseController;
 import com.stamos.model.Cliente;
 import com.stamos.model.Proyecto;
 import com.stamos.model.Usuario;
@@ -21,7 +22,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/cliente")
-public class ClienteDashboardController {
+public class ClienteDashboardController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
@@ -34,21 +35,16 @@ public class ClienteDashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        System.out.println("=== Dashboard Cliente GET ===");
-        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
-            System.out.println("Usuario no autenticado, redirigiendo a login");
             return "redirect:/login";
         }
 
         String email = auth.getName();
-        System.out.println("Usuario autenticado: " + email);
 
         try {
             Usuario usuario = clienteService.findUsuarioByEmail(email);
             if (usuario == null) {
-                System.out.println("Usuario no encontrado: " + email);
                 model.addAttribute("error", "Usuario no encontrado");
                 model.addAttribute("cliente", new Cliente());
                 model.addAttribute("proyectos", new ArrayList<>());
@@ -57,12 +53,12 @@ public class ClienteDashboardController {
                 model.addAttribute("totalPagado", BigDecimal.ZERO);
                 model.addAttribute("saldoPendiente", BigDecimal.ZERO);
                 model.addAttribute("totalProyectos", 0);
+                addCommonAttributes(model);
                 return "cliente/dashboard";
             }
 
             Cliente cliente = clienteService.findByUsuario(usuario);
             if (cliente == null) {
-                System.out.println("Cliente no encontrado para usuario ID: " + usuario.getIdUsuario());
                 model.addAttribute("error", "Cliente no encontrado");
                 model.addAttribute("cliente", new Cliente());
                 model.addAttribute("proyectos", new ArrayList<>());
@@ -71,28 +67,17 @@ public class ClienteDashboardController {
                 model.addAttribute("totalPagado", BigDecimal.ZERO);
                 model.addAttribute("saldoPendiente", BigDecimal.ZERO);
                 model.addAttribute("totalProyectos", 0);
+                addCommonAttributes(model);
                 return "cliente/dashboard";
             }
 
-            System.out.println("Cliente encontrado - ID: " + cliente.getIdCliente() + ", Nombre: " + cliente.getNombreRazonSocial());
-
-            List<Proyecto> proyectos = new ArrayList<>();
-            try {
-                proyectos = proyectoService.findByCliente(cliente.getIdCliente());
-                if (proyectos == null) {
-                    proyectos = new ArrayList<>();
-                }
-            } catch (Exception e) {
-                System.err.println("Error al cargar proyectos: " + e.getMessage());
+            List<Proyecto> proyectos = proyectoService.findByCliente(cliente.getIdCliente());
+            if (proyectos == null) {
                 proyectos = new ArrayList<>();
             }
-            System.out.println("Proyectos encontrados: " + proyectos.size());
 
             long proyectosActivos = proyectos.stream()
-                    .filter(p -> {
-                        Integer estado = p.getIdEstadoActual();
-                        return estado != null && estado != 5 && estado != 6;
-                    })
+                    .filter(p -> p.getIdEstadoActual() != null && p.getIdEstadoActual() != 5 && p.getIdEstadoActual() != 6)
                     .count();
 
             BigDecimal totalCotizado = proyectos.stream()
@@ -100,14 +85,8 @@ public class ClienteDashboardController {
                     .filter(monto -> monto != null)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            BigDecimal totalPagado = BigDecimal.ZERO;
-            try {
-                totalPagado = pagoService.getTotalPagadoByCliente(cliente.getIdCliente());
-                if (totalPagado == null) {
-                    totalPagado = BigDecimal.ZERO;
-                }
-            } catch (Exception e) {
-                System.err.println("Error al obtener pagos: " + e.getMessage());
+            BigDecimal totalPagado = pagoService.getTotalPagadoByCliente(cliente.getIdCliente());
+            if (totalPagado == null) {
                 totalPagado = BigDecimal.ZERO;
             }
 
@@ -116,39 +95,25 @@ public class ClienteDashboardController {
                 saldoPendiente = BigDecimal.ZERO;
             }
 
-            LocalDateTime ultimoAcceso = null;
-            try {
-                ultimoAcceso = clienteService.getUltimoAcceso(cliente.getIdCliente());
-            } catch (Exception e) {
-                System.err.println("Error al obtener ultimo acceso: " + e.getMessage());
-            }
+            LocalDateTime ultimoAcceso = clienteService.getUltimoAcceso(cliente.getIdCliente());
 
             List<Proyecto> proyectosRecientes = proyectos.stream()
                     .filter(p -> p.getIdProyecto() != null)
-                    .sorted((p1, p2) -> {
-                        if (p1.getIdProyecto() == null || p2.getIdProyecto() == null) return 0;
-                        return p2.getIdProyecto().compareTo(p1.getIdProyecto());
-                    })
+                    .sorted((p1, p2) -> p2.getIdProyecto().compareTo(p1.getIdProyecto()))
                     .limit(5)
                     .toList();
 
             for (Proyecto proyecto : proyectosRecientes) {
-                try {
-                    BigDecimal totalPagadoProyecto = pagoService.getTotalPagadoByProyecto(proyecto.getIdProyecto());
-                    if (totalPagadoProyecto == null) {
-                        totalPagadoProyecto = BigDecimal.ZERO;
-                    }
-                    proyecto.setTotalPagado(totalPagadoProyecto);
-                    BigDecimal saldoPendienteProyecto = proyecto.getMontoTotal().subtract(totalPagadoProyecto);
-                    if (saldoPendienteProyecto.compareTo(BigDecimal.ZERO) < 0) {
-                        saldoPendienteProyecto = BigDecimal.ZERO;
-                    }
-                    proyecto.setSaldoPendiente(saldoPendienteProyecto);
-                } catch (Exception e) {
-                    System.err.println("Error al obtener pagos del proyecto: " + e.getMessage());
-                    proyecto.setTotalPagado(BigDecimal.ZERO);
-                    proyecto.setSaldoPendiente(proyecto.getMontoTotal());
+                BigDecimal totalPagadoProyecto = pagoService.getTotalPagadoByProyecto(proyecto.getIdProyecto());
+                if (totalPagadoProyecto == null) {
+                    totalPagadoProyecto = BigDecimal.ZERO;
                 }
+                proyecto.setTotalPagado(totalPagadoProyecto);
+                BigDecimal saldoPendienteProyecto = proyecto.getMontoTotal().subtract(totalPagadoProyecto);
+                if (saldoPendienteProyecto.compareTo(BigDecimal.ZERO) < 0) {
+                    saldoPendienteProyecto = BigDecimal.ZERO;
+                }
+                proyecto.setSaldoPendiente(saldoPendienteProyecto);
             }
 
             model.addAttribute("cliente", cliente);
@@ -160,18 +125,13 @@ public class ClienteDashboardController {
             model.addAttribute("ultimoAcceso", ultimoAcceso);
             model.addAttribute("totalProyectos", proyectos.size());
             model.addAttribute("titulo", "Dashboard - Cliente");
+            addCommonAttributes(model);
 
-            try {
-                clienteService.registrarAcceso(cliente.getIdCliente());
-            } catch (Exception e) {
-                System.err.println("Error al registrar acceso del cliente: " + e.getMessage());
-            }
+            clienteService.registrarAcceso(cliente.getIdCliente());
 
             return "cliente/dashboard";
 
         } catch (Exception e) {
-            System.err.println("Error en dashboard: " + e.getMessage());
-            e.printStackTrace();
             model.addAttribute("error", "Error al cargar el dashboard: " + e.getMessage());
             model.addAttribute("cliente", new Cliente());
             model.addAttribute("proyectos", new ArrayList<>());
@@ -180,6 +140,7 @@ public class ClienteDashboardController {
             model.addAttribute("totalPagado", BigDecimal.ZERO);
             model.addAttribute("saldoPendiente", BigDecimal.ZERO);
             model.addAttribute("totalProyectos", 0);
+            addCommonAttributes(model);
             return "cliente/dashboard";
         }
     }
@@ -196,10 +157,7 @@ public class ClienteDashboardController {
         List<Proyecto> proyectos = proyectoService.findByCliente(cliente.getIdCliente());
         if (proyectos == null) return 0;
         return proyectos.stream()
-                .filter(p -> {
-                    Integer estado = p.getIdEstadoActual();
-                    return estado != null && estado != 5 && estado != 6;
-                })
+                .filter(p -> p.getIdEstadoActual() != null && p.getIdEstadoActual() != 5 && p.getIdEstadoActual() != 6)
                 .count();
     }
 
@@ -245,22 +203,15 @@ public class ClienteDashboardController {
         if (estado == null) {
             return "Sin estado";
         }
-        switch (estado) {
-            case 1:
-                return "Aprobado";
-            case 2:
-                return "En Diseño";
-            case 3:
-                return "En Producción";
-            case 4:
-                return "Instalación/Montaje";
-            case 5:
-                return "Entregado";
-            case 6:
-                return "Anulado";
-            default:
-                return "Desconocido";
-        }
+        return switch (estado) {
+            case 1 -> "Aprobado";
+            case 2 -> "En Diseño";
+            case 3 -> "En Producción";
+            case 4 -> "Instalación/Montaje";
+            case 5 -> "Entregado";
+            case 6 -> "Anulado";
+            default -> "Desconocido";
+        };
     }
 
     public String getEstadoBadgeClass(Proyecto proyecto) {
@@ -271,24 +222,18 @@ public class ClienteDashboardController {
         if (estado == null) {
             return "status-pendiente";
         }
-        switch (estado) {
-            case 1:
-                return "status-aprobado";
-            case 2:
-                return "status-diseno";
-            case 3:
-                return "status-produccion";
-            case 4:
-                return "status-instalacion";
-            case 5:
-                return "status-entregado";
-            case 6:
-                return "status-anulado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (estado) {
+            case 1 -> "status-aprobado";
+            case 2 -> "status-diseno";
+            case 3 -> "status-produccion";
+            case 4 -> "status-instalacion";
+            case 5 -> "status-entregado";
+            case 6 -> "status-anulado";
+            default -> "status-pendiente";
+        };
     }
 
+    @Override
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, java.math.RoundingMode.HALF_UP).toString();

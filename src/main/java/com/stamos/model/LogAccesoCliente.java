@@ -7,22 +7,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Entidad LogAccesoCliente.
- * 
- * <p>Esta entidad registra los accesos de los clientes al portal web,
- * permitiendo el seguimiento de actividad y auditoría de conexiones.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RNF-02: Autenticación obligatoria mediante usuario y contraseña</li>
- *   <li>RNF-04: Control de acceso basado en roles</li>
- *   <li>Portal del Cliente: Registro de accesos y permisos</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "LogAccesoCliente",
        indexes = {
@@ -31,10 +15,6 @@ import java.time.format.DateTimeFormatter;
            @Index(name = "idx_log_ip", columnList = "ip_origen")
        })
 public class LogAccesoCliente {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,10 +36,6 @@ public class LogAccesoCliente {
     @Column(name = "fecha_acceso", nullable = false)
     private LocalDateTime fechaAcceso;
 
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
-
     @Transient
     private String nombreCliente;
 
@@ -78,10 +54,6 @@ public class LogAccesoCliente {
     @Transient
     private String sistemaOperativo;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public LogAccesoCliente() {
         this.fechaAcceso = LocalDateTime.now();
     }
@@ -98,10 +70,6 @@ public class LogAccesoCliente {
         this(idCliente, ipOrigen, navegador);
         this.fechaAcceso = fechaAcceso != null ? fechaAcceso : LocalDateTime.now();
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdLog() {
         return idLog;
@@ -192,13 +160,6 @@ public class LogAccesoCliente {
         this.sistemaOperativo = sistemaOperativo;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Parsea el User-Agent para obtener información del navegador y dispositivo.
-     */
     private void parsearNavegador() {
         if (navegador == null || navegador.isEmpty()) {
             this.navegadorSimplificado = "Desconocido";
@@ -209,7 +170,6 @@ public class LogAccesoCliente {
 
         String userAgent = navegador.toLowerCase();
 
-        // Detectar navegador
         if (userAgent.contains("chrome") && !userAgent.contains("edg")) {
             this.navegadorSimplificado = "Chrome";
         } else if (userAgent.contains("firefox")) {
@@ -228,7 +188,6 @@ public class LogAccesoCliente {
             this.navegadorSimplificado = "Otro";
         }
 
-        // Detectar dispositivo
         if (userAgent.contains("mobile") || userAgent.contains("android") || userAgent.contains("iphone")) {
             this.tipoDispositivo = "Móvil";
         } else if (userAgent.contains("tablet") || userAgent.contains("ipad")) {
@@ -237,7 +196,6 @@ public class LogAccesoCliente {
             this.tipoDispositivo = "Escritorio";
         }
 
-        // Detectar sistema operativo
         if (userAgent.contains("windows")) {
             this.sistemaOperativo = "Windows";
         } else if (userAgent.contains("mac os")) {
@@ -253,48 +211,23 @@ public class LogAccesoCliente {
         }
     }
 
-    /**
-     * Verifica si el acceso es desde un dispositivo móvil.
-     * 
-     * @return true si es móvil, false en caso contrario
-     */
     public boolean esDispositivoMovil() {
         return "Móvil".equals(this.tipoDispositivo);
     }
 
-    /**
-     * Verifica si el acceso es desde una tablet.
-     * 
-     * @return true si es tablet, false en caso contrario
-     */
     public boolean esTablet() {
         return "Tablet".equals(this.tipoDispositivo);
     }
 
-    /**
-     * Verifica si el acceso es desde un escritorio.
-     * 
-     * @return true si es escritorio, false en caso contrario
-     */
     public boolean esEscritorio() {
         return "Escritorio".equals(this.tipoDispositivo);
     }
 
-    /**
-     * Verifica si el acceso es de un navegador moderno.
-     * 
-     * @return true si es moderno, false en caso contrario
-     */
     public boolean esNavegadorModerno() {
         return !"Internet Explorer".equals(this.navegadorSimplificado) && 
                !"Otro".equals(this.navegadorSimplificado);
     }
 
-    /**
-     * Obtiene el nombre del cliente para mostrar.
-     * 
-     * @return Nombre del cliente
-     */
     public String getClienteDisplay() {
         if (nombreCliente != null && !nombreCliente.isEmpty()) {
             return nombreCliente;
@@ -305,137 +238,71 @@ public class LogAccesoCliente {
         return "Cliente ID: " + idCliente;
     }
 
-    /**
-     * Obtiene el icono según el tipo de dispositivo.
-     * 
-     * @return Ícono CSS
-     */
     public String getDispositivoIcono() {
         if (tipoDispositivo == null) return "ti ti-device-laptop";
         
-        switch (tipoDispositivo) {
-            case "Móvil":
-                return "ti ti-device-mobile";
-            case "Tablet":
-                return "ti ti-device-tablet";
-            case "Escritorio":
-                return "ti ti-device-laptop";
-            default:
-                return "ti ti-device-laptop";
-        }
+        return switch (tipoDispositivo) {
+            case "Móvil" -> "ti ti-device-mobile";
+            case "Tablet" -> "ti ti-device-tablet";
+            case "Escritorio" -> "ti ti-device-laptop";
+            default -> "ti ti-device-laptop";
+        };
     }
 
-    /**
-     * Obtiene el color según el tipo de dispositivo.
-     * 
-     * @return Color en hexadecimal
-     */
     public String getDispositivoColor() {
         if (tipoDispositivo == null) return "#6B7280";
         
-        switch (tipoDispositivo) {
-            case "Móvil":
-                return "#3B82F6";
-            case "Tablet":
-                return "#8B5CF6";
-            case "Escritorio":
-                return "#10B981";
-            default:
-                return "#6B7280";
-        }
+        return switch (tipoDispositivo) {
+            case "Móvil" -> "#3B82F6";
+            case "Tablet" -> "#8B5CF6";
+            case "Escritorio" -> "#10B981";
+            default -> "#6B7280";
+        };
     }
 
-    /**
-     * Obtiene el icono según el navegador.
-     * 
-     * @return Ícono CSS
-     */
     public String getNavegadorIcono() {
         if (navegadorSimplificado == null) return "ti ti-world";
         
-        switch (navegadorSimplificado) {
-            case "Chrome":
-                return "ti ti-brand-chrome";
-            case "Firefox":
-                return "ti ti-brand-firefox";
-            case "Safari":
-                return "ti ti-brand-safari";
-            case "Edge":
-                return "ti ti-brand-edge";
-            case "Opera":
-                return "ti ti-brand-opera";
-            case "Brave":
-                return "ti ti-brand-brave";
-            default:
-                return "ti ti-world";
-        }
+        return switch (navegadorSimplificado) {
+            case "Chrome" -> "ti ti-brand-chrome";
+            case "Firefox" -> "ti ti-brand-firefox";
+            case "Safari" -> "ti ti-brand-safari";
+            case "Edge" -> "ti ti-brand-edge";
+            case "Opera" -> "ti ti-brand-opera";
+            case "Brave" -> "ti ti-brand-brave";
+            default -> "ti ti-world";
+        };
     }
 
-    /**
-     * Obtiene el color según el navegador.
-     * 
-     * @return Color en hexadecimal
-     */
     public String getNavegadorColor() {
         if (navegadorSimplificado == null) return "#6B7280";
         
-        switch (navegadorSimplificado) {
-            case "Chrome":
-                return "#4285F4";
-            case "Firefox":
-                return "#FF7139";
-            case "Safari":
-                return "#1A74E6";
-            case "Edge":
-                return "#0078D7";
-            case "Opera":
-                return "#FF1B2D";
-            case "Brave":
-                return "#FB542B";
-            default:
-                return "#6B7280";
-        }
+        return switch (navegadorSimplificado) {
+            case "Chrome" -> "#4285F4";
+            case "Firefox" -> "#FF7139";
+            case "Safari" -> "#1A74E6";
+            case "Edge" -> "#0078D7";
+            case "Opera" -> "#FF1B2D";
+            case "Brave" -> "#FB542B";
+            default -> "#6B7280";
+        };
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene la fecha de acceso formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaAccesoFormateada() {
         if (fechaAcceso == null) return "-";
         return fechaAcceso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     }
 
-    /**
-     * Obtiene la fecha de acceso formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaAccesoFormateadaSoloFecha() {
         if (fechaAcceso == null) return "-";
         return fechaAcceso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la fecha de acceso formateada (solo hora).
-     * 
-     * @return Hora formateada
-     */
     public String getFechaAccesoFormateadaSoloHora() {
         if (fechaAcceso == null) return "-";
         return fechaAcceso.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
     }
 
-    /**
-     * Obtiene la IP de origen con formato.
-     * 
-     * @return IP formateada
-     */
     public String getIpFormateada() {
         if (ipOrigen == null || ipOrigen.isEmpty()) {
             return "IP desconocida";
@@ -443,11 +310,6 @@ public class LogAccesoCliente {
         return ipOrigen;
     }
 
-    /**
-     * Obtiene el navegador completo.
-     * 
-     * @return Navegador completo
-     */
     public String getNavegadorCompleto() {
         if (navegador == null || navegador.isEmpty()) {
             return "Navegador desconocido";
@@ -455,29 +317,14 @@ public class LogAccesoCliente {
         return navegador;
     }
 
-    /**
-     * Obtiene el navegador con ícono.
-     * 
-     * @return Navegador con ícono
-     */
     public String getNavegadorConIcono() {
         return "<i class='" + getNavegadorIcono() + "'></i> " + navegadorSimplificado;
     }
 
-    /**
-     * Obtiene el dispositivo con ícono.
-     * 
-     * @return Dispositivo con ícono
-     */
     public String getDispositivoConIcono() {
         return "<i class='" + getDispositivoIcono() + "'></i> " + tipoDispositivo;
     }
 
-    /**
-     * Obtiene el resumen del acceso.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append("Cliente: ").append(getClienteDisplay());
@@ -489,61 +336,31 @@ public class LogAccesoCliente {
         return sb.toString();
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del tipo de dispositivo.
-     * 
-     * @return Clase CSS
-     */
     public String getDispositivoBadgeClass() {
         if (tipoDispositivo == null) return "badge-secondary";
         
-        switch (tipoDispositivo) {
-            case "Móvil":
-                return "badge-info";
-            case "Tablet":
-                return "badge-warning";
-            case "Escritorio":
-                return "badge-success";
-            default:
-                return "badge-secondary";
-        }
+        return switch (tipoDispositivo) {
+            case "Móvil" -> "badge-info";
+            case "Tablet" -> "badge-warning";
+            case "Escritorio" -> "badge-success";
+            default -> "badge-secondary";
+        };
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del navegador.
-     * 
-     * @return Clase CSS
-     */
     public String getNavegadorBadgeClass() {
         if (navegadorSimplificado == null) return "badge-secondary";
         
-        switch (navegadorSimplificado) {
-            case "Chrome":
-                return "badge-primary";
-            case "Firefox":
-                return "badge-danger";
-            case "Safari":
-                return "badge-info";
-            case "Edge":
-                return "badge-primary";
-            case "Opera":
-                return "badge-danger";
-            case "Brave":
-                return "badge-warning";
-            default:
-                return "badge-secondary";
-        }
+        return switch (navegadorSimplificado) {
+            case "Chrome" -> "badge-primary";
+            case "Firefox" -> "badge-danger";
+            case "Safari" -> "badge-info";
+            case "Edge" -> "badge-primary";
+            case "Opera" -> "badge-danger";
+            case "Brave" -> "badge-warning";
+            default -> "badge-secondary";
+        };
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -560,11 +377,6 @@ public class LogAccesoCliente {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -582,10 +394,6 @@ public class LogAccesoCliente {
         sb.append("}");
         return sb.toString();
     }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -612,41 +420,15 @@ public class LogAccesoCliente {
         return idLog != null ? idLog.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un registro de acceso desde una entidad Cliente.
-     * 
-     * @param idCliente ID del cliente
-     * @param ipOrigen IP de origen
-     * @param userAgent User-Agent del navegador
-     * @return Log de acceso
-     */
     public static LogAccesoCliente fromCliente(Integer idCliente, String ipOrigen, String userAgent) {
         return new LogAccesoCliente(idCliente, ipOrigen, userAgent);
     }
 
-    /**
-     * Crea un registro de acceso con fecha específica.
-     * 
-     * @param idCliente ID del cliente
-     * @param ipOrigen IP de origen
-     * @param userAgent User-Agent del navegador
-     * @param fechaAcceso Fecha de acceso
-     * @return Log de acceso
-     */
     public static LogAccesoCliente fromClienteConFecha(Integer idCliente, String ipOrigen, 
                                                        String userAgent, LocalDateTime fechaAcceso) {
         return new LogAccesoCliente(idCliente, ipOrigen, userAgent, fechaAcceso);
     }
 
-    /**
-     * Convierte el log a un DTO.
-     * 
-     * @return DTO del log
-     */
     public LogAccesoClienteDTO toDTO() {
         LogAccesoClienteDTO dto = new LogAccesoClienteDTO();
         dto.setIdLog(this.idLog);
@@ -663,13 +445,6 @@ public class LogAccesoCliente {
         return dto;
     }
 
-    // ============================================
-    // CLASE INTERNA DTO
-    // ============================================
-
-    /**
-     * DTO para LogAccesoCliente.
-     */
     public static class LogAccesoClienteDTO {
         private Integer idLog;
         private Integer idCliente;
@@ -683,7 +458,6 @@ public class LogAccesoCliente {
         private String sistemaOperativo;
         private LocalDateTime fechaAcceso;
 
-        // Constructores
         public LogAccesoClienteDTO() {}
 
         public LogAccesoClienteDTO(Integer idLog, Integer idCliente, String ipOrigen, 
@@ -697,7 +471,6 @@ public class LogAccesoCliente {
             this.fechaAcceso = fechaAcceso;
         }
 
-        // Getters y Setters
         public Integer getIdLog() { return idLog; }
         public void setIdLog(Integer idLog) { this.idLog = idLog; }
 
@@ -731,7 +504,6 @@ public class LogAccesoCliente {
         public LocalDateTime getFechaAcceso() { return fechaAcceso; }
         public void setFechaAcceso(LocalDateTime fechaAcceso) { this.fechaAcceso = fechaAcceso; }
 
-        // Métodos de formato
         public String getFechaAccesoFormateada() {
             if (fechaAcceso == null) return "-";
             return fechaAcceso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
@@ -739,33 +511,33 @@ public class LogAccesoCliente {
 
         public String getDispositivoIcono() {
             if (tipoDispositivo == null) return "ti ti-device-laptop";
-            switch (tipoDispositivo) {
-                case "Móvil": return "ti ti-device-mobile";
-                case "Tablet": return "ti ti-device-tablet";
-                case "Escritorio": return "ti ti-device-laptop";
-                default: return "ti ti-device-laptop";
-            }
+            return switch (tipoDispositivo) {
+                case "Móvil" -> "ti ti-device-mobile";
+                case "Tablet" -> "ti ti-device-tablet";
+                case "Escritorio" -> "ti ti-device-laptop";
+                default -> "ti ti-device-laptop";
+            };
         }
 
         public String getNavegadorIcono() {
             if (navegadorSimplificado == null) return "ti ti-world";
-            switch (navegadorSimplificado) {
-                case "Chrome": return "ti ti-brand-chrome";
-                case "Firefox": return "ti ti-brand-firefox";
-                case "Safari": return "ti ti-brand-safari";
-                case "Edge": return "ti ti-brand-edge";
-                default: return "ti ti-world";
-            }
+            return switch (navegadorSimplificado) {
+                case "Chrome" -> "ti ti-brand-chrome";
+                case "Firefox" -> "ti ti-brand-firefox";
+                case "Safari" -> "ti ti-brand-safari";
+                case "Edge" -> "ti ti-brand-edge";
+                default -> "ti ti-world";
+            };
         }
 
         public String getDispositivoBadgeClass() {
             if (tipoDispositivo == null) return "badge-secondary";
-            switch (tipoDispositivo) {
-                case "Móvil": return "badge-info";
-                case "Tablet": return "badge-warning";
-                case "Escritorio": return "badge-success";
-                default: return "badge-secondary";
-            }
+            return switch (tipoDispositivo) {
+                case "Móvil" -> "badge-info";
+                case "Tablet" -> "badge-warning";
+                case "Escritorio" -> "badge-success";
+                default -> "badge-secondary";
+            };
         }
 
         public String getResumen() {

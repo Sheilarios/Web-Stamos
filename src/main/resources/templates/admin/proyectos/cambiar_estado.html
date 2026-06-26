@@ -136,34 +136,19 @@
             font-weight: 600;
         }
         
-        .status-aprobado {
-            background: var(--blue-light);
-            color: var(--blue);
-        }
+        .status-aprobado { background: var(--blue-light); color: var(--blue); }
+        .status-diseno { background: var(--orange-light); color: var(--orange); }
+        .status-produccion { background: var(--blue-light); color: var(--blue); }
+        .status-instalacion { background: var(--purple-light); color: var(--purple); }
+        .status-entregado { background: var(--green-light); color: var(--green); }
+        .status-anulado { background: var(--red-light); color: var(--red); }
         
-        .status-diseno {
-            background: var(--orange-light);
-            color: var(--orange);
-        }
-        
-        .status-produccion {
-            background: var(--blue-light);
-            color: var(--blue);
-        }
-        
-        .status-instalacion {
-            background: var(--purple-light);
-            color: var(--purple);
-        }
-        
-        .status-entregado {
-            background: var(--green-light);
-            color: var(--green);
-        }
-        
-        .status-anulado {
-            background: var(--red-light);
-            color: var(--red);
+        .estado-actual {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
         
         .form-group {
@@ -272,46 +257,6 @@
             color: var(--yellow-dark);
         }
         
-        .btn-success {
-            background: var(--green);
-            border: none;
-            color: white;
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.15s;
-        }
-        
-        .btn-success:hover {
-            background: #155D34;
-        }
-        
-        .btn-danger {
-            background: var(--red);
-            border: none;
-            color: white;
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.15s;
-        }
-        
-        .btn-danger:hover {
-            background: #a71d2a;
-        }
-        
         .info-box {
             background: var(--blue-light);
             border: 1px solid #B8D4FE;
@@ -330,20 +275,13 @@
             margin-top: 2px;
         }
         
-        .estado-actual {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
         @media (max-width: 640px) {
             body { padding: 20px; }
             .container { padding: 20px; }
             .form-actions { flex-wrap: wrap; }
             .form-actions .btn { flex: 1; justify-content: center; }
             .proyecto-info .info-row { flex-direction: column; }
+            .header { flex-wrap: wrap; }
         }
     </style>
 </head>
@@ -353,11 +291,11 @@
     <div class="header">
         <i class="ti ti-arrow-forward"></i>
         <h1>Cambiar Estado del Proyecto</h1>
-        <small th:text="'#' + ${proyecto.idProyecto}">#0</small>
+        <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
     <div th:if="${warning}" class="alert alert-warning" th:text="${warning}"></div>
 
     <div class="info-box">
@@ -374,37 +312,37 @@
     <div class="proyecto-info">
         <div class="info-row">
             <span class="label">Proyecto</span>
-            <span class="value" th:text="${proyecto.nombreProyecto}">—</span>
+            <span class="value" th:text="${proyecto != null ? proyecto.nombreProyecto : '—'}">—</span>
         </div>
         <div class="info-row">
             <span class="label">Código</span>
-            <span class="value" th:text="${proyecto.codigoProyecto}">—</span>
+            <span class="value" th:text="${proyecto != null ? proyecto.codigoProyecto : '—'}">—</span>
         </div>
         <div class="info-row">
             <span class="label">Cliente</span>
-            <span class="value" th:text="${proyecto.nombreCliente}">—</span>
+            <span class="value" th:text="${proyecto != null ? proyecto.nombreCliente : '—'}">—</span>
         </div>
         <div class="info-row">
             <span class="label">Estado Actual</span>
             <span class="value">
                 <span class="estado-actual" 
-                      th:classappend="${proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
-                                      (proyecto.estado == 'En Diseño' ? 'status-diseno' : 
-                                      (proyecto.estado == 'En Producción' ? 'status-produccion' : 
-                                      (proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
-                                      (proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
-                      th:text="${proyecto.estado}">Aprobado</span>
+                      th:classappend="${proyecto != null and proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
+                                      (proyecto != null and proyecto.estado == 'En Diseño' ? 'status-diseno' : 
+                                      (proyecto != null and proyecto.estado == 'En Producción' ? 'status-produccion' : 
+                                      (proyecto != null and proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                      (proyecto != null and proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
+                      th:text="${proyecto != null ? proyecto.estado : '—'}">Aprobado</span>
             </span>
         </div>
-        <div class="info-row" th:if="${proyecto.fechaInicio != null}">
+        <div class="info-row" th:if="${proyecto != null and proyecto.fechaInicio != null}">
             <span class="label">Fecha de Inicio</span>
             <span class="value" th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">—</span>
         </div>
     </div>
 
-    <form th:action="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto.idProyecto})}" method="post">
+    <form th:action="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" method="post">
         
-        <input type="hidden" name="idProyecto" th:value="${proyecto.idProyecto}">
+        <input type="hidden" name="idProyecto" th:value="${proyecto != null ? proyecto.idProyecto : ''}">
 
         <div class="form-group">
             <label for="idEstadoNuevo">Nuevo Estado <span class="required">*</span></label>
@@ -413,8 +351,7 @@
                 <select id="idEstadoNuevo" name="idEstadoNuevo" required>
                     <option value="">Seleccione un estado</option>
                     <option th:each="e : ${estadosDisponibles}" th:value="${e.idEstado}" 
-                            th:text="${e.nombreEstado}" 
-                            th:data-color="${e.color}"></option>
+                            th:text="${e.nombreEstado}"></option>
                 </select>
             </div>
             <div style="font-size:11px; color:var(--text-3); margin-top:4px;">
@@ -441,7 +378,7 @@
         </div>
 
         <div class="form-actions">
-            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" class="btn-secondary">
+            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
                 <i class="ti ti-arrow-left"></i> Cancelar
             </a>
             <button type="submit" class="btn-primary">
@@ -463,27 +400,6 @@
     </div>
 
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const select = document.getElementById('idEstadoNuevo');
-        const infoBox = document.querySelector('.info-box');
-        
-        select.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const color = selectedOption.dataset.color;
-            
-            // Cambiar el color del borde de la información
-            if (color) {
-                infoBox.style.borderColor = color;
-                infoBox.style.backgroundColor = color + '15';
-            } else {
-                infoBox.style.borderColor = '';
-                infoBox.style.backgroundColor = '';
-            }
-        });
-    });
-</script>
 
 </body>
 </html>

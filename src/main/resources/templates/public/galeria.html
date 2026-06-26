@@ -3,427 +3,637 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAMOS · Galería de proyectos</title>
+    <title>Galería de Proyectos · STAMOS LINARES S.R.L.</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
-        :root {
-            --yellow: #F5C400;
-            --yellow-light: #FFFBE6;
-            --yellow-mid: #FFE566;
-            --yellow-dark: #9A7500;
-            --yellow-border: #E0C84A;
-            --border: #E2E6EA;
-            --bg: #F5F6F8;
-            --card: #FFFFFF;
-            --text: #1A1F2E;
-            --text-2: #5A6478;
-            --text-3: #9BA5B7;
-            --red: #C0392B;
-            --green: #1A7040;
-        }
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #F5F6F8;
+            color: #1A1F2E;
         }
-        
+
+        /* ===== NAVBAR ===== */
         .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 56px;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 56px; background: #000000; border-bottom: 1px solid #222;
+            position: sticky; top: 0; z-index: 100;
         }
-        
-        .nav-brand {
-            font-family: 'Syne', sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-            letter-spacing: -0.5px;
-        }
-        
-        .nav-brand span { color: var(--yellow-dark); }
-        
-        .nav-links {
-            display: flex;
-            gap: 32px;
-        }
-        
-        .nav-link {
-            font-size: 14px;
-            color: var(--text-2);
-            cursor: pointer;
-            transition: color 0.15s;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--yellow-dark);
-        }
-        
+        .nav-brand { font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; text-decoration: none; }
+        .nav-brand span { color: #F5C400; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-link { font-size: 13px; color: #C0C0C0; text-decoration: none; transition: color 0.2s; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { color: #F5C400; }
         .nav-cta {
-            background: var(--yellow);
-            border: none;
-            color: #2A1800;
-            padding: 8px 22px;
-            border-radius: 8px;
+            background: #F5C400; border: none; color: #000000; padding: 8px 22px;
+            border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;
+            text-decoration: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .nav-cta:hover { background: #E0B000; }
+        .nav-phone { color: #FFFFFF; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .nav-phone i { color: #F5C400; }
+
+        /* ===== PAGE HERO ===== */
+        .page-hero {
+            background: #000000; padding: 48px 56px 40px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(245,196,0,0.08) 0%, transparent 70%);
+        }
+        .page-hero .label { font-size: 11px; color: #F5C400; text-transform: uppercase; letter-spacing: 3px; font-weight: 700; position: relative; z-index: 1; }
+        .page-hero h1 { font-size: 42px; font-weight: 800; color: #FFFFFF; margin: 12px 0 16px; line-height: 1.1; position: relative; z-index: 1; }
+        .page-hero h1 span { color: #F5C400; }
+        .page-hero p { font-size: 15px; color: #C0C0C0; max-width: 560px; margin: 0 auto; line-height: 1.7; position: relative; z-index: 1; }
+
+        /* ===== BREADCRUMB ===== */
+        .breadcrumb {
+            padding: 14px 56px; background: #FFFFFF; border-bottom: 1px solid #E8E8E8;
+            display: flex; align-items: center; gap: 8px; font-size: 12px; color: #8A8A8A;
+        }
+        .breadcrumb a { color: #8A8A8A; text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a:hover { color: #F5C400; }
+        .breadcrumb .sep { color: #C0C0C0; }
+        .breadcrumb .current { color: #3A3A3A; font-weight: 600; }
+
+        /* ===== MAIN LAYOUT: SIDEBAR + GALLERY ===== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            padding: 32px 56px 64px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* ===== SIDEBAR FILTERS ===== */
+        .filter-sidebar {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 24px 20px;
+            border: 1px solid #E8E8E8;
+            position: sticky;
+            top: 90px;
+            align-self: start;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+        .filter-sidebar::-webkit-scrollbar { width: 4px; }
+        .filter-sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
+        .filter-sidebar .sidebar-title {
             font-size: 13px;
-            cursor: pointer;
             font-weight: 700;
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s;
-            text-decoration: none;
-        }
-        
-        .nav-cta:hover {
-            background: var(--yellow-mid);
-        }
-        
-        .hero {
-            padding: 60px 56px 40px;
-            text-align: center;
-            background: linear-gradient(135deg, #FFFBE6 0%, #FFFFFF 100%);
-        }
-        
-        .hero-badge {
-            display: inline-flex;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #000000;
+            margin-bottom: 20px;
+            display: flex;
             align-items: center;
             gap: 8px;
-            background: var(--yellow-light);
-            border: 0.5px solid var(--yellow-border);
-            border-radius: 30px;
-            padding: 6px 16px;
-            font-size: 12px;
-            color: var(--yellow-dark);
+        }
+        .filter-sidebar .sidebar-title i { color: #F5C400; }
+
+        .filter-group {
             margin-bottom: 24px;
-            font-weight: 500;
         }
-        
-        .hero-badge i { font-size: 14px; }
-        
-        .hero-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--text);
-            line-height: 1.2;
-            margin-bottom: 16px;
+        .filter-group .group-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #8A8A8A;
+            margin-bottom: 10px;
+            display: block;
         }
-        
-        .hero-title span { color: var(--yellow-dark); }
-        
-        .hero-desc {
+
+        /* Search input */
+        .search-input-wrap {
+            position: relative;
+        }
+        .search-input-wrap i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #B0B0B0;
             font-size: 16px;
-            color: var(--text-2);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.7;
         }
-        
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            padding: 24px 56px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 8px 20px;
-            border-radius: 30px;
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 40px;
+            border: 1px solid #E0E0E0;
+            border-radius: 10px;
             font-size: 13px;
+            font-family: inherit;
+            transition: all 0.2s;
+            outline: none;
+            background: #FAFAFA;
+        }
+        .search-input:focus {
+            border-color: #F5C400;
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(245,196,0,0.10);
+        }
+
+        /* Filter checkboxes */
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
             cursor: pointer;
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--text-2);
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
+            font-size: 13px;
+            color: #555;
+            transition: color 0.2s;
         }
-        
-        .filter-btn:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+        .filter-option:hover { color: #000000; }
+        .filter-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #F5C400;
+            cursor: pointer;
+            flex-shrink: 0;
         }
-        
-        .filter-btn.active {
-            background: var(--yellow-light);
-            border-color: var(--yellow-border);
-            color: var(--yellow-dark);
+        .filter-option .count {
+            margin-left: auto;
+            font-size: 11px;
+            color: #B0B0B0;
+            background: #F5F5F5;
+            padding: 0 8px;
+            border-radius: 10px;
+        }
+
+        /* Client tags */
+        .client-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .client-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 600;
-        }
-        
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            padding: 20px 56px 60px;
-        }
-        
-        .gallery-item {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
+            background: #F0F0F0;
+            color: #555;
             cursor: pointer;
             transition: all 0.2s;
-            position: relative;
-            min-height: 240px;
+            border: 1px solid transparent;
+        }
+        .client-tag:hover { background: #E0E0E0; }
+        .client-tag.active {
+            background: #000000;
+            color: #F5C400;
+            border-color: #000000;
+        }
+
+        /* Clear filters button */
+        .btn-clear-filters {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 10px;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8A8A8A;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
         }
-        
-        .gallery-item:hover {
-            border-color: var(--yellow);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        .btn-clear-filters:hover {
+            background: #F5F5F5;
+            border-color: #F5C400;
+            color: #000000;
         }
-        
-        .gallery-item.tall {
-            grid-row: span 2;
-            min-height: 500px;
+
+        /* ===== GALLERY GRID ===== */
+        .gallery-section {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #E8E8E8;
         }
-        
-        .gallery-item.wide {
-            grid-column: span 2;
-        }
-        
-        .project-placeholder {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .project-placeholder i {
-            font-size: 48px;
-            color: var(--yellow-dark);
-            opacity: 0.5;
-            margin-bottom: 16px;
-        }
-        
-        .project-name {
-            font-family: 'Syne', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-        
-        .project-client {
-            font-size: 12px;
-            color: var(--text-3);
-        }
-        
-        .project-tag {
-            position: absolute;
-            bottom: 16px;
-            left: 16px;
-            font-size: 10px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            background: var(--yellow-light);
-            border: 1px solid var(--yellow-border);
-            color: var(--yellow-dark);
-            font-weight: 500;
-        }
-        
-        .footer {
-            background: white;
-            border-top: 1px solid var(--border);
-            padding: 48px 56px 32px;
-        }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1.5fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-brand {
-            font-family: 'Syne', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 12px;
-        }
-        
-        .footer-brand span { color: var(--yellow-dark); }
-        
-        .footer-desc {
-            font-size: 13px;
-            color: var(--text-2);
-            line-height: 1.6;
-        }
-        
-        .footer-title {
-            font-size: 12px;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-        
-        .footer-link {
-            display: block;
-            font-size: 13px;
-            color: var(--text-2);
-            margin-bottom: 10px;
-            text-decoration: none;
-            transition: color 0.15s;
-        }
-        
-        .footer-link:hover { color: var(--yellow-dark); }
-        
-        .footer-bottom {
-            border-top: 1px solid var(--border);
-            padding-top: 24px;
+
+        .gallery-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
             flex-wrap: wrap;
+            gap: 12px;
+        }
+        .gallery-header .results-count {
+            font-size: 13px;
+            color: #8A8A8A;
+        }
+        .gallery-header .results-count strong { color: #000000; }
+
+        .sort-select {
+            padding: 8px 14px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #FFFFFF;
+            cursor: pointer;
+            outline: none;
+            color: #555;
+        }
+        .sort-select:focus { border-color: #F5C400; }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 16px;
         }
-        
-        .footer-copy, .footer-ruc {
-            font-size: 11px;
-            color: var(--text-3);
+
+        .gallery-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #E8E8E8;
+            transition: all 0.3s;
+            background: #FFFFFF;
+            cursor: pointer;
         }
-        
-        @media (max-width: 1000px) {
-            .navbar { padding: 0 24px; }
-            .nav-links { display: none; }
-            .hero { padding: 40px 24px; }
-            .hero-title { font-size: 32px; }
-            .filters { padding: 20px 24px; }
-            .gallery-grid { 
-                grid-template-columns: 1fr; 
-                padding: 20px 24px 40px;
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-color: #F5C400;
+        }
+
+        .gallery-card .img-wrap {
+            width: 100%;
+            padding-bottom: 66%;
+            position: relative;
+            background: #1A1A1A;
+            overflow: hidden;
+        }
+        .gallery-card .img-wrap img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+        .gallery-card:hover .img-wrap img { transform: scale(1.06); }
+
+        .gallery-card .card-body {
+            padding: 14px 16px 16px;
+        }
+        .gallery-card .card-body .tag {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 10px;
+            border-radius: 4px;
+            background: #F5F5F5;
+            color: #8A8A8A;
+            margin-bottom: 6px;
+        }
+        .gallery-card .card-body .tag.stand { background: #E8F0FE; color: #1A56DB; }
+        .gallery-card .card-body .tag.video { background: #FEF3E8; color: #D97706; }
+        .gallery-card .card-body .tag.mobiliario { background: #E8FEF0; color: #059669; }
+        .gallery-card .card-body .tag.interactivo { background: #F3E8FE; color: #7C3AED; }
+        .gallery-card .card-body .tag.grafica { background: #FEFCE8; color: #B45309; }
+
+        .gallery-card .card-body h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 2px;
+        }
+        .gallery-card .card-body .client-name {
+            font-size: 12px;
+            color: #8A8A8A;
+        }
+        .gallery-card .card-body .desc {
+            font-size: 12px;
+            color: #6B6B6B;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* ===== PAGINATION ===== */
+        .pagination-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #E8E8E8;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .pagination-wrap .info {
+            font-size: 12px;
+            color: #8A8A8A;
+        }
+        .pagination {
+            display: flex;
+            gap: 4px;
+        }
+        .pagination a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .pagination a:hover {
+            background: #F5F5F5;
+            border-color: #E0E0E0;
+        }
+        .pagination a.active {
+            background: #000000;
+            color: #F5C400;
+            border-color: #000000;
+        }
+        .pagination a.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* ===== STATS ===== */
+        .stats-bar {
+            background: #000000;
+            padding: 40px 56px;
+        }
+        .stats-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .stat-item { text-align: center; }
+        .stat-item .num { font-size: 36px; font-weight: 800; color: #F5C400; line-height: 1; }
+        .stat-item .lbl { font-size: 12px; color: #8A8A8A; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+
+        /* ===== CTA ===== */
+        .cta-section {
+            background: #000000;
+            padding: 48px 56px;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+        .cta-inner { max-width: 680px; margin: 0 auto; }
+        .cta-inner h2 { font-size: 32px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px; }
+        .cta-inner h2 span { color: #F5C400; }
+        .cta-inner p { font-size: 14px; color: #C0C0C0; line-height: 1.7; margin-bottom: 24px; }
+        .cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .btn-primary { background: #F5C400; color: #000000; padding: 12px 28px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; }
+        .btn-primary:hover { background: #E0B000; }
+        .btn-secondary { background: transparent; color: #FFFFFF; padding: 12px 28px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #555; transition: all 0.2s; }
+        .btn-secondary:hover { border-color: #F5C400; color: #F5C400; }
+
+        /* ===== FOOTER ===== */
+        .footer { background: #000000; border-top: 1px solid #222; padding: 40px 56px 28px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 32px; margin-bottom: 32px; }
+        .footer-brand { font-size: 20px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px; }
+        .footer-brand span { color: #F5C400; }
+        .footer-desc { font-size: 12px; color: #8A8A8A; line-height: 1.6; }
+        .footer-title { font-size: 10px; color: #6B6B6B; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; font-weight: 600; }
+        .footer-link { display: block; font-size: 12px; color: #8A8A8A; margin-bottom: 8px; text-decoration: none; transition: color 0.2s; }
+        .footer-link:hover { color: #F5C400; }
+        .footer-bottom { border-top: 1px solid #222; padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .footer-copy, .footer-ruc { font-size: 10px; color: #6B6B6B; }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            text-align: center;
+            padding: 48px 24px;
+            color: #8A8A8A;
+        }
+        .no-results i { font-size: 48px; color: #E0E0E0; margin-bottom: 16px; display: block; }
+        .no-results h4 { font-size: 18px; color: #000000; margin-bottom: 8px; }
+        .no-results p { font-size: 13px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1100px) {
+            .navbar { padding: 14px 24px; }
+            .nav-links, .nav-phone { display: none; }
+            .page-hero { padding: 40px 24px 32px; }
+            .page-hero h1 { font-size: 32px; }
+            .main-layout { grid-template-columns: 1fr; padding: 24px; }
+            .filter-sidebar {
+                position: static;
+                max-height: none;
+                overflow-y: visible;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                padding: 16px 20px;
             }
-            .gallery-item.tall { min-height: auto; }
-            .gallery-item.wide { grid-column: span 1; }
-            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-            .footer { padding: 32px 24px; }
+            .filter-sidebar .sidebar-title { grid-column: span 2; margin-bottom: 8px; }
+            .filter-group { margin-bottom: 0; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); }
+            .stats-bar { padding: 32px 24px; }
+            .cta-section { padding: 36px 24px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+            .footer { padding: 28px 24px; }
+            .breadcrumb { padding: 10px 24px; }
+        }
+        @media (max-width: 600px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+            .filter-sidebar { grid-template-columns: 1fr; }
+            .filter-sidebar .sidebar-title { grid-column: span 1; }
+            .stats-inner { grid-template-columns: 1fr 1fr; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            .pagination-wrap { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
 <body>
 
+<!-- ===== NAVBAR ===== -->
 <nav class="navbar">
-    <div class="nav-brand">STAMOS<span>.</span></div>
+    <a th:href="@{/}" class="nav-brand">STAMOS<span>.</span></a>
     <div class="nav-links">
         <a class="nav-link" th:href="@{/}">Inicio</a>
         <a class="nav-link" th:href="@{/servicios}">Servicios</a>
         <a class="nav-link active" th:href="@{/galeria}">Galería</a>
         <a class="nav-link" th:href="@{/contacto}">Contacto</a>
     </div>
-    <a th:href="@{/login}" class="nav-cta">
-        <i class="ti ti-login"></i> Portal cliente
-    </a>
+    <div class="nav-phone"><i class="ti ti-phone"></i> 01 704-6345</div>
+    <a th:href="@{/login}" class="nav-cta"><i class="ti ti-login"></i> Portal cliente</a>
 </nav>
 
-<section class="hero">
-    <div class="hero-badge">
-        <i class="ti ti-photo"></i> Galería de proyectos
-    </div>
-    <h1 class="hero-title">Proyectos reales,<br><span>resultados tangibles</span></h1>
-    <p class="hero-desc">Explora nuestros proyectos más recientes. Haz clic en cualquier proyecto para verlo en detalle.</p>
-</section>
-
-<div class="filters">
-    <button type="button" class="filter-btn active" data-cat="all">Todos</button>
-    <button type="button" class="filter-btn" data-cat="stand">Stands</button>
-    <button type="button" class="filter-btn" data-cat="escenografia">Escenografía</button>
-    <button type="button" class="filter-btn" data-cat="modular">Modular</button>
-    <button type="button" class="filter-btn" data-cat="interactivo">Interactivo</button>
+<!-- ===== PAGE HERO ===== -->
+<div class="page-hero">
+    <div class="label">Proyectos realizados</div>
+    <h1>Galería de <span>Proyectos</span></h1>
+    <p>Más de 350 proyectos entregados. Stands, video walls, mobiliario y soluciones interactivas para las marcas más importantes del Perú.</p>
 </div>
 
-<div class="gallery-grid" id="galleryGrid">
-    <div class="gallery-item tall" data-cat="stand">
-        <div class="project-placeholder">
-            <i class="ti ti-layout"></i>
-            <div class="project-name">Stand Dinet 2024</div>
-            <div class="project-client">Dinet</div>
+<!-- ===== BREADCRUMB ===== -->
+<div class="breadcrumb">
+    <a th:href="@{/}"><i class="ti ti-home" style="font-size:13px;"></i> Inicio</a>
+    <span class="sep"><i class="ti ti-chevron-right" style="font-size:11px;"></i></span>
+    <span class="current">Galería</span>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="main-layout">
+
+    <!-- ===== SIDEBAR FILTERS ===== -->
+    <aside class="filter-sidebar" id="filterSidebar">
+        <div class="sidebar-title">
+            <i class="ti ti-adjustments"></i> Filtros de búsqueda
         </div>
-        <div class="project-tag">8×6m · Doble altura</div>
-    </div>
-    
-    <div class="gallery-item" data-cat="escenografia">
-        <div class="project-placeholder">
-            <i class="ti ti-building"></i>
-            <div class="project-name">Stand GSK Farma</div>
-            <div class="project-client">GSK</div>
+
+        <!-- Search -->
+        <div class="filter-group">
+            <span class="group-label">Buscar proyecto</span>
+            <div class="search-input-wrap">
+                <i class="ti ti-search"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Ej: GSK, video wall, stand..." oninput="filterProjects()">
+            </div>
         </div>
-        <div class="project-tag">Escenografía · Forma curva</div>
-    </div>
-    
-    <div class="gallery-item" data-cat="stand">
-        <div class="project-placeholder">
-            <i class="ti ti-layout"></i>
-            <div class="project-name">Stand Scharff Expo</div>
-            <div class="project-client">Scharff Logística</div>
+
+        <!-- Tipo de entorno -->
+        <div class="filter-group">
+            <span class="group-label">Tipo de entorno</span>
+            <label class="filter-option">
+                <input type="checkbox" value="interior" onchange="filterProjects()">
+                Interior <span class="count">12</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="exterior" onchange="filterProjects()">
+                Exterior <span class="count">8</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="retail" onchange="filterProjects()">
+                Retail <span class="count">6</span>
+            </label>
         </div>
-        <div class="project-tag">5×5m · Corporativo</div>
-    </div>
-    
-    <div class="gallery-item wide" data-cat="modular">
-        <div class="project-placeholder">
-            <i class="ti ti-box"></i>
-            <div class="project-name">Stand Andino Inv.</div>
-            <div class="project-client">Andino Investment</div>
+
+        <!-- Equipamiento -->
+        <div class="filter-group">
+            <span class="group-label">Equipamiento</span>
+            <label class="filter-option">
+                <input type="checkbox" value="led" onchange="filterProjects()">
+                Pantalla LED <span class="count">15</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="totem" onchange="filterProjects()">
+                Tótems interactivos <span class="count">9</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="videowall" onchange="filterProjects()">
+                Video Wall integrado <span class="count">11</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="iluminacion" onchange="filterProjects()">
+                Iluminación LED perimetral <span class="count">14</span>
+            </label>
         </div>
-        <div class="project-tag">4×3m · Modular · Rojo y blanco</div>
-    </div>
-    
-    <div class="gallery-item" data-cat="escenografia">
-        <div class="project-placeholder">
-            <i class="ti ti-building"></i>
-            <div class="project-name">Escenografía TECHCA</div>
-            <div class="project-client">TECHCA</div>
+
+        <!-- Tipo de estructura -->
+        <div class="filter-group">
+            <span class="group-label">Tipo de estructura</span>
+            <label class="filter-option">
+                <input type="checkbox" value="modular" onchange="filterProjects()">
+                Modular <span class="count">18</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="custom" onchange="filterProjects()">
+                Custom <span class="count">10</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="tela" onchange="filterProjects()">
+                Tela tensada <span class="count">5</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" value="portatil" onchange="filterProjects()">
+                Portátil <span class="count">7</span>
+            </label>
         </div>
-        <div class="project-tag">10×6m · Trusses</div>
-    </div>
-    
-    <div class="gallery-item" data-cat="interactivo">
-        <div class="project-placeholder">
-            <i class="ti ti-device-tablet"></i>
-            <div class="project-name">Stand Cenfotur</div>
-            <div class="project-client">Cenfotur</div>
+
+        <!-- Clientes -->
+        <div class="filter-group">
+            <span class="group-label">Cliente</span>
+            <div class="client-tags" id="clientTags">
+                <span class="client-tag active" data-client="todos" onclick="filterByClient('todos', this)">Todos</span>
+                <span class="client-tag" data-client="gsk" onclick="filterByClient('gsk', this)">GSK</span>
+                <span class="client-tag" data-client="dinet" onclick="filterByClient('dinet', this)">DINET</span>
+                <span class="client-tag" data-client="cenfotur" onclick="filterByClient('cenfotur', this)">CENFOTUR</span>
+                <span class="client-tag" data-client="hunter" onclick="filterByClient('hunter', this)">HUNTER</span>
+                <span class="client-tag" data-client="soldex" onclick="filterByClient('soldex', this)">SOLDEXA</span>
+                <span class="client-tag" data-client="andino" onclick="filterByClient('andino', this)">ANDINO</span>
+                <span class="client-tag" data-client="petroperu" onclick="filterByClient('petroperu', this)">PETROPERÚ</span>
+                <span class="client-tag" data-client="brenta" onclick="filterByClient('brenta', this)">BRENTA</span>
+                <span class="client-tag" data-client="soldamundo" onclick="filterByClient('soldamundo', this)">SOLDAMUNDO</span>
+                <span class="client-tag" data-client="scharff" onclick="filterByClient('scharff', this)">SCHARFF</span>
+                <span class="client-tag" data-client="energigas" onclick="filterByClient('energigas', this)">ENERGIGAS</span>
+                <span class="client-tag" data-client="bago" onclick="filterByClient('bago', this)">BAGÓ</span>
+            </div>
         </div>
-        <div class="project-tag">Interactivo · Pantalla touch</div>
-    </div>
-    
-    <div class="gallery-item" data-cat="stand">
-        <div class="project-placeholder">
-            <i class="ti ti-layout"></i>
-            <div class="project-name">Stand Energigas</div>
-            <div class="project-client">Energigas</div>
+
+        <button class="btn-clear-filters" onclick="clearFilters()">
+            <i class="ti ti-x"></i> Limpiar filtros
+        </button>
+    </aside>
+
+    <!-- ===== GALLERY ===== -->
+    <section class="gallery-section">
+        <div class="gallery-header">
+            <span class="results-count"><strong id="resultCount">12</strong> proyectos encontrados</span>
+            <select class="sort-select" onchange="sortProjects(this.value)">
+                <option value="reciente">Más reciente</option>
+                <option value="nombre">Ordenar A-Z</option>
+                <option value="cliente">Por cliente</option>
+            </select>
         </div>
-        <div class="project-tag">6×4m · Trusses · Verde</div>
-    </div>
-    
-    <div class="gallery-item" data-cat="modular">
-        <div class="project-placeholder">
-            <i class="ti ti-box"></i>
-            <div class="project-name">Stand Brenta Plus</div>
-            <div class="project-client">Brenta</div>
+
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Proyectos renderizados por JavaScript -->
         </div>
-        <div class="project-tag">5×3m · Modular · Azul</div>
+
+        <!-- ===== PAGINATION ===== -->
+        <div class="pagination-wrap">
+            <span class="info" id="paginationInfo">Mostrando 1-9 de 12 proyectos</span>
+            <div class="pagination" id="paginationControls">
+                <!-- Generado por JavaScript -->
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- ===== STATS ===== -->
+<div class="stats-bar">
+    <div class="stats-inner">
+        <div class="stat-item"><div class="num">+350</div><div class="lbl">Proyectos entregados</div></div>
+        <div class="stat-item"><div class="num">+120</div><div class="lbl">Clientes activos</div></div>
+        <div class="stat-item"><div class="num">10+</div><div class="lbl">Años de experiencia</div></div>
+        <div class="stat-item"><div class="num">24h</div><div class="lbl">Tiempo de cotización</div></div>
     </div>
 </div>
 
+<!-- ===== CTA ===== -->
+<div class="cta-section">
+    <div class="cta-inner">
+        <h2>¿Quieres un proyecto como <span>estos</span>?</h2>
+        <p>Contáctanos y recibe una cotización personalizada en menos de 24 horas. Sin costo y sin compromiso.</p>
+        <div class="cta-buttons">
+            <a th:href="@{/contacto}" class="btn-primary"><i class="ti ti-send"></i> Solicitar cotización</a>
+            <a th:href="@{/servicios}" class="btn-secondary"><i class="ti ti-list"></i> Ver todos los servicios</a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="footer-grid">
         <div>
@@ -458,25 +668,167 @@
 </footer>
 
 <script>
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const items = document.querySelectorAll('.gallery-item');
-    
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const cat = this.getAttribute('data-cat');
-            
-            items.forEach(item => {
-                if (cat === 'all' || item.getAttribute('data-cat') === cat) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+    // ===== DATOS DE PROYECTOS =====
+    const proyectos = [
+        { id: 1, nombre: "GSK — Stand farmacéutico con video wall", cliente: "GSK", categoria: "stand", entorno: "interior", equipamiento: ["videowall", "led"], estructura: "custom", img: "https://stamosl.com/img/slider/slider05.jpg", desc: "Estructura 6×4m con video wall curvo y pantalla táctil" },
+        { id: 2, nombre: "DINET — Stand tecnológico", cliente: "DINET", categoria: "interactivo", entorno: "interior", equipamiento: ["totem", "led"], estructura: "modular", img: "https://stamosl.com/img/slider/slider06.jpg", desc: "Pantallas táctiles interactivas + software personalizado" },
+        { id: 3, nombre: "CENFOTUR — Experiencia interactiva", cliente: "CENFOTUR", categoria: "stand", entorno: "interior", equipamiento: ["led", "iluminacion"], estructura: "modular", img: "https://stamosl.com/img/slider/slider01.jpg", desc: "Juegos promocionales + mobiliario lounge + gráfica completa" },
+        { id: 4, nombre: "HUNTER — Ambientación ferial completa", cliente: "HUNTER", categoria: "mobiliario", entorno: "retail", equipamiento: ["iluminacion"], estructura: "custom", img: "https://stamosl.com/img/slider/slider02.jpg", desc: "Mobiliario premium + backings + iluminación LED" },
+        { id: 5, nombre: "SOLDEXA — Stand modular con LED", cliente: "SOLDEXA", categoria: "stand", entorno: "exterior", equipamiento: ["led", "iluminacion"], estructura: "modular", img: "https://stamosl.com/img/slider/slider03.jpg", desc: "Estructura 4×3m con iluminación arquitectónica" },
+        { id: 6, nombre: "ANDINO — Estructura de doble altura", cliente: "ANDINO", categoria: "stand", entorno: "exterior", equipamiento: ["led", "videowall"], estructura: "custom", img: "https://stamosl.com/img/slider/slider04.jpg", desc: "Isla expositora 8×6m con mezzanine y sala VIP" },
+        { id: 7, nombre: "BCP — Activación de marca", cliente: "BCP", categoria: "interactivo", entorno: "retail", equipamiento: ["videowall", "totem", "led"], estructura: "portatil", img: "https://stamosl.com/img/slider/slider05.jpg", desc: "Video wall LED 3×2 + tótems digitales + mobiliario lounge" },
+        { id: 8, nombre: "Alicorp — Stand con impresión full color", cliente: "Alicorp", categoria: "grafica", entorno: "interior", equipamiento: ["led"], estructura: "modular", img: "https://stamosl.com/img/slider/slider06.jpg", desc: "Módulo 3×3m con lonas impresas de alta resolución" },
+        { id: 9, nombre: "CAPECO — Pabellón institucional", cliente: "CAPECO", categoria: "stand", entorno: "exterior", equipamiento: ["led"], estructura: "custom", img: "https://stamosl.com/img/slider/slider01.jpg", desc: "Estructura 6×4m + renders 3D previos + montaje in-site" },
+        { id: 10, nombre: "PETROPERÚ — Stand corporativo", cliente: "PETROPERÚ", categoria: "stand", entorno: "exterior", equipamiento: ["videowall", "iluminacion"], estructura: "custom", img: "https://stamosl.com/img/slider/slider02.jpg", desc: "Stand 8×6m con video wall y zona de reuniones" },
+        { id: 11, nombre: "BRENTA — Experiencia de marca", cliente: "BRENTA", categoria: "interactivo", entorno: "retail", equipamiento: ["totem", "led"], estructura: "modular", img: "https://stamosl.com/img/slider/slider03.jpg", desc: "Tótems interactivos + pantallas táctiles + mobiliario" },
+        { id: 12, nombre: "SOLDAMUNDO — Stand ferial", cliente: "SOLDAMUNDO", categoria: "stand", entorno: "interior", equipamiento: ["led"], estructura: "tela", img: "https://stamosl.com/img/slider/slider04.jpg", desc: "Estructura con tela tensada y gráfica personalizada" },
+        { id: 13, nombre: "SCHARFF — Stand logístico", cliente: "SCHARFF", categoria: "stand", entorno: "interior", equipamiento: ["led", "iluminacion"], estructura: "modular", img: "https://stamosl.com/img/slider/slider05.jpg", desc: "Stand modular 4×4m con backlit y zonas de exhibición" },
+        { id: 14, nombre: "ENERGIGAS — Stand energético", cliente: "ENERGIGAS", categoria: "stand", entorno: "exterior", equipamiento: ["videowall", "led"], estructura: "custom", img: "https://stamosl.com/img/slider/slider06.jpg", desc: "Estructura 6×6m con video wall curvo y gráfica integrada" },
+        { id: 15, nombre: "BAGÓ — Stand farmacéutico", cliente: "BAGÓ", categoria: "stand", entorno: "interior", equipamiento: ["led", "iluminacion"], estructura: "modular", img: "https://stamosl.com/img/slider/slider01.jpg", desc: "Módulos 3×4m con mostradores y zonas de atención" }
+    ];
+
+    // ===== ESTADO =====
+    let currentPage = 1;
+    const perPage = 9;
+    let filteredProjects = [...proyectos];
+    let selectedClient = 'todos';
+
+    // ===== FUNCIONES DE FILTRADO =====
+    function filterProjects() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        const selectedEquipamiento = [...document.querySelectorAll('.filter-group input[type="checkbox"]')]
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
+        filteredProjects = proyectos.filter(p => {
+            // Filtro por búsqueda
+            if (searchTerm && !p.nombre.toLowerCase().includes(searchTerm) && 
+                !p.cliente.toLowerCase().includes(searchTerm) &&
+                !p.desc.toLowerCase().includes(searchTerm)) {
+                return false;
+            }
+
+            // Filtro por cliente
+            if (selectedClient !== 'todos' && p.cliente.toLowerCase() !== selectedClient) {
+                return false;
+            }
+
+            // Filtro por equipamiento
+            if (selectedEquipamiento.length > 0) {
+                const hasEquipamiento = selectedEquipamiento.some(eq => 
+                    p.equipamiento.includes(eq)
+                );
+                if (!hasEquipamiento) return false;
+            }
+
+            return true;
         });
+
+        currentPage = 1;
+        renderGallery();
+    }
+
+    function filterByClient(client, el) {
+        selectedClient = client;
+        document.querySelectorAll('.client-tag').forEach(tag => tag.classList.remove('active'));
+        if (el) el.classList.add('active');
+        filterProjects();
+    }
+
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.querySelectorAll('.filter-group input[type="checkbox"]').forEach(cb => cb.checked = false);
+        selectedClient = 'todos';
+        document.querySelectorAll('.client-tag').forEach(tag => tag.classList.remove('active'));
+        document.querySelector('.client-tag[data-client="todos"]')?.classList.add('active');
+        filterProjects();
+    }
+
+    // ===== ORDENAMIENTO =====
+    function sortProjects(order) {
+        switch(order) {
+            case 'nombre':
+                filteredProjects.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                break;
+            case 'cliente':
+                filteredProjects.sort((a, b) => a.cliente.localeCompare(b.cliente));
+                break;
+            case 'reciente':
+            default:
+                filteredProjects.sort((a, b) => b.id - a.id);
+                break;
+        }
+        renderGallery();
+    }
+
+    // ===== RENDERIZADO =====
+    function renderGallery() {
+        const total = filteredProjects.length;
+        const totalPages = Math.ceil(total / perPage);
+        const start = (currentPage - 1) * perPage;
+        const end = Math.min(start + perPage, total);
+        const pageItems = filteredProjects.slice(start, end);
+
+        const grid = document.getElementById('galleryGrid');
+        const count = document.getElementById('resultCount');
+
+        count.textContent = total;
+
+        if (total === 0) {
+            grid.innerHTML = `
+                <div class="no-results" style="grid-column: 1/-1;">
+                    <i class="ti ti-search-off"></i>
+                    <h4>No se encontraron proyectos</h4>
+                    <p>Prueba con otros filtros o realiza una búsqueda diferente.</p>
+                </div>
+            `;
+            document.getElementById('paginationControls').innerHTML = '';
+            document.getElementById('paginationInfo').textContent = '0 proyectos encontrados';
+            return;
+        }
+
+        grid.innerHTML = pageItems.map(p => `
+            <div class="gallery-card" onclick="location.href='/proyecto/${p.id}'">
+                <div class="img-wrap">
+                    <img src="${p.img}" alt="${p.nombre}" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <span class="tag ${p.categoria}">${p.categoria.toUpperCase()}</span>
+                    <h4>${p.nombre}</h4>
+                    <div class="client-name">${p.cliente}</div>
+                    <div class="desc">${p.desc}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // Paginación
+        document.getElementById('paginationInfo').textContent = 
+            `Mostrando ${start+1}-${end} de ${total} proyectos`;
+
+        let pagHtml = '';
+        pagHtml += `<a href="#" class="${currentPage === 1 ? 'disabled' : ''}" onclick="goToPage(${currentPage-1}, event)"><i class="ti ti-chevron-left"></i></a>`;
+        for (let i = 1; i <= totalPages; i++) {
+            pagHtml += `<a href="#" class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i}, event)">${i}</a>`;
+        }
+        pagHtml += `<a href="#" class="${currentPage === totalPages ? 'disabled' : ''}" onclick="goToPage(${currentPage+1}, event)"><i class="ti ti-chevron-right"></i></a>`;
+        document.getElementById('paginationControls').innerHTML = pagHtml;
+    }
+
+    function goToPage(page, e) {
+        e?.preventDefault();
+        const totalPages = Math.ceil(filteredProjects.length / perPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderGallery();
+        window.scrollTo({ top: document.querySelector('.gallery-section').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    // ===== INICIALIZACIÓN =====
+    document.addEventListener('DOMContentLoaded', () => {
+        // Activar tag "Todos" por defecto
+        document.querySelector('.client-tag[data-client="todos"]')?.classList.add('active');
+        renderGallery();
     });
 </script>
-
 </body>
 </html>

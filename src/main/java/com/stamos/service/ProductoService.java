@@ -4,7 +4,6 @@ import com.stamos.model.CategoriaProducto;
 import com.stamos.model.Producto;
 import com.stamos.repository.CategoriaProductoRepository;
 import com.stamos.repository.ProductoRepository;
-import com.stamos.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -32,9 +31,6 @@ public class ProductoService {
 
     @Autowired
     private CategoriaProductoRepository categoriaProductoRepository;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @Value("${app.upload.productos.dir:./uploads/productos/}")
     private String uploadDir;
@@ -333,12 +329,12 @@ public class ProductoService {
 
     public String getTipoColor(String tipo) {
         if (tipo == null) return "#6B7280";
-        switch (tipo) {
-            case "Alquiler": return "#3B82F6";
-            case "Venta": return "#10B981";
-            case "Servicio": return "#8B5CF6";
-            default: return "#6B7280";
-        }
+        return switch (tipo) {
+            case "Alquiler" -> "#3B82F6";
+            case "Venta" -> "#10B981";
+            case "Servicio" -> "#8B5CF6";
+            default -> "#6B7280";
+        };
     }
 
     public String formatearMoneda(BigDecimal monto) {

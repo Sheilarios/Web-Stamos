@@ -5,24 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO (Data Transfer Object) para la entidad Usuario.
- * 
- * <p>Este DTO se utiliza para transferir datos de usuarios entre la capa de
- * servicio y la capa de presentación, evitando exponer directamente la entidad
- * y permitiendo una mejor organización de los datos.</p>
- * 
- * <p>Incluye información personal, credenciales, rol, estado y permisos
- * del usuario.</p>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 public class UsuarioDTO {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     private Integer idUsuario;
     private Integer idRol;
@@ -31,11 +14,6 @@ public class UsuarioDTO {
     private String passwordHash;
     private String telefono;
     private Boolean activo;
-
-    // ============================================
-    // CAMPOS DE AUDITORÍA
-    // ============================================
-
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
     private LocalDateTime ultimoAcceso;
@@ -43,47 +21,20 @@ public class UsuarioDTO {
     private Integer idUsuarioActualizacion;
     private String nombreUsuarioCreacion;
     private String nombreUsuarioActualizacion;
-
-    // ============================================
-    // CAMPOS RELACIONADOS (DESDE ROL)
-    // ============================================
-
     private String nombreRol;
     private String nombreRolLegible;
     private String colorRol;
     private String iconoRol;
-
-    // ============================================
-    // CAMPOS DE ESTADO
-    // ============================================
-
     private String estadoLegible;
     private String estadoBadgeClass;
     private String estadoIcono;
     private String estadoColor;
-
-    // ============================================
-    // CAMPOS DE PERMISOS
-    // ============================================
-
     private List<String> permisos = new ArrayList<>();
-
-    // ============================================
-    // CAMPOS ADICIONALES
-    // ============================================
-
     private String nombreCompletoTruncado;
     private String fechaCreacionFormateada;
     private String ultimoAccesoFormateado;
     private String resumen;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
-    /**
-     * Constructor por defecto.
-     */
     public UsuarioDTO() {
         this.activo = true;
         this.estadoLegible = "Activo";
@@ -93,14 +44,6 @@ public class UsuarioDTO {
         this.permisos = new ArrayList<>();
     }
 
-    /**
-     * Constructor con campos principales.
-     * 
-     * @param idUsuario ID del usuario
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param activo Estado activo/inactivo
-     */
     public UsuarioDTO(Integer idUsuario, String nombreCompleto, String email, Boolean activo) {
         this();
         this.idUsuario = idUsuario;
@@ -110,17 +53,6 @@ public class UsuarioDTO {
         actualizarCamposFormateados();
     }
 
-    /**
-     * Constructor completo.
-     * 
-     * @param idUsuario ID del usuario
-     * @param idRol ID del rol
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param telefono Teléfono
-     * @param activo Estado activo/inactivo
-     * @param nombreRol Nombre del rol
-     */
     public UsuarioDTO(Integer idUsuario, Integer idRol, String nombreCompleto,
                      String email, String telefono, Boolean activo, String nombreRol) {
         this(idUsuario, nombreCompleto, email, activo);
@@ -129,10 +61,6 @@ public class UsuarioDTO {
         this.nombreRol = nombreRol;
         actualizarCamposFormateados();
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdUsuario() {
         return idUsuario;
@@ -355,15 +283,7 @@ public class UsuarioDTO {
         this.resumen = resumen;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Actualiza los campos formateados basados en los atributos.
-     */
     private void actualizarCamposFormateados() {
-        // Estado del usuario
         if (activo != null) {
             if (activo) {
                 this.estadoLegible = "Activo";
@@ -378,48 +298,46 @@ public class UsuarioDTO {
             }
         }
 
-        // Rol del usuario
         if (nombreRol != null) {
             switch (nombreRol) {
-                case "Administrador":
+                case "Administrador" -> {
                     this.nombreRolLegible = "Administrador";
                     this.colorRol = "#EF4444";
                     this.iconoRol = "ti ti-shield";
-                    break;
-                case "Vendedor":
+                }
+                case "Vendedor" -> {
                     this.nombreRolLegible = "Vendedor";
                     this.colorRol = "#3B82F6";
                     this.iconoRol = "ti ti-user-check";
-                    break;
-                case "Diseñador":
+                }
+                case "Diseñador" -> {
                     this.nombreRolLegible = "Diseñador";
                     this.colorRol = "#8B5CF6";
                     this.iconoRol = "ti ti-pencil";
-                    break;
-                case "Producción":
+                }
+                case "Producción" -> {
                     this.nombreRolLegible = "Producción";
                     this.colorRol = "#F59E0B";
                     this.iconoRol = "ti ti-tools";
-                    break;
-                case "Soporte Técnico":
+                }
+                case "Soporte Técnico" -> {
                     this.nombreRolLegible = "Soporte Técnico";
                     this.colorRol = "#10B981";
                     this.iconoRol = "ti ti-headset";
-                    break;
-                case "Cliente":
+                }
+                case "Cliente" -> {
                     this.nombreRolLegible = "Cliente";
                     this.colorRol = "#6B7280";
                     this.iconoRol = "ti ti-user";
-                    break;
-                default:
+                }
+                default -> {
                     this.nombreRolLegible = nombreRol;
                     this.colorRol = "#6B7280";
                     this.iconoRol = "ti ti-user";
-                    break;
+                }
             }
         }
 
-        // Nombre truncado
         if (nombreCompleto != null) {
             if (nombreCompleto.length() > 30) {
                 this.nombreCompletoTruncado = nombreCompleto.substring(0, 30) + "...";
@@ -428,21 +346,18 @@ public class UsuarioDTO {
             }
         }
 
-        // Fecha de creación formateada
         if (fechaCreacion != null) {
             this.fechaCreacionFormateada = fechaCreacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         } else {
             this.fechaCreacionFormateada = "-";
         }
 
-        // Último acceso formateado
         if (ultimoAcceso != null) {
             this.ultimoAccesoFormateado = ultimoAcceso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         } else {
             this.ultimoAccesoFormateado = "-";
         }
 
-        // Resumen
         StringBuilder sb = new StringBuilder();
         sb.append(nombreCompleto != null ? nombreCompleto : "Sin nombre");
         sb.append(" (").append(getNombreRolLegible()).append(")");
@@ -452,137 +367,62 @@ public class UsuarioDTO {
         this.resumen = sb.toString();
     }
 
-    /**
-     * Verifica si el usuario está activo.
-     * 
-     * @return true si está activo, false en caso contrario
-     */
     public boolean isActivo() {
         return activo != null && activo;
     }
 
-    /**
-     * Verifica si el usuario es Administrador.
-     * 
-     * @return true si es Administrador, false en caso contrario
-     */
     public boolean esAdministrador() {
         return "Administrador".equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario es Vendedor.
-     * 
-     * @return true si es Vendedor, false en caso contrario
-     */
     public boolean esVendedor() {
         return "Vendedor".equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario es Diseñador.
-     * 
-     * @return true si es Diseñador, false en caso contrario
-     */
     public boolean esDiseñador() {
         return "Diseñador".equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario es Producción.
-     * 
-     * @return true si es Producción, false en caso contrario
-     */
     public boolean esProduccion() {
         return "Producción".equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario es Soporte Técnico.
-     * 
-     * @return true si es Soporte Técnico, false en caso contrario
-     */
     public boolean esSoporteTecnico() {
         return "Soporte Técnico".equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario es Cliente.
-     * 
-     * @return true si es Cliente, false en caso contrario
-     */
     public boolean esCliente() {
         return "Cliente".equals(this.nombreRol);
     }
 
-    /**
-     * Verifica si el usuario es interno (no cliente).
-     * 
-     * @return true si es interno, false en caso contrario
-     */
     public boolean esRolInterno() {
         return !esCliente();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de administración.
-     * 
-     * @return true si tiene permisos de administración, false en caso contrario
-     */
     public boolean tienePermisosAdmin() {
         return esAdministrador();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de ventas.
-     * 
-     * @return true si tiene permisos de ventas, false en caso contrario
-     */
     public boolean tienePermisosVentas() {
         return esAdministrador() || esVendedor();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de diseño.
-     * 
-     * @return true si tiene permisos de diseño, false en caso contrario
-     */
     public boolean tienePermisosDiseno() {
         return esAdministrador() || esDiseñador();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de producción.
-     * 
-     * @return true si tiene permisos de producción, false en caso contrario
-     */
     public boolean tienePermisosProduccion() {
         return esAdministrador() || esProduccion();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de soporte técnico.
-     * 
-     * @return true si tiene permisos de soporte, false en caso contrario
-     */
     public boolean tienePermisosSoporte() {
         return esAdministrador() || esSoporteTecnico();
     }
 
-    /**
-     * Verifica si el usuario tiene permisos de cliente.
-     * 
-     * @return true si tiene permisos de cliente, false en caso contrario
-     */
     public boolean tienePermisosCliente() {
         return esAdministrador() || esCliente();
     }
 
-    /**
-     * Agrega un permiso al usuario.
-     * 
-     * @param permiso Permiso a agregar
-     */
     public void agregarPermiso(String permiso) {
         if (permiso != null && this.permisos != null) {
             if (!this.permisos.contains(permiso)) {
@@ -591,63 +431,17 @@ public class UsuarioDTO {
         }
     }
 
-    /**
-     * Verifica si el usuario tiene un permiso específico.
-     * 
-     * @param permiso Permiso a verificar
-     * @return true si tiene el permiso, false en caso contrario
-     */
     public boolean tienePermiso(String permiso) {
         return this.permisos != null && this.permisos.contains(permiso);
     }
 
-    /**
-     * Obtiene el nombre del rol para Spring Security.
-     * 
-     * @return Nombre del rol con prefijo ROLE_
-     */
     public String getRolSeguridad() {
         if (nombreRol == null) return "ROLE_USER";
         return "ROLE_" + nombreRol.toUpperCase().replace(" ", "_").replace("Ó", "O");
     }
 
-    /**
-     * Verifica si el usuario tiene teléfono.
-     * 
-     * @return true si tiene teléfono, false en caso contrario
-     */
     public boolean tieneTelefono() {
         return telefono != null && !telefono.trim().isEmpty();
-    }
-
-   
-    public String getEstadoConIcono() {
-        return "<i class='" + estadoIcono + "'></i> " + getEstadoLegible();
-    }
-
-    public String getRolConIcono() {
-        return "<i class='" + iconoRol + "'></i> " + getNombreRolLegible();
-    }
-
-    public String getRolBadgeClass() {
-        if (nombreRol == null) return "badge-secondary";
-        
-        switch (nombreRol) {
-            case "Administrador":
-                return "badge-danger";
-            case "Vendedor":
-                return "badge-primary";
-            case "Diseñador":
-                return "badge-purple";
-            case "Producción":
-                return "badge-warning";
-            case "Soporte Técnico":
-                return "badge-success";
-            case "Cliente":
-                return "badge-secondary";
-            default:
-                return "badge-secondary";
-        }
     }
 
     public String getNombreTruncado(int maxLength) {
@@ -662,66 +456,74 @@ public class UsuarioDTO {
         return email.substring(0, maxLength) + "...";
     }
 
-    public String toJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"idUsuario\":").append(idUsuario).append(",");
-        sb.append("\"nombre\":\"").append(nombreCompleto != null ? nombreCompleto : "").append("\",");
-        sb.append("\"email\":\"").append(email != null ? email : "").append("\",");
-        sb.append("\"rol\":\"").append(getNombreRolLegible()).append("\",");
-        sb.append("\"rolColor\":\"").append(colorRol != null ? colorRol : "#6B7280").append("\",");
-        sb.append("\"rolIcono\":\"").append(iconoRol != null ? iconoRol : "ti ti-user").append("\",");
-        sb.append("\"activo\":").append(isActivo()).append(",");
-        sb.append("\"estado\":\"").append(getEstadoLegible()).append("\"");
-        if (ultimoAcceso != null) {
-            sb.append(",\"ultimoAcceso\":\"").append(getUltimoAccesoFormateado()).append("\"");
+    public static UsuarioDTO fromEntity(com.stamos.model.Usuario usuario) {
+        if (usuario == null) {
+            return null;
         }
-        sb.append("}");
-        return sb.toString();
+
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setIdUsuario(usuario.getIdUsuario());
+        dto.setIdRol(usuario.getIdRol());
+        dto.setNombreCompleto(usuario.getNombreCompleto());
+        dto.setEmail(usuario.getEmail());
+        dto.setPasswordHash(usuario.getPasswordHash());
+        dto.setTelefono(usuario.getTelefono());
+        dto.setActivo(usuario.getActivo());
+        dto.setFechaCreacion(usuario.getFechaCreacion());
+        dto.setFechaActualizacion(usuario.getFechaActualizacion());
+        dto.setUltimoAcceso(usuario.getUltimoAcceso());
+        dto.setIdUsuarioCreacion(usuario.getIdUsuarioCreacion());
+        dto.setIdUsuarioActualizacion(usuario.getIdUsuarioActualizacion());
+        dto.setNombreRol(usuario.getNombreRol());
+        dto.setNombreRolLegible(usuario.getNombreRolLegible());
+        dto.setColorRol(usuario.getColorRol());
+        dto.setIconoRol(usuario.getIconoRol());
+        dto.setEstadoLegible(usuario.getEstadoLegible());
+        dto.setEstadoBadgeClass(usuario.getEstadoBadgeClass());
+        dto.setEstadoIcono(usuario.getEstadoIcono());
+        dto.setEstadoColor(usuario.getEstadoColor());
+        dto.actualizarCamposFormateados();
+        return dto;
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
-    public String toJsonCompleto() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"idUsuario\":").append(idUsuario).append(",");
-        sb.append("\"idRol\":").append(idRol).append(",");
-        sb.append("\"nombreCompleto\":\"").append(nombreCompleto != null ? nombreCompleto : "").append("\",");
-        sb.append("\"nombreTruncado\":\"").append(getNombreCompletoTruncado()).append("\",");
-        sb.append("\"email\":\"").append(email != null ? email : "").append("\",");
-        sb.append("\"telefono\":\"").append(telefono != null ? telefono : "").append("\",");
-        sb.append("\"rol\":\"").append(getNombreRolLegible()).append("\",");
-        sb.append("\"rolColor\":\"").append(colorRol != null ? colorRol : "#6B7280").append("\",");
-        sb.append("\"rolIcono\":\"").append(iconoRol != null ? iconoRol : "ti ti-user").append("\",");
-        sb.append("\"activo\":").append(isActivo()).append(",");
-        sb.append("\"estado\":\"").append(getEstadoLegible()).append("\",");
-        sb.append("\"estadoBadgeClass\":\"").append(getEstadoBadgeClass()).append("\",");
-        sb.append("\"fechaCreacion\":\"").append(getFechaCreacionFormateada()).append("\",");
-        sb.append("\"fechaCreacionFormateada\":\"").append(getFechaCreacionFormateada()).append("\"");
-        if (ultimoAcceso != null) {
-            sb.append(",\"ultimoAcceso\":\"").append(getUltimoAccesoFormateado()).append("\"");
+    public static UsuarioDTO fromEntityWithPermisos(com.stamos.model.Usuario usuario, List<String> permisos) {
+        UsuarioDTO dto = fromEntity(usuario);
+        if (dto != null && permisos != null) {
+            dto.setPermisos(permisos);
         }
-        if (permisos != null && !permisos.isEmpty()) {
-            sb.append(",\"permisos\":[");
-            for (int i = 0; i < permisos.size(); i++) {
-                sb.append("\"").append(permisos.get(i)).append("\"");
-                if (i < permisos.size() - 1) {
-                    sb.append(",");
-                }
-            }
-            sb.append("]");
-        }
-        sb.append("}");
-        return sb.toString();
+        return dto;
     }
 
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
+    public static UsuarioDTO crearNuevoUsuario(String nombreCompleto, String email, 
+                                               Integer idRol, String telefono) {
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setNombreCompleto(nombreCompleto);
+        dto.setEmail(email);
+        dto.setIdRol(idRol);
+        dto.setTelefono(telefono);
+        dto.setActivo(true);
+        dto.actualizarCamposFormateados();
+        return dto;
+    }
+
+    public com.stamos.model.Usuario toEntity() {
+        com.stamos.model.Usuario usuario = new com.stamos.model.Usuario();
+        if (this.idUsuario != null) {
+            usuario.setIdUsuario(this.idUsuario);
+        }
+        usuario.setIdRol(this.idRol);
+        usuario.setNombreCompleto(this.nombreCompleto);
+        usuario.setEmail(this.email);
+        usuario.setPasswordHash(this.passwordHash);
+        usuario.setTelefono(this.telefono);
+        usuario.setActivo(this.activo);
+        usuario.setFechaCreacion(this.fechaCreacion);
+        usuario.setFechaActualizacion(this.fechaActualizacion);
+        usuario.setUltimoAcceso(this.ultimoAcceso);
+        usuario.setIdUsuarioCreacion(this.idUsuarioCreacion);
+        usuario.setIdUsuarioActualizacion(this.idUsuarioActualizacion);
+        return usuario;
+    }
 
     @Override
     public String toString() {
@@ -745,110 +547,5 @@ public class UsuarioDTO {
     @Override
     public int hashCode() {
         return idUsuario != null ? idUsuario.hashCode() : 0;
-    }
-
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un DTO desde una entidad.
-     * 
-     * @param usuario Entidad de usuario
-     * @return DTO de usuario
-     */
-    public static UsuarioDTO fromEntity(com.stamos.model.Usuario usuario) {
-        if (usuario == null) {
-            return null;
-        }
-
-        UsuarioDTO dto = new UsuarioDTO();
-        dto.setIdUsuario(usuario.getIdUsuario());
-        dto.setIdRol(usuario.getIdRol());
-        dto.setNombreCompleto(usuario.getNombreCompleto());
-        dto.setEmail(usuario.getEmail());
-        dto.setPasswordHash(usuario.getPasswordHash());
-        dto.setTelefono(usuario.getTelefono());
-        dto.setActivo(usuario.getActivo());
-        dto.setFechaCreacion(usuario.getFechaCreacion());
-        dto.setFechaActualizacion(usuario.getFechaActualizacion());
-        dto.setUltimoAcceso(usuario.getUltimoAcceso());
-        dto.setIdUsuarioCreacion(usuario.getIdUsuarioCreacion());
-        dto.setIdUsuarioActualizacion(usuario.getIdUsuarioActualizacion());
-        
-        // Campos transient
-        dto.setNombreRol(usuario.getNombreRol());
-        dto.setNombreRolLegible(usuario.getNombreRolLegible());
-        dto.setColorRol(usuario.getColorRol());
-        dto.setIconoRol(usuario.getIconoRol());
-        dto.setEstadoLegible(usuario.getEstadoLegible());
-        dto.setEstadoBadgeClass(usuario.getEstadoBadgeClass());
-        dto.setEstadoIcono(usuario.getEstadoIcono());
-        dto.setEstadoColor(usuario.getEstadoColor());
-        
-        // Actualizar campos formateados
-        dto.actualizarCamposFormateados();
-        
-        return dto;
-    }
-
-    /**
-     * Crea un DTO desde una entidad con permisos.
-     * 
-     * @param usuario Entidad de usuario
-     * @param permisos Lista de permisos
-     * @return DTO de usuario
-     */
-    public static UsuarioDTO fromEntityWithPermisos(com.stamos.model.Usuario usuario, List<String> permisos) {
-        UsuarioDTO dto = fromEntity(usuario);
-        if (dto != null && permisos != null) {
-            dto.setPermisos(permisos);
-        }
-        return dto;
-    }
-
-    /**
-     * Crea un DTO para un nuevo usuario.
-     * 
-     * @param nombreCompleto Nombre completo
-     * @param email Email
-     * @param idRol ID del rol
-     * @param telefono Teléfono
-     * @return DTO de usuario
-     */
-    public static UsuarioDTO crearNuevoUsuario(String nombreCompleto, String email, 
-                                               Integer idRol, String telefono) {
-        UsuarioDTO dto = new UsuarioDTO();
-        dto.setNombreCompleto(nombreCompleto);
-        dto.setEmail(email);
-        dto.setIdRol(idRol);
-        dto.setTelefono(telefono);
-        dto.setActivo(true);
-        dto.actualizarCamposFormateados();
-        return dto;
-    }
-
-    /**
-     * Convierte el DTO a una entidad.
-     * 
-     * @return Entidad de usuario
-     */
-    public com.stamos.model.Usuario toEntity() {
-        com.stamos.model.Usuario usuario = new com.stamos.model.Usuario();
-        if (this.idUsuario != null) {
-            usuario.setIdUsuario(this.idUsuario);
-        }
-        usuario.setIdRol(this.idRol);
-        usuario.setNombreCompleto(this.nombreCompleto);
-        usuario.setEmail(this.email);
-        usuario.setPasswordHash(this.passwordHash);
-        usuario.setTelefono(this.telefono);
-        usuario.setActivo(this.activo);
-        usuario.setFechaCreacion(this.fechaCreacion);
-        usuario.setFechaActualizacion(this.fechaActualizacion);
-        usuario.setUltimoAcceso(this.ultimoAcceso);
-        usuario.setIdUsuarioCreacion(this.idUsuarioCreacion);
-        usuario.setIdUsuarioActualizacion(this.idUsuarioActualizacion);
-        return usuario;
     }
 }

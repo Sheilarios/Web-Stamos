@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -40,10 +39,10 @@ public class ProyectoService {
     private PagoRepository pagoRepository;
 
     @Autowired
-    private DocumentoProyectoRepository documentoRepository;
+    private ConfiguracionSistemaService configuracionService;
 
     @Autowired
-    private ConfiguracionSistemaService configuracionService;
+    private TransicionEstadoService transicionEstadoService;
 
     @Transactional
     public Proyecto crearDesdeCotizacion(Integer idCotizacion, Integer idUsuarioCreacion) {
@@ -84,13 +83,13 @@ public class ProyectoService {
     public Proyecto cambiarEstado(Integer idProyecto, Integer idEstadoNuevo,
                                   Integer idUsuarioResponsable, String comentario) {
         Proyecto proyecto = proyectoRepository.findById(idProyecto)
-                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + idProyecto));
 
         EstadoProyecto estadoActual = estadoProyectoRepository.findById(proyecto.getIdEstadoActual())
                 .orElseThrow(() -> new RuntimeException("Estado actual no encontrado"));
 
         EstadoProyecto estadoNuevo = estadoProyectoRepository.findById(idEstadoNuevo)
-                .orElseThrow(() -> new RuntimeException("Estado nuevo no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Estado nuevo no encontrado con ID: " + idEstadoNuevo));
 
         if (estadoActual.esEstadoTerminal()) {
             throw new RuntimeException("No se puede cambiar el estado de un proyecto " +
@@ -101,40 +100,12 @@ public class ProyectoService {
             throw new RuntimeException("El proyecto ya se encuentra en ese estado");
         }
 
-        if (estadoNuevo.getOrdenFlujo() <= estadoActual.getOrdenFlujo() && !estadoNuevo.esAnulado()) {
-            throw new RuntimeException("No se puede retroceder en el flujo de estados");
+        if (!transicionEstadoService.esTransicionValidaConOrden(proyecto, idEstadoNuevo, idUsuarioResponsable)) {
+            throw new RuntimeException("No tienes permiso para realizar esta transición de estado o la transición no es válida");
         }
 
         Usuario usuario = usuarioRepository.findById(idUsuarioResponsable)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        String rol = usuario.getNombreRol();
-
-        if (estadoNuevo.esAnulado() && !"Administrador".equals(rol)) {
-            throw new RuntimeException("Solo el administrador puede anular un proyecto");
-        }
-
-        if (estadoNuevo.esEntregado() && !"Administrador".equals(rol) && !"Soporte Técnico".equals(rol)) {
-            throw new RuntimeException("Solo el administrador o soporte técnico pueden entregar un proyecto");
-        }
-
-        if ("Vendedor".equals(rol)) {
-            if (!(estadoActual.esAprobado() && estadoNuevo.esEnDiseno())) {
-                throw new RuntimeException("El vendedor solo puede iniciar un proyecto (Aprobado -> En Diseño)");
-            }
-        }
-
-        if ("Diseñador".equals(rol)) {
-            if (!(estadoActual.esEnDiseno() && estadoNuevo.esEnProduccion())) {
-                throw new RuntimeException("El diseñador solo puede mover entre En Diseño y En Producción");
-            }
-        }
-
-        if ("Producción".equals(rol)) {
-            if (!(estadoActual.esEnProduccion() && estadoNuevo.esInstalacionMontaje())) {
-                throw new RuntimeException("Producción solo puede mover de En Producción a Instalación/Montaje");
-            }
-        }
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuarioResponsable));
 
         Integer idEstadoAnterior = proyecto.getIdEstadoActual();
         proyecto.setIdEstadoActual(idEstadoNuevo);
@@ -164,7 +135,6 @@ public class ProyectoService {
         cambio.setResponsableEmail(usuario.getEmail());
 
         cambioEstadoRepository.save(cambio);
-
         enriquecerProyecto(proyectoActualizado);
         return proyectoActualizado;
     }
@@ -189,7 +159,7 @@ public class ProyectoService {
     @Transactional
     public Proyecto avanzarEstado(Integer idProyecto, Integer idUsuarioResponsable, String comentario) {
         Proyecto proyecto = proyectoRepository.findById(idProyecto)
-                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + idProyecto));
 
         EstadoProyecto estadoActual = estadoProyectoRepository.findById(proyecto.getIdEstadoActual())
                 .orElseThrow(() -> new RuntimeException("Estado actual no encontrado"));
@@ -361,11 +331,7 @@ public class ProyectoService {
     }
 
     public Page<Proyecto> search(String searchText, Pageable pageable) {
-        Page<Proyecto> proyectos = proyectoRepository.search(searchText, pageable);
-        for (Proyecto proyecto : proyectos.getContent()) {
-            enriquecerProyecto(proyecto);
-        }
-        return proyectos;
+        return proyectoRepository.search(searchText, pageable);
     }
 
     public List<Proyecto> findTop10ByOrderByFechaInicioDesc() {
@@ -474,96 +440,8 @@ public class ProyectoService {
         return proyectos;
     }
 
-    public String getEstadoLegible(String estado) {
-        if (estado == null) return "Sin estado";
-        return switch (estado) {
-            case "Aprobado" -> "Aprobado";
-            case "En Diseño" -> "En Diseño";
-            case "En Producción" -> "En Producción";
-            case "Instalación/Montaje" -> "Instalación/Montaje";
-            case "Entregado" -> "Entregado";
-            case "Anulado" -> "Anulado";
-            default -> estado;
-        };
-    }
-
-    public String getEstadoBadgeClass(String estado) {
-        if (estado == null) return "status-pendiente";
-        return switch (estado) {
-            case "Aprobado" -> "status-aprobado";
-            case "En Diseño" -> "status-diseno";
-            case "En Producción" -> "status-produccion";
-            case "Instalación/Montaje" -> "status-instalacion";
-            case "Entregado" -> "status-entregado";
-            case "Anulado" -> "status-anulado";
-            default -> "status-pendiente";
-        };
-    }
-
-    public String getEstadoIcono(String estado) {
-        if (estado == null) return "ti ti-circle";
-        return switch (estado) {
-            case "Aprobado" -> "ti ti-check-circle";
-            case "En Diseño" -> "ti ti-pencil";
-            case "En Producción" -> "ti ti-tools";
-            case "Instalación/Montaje" -> "ti ti-truck";
-            case "Entregado" -> "ti ti-check";
-            case "Anulado" -> "ti ti-x-circle";
-            default -> "ti ti-circle";
-        };
-    }
-
-    public String getEstadoColor(String estado) {
-        if (estado == null) return "#6B7280";
-        return switch (estado) {
-            case "Aprobado" -> "#1A56DB";
-            case "En Diseño" -> "#F59E0B";
-            case "En Producción" -> "#3B82F6";
-            case "Instalación/Montaje" -> "#8B5CF6";
-            case "Entregado" -> "#10B981";
-            case "Anulado" -> "#EF4444";
-            default -> "#6B7280";
-        };
-    }
-
-    public int getProgresoByEstado(String estado) {
-        if (estado == null) return 0;
-        return switch (estado) {
-            case "Aprobado" -> 10;
-            case "En Diseño" -> 30;
-            case "En Producción" -> 60;
-            case "Instalación/Montaje" -> 85;
-            case "Entregado" -> 100;
-            case "Anulado" -> 0;
-            default -> 0;
-        };
-    }
-
-    public String getProgresoColor(int progreso) {
-        if (progreso >= 100) return "#10B981";
-        if (progreso >= 60) return "#3B82F6";
-        if (progreso >= 30) return "#F59E0B";
-        return "#EF4444";
-    }
-
-    public String formatearMoneda(BigDecimal monto) {
-        if (monto == null) return "S/ 0.00";
-        return "S/ " + monto.setScale(2, RoundingMode.HALF_UP).toString();
-    }
-
-    public String formatearFecha(LocalDate fecha) {
-        if (fecha == null) return "-";
-        return fecha.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
-
-    public String formatearFechaHora(LocalDateTime fecha) {
-        if (fecha == null) return "-";
-        return fecha.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-    }
-
-    public String getCodigoProyecto(Integer idProyecto) {
-        if (idProyecto == null) return "PRO-00000";
-        return "PRO-" + String.format("%05d", idProyecto);
+    public Page<Proyecto> buscar(String search, Pageable pageable) {
+        return proyectoRepository.search(search, pageable);
     }
 
     private void enriquecerProyecto(Proyecto proyecto) {
@@ -635,9 +513,5 @@ public class ProyectoService {
         } else {
             proyecto.setDiasRestantes(0);
         }
-    }
-
-    public Page<Proyecto> buscar(String search, Pageable pageable) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

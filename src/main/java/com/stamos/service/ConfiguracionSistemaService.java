@@ -1,7 +1,6 @@
 package com.stamos.service;
 
 import com.stamos.model.ConfiguracionSistema;
-import com.stamos.model.Usuario;
 import com.stamos.repository.ConfiguracionSistemaRepository;
 import com.stamos.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConfiguracionSistemaService {
@@ -20,6 +21,9 @@ public class ConfiguracionSistemaService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private AuditoriaService auditoriaService;
 
     public static final String PARAM_TASA_IGV = "tasa_igv";
     public static final String PARAM_DIAS_VENCIMIENTO = "dias_vencimiento_pago";
@@ -120,7 +124,24 @@ public class ConfiguracionSistemaService {
             throw new RuntimeException("La tasa IGV no puede ser mayor a 100");
         }
 
+        BigDecimal valorAnterior = getIgv();
+        
         configuracionRepository.updateTasaIgv(igv.toString(), idUsuarioActualiza);
+
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("parametro", "tasa_igv");
+        datos.put("valor_anterior", valorAnterior != null ? valorAnterior.toString() : "18.00");
+        datos.put("nuevo_valor", igv.toString());
+        datos.put("fecha_cambio", LocalDateTime.now().toString());
+
+        auditoriaService.registrarAccion(
+            "UPDATE",
+            "ConfiguracionSistema",
+            null,
+            null,
+            datos,
+            null
+        );
     }
 
     @Transactional
@@ -132,7 +153,24 @@ public class ConfiguracionSistemaService {
             throw new RuntimeException("Los días de vencimiento no pueden ser mayores a 365");
         }
 
+        Integer valorAnterior = getDiasVencimientoPago();
+
         configuracionRepository.updateDiasVencimiento(dias.toString(), idUsuarioActualiza);
+
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("parametro", "dias_vencimiento_pago");
+        datos.put("valor_anterior", valorAnterior != null ? valorAnterior.toString() : "30");
+        datos.put("nuevo_valor", dias.toString());
+        datos.put("fecha_cambio", LocalDateTime.now().toString());
+
+        auditoriaService.registrarAccion(
+            "UPDATE",
+            "ConfiguracionSistema",
+            null,
+            null,
+            datos,
+            null
+        );
     }
 
     @Transactional
@@ -221,35 +259,41 @@ public class ConfiguracionSistemaService {
         }
 
         switch (tipoDato) {
-            case "DECIMAL":
+            case "DECIMAL" -> {
                 try {
                     BigDecimal dec = new BigDecimal(valor);
                     return dec.compareTo(BigDecimal.ZERO) >= 0;
                 } catch (NumberFormatException e) {
                     return false;
                 }
-            case "INT":
+            }
+            case "INT" -> {
                 try {
-                    Integer.parseInt(valor);
+                    Integer.valueOf(valor);
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
                 }
-            case "BOOLEAN":
+            }
+            case "BOOLEAN" -> {
                 return "true".equalsIgnoreCase(valor) || "false".equalsIgnoreCase(valor) ||
-                       "1".equals(valor) || "0".equals(valor) ||
-                       "si".equalsIgnoreCase(valor) || "no".equalsIgnoreCase(valor);
-            case "DATE":
+                        "1".equals(valor) || "0".equals(valor) ||
+                        "si".equalsIgnoreCase(valor) || "no".equalsIgnoreCase(valor);
+            }
+            case "DATE" -> {
                 try {
                     LocalDateTime.parse(valor);
                     return true;
                 } catch (Exception e) {
                     return false;
                 }
-            case "STRING":
+            }
+            case "STRING" -> {
                 return true;
-            default:
+            }
+            default -> {
                 return true;
+            }
         }
     }
 
@@ -308,18 +352,13 @@ public class ConfiguracionSistemaService {
     }
 
     private String getValorDefault(String parametro) {
-        switch (parametro) {
-            case PARAM_TASA_IGV:
-                return "18.00";
-            case PARAM_DIAS_VENCIMIENTO:
-                return "30";
-            case PARAM_FORMATO_FECHA:
-                return "%d/%m/%Y";
-            case PARAM_MONEDA_DEFAULT:
-                return "PEN";
-            default:
-                return null;
-        }
+        return switch (parametro) {
+            case PARAM_TASA_IGV -> "18.00";
+            case PARAM_DIAS_VENCIMIENTO -> "30";
+            case PARAM_FORMATO_FECHA -> "%d/%m/%Y";
+            case PARAM_MONEDA_DEFAULT -> "PEN";
+            default -> null;
+        };
     }
 
     public long count() {

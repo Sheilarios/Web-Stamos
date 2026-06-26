@@ -220,6 +220,7 @@
         
         .btn-icon.azul:hover { border-color: var(--blue); color: var(--blue); }
         .btn-icon.verde:hover { border-color: var(--green); color: var(--green); }
+        .btn-icon.rojo:hover { border-color: var(--red); color: var(--red); }
         
         .empty-message {
             text-align: center;
@@ -364,28 +365,28 @@
         <div class="page-title">
             <i class="ti ti-folder-open"></i>
             <span>Gestión de Proyectos</span>
-            <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
+            <span class="count" th:text="'(' + ${totalItems != null ? totalItems : 0} + ')'">(0)</span>
         </div>
     </div>
 
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
 
     <div class="stats-row">
         <div class="stat-card">
-            <div class="numero azul" th:text="${totalActivos}">0</div>
+            <div class="numero azul" th:text="${totalActivos != null ? totalActivos : 0}">0</div>
             <div class="etiqueta">Activos</div>
         </div>
         <div class="stat-card">
-            <div class="numero verde" th:text="${totalEntregados}">0</div>
+            <div class="numero verde" th:text="${totalEntregados != null ? totalEntregados : 0}">0</div>
             <div class="etiqueta">Entregados</div>
         </div>
         <div class="stat-card">
-            <div class="numero rojo" th:text="${totalAnulados}">0</div>
+            <div class="numero rojo" th:text="${totalAnulados != null ? totalAnulados : 0}">0</div>
             <div class="etiqueta">Anulados</div>
         </div>
         <div class="stat-card">
-            <div class="numero" th:text="${totalProyectos}">0</div>
+            <div class="numero" th:text="${totalProyectos != null ? totalProyectos : 0}">0</div>
             <div class="etiqueta">Total</div>
         </div>
     </div>
@@ -456,7 +457,7 @@
                     </td>
                     <td th:text="${proyecto.nombreCliente}">—</td>
                     <td>
-                        <span th:text="'COT-' + ${#strings.leftPad(proyecto.idCotizacion, 5, '0')}">COT-00000</span>
+                        <span th:text="${proyecto.codigoCotizacion != null ? proyecto.codigoCotizacion : 'COT-' + #strings.leftPad(proyecto.idCotizacion, 5, '0')}">COT-00000</span>
                     </td>
                     <td>
                         <strong th:text="${proyecto.montoTotalFormateado}">S/ 0.00</strong>
@@ -480,13 +481,17 @@
                         <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" class="btn-icon azul">
                             <i class="ti ti-eye"></i> Detalle
                         </a>
+                        <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto.idProyecto})}" class="btn-icon" 
+                           th:if="${proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
+                            <i class="ti ti-arrows-exchange"></i> Estado
+                        </a>
                         <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto.idProyecto})}" class="btn-icon verde" 
                            th:if="${proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
                             <i class="ti ti-credit-card-plus"></i> Pago
                         </a>
                     </td>
                 </tr>
-                <tr th:if="${proyectos == null || proyectos.isEmpty()}">
+                <tr th:if="${proyectos == null or #lists.isEmpty(proyectos)}">
                     <td colspan="8">
                         <div class="empty-message">
                             <i class="ti ti-folder-off"></i>
@@ -501,26 +506,26 @@
         </table>
     </div>
 
-    <div class="pagination" th:if="${proyectos != null && !proyectos.isEmpty()}">
+    <div class="pagination" th:if="${proyectos != null and !#lists.isEmpty(proyectos)}">
         <div class="pagination-info">
-            Mostrando <span th:text="${#lists.size(proyectos)}">0</span> de <span th:text="${totalItems}">0</span> proyectos
+            Mostrando <span th:text="${#lists.size(proyectos)}">0</span> de <span th:text="${totalItems != null ? totalItems : 0}">0</span> proyectos
         </div>
         <div class="pagination-buttons">
-            <a th:href="@{/admin/proyectos(page=${currentPage - 1}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
+            <a th:href="@{/admin/proyectos(page=${currentPage != null ? currentPage - 1 : 0}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
                class="page-link" 
-               th:classappend="${currentPage == 0} ? 'disabled' : ''">
+               th:classappend="${currentPage == null or currentPage == 0} ? 'disabled' : ''">
                 Anterior
             </a>
-            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+            <a th:each="i : ${#numbers.sequence(0, totalPages != null ? totalPages - 1 : 0)}" 
                th:href="@{/admin/proyectos(page=${i}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
                class="page-link" 
                th:classappend="${i == currentPage} ? 'active' : ''"
                th:text="${i + 1}">
                 1
             </a>
-            <a th:href="@{/admin/proyectos(page=${currentPage + 1}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
+            <a th:href="@{/admin/proyectos(page=${currentPage != null ? currentPage + 1 : 1}, estado=${estado}, clienteId=${clienteId}, search=${search}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}" 
                class="page-link" 
-               th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+               th:classappend="${currentPage == null or currentPage == totalPages - 1} ? 'disabled' : ''">
                 Siguiente
             </a>
         </div>

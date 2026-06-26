@@ -1,6 +1,7 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
 import com.stamos.model.*;
 import com.stamos.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/cotizaciones")
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
-public class CotizacionController {
+public class CotizacionController extends BaseController {
 
     @Autowired
     private CotizacionService cotizacionService;
@@ -41,9 +42,6 @@ public class CotizacionController {
     @Autowired
     private ClienteService clienteService;
 
-    /**
-     * Lista todas las cotizaciones con paginación y filtros
-     */
     @GetMapping
     public String listarCotizaciones(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "10") int size,
@@ -80,6 +78,7 @@ public class CotizacionController {
             model.addAttribute("totalAprobadas", totalAprobadas);
             model.addAttribute("totalAnuladas", totalAnuladas);
             model.addAttribute("totalCotizaciones", totalCotizaciones);
+            addCommonAttributes(model);
             
             return "admin/cotizaciones/lista";
             
@@ -89,9 +88,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Muestra el formulario para crear una nueva cotización
-     */
     @GetMapping("/nuevo")
     public String mostrarFormularioNuevo(@RequestParam(required = false) Integer clienteId,
                                          Model model) {
@@ -111,8 +107,6 @@ public class CotizacionController {
             }
             
             BigDecimal tasaIgv = configuracionService.getIgv();
-            
-            // OBTENER SOLO PRODUCTOS ACTIVOS
             List<Producto> productosActivos = productoService.findActive();
             
             model.addAttribute("cotizacion", cotizacion);
@@ -121,6 +115,7 @@ public class CotizacionController {
             model.addAttribute("tasaIgv", tasaIgv);
             model.addAttribute("titulo", "Nueva Cotización");
             model.addAttribute("accion", "crear");
+            addCommonAttributes(model);
             
             return "admin/cotizaciones/formulario";
             
@@ -130,9 +125,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Muestra el formulario para editar una cotización existente
-     */
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         try {
@@ -154,8 +146,6 @@ public class CotizacionController {
             }
             
             BigDecimal tasaIgv = configuracionService.getIgv();
-            
-            // OBTENER SOLO PRODUCTOS ACTIVOS
             List<Producto> productosActivos = productoService.findActive();
             
             model.addAttribute("cotizacion", cotizacion);
@@ -165,6 +155,7 @@ public class CotizacionController {
             model.addAttribute("tasaIgv", tasaIgv);
             model.addAttribute("titulo", "Editar Cotización");
             model.addAttribute("accion", "editar");
+            addCommonAttributes(model);
             
             return "admin/cotizaciones/formulario";
             
@@ -174,11 +165,8 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Crea una nueva cotización
-     */
     @PostMapping("/crear")
-    @Auditable(value = "Creación de cotización", accion = "CREATE")
+    @Auditable
     public String crearCotizacion(@Valid @ModelAttribute("cotizacion") Cotizacion cotizacion,
                                   BindingResult result,
                                   @RequestParam(value = "productosIds", required = false) List<Integer> productosIds,
@@ -233,11 +221,8 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Actualiza una cotización existente creando una nueva versión
-     */
     @PostMapping("/actualizar/{id}")
-    @Auditable(value = "Actualización de cotización (nueva versión)", accion = "UPDATE")
+    @Auditable
     public String actualizarCotizacion(@PathVariable Integer id,
                                        @ModelAttribute("cotizacion") Cotizacion cotizacion,
                                        @RequestParam(value = "productosIds", required = false) List<Integer> productosIds,
@@ -290,11 +275,8 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Aprueba una cotización y genera el proyecto automáticamente
-     */
     @PostMapping("/aprobar/{id}")
-    @Auditable(value = "Aprobación de cotización y generación de proyecto", accion = "VALIDATE")
+    @Auditable
     public String aprobarCotizacion(@PathVariable Integer id,
                                     Authentication auth,
                                     RedirectAttributes redirectAttributes) {
@@ -331,11 +313,8 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Anula una cotización
-     */
     @PostMapping("/anular/{id}")
-    @Auditable(value = "Anulación de cotización", accion = "DELETE")
+    @Auditable
     public String anularCotizacion(@PathVariable Integer id,
                                    @RequestParam(value = "motivo", required = false) String motivo,
                                    Authentication auth,
@@ -377,9 +356,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Muestra el historial de versiones de una cotización
-     */
     @GetMapping("/versiones/{id}")
     public String verVersiones(@PathVariable Integer id, Model model) {
         try {
@@ -395,6 +371,7 @@ public class CotizacionController {
             model.addAttribute("cotizacion", cotizacion);
             model.addAttribute("versiones", versiones);
             model.addAttribute("detallesActuales", detallesActuales);
+            addCommonAttributes(model);
             
             return "admin/cotizaciones/versiones";
             
@@ -404,9 +381,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Obtiene los detalles de una versión específica (API)
-     */
     @GetMapping("/detalle-version/{id}")
     @ResponseBody
     public List<CotizacionDetalle> obtenerDetalleVersion(@PathVariable Integer idVersion) {
@@ -417,9 +391,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Obtiene una versión específica (API)
-     */
     @GetMapping("/version/{id}")
     @ResponseBody
     public CotizacionVersion obtenerVersion(@PathVariable Integer idVersion) {
@@ -430,9 +401,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Obtiene el detalle de una cotización (API)
-     */
     @GetMapping("/detalle/{id}")
     @ResponseBody
     public Cotizacion obtenerDetalleCotizacion(@PathVariable Integer id) {
@@ -443,9 +411,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Verifica si una cotización puede ser editada (API)
-     */
     @GetMapping("/puede-editar/{id}")
     @ResponseBody
     public boolean puedeEditar(@PathVariable Integer id) {
@@ -460,9 +425,6 @@ public class CotizacionController {
         }
     }
 
-    /**
-     * Métodos auxiliares para la vista
-     */
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
         return switch (estado) {
@@ -483,6 +445,7 @@ public class CotizacionController {
         };
     }
 
+    @Override
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, RoundingMode.HALF_UP).toString();

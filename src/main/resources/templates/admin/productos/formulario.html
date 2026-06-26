@@ -230,18 +230,6 @@
             margin-top: 2px;
         }
         
-        .badge-tipo {
-            display: inline-block;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .badge-alquiler { background: #DBEAFE; color: #2563EB; }
-        .badge-venta { background: var(--green-light); color: var(--green); }
-        .badge-servicio { background: var(--purple-light); color: var(--purple); }
-        
         .file-info {
             font-size: 11px;
             color: var(--text-3);
@@ -286,8 +274,8 @@
                th:text="'ID: ' + ${producto.idProducto}">ID: 0</small>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
     <div class="info-box" th:if="${accion == 'editar'}">
         <i class="ti ti-info-circle"></i>
@@ -373,15 +361,15 @@
                 <i class="ti ti-info-circle"></i> 
                 Formatos permitidos: JPG, PNG, WEBP. Tamaño máximo: 2MB
             </div>
-            <div class="image-preview" th:if="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}">
+            <div class="image-preview" th:if="${producto != null and producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}">
                 <img th:src="${producto.imagenUrl}" th:alt="${producto.nombreItem}">
                 <span style="font-size:12px; color:var(--text-3);">Imagen actual</span>
             </div>
         </div>
 
         <div class="form-group" th:if="${accion == 'editar'}">
-            <div class="checkbox-group" style="display:flex; align-items:center; gap:12px;">
-                <input type="checkbox" id="activo" th:field="*{activo}">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <input type="checkbox" id="activo" th:field="*{activo}" style="width:auto; padding:0; margin:0;">
                 <label for="activo" style="margin:0; text-transform:none; font-size:13px; font-weight:500; color:var(--text);">
                     Producto activo
                 </label>
@@ -403,35 +391,6 @@
         </div>
     </form>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tipoSelect = document.getElementById('tipo');
-        const precioInput = document.getElementById('precioBase');
-        
-        // Mostrar badge de tipo seleccionado
-        tipoSelect.addEventListener('change', function() {
-            const selected = this.options[this.selectedIndex];
-            const label = document.querySelector('.form-group .badge-tipo');
-            if (selected.value) {
-                const badge = document.createElement('span');
-                badge.className = 'badge-tipo';
-                badge.textContent = selected.value;
-                const container = this.closest('.form-group');
-                const existing = container.querySelector('.badge-tipo');
-                if (existing) existing.remove();
-                container.appendChild(badge);
-            }
-        });
-        
-        // Validar precio
-        precioInput.addEventListener('input', function() {
-            if (this.value < 0) {
-                this.value = 0;
-            }
-        });
-    });
-</script>
 
 </body>
 </html>

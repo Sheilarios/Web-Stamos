@@ -2,6 +2,7 @@ package com.stamos.service;
 
 import com.stamos.model.Rol;
 import com.stamos.model.Usuario;
+import com.stamos.repository.ClienteRepository;
 import com.stamos.repository.RolRepository;
 import com.stamos.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class UsuarioService {
     private RolRepository rolRepository;
 
     @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -41,11 +45,7 @@ public class UsuarioService {
         usuario.setFechaActualizacion(LocalDateTime.now());
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
-
-        usuarioGuardado.setNombreRol(rol.getNombreRol());
-        usuarioGuardado.setNombreRolLegible(rol.getNombreLegible());
-        usuarioGuardado.setColorRol(rol.getColor());
-        usuarioGuardado.setIconoRol(rol.getIcono());
+        enriquecerUsuario(usuarioGuardado, rol);
 
         return usuarioGuardado;
     }
@@ -71,11 +71,7 @@ public class UsuarioService {
         existente.setFechaActualizacion(LocalDateTime.now());
 
         Usuario usuarioActualizado = usuarioRepository.save(existente);
-
-        usuarioActualizado.setNombreRol(rol.getNombreRol());
-        usuarioActualizado.setNombreRolLegible(rol.getNombreLegible());
-        usuarioActualizado.setColorRol(rol.getColor());
-        usuarioActualizado.setIconoRol(rol.getIcono());
+        enriquecerUsuario(usuarioActualizado, rol);
 
         return usuarioActualizado;
     }
@@ -98,7 +94,6 @@ public class UsuarioService {
     public void cambiarRol(Integer idUsuario, Integer idRol) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
 
         usuario.setIdRol(idRol);
         usuario.setFechaActualizacion(LocalDateTime.now());
@@ -128,12 +123,19 @@ public class UsuarioService {
     @Transactional
     public void eliminar(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
 
         if (usuario.esAdministrador()) {
             long countAdmin = usuarioRepository.countByNombreRol("Administrador");
             if (countAdmin <= 1) {
                 throw new RuntimeException("No se puede eliminar el último administrador del sistema");
+            }
+        }
+
+        if (usuario.esCliente()) {
+            long countClientes = clienteRepository.countByIdUsuarioRegis(idUsuario);
+            if (countClientes > 0) {
+                throw new RuntimeException("No se puede eliminar un usuario que tiene clientes asociados");
             }
         }
 
@@ -332,78 +334,6 @@ public class UsuarioService {
         usuarioRepository.updateUltimoAcceso(idUsuario);
     }
 
-    public String getEstadoLegible(Boolean activo) {
-        if (activo == null) return "Sin estado";
-        return activo ? "Activo" : "Inactivo";
-    }
-
-    public String getEstadoBadgeClass(Boolean activo) {
-        if (activo == null) return "badge-secondary";
-        return activo ? "badge-success" : "badge-danger";
-    }
-
-    public String getEstadoIcono(Boolean activo) {
-        if (activo == null) return "ti ti-circle";
-        return activo ? "ti ti-check-circle" : "ti ti-x-circle";
-    }
-
-    public String getEstadoColor(Boolean activo) {
-        if (activo == null) return "#6B7280";
-        return activo ? "#10B981" : "#EF4444";
-    }
-
-    public String getNombreRolLegible(String nombreRol) {
-        if (nombreRol == null) return "Sin rol";
-        return switch (nombreRol) {
-            case "Administrador" -> "Administrador";
-            case "Vendedor" -> "Vendedor";
-            case "Diseñador" -> "Diseñador";
-            case "Producción" -> "Producción";
-            case "Soporte Técnico" -> "Soporte Técnico";
-            case "Cliente" -> "Cliente";
-            default -> nombreRol;
-        };
-    }
-
-    public String getRolBadgeClass(String nombreRol) {
-        if (nombreRol == null) return "badge-secondary";
-        return switch (nombreRol) {
-            case "Administrador" -> "badge-danger";
-            case "Vendedor" -> "badge-primary";
-            case "Diseñador" -> "badge-purple";
-            case "Producción" -> "badge-warning";
-            case "Soporte Técnico" -> "badge-success";
-            case "Cliente" -> "badge-secondary";
-            default -> "badge-secondary";
-        };
-    }
-
-    public String getRolIcono(String nombreRol) {
-        if (nombreRol == null) return "ti ti-user";
-        return switch (nombreRol) {
-            case "Administrador" -> "ti ti-shield";
-            case "Vendedor" -> "ti ti-user-check";
-            case "Diseñador" -> "ti ti-pencil";
-            case "Producción" -> "ti ti-tools";
-            case "Soporte Técnico" -> "ti ti-headset";
-            case "Cliente" -> "ti ti-user";
-            default -> "ti ti-user";
-        };
-    }
-
-    public String getRolColor(String nombreRol) {
-        if (nombreRol == null) return "#6B7280";
-        return switch (nombreRol) {
-            case "Administrador" -> "#EF4444";
-            case "Vendedor" -> "#3B82F6";
-            case "Diseñador" -> "#8B5CF6";
-            case "Producción" -> "#F59E0B";
-            case "Soporte Técnico" -> "#10B981";
-            case "Cliente" -> "#6B7280";
-            default -> "#6B7280";
-        };
-    }
-
     private void enriquecerUsuario(Usuario usuario) {
         if (usuario == null) return;
 
@@ -422,5 +352,18 @@ public class UsuarioService {
             usuario.setEstadoIcono(usuario.isActivo() ? "ti ti-check-circle" : "ti ti-x-circle");
             usuario.setEstadoColor(usuario.isActivo() ? "#10B981" : "#EF4444");
         }
+    }
+
+    private void enriquecerUsuario(Usuario usuario, Rol rol) {
+        if (usuario == null) return;
+
+        usuario.setNombreRol(rol.getNombreRol());
+        usuario.setNombreRolLegible(rol.getNombreLegible());
+        usuario.setColorRol(rol.getColor());
+        usuario.setIconoRol(rol.getIcono());
+        usuario.setEstadoLegible(usuario.isActivo() ? "Activo" : "Inactivo");
+        usuario.setEstadoBadgeClass(usuario.isActivo() ? "badge-success" : "badge-danger");
+        usuario.setEstadoIcono(usuario.isActivo() ? "ti ti-check-circle" : "ti ti-x-circle");
+        usuario.setEstadoColor(usuario.isActivo() ? "#10B981" : "#EF4444");
     }
 }

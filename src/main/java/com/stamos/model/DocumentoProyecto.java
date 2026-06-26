@@ -8,21 +8,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Entidad DocumentoProyecto.
- * 
- * <p>Esta entidad representa los documentos asociados a un proyecto,
- * como renders, planos, bocetos, contratos y otros archivos.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RF-23: Visualización de renders, planos, bocetos y documentación</li>
- *   <li>RF-14: Mostrar información del proyecto y documentación asociada</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "DocumentoProyecto",
        indexes = {
@@ -32,10 +17,6 @@ import java.time.format.DateTimeFormatter;
            @Index(name = "idx_documento_fecha", columnList = "fecha_subida")
        })
 public class DocumentoProyecto {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,10 +50,6 @@ public class DocumentoProyecto {
     @Column(name = "id_usuario_subio")
     private Integer idUsuarioSubio;
 
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
-
     @Transient
     private String nombreProyecto;
 
@@ -100,10 +77,6 @@ public class DocumentoProyecto {
     @Transient
     private Boolean esPdf;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public DocumentoProyecto() {
         this.fechaSubida = LocalDateTime.now();
         this.tipoDocumento = "Otro";
@@ -125,10 +98,6 @@ public class DocumentoProyecto {
         this.tamanoBytes = tamanoBytes;
         this.idUsuarioSubio = idUsuarioSubio;
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdDocumento() {
         return idDocumento;
@@ -268,53 +237,43 @@ public class DocumentoProyecto {
         this.esPdf = esPdf;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
 
-    /**
-     * Actualiza los campos transient basados en el tipo y nombre del archivo.
-     */
     private void actualizarCamposTransient() {
-        // Tipo de documento legible
         if (tipoDocumento != null) {
             switch (tipoDocumento) {
-                case "Render":
+                case "Render" -> {
                     this.tipoDocumentoLegible = "Render";
                     this.icono = "ti ti-photo";
                     this.color = "#8B5CF6";
-                    break;
-                case "Plano":
+                }
+                case "Plano" -> {
                     this.tipoDocumentoLegible = "Plano";
                     this.icono = "ti ti-ruler-2";
                     this.color = "#3B82F6";
-                    break;
-                case "Boceto":
+                }
+                case "Boceto" -> {
                     this.tipoDocumentoLegible = "Boceto";
                     this.icono = "ti ti-pencil";
                     this.color = "#F59E0B";
-                    break;
-                case "Contrato":
+                }
+                case "Contrato" -> {
                     this.tipoDocumentoLegible = "Contrato";
                     this.icono = "ti ti-file-contract";
                     this.color = "#10B981";
-                    break;
-                default:
+                }
+                default -> {
                     this.tipoDocumentoLegible = "Otro";
                     this.icono = "ti ti-file";
                     this.color = "#6B7280";
-                    break;
+                }
             }
         }
 
-        // Extensión del archivo
         if (nombreArchivo != null && nombreArchivo.contains(".")) {
             this.extensionArchivo = nombreArchivo.substring(nombreArchivo.lastIndexOf(".") + 1).toLowerCase();
             
-            // Verificar si es imagen
             this.esImagen = extensionArchivo.matches("(?i)(jpg|jpeg|png|gif|webp|svg|bmp|ico)");
             
-            // Verificar si es PDF
             this.esPdf = "pdf".equalsIgnoreCase(extensionArchivo);
         } else {
             this.extensionArchivo = "";
@@ -323,56 +282,26 @@ public class DocumentoProyecto {
         }
     }
 
-    /**
-     * Verifica si el documento es de tipo Render.
-     * 
-     * @return true si es Render, false en caso contrario
-     */
     public boolean esRender() {
         return "Render".equals(this.tipoDocumento);
     }
 
-    /**
-     * Verifica si el documento es de tipo Plano.
-     * 
-     * @return true si es Plano, false en caso contrario
-     */
     public boolean esPlano() {
         return "Plano".equals(this.tipoDocumento);
     }
 
-    /**
-     * Verifica si el documento es de tipo Boceto.
-     * 
-     * @return true si es Boceto, false en caso contrario
-     */
     public boolean esBoceto() {
         return "Boceto".equals(this.tipoDocumento);
     }
 
-    /**
-     * Verifica si el documento es de tipo Contrato.
-     * 
-     * @return true si es Contrato, false en caso contrario
-     */
     public boolean esContrato() {
         return "Contrato".equals(this.tipoDocumento);
     }
 
-    /**
-     * Verifica si el documento tiene archivo asociado.
-     * 
-     * @return true si tiene archivo, false en caso contrario
-     */
     public boolean tieneArchivo() {
         return urlArchivo != null && !urlArchivo.trim().isEmpty();
     }
 
-    /**
-     * Obtiene el tamaño del archivo formateado.
-     * 
-     * @return Tamaño formateado (KB o MB)
-     */
     public String getTamanoFormateado() {
         if (tamanoBytes == null) return "-";
         
@@ -384,11 +313,6 @@ public class DocumentoProyecto {
         return String.format("%.1f MB", mb);
     }
 
-    /**
-     * Obtiene el nombre del archivo sin extensión.
-     * 
-     * @return Nombre del archivo sin extensión
-     */
     public String getNombreArchivoSinExtension() {
         if (nombreArchivo == null) return "";
         if (nombreArchivo.contains(".")) {
@@ -397,11 +321,6 @@ public class DocumentoProyecto {
         return nombreArchivo;
     }
 
-    /**
-     * Obtiene el usuario que subió el documento en formato legible.
-     * 
-     * @return Usuario legible
-     */
     public String getUsuarioSubioLegible() {
         if (nombreUsuarioSubio != null && !nombreUsuarioSubio.isEmpty()) {
             return nombreUsuarioSubio;
@@ -415,78 +334,38 @@ public class DocumentoProyecto {
         return "Sistema";
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del tipo de documento.
-     * 
-     * @return Clase CSS
-     */
     public String getTipoBadgeClass() {
         if (tipoDocumento == null) return "otro";
         
-        switch (tipoDocumento) {
-            case "Render":
-                return "render";
-            case "Plano":
-                return "plano";
-            case "Boceto":
-                return "boceto";
-            case "Contrato":
-                return "contrato";
-            default:
-                return "otro";
-        }
+        return switch (tipoDocumento) {
+            case "Render" -> "render";
+            case "Plano" -> "plano";
+            case "Boceto" -> "boceto";
+            case "Contrato" -> "contrato";
+            default -> "otro";
+        };
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene la fecha de subida formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaSubidaFormateada() {
         if (fechaSubida == null) return "-";
         return fechaSubida.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de subida formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaSubidaSoloFecha() {
         if (fechaSubida == null) return "-";
         return fechaSubida.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene el nombre del archivo truncado.
-     * 
-     * @param maxLength Longitud máxima
-     * @return Nombre truncado
-     */
     public String getNombreArchivoTruncado(int maxLength) {
         if (nombreArchivo == null) return "";
         if (nombreArchivo.length() <= maxLength) return nombreArchivo;
         return nombreArchivo.substring(0, maxLength) + "...";
     }
 
-    /**
-     * Obtiene el tipo de documento con ícono.
-     * 
-     * @return Tipo con ícono
-     */
     public String getTipoConIcono() {
         return "<i class='" + icono + "'></i> " + tipoDocumentoLegible;
     }
 
-    /**
-     * Obtiene el resumen del documento.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append(tipoDocumentoLegible);
@@ -500,54 +379,26 @@ public class DocumentoProyecto {
         return sb.toString();
     }
 
-    /**
-     * Obtiene el tipo de archivo para el atributo accept de input file.
-     * 
-     * @return Tipo MIME
-     */
     public String getTipoMime() {
         if (extensionArchivo == null) return "application/octet-stream";
         
-        switch (extensionArchivo) {
-            case "jpg":
-            case "jpeg":
-                return "image/jpeg";
-            case "png":
-                return "image/png";
-            case "gif":
-                return "image/gif";
-            case "webp":
-                return "image/webp";
-            case "svg":
-                return "image/svg+xml";
-            case "pdf":
-                return "application/pdf";
-            case "doc":
-                return "application/msword";
-            case "docx":
-                return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-            case "xls":
-                return "application/vnd.ms-excel";
-            case "xlsx":
-                return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            case "ppt":
-                return "application/vnd.ms-powerpoint";
-            case "pptx":
-                return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-            default:
-                return "application/octet-stream";
-        }
+        return switch (extensionArchivo) {
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "gif" -> "image/gif";
+            case "webp" -> "image/webp";
+            case "svg" -> "image/svg+xml";
+            case "pdf" -> "application/pdf";
+            case "doc" -> "application/msword";
+            case "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            case "xls" -> "application/vnd.ms-excel";
+            case "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            case "ppt" -> "application/vnd.ms-powerpoint";
+            case "pptx" -> "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            default -> "application/octet-stream";
+        };
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -565,11 +416,6 @@ public class DocumentoProyecto {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -591,10 +437,6 @@ public class DocumentoProyecto {
         sb.append("}");
         return sb.toString();
     }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -621,76 +463,28 @@ public class DocumentoProyecto {
         return idDocumento != null ? idDocumento.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un documento de tipo Render.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param nombreArchivo Nombre del archivo
-     * @param urlArchivo URL del archivo
-     * @return Documento
-     */
     public static DocumentoProyecto crearRender(Integer idProyecto, String nombreArchivo, String urlArchivo) {
         return new DocumentoProyecto(idProyecto, "Render", nombreArchivo, urlArchivo);
     }
 
-    /**
-     * Crea un documento de tipo Plano.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param nombreArchivo Nombre del archivo
-     * @param urlArchivo URL del archivo
-     * @return Documento
-     */
     public static DocumentoProyecto crearPlano(Integer idProyecto, String nombreArchivo, String urlArchivo) {
         return new DocumentoProyecto(idProyecto, "Plano", nombreArchivo, urlArchivo);
     }
 
-    /**
-     * Crea un documento de tipo Boceto.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param nombreArchivo Nombre del archivo
-     * @param urlArchivo URL del archivo
-     * @return Documento
-     */
     public static DocumentoProyecto crearBoceto(Integer idProyecto, String nombreArchivo, String urlArchivo) {
         return new DocumentoProyecto(idProyecto, "Boceto", nombreArchivo, urlArchivo);
     }
 
-    /**
-     * Crea un documento de tipo Contrato.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param nombreArchivo Nombre del archivo
-     * @param urlArchivo URL del archivo
-     * @return Documento
-     */
     public static DocumentoProyecto crearContrato(Integer idProyecto, String nombreArchivo, String urlArchivo) {
         return new DocumentoProyecto(idProyecto, "Contrato", nombreArchivo, urlArchivo);
     }
 
-    /**
-     * Crea un documento de tipo Otro.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param nombreArchivo Nombre del archivo
-     * @param urlArchivo URL del archivo
-     * @return Documento
-     */
+
     public static DocumentoProyecto crearOtro(Integer idProyecto, String nombreArchivo, String urlArchivo) {
         return new DocumentoProyecto(idProyecto, "Otro", nombreArchivo, urlArchivo);
     }
 
-    /**
-     * Crea un documento desde un DTO.
-     * 
-     * @param dto DTO del documento
-     * @return Documento
-     */
+
     public static DocumentoProyecto fromDTO(com.stamos.dto.DocumentoProyectoDTO dto) {
         if (dto == null) {
             return null;
@@ -709,11 +503,6 @@ public class DocumentoProyecto {
         return documento;
     }
 
-    /**
-     * Convierte el documento a un DTO.
-     * 
-     * @return DTO del documento
-     */
     public com.stamos.dto.DocumentoProyectoDTO toDTO() {
         com.stamos.dto.DocumentoProyectoDTO dto = new com.stamos.dto.DocumentoProyectoDTO();
         dto.setIdDocumento(this.idDocumento);

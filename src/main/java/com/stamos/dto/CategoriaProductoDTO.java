@@ -1,7 +1,6 @@
 package com.stamos.dto;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,24 +10,22 @@ public class CategoriaProductoDTO {
     private String nombreCategoria;
     private String descripcion;
     private Boolean activo;
-
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
     private Integer idUsuarioCreacion;
     private Integer idUsuarioActualizacion;
     private String nombreUsuarioCreacion;
     private String nombreUsuarioActualizacion;
-
     private Integer cantidadProductos;
     private Integer cantidadProductosActivos;
     private Integer cantidadProductosInactivos;
     private Integer cantidadProductosAlquiler;
     private Integer cantidadProductosVenta;
     private Integer cantidadProductosServicio;
-
     private List<ProductoDTO> productos = new ArrayList<>();
     private String color;
     private String icono;
+
     public CategoriaProductoDTO() {
         this.activo = true;
         this.cantidadProductos = 0;
@@ -61,7 +58,6 @@ public class CategoriaProductoDTO {
             this.cantidadProductosInactivos = cantidadProductos - cantidadProductosActivos;
         }
     }
-
 
     public Integer getIdCategoria() {
         return idCategoria;
@@ -215,343 +211,28 @@ public class CategoriaProductoDTO {
         this.icono = icono;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Verifica si la categoría está activa.
-     * 
-     * @return true si está activa, false en caso contrario
-     */
     public boolean isActivo() {
         return activo != null && activo;
     }
 
-    /**
-     * Verifica si la categoría tiene productos.
-     * 
-     * @return true si tiene productos, false en caso contrario
-     */
     public boolean tieneProductos() {
         return cantidadProductos != null && cantidadProductos > 0;
     }
 
-    /**
-     * Verifica si la categoría tiene productos activos.
-     * 
-     * @return true si tiene productos activos, false en caso contrario
-     */
     public boolean tieneProductosActivos() {
         return cantidadProductosActivos != null && cantidadProductosActivos > 0;
     }
 
-    /**
-     * Verifica si la categoría tiene productos inactivos.
-     * 
-     * @return true si tiene productos inactivos, false en caso contrario
-     */
     public boolean tieneProductosInactivos() {
         return cantidadProductosInactivos != null && cantidadProductosInactivos > 0;
     }
 
-    /**
-     * Agrega un producto a la lista de productos.
-     * 
-     * @param producto DTO del producto
-     */
     public void agregarProducto(ProductoDTO producto) {
         if (producto != null && this.productos != null) {
             this.productos.add(producto);
         }
     }
 
-    /**
-     * Obtiene el porcentaje de productos activos.
-     * 
-     * @return Porcentaje de productos activos
-     */
-    public int getPorcentajeActivos() {
-        if (cantidadProductos == null || cantidadProductos == 0) {
-            return 0;
-        }
-        if (cantidadProductosActivos == null) {
-            return 0;
-        }
-        return (cantidadProductosActivos * 100) / cantidadProductos;
-    }
-
-    /**
-     * Obtiene el porcentaje de productos inactivos.
-     * 
-     * @return Porcentaje de productos inactivos
-     */
-    public int getPorcentajeInactivos() {
-        if (cantidadProductos == null || cantidadProductos == 0) {
-            return 0;
-        }
-        if (cantidadProductosInactivos == null) {
-            return 0;
-        }
-        return (cantidadProductosInactivos * 100) / cantidadProductos;
-    }
-
-    /**
-     * Obtiene el total de productos por tipo.
-     * 
-     * @return Total de productos
-     */
-    public int getTotalProductosPorTipo() {
-        int total = 0;
-        if (cantidadProductosAlquiler != null) total += cantidadProductosAlquiler;
-        if (cantidadProductosVenta != null) total += cantidadProductosVenta;
-        if (cantidadProductosServicio != null) total += cantidadProductosServicio;
-        return total;
-    }
-
-    /**
-     * Verifica si el total de productos por tipo coincide con la cantidad total.
-     * 
-     * @return true si coinciden, false en caso contrario
-     */
-    public boolean validarTotales() {
-        return cantidadProductos != null && 
-               cantidadProductos.equals(getTotalProductosPorTipo());
-    }
-
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene el estado en formato legible.
-     * 
-     * @return Estado legible
-     */
-    public String getEstadoLegible() {
-        return isActivo() ? "Activo" : "Inactivo";
-    }
-
-    /**
-     * Obtiene la clase CSS para el badge del estado.
-     * 
-     * @return Clase CSS
-     */
-    public String getEstadoBadgeClass() {
-        return isActivo() ? "badge-success" : "badge-danger";
-    }
-
-    /**
-     * Obtiene el ícono para el estado.
-     * 
-     * @return Ícono CSS
-     */
-    public String getEstadoIcono() {
-        return isActivo() ? "ti ti-check-circle" : "ti ti-x-circle";
-    }
-
-    /**
-     * Obtiene el color para el estado.
-     * 
-     * @return Color en hexadecimal
-     */
-    public String getEstadoColor() {
-        return isActivo() ? "#10B981" : "#EF4444";
-    }
-
-    /**
-     * Obtiene el nombre de la categoría en mayúsculas.
-     * 
-     * @return Nombre en mayúsculas
-     */
-    public String getNombreUpper() {
-        return nombreCategoria != null ? nombreCategoria.toUpperCase() : "";
-    }
-
-    /**
-     * Obtiene la descripción truncada.
-     * 
-     * @param maxLength Longitud máxima
-     * @return Descripción truncada
-     */
-    public String getDescripcionTruncada(int maxLength) {
-        if (descripcion == null) return "";
-        if (descripcion.length() <= maxLength) return descripcion;
-        return descripcion.substring(0, maxLength) + "...";
-    }
-
-    /**
-     * Obtiene la fecha de creación formateada.
-     * 
-     * @return Fecha formateada
-     */
-    public String getFechaCreacionFormateada() {
-        if (fechaCreacion == null) return "-";
-        return fechaCreacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-    }
-
-    /**
-     * Obtiene la fecha de actualización formateada.
-     * 
-     * @return Fecha formateada
-     */
-    public String getFechaActualizacionFormateada() {
-        if (fechaActualizacion == null) return "-";
-        return fechaActualizacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-    }
-
-    /**
-     * Obtiene la fecha de creación formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
-    public String getFechaCreacionSoloFecha() {
-        if (fechaCreacion == null) return "-";
-        return fechaCreacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
-
-    /**
-     * Obtiene el resumen de la categoría.
-     * 
-     * @return Resumen
-     */
-    public String getResumen() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(nombreCategoria);
-        if (cantidadProductos != null) {
-            sb.append(" (").append(cantidadProductos).append(" productos)");
-            if (cantidadProductosActivos != null) {
-                sb.append(", ").append(cantidadProductosActivos).append(" activos");
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Obtiene la clase CSS para el badge de productos.
-     * 
-     * @return Clase CSS
-     */
-    public String getProductosBadgeClass() {
-        if (cantidadProductos == null || cantidadProductos == 0) {
-            return "badge-secondary";
-        }
-        if (cantidadProductosActivos != null && cantidadProductosActivos > 0) {
-            return "badge-success";
-        }
-        return "badge-warning";
-    }
-
-    /**
-     * Obtiene el color para el ícono de la categoría.
-     * 
-     * @return Color en hexadecimal
-     */
-    public String getIconoColor() {
-        if (color == null) return "#3B82F6";
-        return color;
-    }
-
-    /**
-     * Obtiene el nombre de la categoría con su ícono.
-     * 
-     * @return Nombre con ícono
-     */
-    public String getNombreConIcono() {
-        return "<i class='" + icono + "'></i> " + nombreCategoria;
-    }
-
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
-    public String toJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"idCategoria\":").append(idCategoria).append(",");
-        sb.append("\"nombre\":\"").append(nombreCategoria != null ? nombreCategoria : "").append("\",");
-        sb.append("\"descripcion\":\"").append(descripcion != null ? descripcion : "").append("\",");
-        sb.append("\"activo\":").append(isActivo()).append(",");
-        sb.append("\"cantidadProductos\":").append(cantidadProductos != null ? cantidadProductos : 0).append(",");
-        sb.append("\"cantidadProductosActivos\":").append(cantidadProductosActivos != null ? cantidadProductosActivos : 0);
-        sb.append("}");
-        return sb.toString();
-    }
-
-    /**
-     * Convierte a una representación JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
-    public String toJsonCompleto() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"idCategoria\":").append(idCategoria).append(",");
-        sb.append("\"nombre\":\"").append(nombreCategoria != null ? nombreCategoria : "").append("\",");
-        sb.append("\"descripcion\":\"").append(descripcion != null ? descripcion : "").append("\",");
-        sb.append("\"activo\":").append(isActivo()).append(",");
-        sb.append("\"cantidadProductos\":").append(cantidadProductos != null ? cantidadProductos : 0).append(",");
-        sb.append("\"cantidadProductosActivos\":").append(cantidadProductosActivos != null ? cantidadProductosActivos : 0).append(",");
-        sb.append("\"cantidadProductosInactivos\":").append(cantidadProductosInactivos != null ? cantidadProductosInactivos : 0).append(",");
-        sb.append("\"cantidadProductosAlquiler\":").append(cantidadProductosAlquiler != null ? cantidadProductosAlquiler : 0).append(",");
-        sb.append("\"cantidadProductosVenta\":").append(cantidadProductosVenta != null ? cantidadProductosVenta : 0).append(",");
-        sb.append("\"cantidadProductosServicio\":").append(cantidadProductosServicio != null ? cantidadProductosServicio : 0).append(",");
-        sb.append("\"fechaCreacion\":\"").append(getFechaCreacionFormateada()).append("\"");
-        if (fechaActualizacion != null) {
-            sb.append(",\"fechaActualizacion\":\"").append(getFechaActualizacionFormateada()).append("\"");
-        }
-        sb.append("}");
-        return sb.toString();
-    }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
-
-    @Override
-    public String toString() {
-        return "CategoriaProductoDTO{" +
-                "idCategoria=" + idCategoria +
-                ", nombreCategoria='" + nombreCategoria + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", activo=" + activo +
-                ", cantidadProductos=" + cantidadProductos +
-                ", cantidadProductosActivos=" + cantidadProductosActivos +
-                ", cantidadProductosInactivos=" + cantidadProductosInactivos +
-                ", cantidadProductosAlquiler=" + cantidadProductosAlquiler +
-                ", cantidadProductosVenta=" + cantidadProductosVenta +
-                ", cantidadProductosServicio=" + cantidadProductosServicio +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoriaProductoDTO that = (CategoriaProductoDTO) o;
-        return idCategoria != null && idCategoria.equals(that.idCategoria);
-    }
-
-    @Override
-    public int hashCode() {
-        return idCategoria != null ? idCategoria.hashCode() : 0;
-    }
-
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea un DTO desde una entidad.
-     * 
-     * @param categoria Entidad de categoría
-     * @return DTO de categoría
-     */
     public static CategoriaProductoDTO fromEntity(com.stamos.model.CategoriaProducto categoria) {
         if (categoria == null) {
             return null;
@@ -567,7 +248,6 @@ public class CategoriaProductoDTO {
         dto.setIdUsuarioCreacion(categoria.getIdUsuarioCreacion());
         dto.setIdUsuarioActualizacion(categoria.getIdUsuarioActualizacion());
         
-        // Asignar métricas si están disponibles
         if (categoria.getCantidadProductos() != null) {
             dto.setCantidadProductos(categoria.getCantidadProductos());
         }
@@ -578,15 +258,6 @@ public class CategoriaProductoDTO {
         return dto;
     }
 
-    /**
-     * Crea un DTO desde una entidad con métricas completas.
-     * 
-     * @param categoria Entidad de categoría
-     * @param cantidadProductos Total de productos
-     * @param cantidadProductosActivos Productos activos
-     * @param cantidadProductosInactivos Productos inactivos
-     * @return DTO de categoría
-     */
     public static CategoriaProductoDTO fromEntityWithMetrics(
             com.stamos.model.CategoriaProducto categoria,
             Integer cantidadProductos,
@@ -602,18 +273,6 @@ public class CategoriaProductoDTO {
         return dto;
     }
 
-    /**
-     * Crea un DTO desde una entidad con métricas por tipo.
-     * 
-     * @param categoria Entidad de categoría
-     * @param cantidadProductos Total de productos
-     * @param cantidadProductosActivos Productos activos
-     * @param cantidadProductosInactivos Productos inactivos
-     * @param cantidadProductosAlquiler Productos de alquiler
-     * @param cantidadProductosVenta Productos de venta
-     * @param cantidadProductosServicio Productos de servicio
-     * @return DTO de categoría
-     */
     public static CategoriaProductoDTO fromEntityWithAllMetrics(
             com.stamos.model.CategoriaProducto categoria,
             Integer cantidadProductos,
@@ -634,12 +293,6 @@ public class CategoriaProductoDTO {
         return dto;
     }
 
-    /**
-     * Crea una lista de DTOs desde una lista de entidades.
-     * 
-     * @param categorias Lista de entidades
-     * @return Lista de DTOs
-     */
     public static List<CategoriaProductoDTO> fromEntityList(List<com.stamos.model.CategoriaProducto> categorias) {
         if (categorias == null) {
             return new ArrayList<>();
@@ -655,11 +308,6 @@ public class CategoriaProductoDTO {
         return dtos;
     }
 
-    /**
-     * Convierte el DTO a una entidad.
-     * 
-     * @return Entidad de categoría
-     */
     public com.stamos.model.CategoriaProducto toEntity() {
         com.stamos.model.CategoriaProducto categoria = new com.stamos.model.CategoriaProducto();
         categoria.setIdCategoria(this.idCategoria);
@@ -673,13 +321,6 @@ public class CategoriaProductoDTO {
         return categoria;
     }
 
-    // ============================================
-    // CLASE INTERNA PARA PRODUCTO DTO
-    // ============================================
-
-    /**
-     * DTO para productos dentro de la categoría.
-     */
     public static class ProductoDTO {
         private Integer idProducto;
         private String nombreItem;
@@ -689,7 +330,6 @@ public class CategoriaProductoDTO {
         private String imagenUrl;
         private Boolean activo;
 
-        // Getters y Setters
         public Integer getIdProducto() { return idProducto; }
         public void setIdProducto(Integer idProducto) { this.idProducto = idProducto; }
 
@@ -711,38 +351,8 @@ public class CategoriaProductoDTO {
         public Boolean getActivo() { return activo; }
         public void setActivo(Boolean activo) { this.activo = activo; }
 
-        // Métodos de formato
-        public String getPrecioBaseFormateado() {
-            if (precioBase == null) return "S/ 0.00";
-            return "S/ " + precioBase.setScale(2, java.math.RoundingMode.HALF_UP).toString();
-        }
-
         public boolean isActivo() {
             return activo != null && activo;
-        }
-
-        public String getEstadoLegible() {
-            return isActivo() ? "Activo" : "Inactivo";
-        }
-
-        public String getTipoLegible() {
-            if (tipo == null) return "No especificado";
-            switch (tipo) {
-                case "Alquiler": return "Alquiler";
-                case "Venta": return "Venta";
-                case "Servicio": return "Servicio";
-                default: return tipo;
-            }
-        }
-
-        public String getTipoBadgeClass() {
-            if (tipo == null) return "badge-secondary";
-            switch (tipo) {
-                case "Alquiler": return "badge-alquiler";
-                case "Venta": return "badge-venta";
-                case "Servicio": return "badge-servicio";
-                default: return "badge-secondary";
-            }
         }
 
         @Override

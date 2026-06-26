@@ -11,7 +11,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Recursos estáticos
         registry.addResourceHandler("/css/**")
                 .addResourceLocations("classpath:/static/css/");
         
@@ -24,11 +23,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/fonts/**")
                 .addResourceLocations("classpath:/static/fonts/");
         
-        // WebJars
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("/webjars/");
         
-        // Documentos de proyectos (renders, planos, etc.)
         registry.addResourceHandler("/documentos/**")
                 .addResourceLocations("file:./uploads/documentos/");
     }

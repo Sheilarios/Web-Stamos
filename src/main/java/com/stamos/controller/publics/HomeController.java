@@ -1,5 +1,6 @@
 package com.stamos.controller.publics;
 
+import com.stamos.controller.BaseController;
 import com.stamos.model.CategoriaProducto;
 import com.stamos.model.Producto;
 import com.stamos.service.CategoriaProductoService;
@@ -14,17 +15,15 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Controller
 @RequestMapping("/")
-public class HomeController {
+public class HomeController extends BaseController {
 
     @Autowired
     private ProductoService productoService;
 
     @Autowired
     private CategoriaProductoService categoriaProductoService;
-
 
     @GetMapping
     public String index(Model model) {
@@ -34,52 +33,36 @@ public class HomeController {
         model.addAttribute("experiencia", "Más de 10 años de experiencia en el mercado");
         model.addAttribute("mision", "Brindar soluciones innovadoras en diseño publicitario, stands y producción para eventos, ofreciendo servicios de calidad que satisfagan las necesidades de los clientes mediante procesos eficientes y tecnología moderna.");
         model.addAttribute("vision", "Ser líderes del mercado a través de innovación, calidad, tiempo y costo para satisfacer con excelencia las necesidades de nuestros clientes y colaboradores.");
-        
-        List<Producto> productosDestacados = productoService.findTopActive(6);
-        model.addAttribute("productosDestacados", productosDestacados);
-        
-        List<CategoriaProducto> categorias = categoriaProductoService.findAllActive();
-        model.addAttribute("categorias", categorias);
-        
+        model.addAttribute("productosDestacados", productoService.findTopActive(6));
+        model.addAttribute("categorias", categoriaProductoService.findAllActive());
         model.addAttribute("titulo", "STAMOS S.L. - Soluciones en Stands y Mobiliario Ferial");
         model.addAttribute("descripcion", "Empresa líder en diseño, producción y alquiler de mobiliario ferial, stands publicitarios y soluciones visuales para eventos corporativos.");
-        
+        addCommonAttributes(model);
         return "public/index";
     }
 
     @GetMapping("/galeria")
     public String galeria(Model model) {
-        List<ProyectoGaleria> proyectos = obtenerProyectosGaleria();
-        
-        List<CategoriaProducto> categorias = categoriaProductoService.findAllActive();
-        
-        model.addAttribute("proyectos", proyectos);
-        model.addAttribute("categorias", categorias);
+        model.addAttribute("proyectos", obtenerProyectosGaleria());
+        model.addAttribute("categorias", categoriaProductoService.findAllActive());
         model.addAttribute("titulo", "Galería de Proyectos");
         model.addAttribute("descripcion", "Conoce algunos de nuestros proyectos más destacados realizados para clientes de diversos sectores.");
         model.addAttribute("empresa", "STAMOS LINARES S.R.L.");
         model.addAttribute("anio", Year.now().getValue());
-        
+        addCommonAttributes(model);
         return "public/galeria";
     }
 
-
     @GetMapping("/servicios")
     public String servicios(Model model) {
-        List<Producto> productos = productoService.findActive();
-        
-        List<CategoriaProducto> categorias = categoriaProductoService.findAllActive();
-        
-        List<ServicioItem> servicios = obtenerServicios();
-        
-        model.addAttribute("productos", productos);
-        model.addAttribute("categorias", categorias);
-        model.addAttribute("servicios", servicios);
+        model.addAttribute("productos", productoService.findActive());
+        model.addAttribute("categorias", categoriaProductoService.findAllActive());
+        model.addAttribute("servicios", obtenerServicios());
         model.addAttribute("titulo", "Servicios y Productos");
         model.addAttribute("descripcion", "Ofrecemos soluciones integrales para eventos corporativos y ferias.");
         model.addAttribute("empresa", "STAMOS LINARES S.R.L.");
         model.addAttribute("anio", Year.now().getValue());
-        
+        addCommonAttributes(model);
         return "public/servicios";
     }
 
@@ -238,7 +221,6 @@ public class HomeController {
         return Year.now().getValue();
     }
 
-
     public String getNombreEmpresa() {
         return "STAMOS LINARES S.R.L.";
     }
@@ -247,66 +229,53 @@ public class HomeController {
         return "20549500715";
     }
 
-
     public String getTelefonoContacto() {
         return "01 7046345";
     }
-
 
     public String getCelularContacto() {
         return "987819456";
     }
 
-
     public String getCelularSecundario() {
         return "987181168";
     }
-
 
     public String getEmailContacto() {
         return "info@stamos.com";
     }
 
-
     public String getDireccion() {
         return "Jr. Antisuyo 438, Urbanización Zárate, San Juan de Lurigancho, Lima, Perú";
     }
-
 
     public String getHorarioLunesViernes() {
         return "9:00 AM - 6:00 PM";
     }
 
-
     public String getHorarioSabado() {
         return "9:00 AM - 1:00 PM";
     }
-
 
     public String getHorarioCompleto() {
         return "Lunes a Viernes: 9:00 AM - 6:00 PM\nSábado: 9:00 AM - 1:00 PM";
     }
 
-
     public String getWhatsApp() {
         return "51987819456";
     }
-
 
     public int getAnioFundacion() {
         return 2014;
     }
 
-
     public int getTotalProyectos() {
         return 500;
     }
 
-
     public int getTotalClientes() {
         return 300;
     }
-
 
     public int getSatisfaccionCliente() {
         return 98;
@@ -322,7 +291,6 @@ public class HomeController {
         return telefono;
     }
 
-
     public RedesSociales getRedesSociales() {
         return new RedesSociales(
             "https://www.facebook.com/stamos",
@@ -332,12 +300,11 @@ public class HomeController {
         );
     }
 
-
     public static class RedesSociales {
-        private String facebook;
-        private String instagram;
-        private String linkedin;
-        private String youtube;
+        private final String facebook;
+        private final String instagram;
+        private final String linkedin;
+        private final String youtube;
 
         public RedesSociales(String facebook, String instagram, String linkedin, String youtube) {
             this.facebook = facebook;
@@ -356,23 +323,19 @@ public class HomeController {
         return "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3902.123456789!2d-77.0312!3d-12.0453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c5f123456789%3A0x123456789abcdef!2sJr.%20Antisuyo%20438%2C%20San%20Juan%20de%20Lurigancho!5e0!3m2!1ses!2spe!4v1234567890";
     }
 
-
     public String getLatitud() {
         return "-12.0453";
     }
 
-
     public String getLongitud() {
         return "-77.0312";
     }
-
 
     public String getMensajeBienvenida() {
         return "Bienvenidos a STAMOS S.L., donde convertimos tus ideas en realidades visuales. " +
                "Somos especialistas en diseño, producción y alquiler de stands publicitarios, " +
                "mobiliario ferial y soluciones gráficas para eventos corporativos.";
     }
-
 
     public String getCallToAction() {
         return "Solicita tu cotización ahora";

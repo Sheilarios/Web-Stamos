@@ -8,23 +8,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Entidad ConfiguracionSistema.
- * 
- * <p>Esta entidad almacena los parámetros de configuración del sistema
- * de STAMOS S.L., permitiendo la personalización y ajuste dinámico
- * de valores clave como tasas impositivas, plazos y formatos.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-21: STAMOS S.L. aplica una tasa IGV del 18%</li>
- *   <li>RN-22: Las cotizaciones ya emitidas mantienen su tasa IGV</li>
- *   <li>RNF-07: Configuración de IGV a través de la tabla ConfiguracionSistema</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "ConfiguracionSistema",
        indexes = {
@@ -35,9 +18,6 @@ import java.time.format.DateTimeFormatter;
        })
 public class ConfiguracionSistema {
 
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,9 +48,6 @@ public class ConfiguracionSistema {
     @Column(name = "id_usuario_actualiza")
     private Integer idUsuarioActualiza;
 
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
 
     @Transient
     private String nombreUsuarioActualiza;
@@ -83,10 +60,6 @@ public class ConfiguracionSistema {
 
     @Transient
     private String categoria;
-
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
 
     public ConfiguracionSistema() {
         this.fechaActualizacion = LocalDateTime.now();
@@ -106,10 +79,6 @@ public class ConfiguracionSistema {
         this(parametro, valor, tipoDato, descripcion);
         this.idConfig = idConfig;
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdConfig() {
         return idConfig;
@@ -199,15 +168,6 @@ public class ConfiguracionSistema {
         this.categoria = categoria;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Obtiene el valor como BigDecimal (para tipo DECIMAL).
-     * 
-     * @return Valor como BigDecimal, o null si no es DECIMAL
-     */
     public java.math.BigDecimal getValorDecimal() {
         if (!"DECIMAL".equals(this.tipoDato) || valor == null) {
             return null;
@@ -219,27 +179,17 @@ public class ConfiguracionSistema {
         }
     }
 
-    /**
-     * Obtiene el valor como Integer (para tipo INT).
-     * 
-     * @return Valor como Integer, o null si no es INT
-     */
     public Integer getValorInteger() {
         if (!"INT".equals(this.tipoDato) || valor == null) {
             return null;
         }
         try {
-            return Integer.parseInt(valor);
+            return Integer.valueOf(valor);
         } catch (NumberFormatException e) {
             return null;
         }
     }
 
-    /**
-     * Obtiene el valor como Boolean (para tipo BOOLEAN).
-     * 
-     * @return Valor como Boolean, o null si no es BOOLEAN
-     */
     public Boolean getValorBoolean() {
         if (!"BOOLEAN".equals(this.tipoDato) || valor == null) {
             return null;
@@ -247,11 +197,6 @@ public class ConfiguracionSistema {
         return "true".equalsIgnoreCase(valor) || "1".equals(valor) || "si".equalsIgnoreCase(valor);
     }
 
-    /**
-     * Obtiene el valor como LocalDate (para tipo DATE).
-     * 
-     * @return Valor como LocalDate, o null si no es DATE
-     */
     public LocalDateTime getValorDate() {
         if (!"DATE".equals(this.tipoDato) || valor == null) {
             return null;
@@ -263,185 +208,91 @@ public class ConfiguracionSistema {
         }
     }
 
-    /**
-     * Obtiene el valor como String (para cualquier tipo).
-     * 
-     * @return Valor como String
-     */
     public String getValorString() {
         return valor;
     }
 
-    /**
-     * Actualiza el valor del parámetro.
-     * 
-     * @param valor Nuevo valor
-     * @param idUsuario ID del usuario que actualiza
-     */
     public void actualizarValor(String valor, Integer idUsuario) {
         this.valor = valor;
         this.idUsuarioActualiza = idUsuario;
         this.fechaActualizacion = LocalDateTime.now();
     }
 
-    /**
-     * Verifica si el parámetro es de tipo DECIMAL.
-     * 
-     * @return true si es DECIMAL, false en caso contrario
-     */
     public boolean esDecimal() {
         return "DECIMAL".equals(this.tipoDato);
     }
 
-    /**
-     * Verifica si el parámetro es de tipo INT.
-     * 
-     * @return true si es INT, false en caso contrario
-     */
     public boolean esInteger() {
         return "INT".equals(this.tipoDato);
     }
 
-    /**
-     * Verifica si el parámetro es de tipo BOOLEAN.
-     * 
-     * @return true si es BOOLEAN, false en caso contrario
-     */
     public boolean esBoolean() {
         return "BOOLEAN".equals(this.tipoDato);
     }
 
-    /**
-     * Verifica si el parámetro es de tipo STRING.
-     * 
-     * @return true si es STRING, false en caso contrario
-     */
     public boolean esString() {
         return "STRING".equals(this.tipoDato);
     }
 
-    /**
-     * Verifica si el parámetro es de tipo DATE.
-     * 
-     * @return true si es DATE, false en caso contrario
-     */
     public boolean esDate() {
         return "DATE".equals(this.tipoDato);
     }
 
-    /**
-     * Verifica si el parámetro es la tasa IGV.
-     * 
-     * @return true si es tasa_igv, false en caso contrario
-     */
     public boolean esTasaIgv() {
         return "tasa_igv".equals(this.parametro);
     }
 
-    /**
-     * Verifica si el parámetro es días de vencimiento.
-     * 
-     * @return true si es dias_vencimiento_pago, false en caso contrario
-     */
     public boolean esDiasVencimiento() {
         return "dias_vencimiento_pago".equals(this.parametro);
     }
 
-    /**
-     * Verifica si el parámetro es formato de fecha.
-     * 
-     * @return true si es formato_fecha, false en caso contrario
-     */
     public boolean esFormatoFecha() {
         return "formato_fecha".equals(this.parametro);
     }
 
-    /**
-     * Verifica si el parámetro es moneda por defecto.
-     * 
-     * @return true si es moneda_default, false en caso contrario
-     */
     public boolean esMonedaDefault() {
         return "moneda_default".equals(this.parametro);
     }
 
-    /**
-     * Obtiene el tipo de dato en formato legible.
-     * 
-     * @return Tipo de dato legible
-     */
     public String getTipoDatoLegible() {
         if (tipoDato == null) return "No especificado";
         
-        switch (tipoDato) {
-            case "DECIMAL":
-                return "Decimal";
-            case "INT":
-                return "Entero";
-            case "BOOLEAN":
-                return "Booleano";
-            case "STRING":
-                return "Texto";
-            case "DATE":
-                return "Fecha";
-            default:
-                return tipoDato;
-        }
+        return switch (tipoDato) {
+            case "DECIMAL" -> "Decimal";
+            case "INT" -> "Entero";
+            case "BOOLEAN" -> "Booleano";
+            case "STRING" -> "Texto";
+            case "DATE" -> "Fecha";
+            default -> tipoDato;
+        };
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del tipo de dato.
-     * 
-     * @return Clase CSS
-     */
     public String getTipoDatoBadgeClass() {
         if (tipoDato == null) return "badge-secondary";
         
-        switch (tipoDato) {
-            case "DECIMAL":
-                return "badge-info";
-            case "INT":
-                return "badge-warning";
-            case "BOOLEAN":
-                return "badge-success";
-            case "STRING":
-                return "badge-primary";
-            case "DATE":
-                return "badge-danger";
-            default:
-                return "badge-secondary";
-        }
+        return switch (tipoDato) {
+            case "DECIMAL" -> "badge-info";
+            case "INT" -> "badge-warning";
+            case "BOOLEAN" -> "badge-success";
+            case "STRING" -> "badge-primary";
+            case "DATE" -> "badge-danger";
+            default -> "badge-secondary";
+        };
     }
 
-    /**
-     * Obtiene el ícono para el tipo de dato.
-     * 
-     * @return Ícono CSS
-     */
     public String getTipoDatoIcono() {
         if (tipoDato == null) return "ti ti-file";
         
-        switch (tipoDato) {
-            case "DECIMAL":
-                return "ti ti-currency-dollar";
-            case "INT":
-                return "ti ti-numbers";
-            case "BOOLEAN":
-                return "ti ti-toggle-left";
-            case "STRING":
-                return "ti ti-text";
-            case "DATE":
-                return "ti ti-calendar";
-            default:
-                return "ti ti-file";
-        }
+        return switch (tipoDato) {
+            case "DECIMAL" -> "ti ti-currency-dollar";
+            case "INT" -> "ti ti-numbers";
+            case "BOOLEAN" -> "ti ti-toggle-left";
+            case "STRING" -> "ti ti-text";
+            case "DATE" -> "ti ti-calendar";
+            default -> "ti ti-file";
+        };
     }
 
-    /**
-     * Obtiene el valor formateado según su tipo de dato.
-     * 
-     * @return Valor formateado
-     */
     public String getValorFormateadoDisplay() {
         if (valor == null) return "-";
         
@@ -470,15 +321,6 @@ public class ConfiguracionSistema {
         return valor;
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -494,11 +336,6 @@ public class ConfiguracionSistema {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -515,35 +352,16 @@ public class ConfiguracionSistema {
         return sb.toString();
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene la fecha de actualización formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaActualizacionFormateada() {
         if (fechaActualizacion == null) return "-";
         return fechaActualizacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de actualización formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaActualizacionSoloFecha() {
         if (fechaActualizacion == null) return "-";
         return fechaActualizacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene el usuario actualizador en formato legible.
-     * 
-     * @return Usuario legible
-     */
     public String getUsuarioActualizaLegible() {
         if (nombreUsuarioActualiza != null && !nombreUsuarioActualiza.isEmpty()) {
             return nombreUsuarioActualiza;
@@ -557,43 +375,23 @@ public class ConfiguracionSistema {
         return "Sistema";
     }
 
-    /**
-     * Obtiene la categoría del parámetro en formato legible.
-     * 
-     * @return Categoría legible
-     */
     public String getCategoriaLegible() {
         if (categoria == null) return "General";
         return categoria;
     }
 
-    /**
-     * Obtiene la clase CSS para la categoría.
-     * 
-     * @return Clase CSS
-     */
     public String getCategoriaBadgeClass() {
         if (categoria == null) return "badge-secondary";
         
-        switch (categoria) {
-            case "FINANCIERO":
-                return "badge-success";
-            case "GENERAL":
-                return "badge-primary";
-            case "SEGURIDAD":
-                return "badge-danger";
-            case "NOTIFICACIONES":
-                return "badge-info";
-            default:
-                return "badge-secondary";
-        }
+        return switch (categoria) {
+            case "FINANCIERO" -> "badge-success";
+            case "GENERAL" -> "badge-primary";
+            case "SEGURIDAD" -> "badge-danger";
+            case "NOTIFICACIONES" -> "badge-info";
+            default -> "badge-secondary";
+        };
     }
 
-    /**
-     * Obtiene el resumen del parámetro.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append(parametro);
@@ -603,10 +401,6 @@ public class ConfiguracionSistema {
         }
         return sb.toString();
     }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -633,16 +427,6 @@ public class ConfiguracionSistema {
         return idConfig != null ? idConfig.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea la configuración de la tasa IGV.
-     * 
-     * @param igv Valor de la tasa IGV
-     * @return Configuración de sistema
-     */
     public static ConfiguracionSistema crearTasaIgv(java.math.BigDecimal igv) {
         return new ConfiguracionSistema(
             "tasa_igv",
@@ -652,12 +436,7 @@ public class ConfiguracionSistema {
         );
     }
 
-    /**
-     * Crea la configuración de días de vencimiento de pago.
-     * 
-     * @param dias Días de vencimiento
-     * @return Configuración de sistema
-     */
+
     public static ConfiguracionSistema crearDiasVencimiento(Integer dias) {
         return new ConfiguracionSistema(
             "dias_vencimiento_pago",
@@ -667,12 +446,6 @@ public class ConfiguracionSistema {
         );
     }
 
-    /**
-     * Crea la configuración de formato de fecha.
-     * 
-     * @param formato Formato de fecha
-     * @return Configuración de sistema
-     */
     public static ConfiguracionSistema crearFormatoFecha(String formato) {
         return new ConfiguracionSistema(
             "formato_fecha",
@@ -682,12 +455,6 @@ public class ConfiguracionSistema {
         );
     }
 
-    /**
-     * Crea la configuración de moneda por defecto.
-     * 
-     * @param moneda Moneda por defecto
-     * @return Configuración de sistema
-     */
     public static ConfiguracionSistema crearMonedaDefault(String moneda) {
         return new ConfiguracionSistema(
             "moneda_default",
@@ -697,12 +464,6 @@ public class ConfiguracionSistema {
         );
     }
 
-    /**
-     * Crea la configuración desde un DTO.
-     * 
-     * @param dto DTO de configuración
-     * @return Configuración de sistema
-     */
     public static ConfiguracionSistema fromDTO(com.stamos.dto.ConfiguracionSistemaDTO dto) {
         if (dto == null) {
             return null;
@@ -719,11 +480,6 @@ public class ConfiguracionSistema {
         return config;
     }
 
-    /**
-     * Convierte la entidad a un DTO.
-     * 
-     * @return DTO de configuración
-     */
     public com.stamos.dto.ConfiguracionSistemaDTO toDTO() {
         com.stamos.dto.ConfiguracionSistemaDTO dto = new com.stamos.dto.ConfiguracionSistemaDTO();
         dto.setIdConfig(this.idConfig);
@@ -740,13 +496,6 @@ public class ConfiguracionSistema {
         return dto;
     }
 
-    // ============================================
-    // CLASE PARA DTO DE CONFIGURACIÓN
-    // ============================================
-
-    /**
-     * DTO para ConfiguracionSistema.
-     */
     public static class ConfiguracionSistemaDTO {
         private Integer idConfig;
         private String parametro;
@@ -760,7 +509,6 @@ public class ConfiguracionSistema {
         private String valorFormateado;
         private String categoria;
 
-        // Getters y Setters
         public Integer getIdConfig() { return idConfig; }
         public void setIdConfig(Integer idConfig) { this.idConfig = idConfig; }
 
@@ -794,29 +542,28 @@ public class ConfiguracionSistema {
         public String getCategoria() { return categoria; }
         public void setCategoria(String categoria) { this.categoria = categoria; }
 
-        // Métodos de formato
         public String getTipoDatoLegible() {
             if (tipoDato == null) return "No especificado";
-            switch (tipoDato) {
-                case "DECIMAL": return "Decimal";
-                case "INT": return "Entero";
-                case "BOOLEAN": return "Booleano";
-                case "STRING": return "Texto";
-                case "DATE": return "Fecha";
-                default: return tipoDato;
-            }
+            return switch (tipoDato) {
+                case "DECIMAL" -> "Decimal";
+                case "INT" -> "Entero";
+                case "BOOLEAN" -> "Booleano";
+                case "STRING" -> "Texto";
+                case "DATE" -> "Fecha";
+                default -> tipoDato;
+            };
         }
 
         public String getTipoDatoBadgeClass() {
             if (tipoDato == null) return "badge-secondary";
-            switch (tipoDato) {
-                case "DECIMAL": return "badge-info";
-                case "INT": return "badge-warning";
-                case "BOOLEAN": return "badge-success";
-                case "STRING": return "badge-primary";
-                case "DATE": return "badge-danger";
-                default: return "badge-secondary";
-            }
+            return switch (tipoDato) {
+                case "DECIMAL" -> "badge-info";
+                case "INT" -> "badge-warning";
+                case "BOOLEAN" -> "badge-success";
+                case "STRING" -> "badge-primary";
+                case "DATE" -> "badge-danger";
+                default -> "badge-secondary";
+            };
         }
 
         public String getFechaActualizacionFormateada() {

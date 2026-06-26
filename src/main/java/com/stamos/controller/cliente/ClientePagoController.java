@@ -1,7 +1,8 @@
 package com.stamos.controller.cliente;
 
+import com.stamos.controller.BaseController;
+import com.stamos.dto.PagoDTO;
 import com.stamos.model.Cliente;
-import com.stamos.model.Pago;
 import com.stamos.model.Proyecto;
 import com.stamos.model.Usuario;
 import com.stamos.service.ClienteService;
@@ -23,12 +24,13 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/cliente")
-public class ClientePagoController {
+public class ClientePagoController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
@@ -52,16 +54,18 @@ public class ClientePagoController {
                 throw new RuntimeException("Cliente no encontrado");
             }
 
-            List<Pago> pagos = pagoService.findByCliente(cliente.getIdCliente());
-            
+            List<com.stamos.model.Pago> pagos = pagoService.findByCliente(cliente.getIdCliente());
             List<Proyecto> proyectos = proyectoService.findByCliente(cliente.getIdCliente());
 
-            for (Pago pago : pagos) {
+            List<PagoDTO> pagosDTO = new ArrayList<>();
+            for (com.stamos.model.Pago pago : pagos) {
                 Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
-                if (proyecto != null) {
-                    pago.setNombreProyecto(proyecto.getNombreProyecto());
-                    pago.setMontoTotalProyecto(proyecto.getMontoTotal());
-                }
+                Usuario usuarioRegistro = clienteService.findUsuarioById(pago.getIdUsuarioRegistro());
+                Usuario usuarioValidacion = clienteService.findUsuarioById(pago.getIdUsuarioValidacion());
+                com.stamos.model.ComprobantePago comprobante = pagoService.findComprobanteByPago(pago.getIdPago());
+                
+                PagoDTO dto = PagoDTO.fromEntityWithComprobante(pago, proyecto, usuarioRegistro, usuarioValidacion, comprobante);
+                pagosDTO.add(dto);
             }
 
             BigDecimal totalPagado = pagoService.getTotalPagadoByCliente(cliente.getIdCliente());
@@ -79,27 +83,27 @@ public class ClientePagoController {
                 saldoPendiente = BigDecimal.ZERO;
             }
 
-            long pagosPendientesValidacion = pagos.stream()
+            long pagosPendientesValidacion = pagosDTO.stream()
                     .filter(p -> "Pendiente".equals(p.getEstadoPago()))
                     .count();
 
-            long pagosValidados = pagos.stream()
+            long pagosValidados = pagosDTO.stream()
                     .filter(p -> "Validado".equals(p.getEstadoPago()))
                     .count();
-            long pagosRechazados = pagos.stream()
+            long pagosRechazados = pagosDTO.stream()
                     .filter(p -> "Rechazado".equals(p.getEstadoPago()))
                     .count();
 
-            long efectivo = pagos.stream()
+            long efectivo = pagosDTO.stream()
                     .filter(p -> "Efectivo".equals(p.getMetodoPago()))
                     .count();
-            long transferencia = pagos.stream()
+            long transferencia = pagosDTO.stream()
                     .filter(p -> "Transferencia".equals(p.getMetodoPago()))
                     .count();
-            long tarjeta = pagos.stream()
+            long tarjeta = pagosDTO.stream()
                     .filter(p -> "Tarjeta".equals(p.getMetodoPago()))
                     .count();
-            long cheque = pagos.stream()
+            long cheque = pagosDTO.stream()
                     .filter(p -> "Cheque".equals(p.getMetodoPago()))
                     .count();
 
@@ -114,25 +118,9 @@ public class ClientePagoController {
             }
 
             List<Proyecto> proyectosVencidos = proyectoService.findProyectosConPagosVencidosByCliente(cliente.getIdCliente());
-            
-            for (Proyecto proyecto : proyectosVencidos) {
-                BigDecimal totalPagadoProyecto = pagoService.getTotalPagadoByProyecto(proyecto.getIdProyecto());
-                BigDecimal saldoPendienteProyecto = proyecto.getMontoTotal().subtract(totalPagadoProyecto);
-                if (saldoPendienteProyecto.compareTo(BigDecimal.ZERO) < 0) {
-                    saldoPendienteProyecto = BigDecimal.ZERO;
-                }
-                proyecto.setSaldoPendiente(saldoPendienteProyecto);
-                proyecto.setTotalPagado(totalPagadoProyecto);
-                
-                if (proyecto.getFechaVencimiento() != null) {
-                    long diasVencidos = java.time.temporal.ChronoUnit.DAYS.between(
-                        proyecto.getFechaVencimiento(), LocalDate.now());
-                    proyecto.setDiasVencidos((int) Math.max(0, diasVencidos));
-                }
-            }
 
             model.addAttribute("cliente", cliente);
-            model.addAttribute("pagos", pagos);
+            model.addAttribute("pagos", pagosDTO);
             model.addAttribute("proyectos", proyectos);
             model.addAttribute("totalProyectos", proyectos.size());
             model.addAttribute("totalPagado", totalPagado);
@@ -147,18 +135,20 @@ public class ClientePagoController {
             model.addAttribute("cheque", cheque);
             model.addAttribute("proyectosVencidos", proyectosVencidos);
             model.addAttribute("tienePagosVencidos", !proyectosVencidos.isEmpty());
+            addCommonAttributes(model);
 
             return "cliente/historial-pagos";
 
         } catch (RuntimeException e) {
             model.addAttribute("error", "Error al cargar los pagos: " + e.getMessage());
+            addCommonAttributes(model);
             return "cliente/dashboard";
         }
     }
 
     @GetMapping("/pagos/detalle/{id}")
     @ResponseBody
-    public Pago getDetallePago(@PathVariable("id") Integer idPago, Authentication auth) {
+    public PagoDTO getDetallePago(@PathVariable("id") Integer idPago, Authentication auth) {
         try {
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
             if (usuario == null) {
@@ -170,7 +160,7 @@ public class ClientePagoController {
                 throw new RuntimeException("Cliente no encontrado");
             }
 
-            Pago pago = pagoService.findById(idPago);
+            com.stamos.model.Pago pago = pagoService.findById(idPago);
             if (pago == null) {
                 throw new RuntimeException("Pago no encontrado");
             }
@@ -180,10 +170,11 @@ public class ClientePagoController {
                 throw new AccessDeniedException("No tienes acceso a este pago");
             }
 
-            pago.setNombreProyecto(proyecto.getNombreProyecto());
-            pago.setMontoTotalProyecto(proyecto.getMontoTotal());
+            Usuario usuarioRegistro = clienteService.findUsuarioById(pago.getIdUsuarioRegistro());
+            Usuario usuarioValidacion = clienteService.findUsuarioById(pago.getIdUsuarioValidacion());
+            com.stamos.model.ComprobantePago comprobante = pagoService.findComprobanteByPago(pago.getIdPago());
 
-            return pago;
+            return PagoDTO.fromEntityWithComprobante(pago, proyecto, usuarioRegistro, usuarioValidacion, comprobante);
 
         } catch (AccessDeniedException e) {
             throw e;
@@ -194,10 +185,10 @@ public class ClientePagoController {
 
     @GetMapping("/pagos/filtrar")
     @ResponseBody
-    public List<Pago> filtrarPagos(@RequestParam(value = "estado", required = false) String estado,
-                                   @RequestParam(value = "metodo", required = false) String metodo,
-                                   @RequestParam(value = "proyecto", required = false) Integer idProyecto,
-                                   Authentication auth) {
+    public List<PagoDTO> filtrarPagos(@RequestParam(value = "estado", required = false) String estado,
+                                      @RequestParam(value = "metodo", required = false) String metodo,
+                                      @RequestParam(value = "proyecto", required = false) Integer idProyecto,
+                                      Authentication auth) {
         try {
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
             if (usuario == null) {
@@ -209,14 +200,7 @@ public class ClientePagoController {
                 throw new RuntimeException("Cliente no encontrado");
             }
 
-            List<Pago> pagos = pagoService.findByCliente(cliente.getIdCliente());
-
-            for (Pago pago : pagos) {
-                Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
-                if (proyecto != null) {
-                    pago.setNombreProyecto(proyecto.getNombreProyecto());
-                }
-            }
+            List<com.stamos.model.Pago> pagos = pagoService.findByCliente(cliente.getIdCliente());
 
             if (estado != null && !estado.isEmpty() && !"todos".equals(estado)) {
                 pagos = pagos.stream()
@@ -241,7 +225,18 @@ public class ClientePagoController {
                 }
             }
 
-            return pagos;
+            List<PagoDTO> pagosDTO = new ArrayList<>();
+            for (com.stamos.model.Pago pago : pagos) {
+                Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
+                Usuario usuarioRegistro = clienteService.findUsuarioById(pago.getIdUsuarioRegistro());
+                Usuario usuarioValidacion = clienteService.findUsuarioById(pago.getIdUsuarioValidacion());
+                com.stamos.model.ComprobantePago comprobante = pagoService.findComprobanteByPago(pago.getIdPago());
+                
+                PagoDTO dto = PagoDTO.fromEntityWithComprobante(pago, proyecto, usuarioRegistro, usuarioValidacion, comprobante);
+                pagosDTO.add(dto);
+            }
+
+            return pagosDTO;
 
         } catch (RuntimeException e) {
             return List.of();
@@ -263,7 +258,7 @@ public class ClientePagoController {
             }
 
             List<Proyecto> proyectos = proyectoService.findByCliente(cliente.getIdCliente());
-            List<Pago> pagos = pagoService.findByCliente(cliente.getIdCliente());
+            List<com.stamos.model.Pago> pagos = pagoService.findByCliente(cliente.getIdCliente());
 
             BigDecimal totalCotizado = proyectos.stream()
                     .map(Proyecto::getMontoTotal)
@@ -315,7 +310,7 @@ public class ClientePagoController {
 
     @GetMapping("/pagos/vencidos")
     @ResponseBody
-    public List<Proyecto> getPagosVencidos(Authentication auth) {
+    public List<ResumenProyectoVencido> getPagosVencidos(Authentication auth) {
         try {
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
             if (usuario == null) {
@@ -329,23 +324,32 @@ public class ClientePagoController {
 
             List<Proyecto> proyectosVencidos = proyectoService.findProyectosConPagosVencidosByCliente(cliente.getIdCliente());
 
+            List<ResumenProyectoVencido> resultado = new ArrayList<>();
             for (Proyecto proyecto : proyectosVencidos) {
                 BigDecimal totalPagado = pagoService.getTotalPagadoByProyecto(proyecto.getIdProyecto());
                 BigDecimal saldoPendiente = proyecto.getMontoTotal().subtract(totalPagado);
                 if (saldoPendiente.compareTo(BigDecimal.ZERO) < 0) {
                     saldoPendiente = BigDecimal.ZERO;
                 }
-                proyecto.setSaldoPendiente(saldoPendiente);
-                proyecto.setTotalPagado(totalPagado);
                 
+                int diasVencidos = 0;
                 if (proyecto.getFechaVencimiento() != null) {
-                    long diasVencidos = java.time.temporal.ChronoUnit.DAYS.between(
-                        proyecto.getFechaVencimiento(), LocalDate.now());
-                    proyecto.setDiasVencidos((int) Math.max(0, diasVencidos));
+                    diasVencidos = (int) Math.max(0, java.time.temporal.ChronoUnit.DAYS.between(
+                        proyecto.getFechaVencimiento(), LocalDate.now()));
                 }
+
+                ResumenProyectoVencido resumen = new ResumenProyectoVencido();
+                resumen.setIdProyecto(proyecto.getIdProyecto());
+                resumen.setNombreProyecto(proyecto.getNombreProyecto());
+                resumen.setMontoTotal(proyecto.getMontoTotal());
+                resumen.setTotalPagado(totalPagado);
+                resumen.setSaldoPendiente(saldoPendiente);
+                resumen.setFechaVencimiento(proyecto.getFechaVencimiento());
+                resumen.setDiasVencidos(diasVencidos);
+                resultado.add(resumen);
             }
 
-            return proyectosVencidos;
+            return resultado;
 
         } catch (RuntimeException e) {
             return List.of();
@@ -423,7 +427,6 @@ public class ClientePagoController {
 
     public String getEstadoLegible(String estadoPago) {
         if (estadoPago == null) return "Sin estado";
-        
         return switch (estadoPago) {
             case "Validado" -> "Validado";
             case "Pendiente" -> "Pendiente de validación";
@@ -434,7 +437,6 @@ public class ClientePagoController {
 
     public String getEstadoBadgeClass(String estadoPago) {
         if (estadoPago == null) return "status-pendiente";
-        
         return switch (estadoPago) {
             case "Validado" -> "status-validado";
             case "Pendiente" -> "status-pendiente";
@@ -445,7 +447,6 @@ public class ClientePagoController {
 
     public String getMetodoBadgeClass(String metodoPago) {
         if (metodoPago == null) return "";
-        
         return switch (metodoPago) {
             case "Efectivo" -> "efectivo";
             case "Transferencia" -> "transferencia";
@@ -457,7 +458,6 @@ public class ClientePagoController {
 
     public String getMetodoIcono(String metodoPago) {
         if (metodoPago == null) return "ti ti-credit-card";
-        
         return switch (metodoPago) {
             case "Efectivo" -> "ti ti-coin";
             case "Transferencia" -> "ti ti-transfer";
@@ -579,5 +579,36 @@ public class ClientePagoController {
         
         public String getError() { return error; }
         public void setError(String error) { this.error = error; }
+    }
+
+    public static class ResumenProyectoVencido {
+        private Integer idProyecto;
+        private String nombreProyecto;
+        private BigDecimal montoTotal;
+        private BigDecimal totalPagado;
+        private BigDecimal saldoPendiente;
+        private LocalDate fechaVencimiento;
+        private Integer diasVencidos;
+
+        public Integer getIdProyecto() { return idProyecto; }
+        public void setIdProyecto(Integer idProyecto) { this.idProyecto = idProyecto; }
+
+        public String getNombreProyecto() { return nombreProyecto; }
+        public void setNombreProyecto(String nombreProyecto) { this.nombreProyecto = nombreProyecto; }
+
+        public BigDecimal getMontoTotal() { return montoTotal; }
+        public void setMontoTotal(BigDecimal montoTotal) { this.montoTotal = montoTotal; }
+
+        public BigDecimal getTotalPagado() { return totalPagado; }
+        public void setTotalPagado(BigDecimal totalPagado) { this.totalPagado = totalPagado; }
+
+        public BigDecimal getSaldoPendiente() { return saldoPendiente; }
+        public void setSaldoPendiente(BigDecimal saldoPendiente) { this.saldoPendiente = saldoPendiente; }
+
+        public LocalDate getFechaVencimiento() { return fechaVencimiento; }
+        public void setFechaVencimiento(LocalDate fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
+
+        public Integer getDiasVencidos() { return diasVencidos; }
+        public void setDiasVencidos(Integer diasVencidos) { this.diasVencidos = diasVencidos; }
     }
 }

@@ -12,23 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entidad CotizacionVersion (VersionCotizacion).
- * 
- * <p>Esta entidad representa las versiones de una cotización, permitiendo
- * el seguimiento de cambios y modificaciones a lo largo del tiempo.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-06: Cotización aprobada no puede modificarse, se crea nueva versión</li>
- *   <li>RN-22: Cotizaciones ya emitidas mantienen su tasa IGV</li>
- *   <li>RF-08: Registrar versiones de cotizaciones modificadas</li>
- *   <li>RNF-07: Almacenar tasa IGV vigente en cada versión</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
+
 @Entity
 @Table(name = "VersionCotizacion",
        indexes = {
@@ -38,10 +22,6 @@ import java.util.List;
            @Index(name = "idx_version_fecha", columnList = "fecha_creacion")
        })
 public class CotizacionVersion {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,10 +67,6 @@ public class CotizacionVersion {
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
-
     @Transient
     private String nombreUsuarioCreador;
 
@@ -121,10 +97,6 @@ public class CotizacionVersion {
     @Transient
     private String codigoCotizacion;
 
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
-
     public CotizacionVersion() {
         this.subtotal = BigDecimal.ZERO;
         this.igv = BigDecimal.ZERO;
@@ -154,10 +126,6 @@ public class CotizacionVersion {
         this(idCotizacion, numeroVersion, subtotal, igv, total, tasaIgv, idUsuarioCreador);
         this.motivoCambio = motivoCambio;
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdVersion() {
         return idVersion;
@@ -319,13 +287,6 @@ public class CotizacionVersion {
         this.codigoCotizacion = codigoCotizacion;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Recalcula subtotal, IGV y total basado en los detalles.
-     */
     public void recalcularTotales() {
         if (detalles == null || detalles.isEmpty()) {
             this.subtotal = BigDecimal.ZERO;
@@ -351,11 +312,6 @@ public class CotizacionVersion {
         this.cantidadItems = detalles.size();
     }
 
-    /**
-     * Agrega un detalle a la versión y recalcula totales.
-     * 
-     * @param detalle Detalle a agregar
-     */
     public void agregarDetalle(CotizacionDetalle detalle) {
         if (detalle != null) {
             this.detalles.add(detalle);
@@ -363,11 +319,6 @@ public class CotizacionVersion {
         }
     }
 
-    /**
-     * Elimina un detalle de la versión y recalcula totales.
-     * 
-     * @param index Índice del detalle a eliminar
-     */
     public void eliminarDetalle(int index) {
         if (index >= 0 && index < this.detalles.size()) {
             this.detalles.remove(index);
@@ -375,39 +326,18 @@ public class CotizacionVersion {
         }
     }
 
-    /**
-     * Verifica si la versión tiene detalles.
-     * 
-     * @return true si tiene detalles, false en caso contrario
-     */
     public boolean tieneDetalles() {
         return detalles != null && !detalles.isEmpty();
     }
 
-    /**
-     * Verifica si la versión tiene motivo de cambio.
-     * 
-     * @return true si tiene motivo, false en caso contrario
-     */
     public boolean tieneMotivoCambio() {
         return motivoCambio != null && !motivoCambio.trim().isEmpty();
     }
 
-    /**
-     * Verifica si es la primera versión.
-     * 
-     * @return true si es la versión 1, false en caso contrario
-     */
     public boolean esPrimeraVersion() {
         return numeroVersion != null && numeroVersion == 1;
     }
 
-    /**
-     * Obtiene la diferencia de total entre esta versión y otra.
-     * 
-     * @param otraVersion Otra versión para comparar
-     * @return Diferencia de total
-     */
     public BigDecimal getDiferenciaTotal(CotizacionVersion otraVersion) {
         if (otraVersion == null || otraVersion.getTotal() == null) {
             return this.total != null ? this.total : BigDecimal.ZERO;
@@ -417,12 +347,6 @@ public class CotizacionVersion {
         return totalActual.subtract(totalOtro);
     }
 
-    /**
-     * Obtiene la diferencia porcentual de total entre esta versión y otra.
-     * 
-     * @param otraVersion Otra versión para comparar
-     * @return Diferencia porcentual
-     */
     public BigDecimal getDiferenciaPorcentual(CotizacionVersion otraVersion) {
         if (otraVersion == null || otraVersion.getTotal() == null || 
             otraVersion.getTotal().compareTo(BigDecimal.ZERO) == 0) {
@@ -433,85 +357,41 @@ public class CotizacionVersion {
                 .divide(otraVersion.getTotal(), 2, RoundingMode.HALF_UP);
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene la fecha de creación formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaCreacionFormateada() {
         if (fechaCreacion == null) return "-";
         return fechaCreacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la fecha de creación formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaCreacionSoloFecha() {
         if (fechaCreacion == null) return "-";
         return fechaCreacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene el subtotal formateado.
-     * 
-     * @return Subtotal formateado
-     */
     public String getSubtotalFormateado() {
         if (subtotal == null) return "S/ 0.00";
         return "S/ " + subtotal.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el IGV formateado.
-     * 
-     * @return IGV formateado
-     */
     public String getIgvFormateado() {
         if (igv == null) return "S/ 0.00";
         return "S/ " + igv.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene el total formateado.
-     * 
-     * @return Total formateado
-     */
     public String getTotalFormateado() {
         if (total == null) return "S/ 0.00";
         return "S/ " + total.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
-    /**
-     * Obtiene la tasa IGV formateada.
-     * 
-     * @return Tasa IGV formateada
-     */
     public String getTasaIgvFormateada() {
         if (tasaIgv == null) return "18.00%";
         return tasaIgv.setScale(2, RoundingMode.HALF_UP).toString() + "%";
     }
 
-    /**
-     * Obtiene el número de versión en formato legible.
-     * 
-     * @return Número de versión legible
-     */
     public String getNumeroVersionLegible() {
         if (numeroVersion == null) return "V0";
         return "V" + numeroVersion;
     }
 
-    /**
-     * Obtiene el creador en formato legible.
-     * 
-     * @return Creador legible
-     */
     public String getCreadorLegible() {
         if (nombreUsuarioCreador != null && !nombreUsuarioCreador.isEmpty()) {
             return nombreUsuarioCreador;
@@ -522,11 +402,6 @@ public class CotizacionVersion {
         return "Usuario ID: " + idUsuarioCreador;
     }
 
-    /**
-     * Obtiene la clase CSS para el badge de la versión.
-     * 
-     * @return Clase CSS
-     */
     public String getVersionBadgeClass() {
         if (esVersionActual != null && esVersionActual) {
             return "badge-success";
@@ -534,11 +409,6 @@ public class CotizacionVersion {
         return "badge-secondary";
     }
 
-    /**
-     * Obtiene el texto para el badge de la versión.
-     * 
-     * @return Texto del badge
-     */
     public String getVersionBadgeText() {
         if (esVersionActual != null && esVersionActual) {
             return "Actual";
@@ -546,11 +416,6 @@ public class CotizacionVersion {
         return "Histórica";
     }
 
-    /**
-     * Obtiene el resumen de la versión.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append("Versión ").append(numeroVersion);
@@ -564,11 +429,6 @@ public class CotizacionVersion {
         return sb.toString();
     }
 
-    /**
-     * Obtiene el cliente en formato legible.
-     * 
-     * @return Cliente legible
-     */
     public String getClienteLegible() {
         if (nombreCliente != null && !nombreCliente.isEmpty()) {
             if (rucCliente != null && !rucCliente.isEmpty()) {
@@ -579,11 +439,6 @@ public class CotizacionVersion {
         return "Cliente no especificado";
     }
 
-    /**
-     * Obtiene el vendedor en formato legible.
-     * 
-     * @return Vendedor legible
-     */
     public String getVendedorLegible() {
         if (nombreVendedor != null && !nombreVendedor.isEmpty()) {
             return nombreVendedor;
@@ -591,15 +446,6 @@ public class CotizacionVersion {
         return "Vendedor no especificado";
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -618,11 +464,6 @@ public class CotizacionVersion {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -642,10 +483,6 @@ public class CotizacionVersion {
         sb.append("}");
         return sb.toString();
     }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -674,18 +511,6 @@ public class CotizacionVersion {
         return idVersion != null ? idVersion.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea una nueva versión de cotización desde la cotización actual.
-     * 
-     * @param cotizacion Cotización actual
-     * @param idUsuarioCreador ID del usuario que crea la versión
-     * @param motivoCambio Motivo del cambio
-     * @return Nueva versión
-     */
     public static CotizacionVersion fromCotizacion(Cotizacion cotizacion, Integer idUsuarioCreador,
                                                   String motivoCambio) {
         if (cotizacion == null) {
@@ -705,14 +530,6 @@ public class CotizacionVersion {
         return version;
     }
 
-    /**
-     * Crea una nueva versión de cotización desde una versión existente.
-     * 
-     * @param versionExistente Versión existente
-     * @param idUsuarioCreador ID del usuario que crea la versión
-     * @param motivoCambio Motivo del cambio
-     * @return Nueva versión
-     */
     public static CotizacionVersion fromVersion(CotizacionVersion versionExistente, 
                                                Integer idUsuarioCreador, String motivoCambio) {
         if (versionExistente == null) {
@@ -732,12 +549,6 @@ public class CotizacionVersion {
         return version;
     }
 
-    /**
-     * Crea una versión de cotización desde un DTO.
-     * 
-     * @param dto DTO de la versión
-     * @return Versión de cotización
-     */
     public static CotizacionVersion fromDTO(com.stamos.dto.CotizacionVersionDTO dto) {
         if (dto == null) {
             return null;
@@ -757,7 +568,6 @@ public class CotizacionVersion {
         version.setIdUsuarioCreador(dto.getIdUsuarioCreador());
         version.setFechaCreacion(dto.getFechaCreacion());
         
-        // Poblar campos transient
         version.setNombreUsuarioCreador(dto.getNombreUsuarioCreador());
         version.setEmailUsuarioCreador(dto.getEmailUsuarioCreador());
         version.setNombreCliente(dto.getNombreCliente());
@@ -770,11 +580,6 @@ public class CotizacionVersion {
         return version;
     }
 
-    /**
-     * Convierte la versión a un DTO.
-     * 
-     * @return DTO de la versión
-     */
     public com.stamos.dto.CotizacionVersionDTO toDTO() {
         com.stamos.dto.CotizacionVersionDTO dto = new com.stamos.dto.CotizacionVersionDTO();
         dto.setIdVersion(this.idVersion);

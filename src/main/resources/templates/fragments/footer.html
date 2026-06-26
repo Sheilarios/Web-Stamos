@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Footer · STAMOS</title>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: footer                                             -->
+<!-- ============================================================ -->
+<footer th:fragment="footer" class="footer">
+    <div class="footer-grid">
+        <!-- Columna 1: Marca y descripción -->
+        <div>
+            <div class="footer-brand">STAMOS<span>.</span></div>
+            <div class="footer-desc">
+                Diseño, producción y alquiler de stands publicitarios, mobiliario ferial 
+                y soluciones interactivas para eventos corporativos en Lima, Perú.
+            </div>
+            <!-- Redes sociales (opcional) -->
+            <div class="footer-social" style="margin-top: 16px; display: flex; gap: 12px;">
+                <a href="#" class="social-link" style="color: #6B6B6B; font-size: 18px; transition: color 0.2s;">
+                    <i class="ti ti-brand-facebook"></i>
+                </a>
+                <a href="#" class="social-link" style="color: #6B6B6B; font-size: 18px; transition: color 0.2s;">
+                    <i class="ti ti-brand-instagram"></i>
+                </a>
+                <a href="#" class="social-link" style="color: #6B6B6B; font-size: 18px; transition: color 0.2s;">
+                    <i class="ti ti-brand-linkedin"></i>
+                </a>
+                <a href="#" class="social-link" style="color: #6B6B6B; font-size: 18px; transition: color 0.2s;">
+                    <i class="ti ti-brand-youtube"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Columna 2: Servicios -->
+        <div>
+            <div class="footer-title">Servicios</div>
+            <a class="footer-link" th:href="@{/servicios}">Stands publicitarios</a>
+            <a class="footer-link" th:href="@{/servicios}">Video walls &amp; LED</a>
+            <a class="footer-link" th:href="@{/servicios}">Mobiliario ferial</a>
+            <a class="footer-link" th:href="@{/servicios}">Diseño 3D</a>
+            <a class="footer-link" th:href="@{/servicios}">Pantallas táctiles</a>
+            <a class="footer-link" th:href="@{/servicios}">Montaje y logística</a>
+        </div>
+
+        <!-- Columna 3: Empresa / Navegación -->
+        <div>
+            <div class="footer-title">Empresa</div>
+            <a class="footer-link" th:href="@{/}">Inicio</a>
+            <a class="footer-link" th:href="@{/servicios}">Servicios</a>
+            <a class="footer-link" th:href="@{/galeria}">Galería</a>
+            <a class="footer-link" th:href="@{/contacto}">Contacto</a>
+            <a class="footer-link" th:href="@{/login}">Portal del cliente</a>
+        </div>
+
+        <!-- Columna 4: Contacto -->
+        <div>
+            <div class="footer-title">Contacto</div>
+            <div class="footer-desc" style="margin-bottom: 12px;">
+                <i class="ti ti-map-pin" style="color: #F5C400; font-size: 16px; vertical-align: middle; margin-right: 6px;"></i>
+                Jr. Antisuyo 438, Zárate — SJL, Lima
+            </div>
+            <div class="footer-desc" style="margin-bottom: 6px;">
+                <i class="ti ti-phone" style="color: #F5C400; font-size: 16px; vertical-align: middle; margin-right: 6px;"></i>
+                <a href="tel:017046345" style="color: #8A8A8A; text-decoration: none;">01 704-6345</a>
+                · <a href="tel:987819456" style="color: #8A8A8A; text-decoration: none;">987 819 456</a>
+            </div>
+            <div class="footer-desc" style="margin-bottom: 12px;">
+                <i class="ti ti-mail" style="color: #F5C400; font-size: 16px; vertical-align: middle; margin-right: 6px;"></i>
+                <a href="mailto:info@stamosl.com" style="color: #8A8A8A; text-decoration: none;">info@stamosl.com</a>
+            </div>
+            <div class="footer-desc" style="font-size: 12px; color: #6B6B6B;">
+                <i class="ti ti-clock" style="color: #F5C400; font-size: 14px; vertical-align: middle; margin-right: 6px;"></i>
+                Lun–Vie 9:00–21:00 · Sáb 9:00–13:00
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+        <div class="footer-copy">
+            © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> 
+            <span th:text="${empresa} ?: 'STAMOS LINARES S.R.L.'">STAMOS LINARES S.R.L.</span> 
+            · Todos los derechos reservados
+        </div>
+        <div class="footer-ruc">
+            RUC <span th:text="${ruc} ?: '20549500715'">20549500715</span>
+        </div>
+    </div>
+</footer>
+
+<!-- ============================================================ -->
+<!-- ESTILOS DEL FOOTER (incluidos en el fragmento)              -->
+<!-- ============================================================ -->
+<style>
+    .footer {
+        background: #000000;
+        border-top: 1px solid #222;
+        padding: 48px 56px 32px;
+    }
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+    .footer-brand {
+        font-size: 20px;
+        font-weight: 800;
+        color: #FFFFFF;
+        margin-bottom: 12px;
+    }
+    .footer-brand span {
+        color: #F5C400;
+    }
+    .footer-desc {
+        font-size: 13px;
+        color: #8A8A8A;
+        line-height: 1.6;
+    }
+    .footer-title {
+        font-size: 11px;
+        color: #6B6B6B;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin-bottom: 18px;
+        font-weight: 600;
+    }
+    .footer-link {
+        display: block;
+        font-size: 13px;
+        color: #8A8A8A;
+        margin-bottom: 10px;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .footer-link:hover {
+        color: #F5C400;
+    }
+    .footer-bottom {
+        border-top: 1px solid #222;
+        padding-top: 24px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .footer-copy,
+    .footer-ruc {
+        font-size: 11px;
+        color: #6B6B6B;
+    }
+
+    .social-link:hover {
+        color: #F5C400 !important;
+    }
+
+    @media (max-width: 1000px) {
+        .footer {
+            padding: 32px 24px;
+        }
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+    }
+</style>
+
+</body>
+</html>

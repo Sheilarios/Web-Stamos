@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "EstadoProyecto",
@@ -206,60 +205,56 @@ public class EstadoProyecto {
     private void actualizarCamposTransient() {
         if (nombreEstado != null) {
             switch (nombreEstado) {
-                case NOMBRE_APROBADO:
+                case NOMBRE_APROBADO -> {
                     this.color = "#1A56DB";
                     this.icono = "ti ti-check-circle";
                     this.esEstadoInicial = true;
                     this.esEstadoFinal = false;
                     this.esEstadoActivo = true;
-                    break;
-                case NOMBRE_EN_DISENO:
+                }
+                case NOMBRE_EN_DISENO -> {
                     this.color = "#F59E0B";
                     this.icono = "ti ti-pencil";
                     this.esEstadoInicial = false;
                     this.esEstadoFinal = false;
                     this.esEstadoActivo = true;
-                    break;
-                case NOMBRE_EN_PRODUCCION:
+                }
+                case NOMBRE_EN_PRODUCCION -> {
                     this.color = "#3B82F6";
                     this.icono = "ti ti-tools";
                     this.esEstadoInicial = false;
                     this.esEstadoFinal = false;
                     this.esEstadoActivo = true;
-                    break;
-                case NOMBRE_INSTALACION_MONTAJE:
+                }
+                case NOMBRE_INSTALACION_MONTAJE -> {
                     this.color = "#8B5CF6";
                     this.icono = "ti ti-truck";
                     this.esEstadoInicial = false;
                     this.esEstadoFinal = false;
                     this.esEstadoActivo = true;
-                    break;
-                case NOMBRE_ENTREGADO:
+                }
+                case NOMBRE_ENTREGADO -> {
                     this.color = "#10B981";
                     this.icono = "ti ti-check";
                     this.esEstadoInicial = false;
                     this.esEstadoFinal = true;
                     this.esEstadoActivo = false;
-                    break;
-                case NOMBRE_ANULADO:
+                }
+                case NOMBRE_ANULADO -> {
                     this.color = "#EF4444";
                     this.icono = "ti ti-x-circle";
                     this.esEstadoInicial = false;
                     this.esEstadoFinal = true;
                     this.esEstadoActivo = false;
-                    break;
-                default:
+                }
+                default -> {
                     this.color = "#6B7280";
                     this.icono = "ti ti-circle";
                     this.esEstadoInicial = false;
                     this.esEstadoFinal = false;
                     this.esEstadoActivo = true;
-                    break;
+                }
             }
-        }
-
-        if (ordenFlujo != null && ordenFlujo == 1) {
-            this.esEstadoInicial = true;
         }
     }
 
@@ -316,56 +311,39 @@ public class EstadoProyecto {
     public String getEstadoSiguiente() {
         if (ordenFlujo == null) return null;
         
-        switch (ordenFlujo) {
-            case 1:
-                return NOMBRE_EN_DISENO;
-            case 2:
-                return NOMBRE_EN_PRODUCCION;
-            case 3:
-                return NOMBRE_INSTALACION_MONTAJE;
-            case 4:
-                return NOMBRE_ENTREGADO;
-            default:
-                return null;
-        }
+        return switch (ordenFlujo) {
+            case 1 -> NOMBRE_EN_DISENO;
+            case 2 -> NOMBRE_EN_PRODUCCION;
+            case 3 -> NOMBRE_INSTALACION_MONTAJE;
+            case 4 -> NOMBRE_ENTREGADO;
+            default -> null;
+        };
     }
 
     public String getEstadoAnterior() {
         if (ordenFlujo == null) return null;
         
-        switch (ordenFlujo) {
-            case 2:
-                return NOMBRE_APROBADO;
-            case 3:
-                return NOMBRE_EN_DISENO;
-            case 4:
-                return NOMBRE_EN_PRODUCCION;
-            case 5:
-                return NOMBRE_INSTALACION_MONTAJE;
-            default:
-                return null;
-        }
+        return switch (ordenFlujo) {
+            case 2 -> NOMBRE_APROBADO;
+            case 3 -> NOMBRE_EN_DISENO;
+            case 4 -> NOMBRE_EN_PRODUCCION;
+            case 5 -> NOMBRE_INSTALACION_MONTAJE;
+            default -> null;
+        };
     }
 
     public int getProgreso() {
         if (ordenFlujo == null) return 0;
         
-        switch (ordenFlujo) {
-            case 1:
-                return 10;
-            case 2:
-                return 30;
-            case 3:
-                return 60;
-            case 4:
-                return 85;
-            case 5:
-                return 100;
-            case 6:
-                return 0;
-            default:
-                return 0;
-        }
+        return switch (ordenFlujo) {
+            case 1 -> 10;
+            case 2 -> 30;
+            case 3 -> 60;
+            case 4 -> 85;
+            case 5 -> 100;
+            case 6 -> 0;
+            default -> 0;
+        };
     }
 
     public static EstadoProyecto crearAprobado() {
@@ -411,22 +389,15 @@ public class EstadoProyecto {
     public String getBadgeClass() {
         if (nombreEstado == null) return "status-pendiente";
         
-        switch (nombreEstado) {
-            case NOMBRE_APROBADO:
-                return "status-aprobado";
-            case NOMBRE_EN_DISENO:
-                return "status-diseno";
-            case NOMBRE_EN_PRODUCCION:
-                return "status-produccion";
-            case NOMBRE_INSTALACION_MONTAJE:
-                return "status-instalacion";
-            case NOMBRE_ENTREGADO:
-                return "status-entregado";
-            case NOMBRE_ANULADO:
-                return "status-anulado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (nombreEstado) {
+            case NOMBRE_APROBADO -> "status-aprobado";
+            case NOMBRE_EN_DISENO -> "status-diseno";
+            case NOMBRE_EN_PRODUCCION -> "status-produccion";
+            case NOMBRE_INSTALACION_MONTAJE -> "status-instalacion";
+            case NOMBRE_ENTREGADO -> "status-entregado";
+            case NOMBRE_ANULADO -> "status-anulado";
+            default -> "status-pendiente";
+        };
     }
 
     public String getColorHex() {
@@ -594,15 +565,15 @@ public class EstadoProyecto {
 
         public String getBadgeClass() {
             if (nombreEstado == null) return "status-pendiente";
-            switch (nombreEstado) {
-                case EstadoProyecto.NOMBRE_APROBADO: return "status-aprobado";
-                case EstadoProyecto.NOMBRE_EN_DISENO: return "status-diseno";
-                case EstadoProyecto.NOMBRE_EN_PRODUCCION: return "status-produccion";
-                case EstadoProyecto.NOMBRE_INSTALACION_MONTAJE: return "status-instalacion";
-                case EstadoProyecto.NOMBRE_ENTREGADO: return "status-entregado";
-                case EstadoProyecto.NOMBRE_ANULADO: return "status-anulado";
-                default: return "status-pendiente";
-            }
+            return switch (nombreEstado) {
+                case EstadoProyecto.NOMBRE_APROBADO -> "status-aprobado";
+                case EstadoProyecto.NOMBRE_EN_DISENO -> "status-diseno";
+                case EstadoProyecto.NOMBRE_EN_PRODUCCION -> "status-produccion";
+                case EstadoProyecto.NOMBRE_INSTALACION_MONTAJE -> "status-instalacion";
+                case EstadoProyecto.NOMBRE_ENTREGADO -> "status-entregado";
+                case EstadoProyecto.NOMBRE_ANULADO -> "status-anulado";
+                default -> "status-pendiente";
+            };
         }
 
         public String getNombreLegible() {

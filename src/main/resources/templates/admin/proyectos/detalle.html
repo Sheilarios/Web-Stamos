@@ -198,6 +198,9 @@
         .status-instalacion { background: var(--purple-light); color: var(--purple); }
         .status-entregado { background: var(--green-light); color: var(--green); }
         .status-anulado { background: var(--red-light); color: var(--red); }
+        .status-pago-validado { background: var(--green-light); color: var(--green); }
+        .status-pago-pendiente { background: var(--yellow-light); color: var(--yellow-dark); }
+        .status-pago-rechazado { background: var(--red-light); color: var(--red); }
         
         .proyecto-header {
             background: var(--yellow-light);
@@ -315,6 +318,7 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            margin-top: 16px;
         }
         
         .btn-icon {
@@ -462,6 +466,42 @@
             transition: width 0.5s;
         }
         
+        .documento-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-2);
+            transition: all 0.15s;
+        }
+        
+        .documento-item:hover {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+        }
+        
+        .documento-item i {
+            font-size: 18px;
+            color: var(--yellow-dark);
+        }
+        
+        .documento-item .info {
+            flex: 1;
+        }
+        
+        .documento-item .info .nombre {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .documento-item .info .tipo {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+        
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
@@ -484,7 +524,7 @@
         <div class="page-title">
             <i class="ti ti-folder"></i>
             <span>Detalle del Proyecto</span>
-            <small th:text="'#' + ${proyecto.idProyecto}">#0</small>
+            <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <a th:href="@{/admin/proyectos}" class="btn-secondary">
@@ -493,39 +533,39 @@
         </div>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
     <div class="proyecto-header">
         <div class="item">
             <div class="label">Proyecto</div>
-            <div class="value" th:text="${proyecto.nombreProyecto}">—</div>
+            <div class="value" th:text="${proyecto != null ? proyecto.nombreProyecto : '—'}">—</div>
         </div>
         <div class="item">
             <div class="label">Código</div>
-            <div class="value" th:text="${proyecto.codigoProyecto}">—</div>
+            <div class="value" th:text="${proyecto != null ? proyecto.codigoProyecto : '—'}">—</div>
         </div>
         <div class="item">
             <div class="label">Cliente</div>
-            <div class="value" th:text="${proyecto.nombreCliente}">—</div>
+            <div class="value" th:text="${proyecto != null ? proyecto.nombreCliente : '—'}">—</div>
         </div>
         <div class="item">
             <div class="label">Estado</div>
             <div class="value">
                 <span class="status-badge" 
-                      th:classappend="${proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
-                                      (proyecto.estado == 'En Diseño' ? 'status-diseno' : 
-                                      (proyecto.estado == 'En Producción' ? 'status-produccion' : 
-                                      (proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
-                                      (proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
-                      th:text="${proyecto.estado}">Aprobado</span>
+                      th:classappend="${proyecto != null and proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
+                                      (proyecto != null and proyecto.estado == 'En Diseño' ? 'status-diseno' : 
+                                      (proyecto != null and proyecto.estado == 'En Producción' ? 'status-produccion' : 
+                                      (proyecto != null and proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                      (proyecto != null and proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
+                      th:text="${proyecto != null ? proyecto.estado : '—'}">Aprobado</span>
             </div>
         </div>
         <div class="item">
             <div class="label">Monto Total</div>
-            <div class="value" style="color:var(--yellow-dark);" th:text="${proyecto.montoTotalFormateado}">S/ 0.00</div>
+            <div class="value" style="color:var(--yellow-dark);" th:text="${proyecto != null ? proyecto.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</div>
         </div>
-        <div class="item" th:if="${proyecto.fechaInicio != null}">
+        <div class="item" th:if="${proyecto != null and proyecto.fechaInicio != null}">
             <div class="label">Fecha Inicio</div>
             <div class="value" th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">—</div>
         </div>
@@ -540,58 +580,58 @@
         <div class="section-body">
             <div class="resumen-grid">
                 <div class="resumen-item">
-                    <div class="valor total" th:text="${proyecto.montoTotalFormateado}">S/ 0.00</div>
+                    <div class="valor total" th:text="${proyecto != null ? proyecto.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</div>
                     <div class="label">Total</div>
                 </div>
                 <div class="resumen-item">
-                    <div class="valor pagado" th:text="${totalPagadoFormateado}">S/ 0.00</div>
+                    <div class="valor pagado" th:text="${totalPagadoFormateado != null ? totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</div>
                     <div class="label">Pagado</div>
                 </div>
                 <div class="resumen-item">
-                    <div class="valor pendiente" th:text="${saldoPendienteFormateado}">S/ 0.00</div>
+                    <div class="valor pendiente" th:text="${saldoPendienteFormateado != null ? saldoPendienteFormateado : 'S/ 0.00'}">S/ 0.00</div>
                     <div class="label">Pendiente</div>
                 </div>
             </div>
             <div style="margin-top: 12px;">
                 <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-3);">
                     <span>Progreso de pago</span>
-                    <span th:text="${porcentajePagado} + '%'">0%</span>
+                    <span th:text="${porcentajePagado != null ? porcentajePagado + '%' : '0%'}">0%</span>
                 </div>
                 <div class="progress-bar">
-                    <div class="fill" th:style="'width:' + ${porcentajePagado} + '%;'"></div>
+                    <div class="fill" th:style="'width:' + ${porcentajePagado != null ? porcentajePagado : 0} + '%;'"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="section">
+    <div class="section" th:if="${cotizacion != null}">
         <div class="section-header">
             <div class="section-title">
                 <i class="ti ti-file-invoice"></i> Detalles de la Cotización
             </div>
             <span style="font-size:12px; color:var(--text-3);">
                 <i class="ti ti-file"></i> 
-                <span th:text="'COT-' + ${#strings.leftPad(cotizacion.idCotizacion, 5, '0')}">COT-00000</span>
+                <span th:text="${cotizacion.codigoCotizacion != null ? cotizacion.codigoCotizacion : 'COT-' + #strings.leftPad(cotizacion.idCotizacion, 5, '0')}">COT-00000</span>
             </span>
         </div>
         <div class="section-body">
             <div class="detail-row">
                 <span class="label">Subtotal</span>
-                <span class="value" th:text="${cotizacion.subtotalFormateado}">S/ 0.00</span>
+                <span class="value" th:text="${cotizacion.subtotalFormateado != null ? cotizacion.subtotalFormateado : 'S/ 0.00'}">S/ 0.00</span>
             </div>
             <div class="detail-row">
-                <span class="label">IGV (<span th:text="${cotizacion.tasaIgv}">18</span>%)</span>
-                <span class="value" th:text="${cotizacion.igvFormateado}">S/ 0.00</span>
+                <span class="label">IGV (<span th:text="${cotizacion.tasaIgv != null ? cotizacion.tasaIgv : 18}">18</span>%)</span>
+                <span class="value" th:text="${cotizacion.igvFormateado != null ? cotizacion.igvFormateado : 'S/ 0.00'}">S/ 0.00</span>
             </div>
             <div class="detail-row">
                 <span class="label">Total</span>
                 <span class="value" style="font-weight:700; color:var(--yellow-dark); font-size:16px;" 
-                      th:text="${cotizacion.totalFormateado}">S/ 0.00</span>
+                      th:text="${cotizacion.totalFormateado != null ? cotizacion.totalFormateado : 'S/ 0.00'}">S/ 0.00</span>
             </div>
         </div>
     </div>
 
-    <div class="section" th:if="${detallesCotizacion != null && !detallesCotizacion.isEmpty()}">
+    <div class="section" th:if="${detallesCotizacion != null and !#lists.isEmpty(detallesCotizacion)}">
         <div class="section-header">
             <div class="section-title">
                 <i class="ti ti-list"></i> Productos y Servicios
@@ -611,15 +651,42 @@
                     <tr th:each="detalle : ${detallesCotizacion}">
                         <td th:text="${detalle.nombreProducto}">—</td>
                         <td th:text="${detalle.cantidad}">0</td>
-                        <td th:text="${detalle.precioUnitarioFormateado}">S/ 0.00</td>
-                        <td th:text="${detalle.subtotalFormateado}">S/ 0.00</td>
+                        <td th:text="${detalle.precioUnitarioFormateado != null ? detalle.precioUnitarioFormateado : 'S/ 0.00'}">S/ 0.00</td>
+                        <td th:text="${detalle.subtotalFormateado != null ? detalle.subtotalFormateado : 'S/ 0.00'}">S/ 0.00</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="section" th:if="${pagos != null && !pagos.isEmpty()}">
+    <div class="section" th:if="${documentos != null and !#lists.isEmpty(documentos)}">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="ti ti-file-text"></i> Documentos del Proyecto
+            </div>
+            <a th:href="@{/admin/documentos(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary" style="font-size:12px;">
+                Ver todos <i class="ti ti-arrow-right"></i>
+            </a>
+        </div>
+        <div class="section-body">
+            <div th:each="doc : ${documentos}" class="documento-item" style="margin-bottom: 8px;">
+                <i th:if="${doc.tipoDocumento == 'Render'}" class="ti ti-photo"></i>
+                <i th:if="${doc.tipoDocumento == 'Plano'}" class="ti ti-ruler-2"></i>
+                <i th:if="${doc.tipoDocumento == 'Boceto'}" class="ti ti-pencil"></i>
+                <i th:if="${doc.tipoDocumento == 'Contrato'}" class="ti ti-file-contract"></i>
+                <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="ti ti-file"></i>
+                <div class="info">
+                    <div class="nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
+                    <div class="tipo" th:text="${doc.tipoDocumento} + ' · ' + ${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">Render · 01/01/2024</div>
+                </div>
+                <a th:href="@{/admin/documentos/ver/{id}(id=${doc.idDocumento})}" class="btn-icon azul" target="_blank">
+                    <i class="ti ti-eye"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" th:if="${pagos != null and !#lists.isEmpty(pagos)}">
         <div class="section-header">
             <div class="section-title">
                 <i class="ti ti-credit-card"></i> Pagos Registrados
@@ -640,13 +707,13 @@
                 </thead>
                 <tbody>
                     <tr th:each="pago : ${pagos}">
-                        <td th:text="${pago.montoFormateado}">S/ 0.00</td>
+                        <td th:text="${pago.montoFormateado != null ? pago.montoFormateado : 'S/ 0.00'}">S/ 0.00</td>
                         <td th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy')}">—</td>
                         <td th:text="${pago.metodoPago}">—</td>
                         <td>
                             <span class="status-badge" 
-                                  th:classappend="${pago.estadoPago == 'Validado'} ? 'status-entregado' : 
-                                                  (pago.estadoPago == 'Pendiente' ? 'status-diseno' : 'status-anulado')"
+                                  th:classappend="${pago.estadoPago == 'Validado'} ? 'status-pago-validado' : 
+                                                  (pago.estadoPago == 'Pendiente' ? 'status-pago-pendiente' : 'status-pago-rechazado')"
                                   th:text="${pago.estadoPago}">—</span>
                         </td>
                     </tr>
@@ -655,7 +722,7 @@
         </div>
     </div>
 
-    <div class="section" th:if="${historialEstados != null && !historialEstados.isEmpty()}">
+    <div class="section" th:if="${historialEstados != null and !#lists.isEmpty(historialEstados)}">
         <div class="section-header">
             <div class="section-title">
                 <i class="ti ti-clock"></i> Historial de Estados
@@ -674,15 +741,15 @@
     </div>
 
     <div class="action-buttons">
-        <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto.idProyecto})}" class="btn-primary" 
-           th:if="${proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
+        <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary" 
+           th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
             <i class="ti ti-arrow-forward"></i> Cambiar Estado
         </a>
-        <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto.idProyecto})}" class="btn-success" 
-           th:if="${proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
+        <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-success" 
+           th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
             <i class="ti ti-credit-card-plus"></i> Registrar Pago
         </a>
-        <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto.idProyecto})}" class="btn-secondary">
+        <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
             <i class="ti ti-upload"></i> Subir Documento
         </a>
         <a th:href="@{/admin/proyectos}" class="btn-secondary">

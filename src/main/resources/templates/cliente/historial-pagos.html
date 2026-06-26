@@ -207,8 +207,8 @@
         
         .resumen-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
             margin-bottom: 32px;
         }
         
@@ -235,7 +235,7 @@
         
         .resumen-card .value {
             font-family: 'Syne', sans-serif;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             color: var(--text);
             margin-top: 8px;
@@ -244,6 +244,7 @@
         .resumen-card .value.pendiente { color: var(--red); }
         .resumen-card .value.pagado { color: var(--green); }
         .resumen-card .value.total { color: var(--blue); }
+        .resumen-card .value.warning { color: var(--yellow-dark); }
         
         .resumen-card .icon {
             float: right;
@@ -424,6 +425,25 @@
             text-decoration: underline;
         }
         
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        
         .modal-overlay {
             display: none;
             position: fixed;
@@ -584,15 +604,15 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li><a href="/cliente/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
-            <li><a href="/cliente/proyectos"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
-            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
-            <li><a href="/cliente/pagos" class="active"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
-            <li><a href="/cliente/perfil"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+            <li><a th:href="@{/cliente/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/cliente/proyectos}"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a th:href="@{/cliente/documentos}"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a th:href="@{/cliente/pagos}" class="active"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a th:href="@{/cliente/perfil}"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
         </ul>
         
         <div class="sidebar-footer">
-            <a href="/logout">
+            <a th:href="@{/logout}">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
@@ -608,42 +628,43 @@
             </div>
             <div class="user-info">
                 <i class="ti ti-user-circle"></i>
-                <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
+                <span th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Cliente</span>
             </div>
         </div>
 
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:replace="fragments/mensajes :: mensaje_error"></div>
+        <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
         <div class="resumen-grid">
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-file-invoice"></i></div>
                 <div class="label">Total Proyectos</div>
-                <div class="value total" th:text="${totalProyectos}">0</div>
+                <div class="value total" th:text="${totalProyectos != null ? totalProyectos : 0}">0</div>
             </div>
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-credit-card"></i></div>
                 <div class="label">Total Pagado</div>
-                <div class="value pagado" th:text="${totalPagadoFormateado}">S/ 0.00</div>
+                <div class="value pagado" th:text="${totalPagadoFormateado != null ? totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</div>
             </div>
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-wallet"></i></div>
                 <div class="label">Saldo Pendiente</div>
-                <div class="value pendiente" th:text="${saldoPendienteFormateado}">S/ 0.00</div>
+                <div class="value pendiente" th:text="${saldoPendienteFormateado != null ? saldoPendienteFormateado : 'S/ 0.00'}">S/ 0.00</div>
             </div>
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-clock"></i></div>
                 <div class="label">Pagos por Validar</div>
-                <div class="value" th:text="${pagosPendientesValidacion}">0</div>
+                <div class="value warning" th:text="${pagosPendientesValidacion != null ? pagosPendientesValidacion : 0}">0</div>
             </div>
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-check"></i></div>
                 <div class="label">Pagos Validados</div>
-                <div class="value" th:text="${pagosValidados}">0</div>
+                <div class="value pagado" th:text="${pagosValidados != null ? pagosValidados : 0}">0</div>
             </div>
             <div class="resumen-card">
                 <div class="icon"><i class="ti ti-x"></i></div>
                 <div class="label">Pagos Rechazados</div>
-                <div class="value" th:text="${pagosRechazados}">0</div>
+                <div class="value pendiente" th:text="${pagosRechazados != null ? pagosRechazados : 0}">0</div>
             </div>
         </div>
 
@@ -682,7 +703,7 @@
                 </span>
             </div>
             
-            <div th:if="${!pagos.isEmpty()}">
+            <div th:if="${pagos != null and !#lists.isEmpty(pagos)}">
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -703,7 +724,7 @@
                                 th:data-proyecto="${p.idProyecto}">
                                 <td th:text="${p.idPago}">1</td>
                                 <td th:text="${p.nombreProyecto}">Proyecto</td>
-                                <td th:text="${p.montoFormateado}">S/ 0.00</td>
+                                <td th:text="${p.montoFormateado != null ? p.montoFormateado : 'S/ 0.00'}">S/ 0.00</td>
                                 <td th:text="${#temporals.format(p.fechaPago, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
                                 <td>
                                     <span class="metodo-badge" 
@@ -729,7 +750,7 @@
                 </div>
             </div>
             
-            <div th:if="${pagos.isEmpty()}" class="empty-message">
+            <div th:if="${pagos == null or #lists.isEmpty(pagos)}" class="empty-message">
                 <i class="ti ti-credit-card-off"></i>
                 <p>No tienes pagos registrados aún.</p>
                 <p style="font-size:12px; color:var(--text-3); margin-top:4px;">
@@ -738,7 +759,7 @@
             </div>
         </div>
 
-        <div th:if="${proyectosVencidos != null && !proyectosVencidos.isEmpty()}" 
+        <div th:if="${proyectosVencidos != null and !#lists.isEmpty(proyectosVencidos)}" 
              style="margin-top:24px; background:var(--red-light); border:1px solid #FECACA; border-radius:16px; padding:16px 20px;">
             <div style="display:flex; align-items:center; gap:12px; color:var(--red);">
                 <i class="ti ti-alert-triangle" style="font-size:20px;"></i>
@@ -776,53 +797,25 @@
     </div>
 
     <script>
-        const pagosData = /*[[${pagos}]]*/ [];
+        var pagosData = /*[[${pagos}]]*/ [];
         
         function verDetalle(idPago) {
-            const pago = pagosData.find(p => p.idPago === idPago);
+            var pago = pagosData.find(function(p) { return p.idPago === idPago; });
             if (!pago) return;
             
-            const modal = document.getElementById('modalDetallePago');
-            const body = document.getElementById('modalDetalleBody');
+            var modal = document.getElementById('modalDetallePago');
+            var body = document.getElementById('modalDetalleBody');
             
-            const estadoColor = pago.estadoPago === 'Validado' ? 'var(--green)' :
+            var estadoColor = pago.estadoPago === 'Validado' ? 'var(--green)' :
                                pago.estadoPago === 'Pendiente' ? 'var(--yellow-dark)' : 'var(--red)';
             
-            body.innerHTML = `
-                <div class="detalle-item">
-                    <span class="label">ID del Pago</span>
-                    <span class="value">#${pago.idPago}</span>
-                </div>
-                <div class="detalle-item">
-                    <span class="label">Proyecto</span>
-                    <span class="value">${pago.nombreProyecto || 'N/A'}</span>
-                </div>
-                <div class="detalle-item">
-                    <span class="label">Monto</span>
-                    <span class="value" style="font-size:18px; color:var(--yellow-dark);">
-                        ${pago.montoFormateado || 'S/ 0.00'}
-                    </span>
-                </div>
-                <div class="detalle-item">
-                    <span class="label">Fecha</span>
-                    <span class="value">${pago.fechaPago ? new Date(pago.fechaPago).toLocaleDateString('es-PE') : 'N/A'}</span>
-                </div>
-                <div class="detalle-item">
-                    <span class="label">Método de Pago</span>
-                    <span class="value">${pago.metodoPago || 'N/A'}</span>
-                </div>
-                <div class="detalle-item">
-                    <span class="label">Estado</span>
-                    <span class="value" style="color:${estadoColor}; font-weight:700;">
-                        ${pago.estadoPago || 'N/A'}
-                    </span>
-                </div>
-                ${pago.observaciones ? `
-                <div class="detalle-item">
-                    <span class="label">Observaciones</span>
-                    <span class="value" style="font-weight:400; color:var(--text-2);">${pago.observaciones}</span>
-                </div>` : ''}
-            `;
+            body.innerHTML = '<div class="detalle-item"><span class="label">ID del Pago</span><span class="value">#' + (pago.idPago || 'N/A') + '</span></div>' +
+                '<div class="detalle-item"><span class="label">Proyecto</span><span class="value">' + (pago.nombreProyecto || 'N/A') + '</span></div>' +
+                '<div class="detalle-item"><span class="label">Monto</span><span class="value" style="font-size:18px; color:var(--yellow-dark);">' + (pago.montoFormateado || 'S/ 0.00') + '</span></div>' +
+                '<div class="detalle-item"><span class="label">Fecha</span><span class="value">' + (pago.fechaPago ? new Date(pago.fechaPago).toLocaleDateString('es-PE') : 'N/A') + '</span></div>' +
+                '<div class="detalle-item"><span class="label">Método de Pago</span><span class="value">' + (pago.metodoPago || 'N/A') + '</span></div>' +
+                '<div class="detalle-item"><span class="label">Estado</span><span class="value" style="color:' + estadoColor + '; font-weight:700;">' + (pago.estadoPago || 'N/A') + '</span></div>' +
+                (pago.observaciones ? '<div class="detalle-item"><span class="label">Observaciones</span><span class="value" style="font-weight:400; color:var(--text-2);">' + pago.observaciones + '</span></div>' : '');
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -842,18 +835,18 @@
         });
 
         function filtrarPagos() {
-            const estadoFiltro = document.getElementById('estadoFiltro').value;
-            const metodoFiltro = document.getElementById('metodoFiltro').value;
-            const proyectoFiltro = document.getElementById('proyectoFiltro').value;
+            var estadoFiltro = document.getElementById('estadoFiltro').value;
+            var metodoFiltro = document.getElementById('metodoFiltro').value;
+            var proyectoFiltro = document.getElementById('proyectoFiltro').value;
             
-            const rows = document.querySelectorAll('#tablaPagos tr');
+            var rows = document.querySelectorAll('#tablaPagos tr');
             
-            rows.forEach(row => {
-                const estado = row.dataset.estado;
-                const metodo = row.dataset.metodo;
-                const proyecto = row.dataset.proyecto;
+            rows.forEach(function(row) {
+                var estado = row.dataset.estado;
+                var metodo = row.dataset.metodo;
+                var proyecto = row.dataset.proyecto;
                 
-                let mostrar = true;
+                var mostrar = true;
                 
                 if (estadoFiltro !== 'todos' && estado !== estadoFiltro) {
                     mostrar = false;

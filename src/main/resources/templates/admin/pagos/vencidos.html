@@ -120,27 +120,6 @@
             background: var(--yellow-mid);
         }
         
-        .btn-danger {
-            background: var(--red);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.15s;
-        }
-        
-        .btn-danger:hover {
-            background: #a71d2a;
-        }
-        
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -337,7 +316,7 @@
         <div class="page-title">
             <i class="ti ti-alert-triangle"></i>
             <span>Pagos Vencidos</span>
-            <span class="count" th:text="'(' + ${totalVencidos} + ')'">(0)</span>
+            <span class="count" th:text="'(' + ${totalVencidos != null ? totalVencidos : 0} + ')'">(0)</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <a th:href="@{/admin/pagos}" class="btn-secondary">
@@ -349,16 +328,16 @@
         </div>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
     <div class="stats-row">
         <div class="stat-card">
-            <div class="numero rojo" th:text="${totalVencidos}">0</div>
+            <div class="numero rojo" th:text="${totalVencidos != null ? totalVencidos : 0}">0</div>
             <div class="etiqueta">Proyectos con pagos vencidos</div>
         </div>
         <div class="stat-card">
-            <div class="numero amarillo" th:text="${totalPendientes}">0</div>
+            <div class="numero amarillo" th:text="${totalPendientes != null ? totalPendientes : 0}">0</div>
             <div class="etiqueta">Pagos pendientes de validación</div>
         </div>
     </div>
@@ -386,14 +365,14 @@
                               th:text="${proyecto.codigoProyecto}">—</span>
                     </td>
                     <td th:text="${proyecto.nombreCliente}">—</td>
-                    <td th:text="${proyecto.montoTotalFormateado}">S/ 0.00</td>
-                    <td th:text="${proyecto.totalPagadoFormateado}">S/ 0.00</td>
+                    <td th:text="${proyecto.montoTotalFormateado != null ? proyecto.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</td>
+                    <td th:text="${proyecto.totalPagadoFormateado != null ? proyecto.totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</td>
                     <td>
-                        <strong style="color:var(--red);" th:text="${proyecto.saldoPendienteFormateado}">S/ 0.00</strong>
+                        <strong style="color:var(--red);" th:text="${proyecto.saldoPendienteFormateado != null ? proyecto.saldoPendienteFormateado : 'S/ 0.00'}">S/ 0.00</strong>
                     </td>
                     <td th:text="${#temporals.format(proyecto.fechaVencimiento, 'dd/MM/yyyy')}">—</td>
                     <td>
-                        <span class="dias-vencido" th:text="${proyecto.diasVencidos + ' días'}">0 días</span>
+                        <span class="dias-vencido" th:text="${proyecto.diasVencidos != null ? proyecto.diasVencidos + ' días' : '0 días'}">0 días</span>
                     </td>
                     <td>
                         <span class="status-badge status-vencido">VENCIDO</span>
@@ -407,7 +386,7 @@
                         </a>
                     </td>
                 </tr>
-                <tr th:if="${proyectosVencidos == null || proyectosVencidos.isEmpty()}">
+                <tr th:if="${proyectosVencidos == null or #lists.isEmpty(proyectosVencidos)}">
                     <td colspan="9">
                         <div class="empty-message">
                             <i class="ti ti-check-circle" style="color:var(--green);"></i>

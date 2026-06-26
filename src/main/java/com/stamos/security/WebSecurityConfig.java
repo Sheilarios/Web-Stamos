@@ -33,7 +33,7 @@ public class WebSecurityConfig {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;  // Usa el bean existente
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private DataSource dataSource;
@@ -82,7 +82,7 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder)  // Usa el bean inyectado
+                .passwordEncoder(passwordEncoder)
                 .and()
                 .build();
     }
@@ -113,9 +113,12 @@ public class WebSecurityConfig {
                     "/favicon.ico",
                     "/manifest.json"
                 ).permitAll()
+                
                 .requestMatchers("/productos/imagen/**").permitAll()
                 .requestMatchers("/documentos/public/**").permitAll()
-                .requestMatchers("/cliente/**").hasAnyRole("CLIENTE")
+                
+                .requestMatchers("/cliente/**").hasRole("CLIENTE")
+                
                 .requestMatchers("/admin/**").hasAnyRole(
                     "ADMINISTRADOR", 
                     "VENDEDOR", 
@@ -123,9 +126,13 @@ public class WebSecurityConfig {
                     "PRODUCCION", 
                     "SOPORTE_TECNICO"
                 )
+                
                 .requestMatchers("/admin/configuracion/**").hasRole("ADMINISTRADOR")
+                
                 .requestMatchers("/admin/usuarios/**").hasRole("ADMINISTRADOR")
+                
                 .requestMatchers("/admin/reportes/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
+                
                 .anyRequest().authenticated()
             )
             .formLogin(formLogin -> formLogin
@@ -189,6 +196,6 @@ public class WebSecurityConfig {
 
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailsService)
-            .passwordEncoder(passwordEncoder);  // Usa el bean inyectado
+            .passwordEncoder(passwordEncoder);
     }
 }

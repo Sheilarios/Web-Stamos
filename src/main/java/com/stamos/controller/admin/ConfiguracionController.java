@@ -1,6 +1,7 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
 import com.stamos.model.ConfiguracionSistema;
 import com.stamos.model.Usuario;
 import com.stamos.service.ClienteService;
@@ -22,7 +23,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/configuracion")
 @PreAuthorize("hasRole('ADMIN')")
-public class ConfiguracionController {
+public class ConfiguracionController extends BaseController {
 
     @Autowired
     private ConfiguracionSistemaService configuracionService;
@@ -34,11 +35,9 @@ public class ConfiguracionController {
     public String listarConfiguraciones(Model model) {
         try {
             List<ConfiguracionSistema> configuraciones = configuracionService.findAll();
-            
             model.addAttribute("configuraciones", configuraciones);
-            
+            addCommonAttributes(model);
             return "admin/configuracion/index";
-            
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar la configuración: " + e.getMessage());
             return "admin/configuracion/index";
@@ -53,11 +52,10 @@ public class ConfiguracionController {
                 model.addAttribute("error", "Parámetro de configuración no encontrado");
                 return "redirect:/admin/configuracion";
             }
-            
             model.addAttribute("configuracion", config);
             model.addAttribute("titulo", "Editar Configuración");
+            addCommonAttributes(model);
             return "admin/configuracion/editar";
-            
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar la configuración: " + e.getMessage());
             return "redirect:/admin/configuracion";
@@ -65,7 +63,7 @@ public class ConfiguracionController {
     }
 
     @PostMapping("/actualizar/{id}")
-    @Auditable(value = "Actualización de configuración del sistema", accion = "UPDATE")
+    @Auditable
     public String actualizarConfiguracion(@PathVariable Integer id,
                                           @Valid @ModelAttribute("configuracion") ConfiguracionSistema config,
                                           BindingResult result,
@@ -104,7 +102,6 @@ public class ConfiguracionController {
             }
             
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
             return "redirect:/admin/configuracion";
             
         } catch (Exception e) {
@@ -115,7 +112,7 @@ public class ConfiguracionController {
 
     @PostMapping("/editar-rapido/{id}")
     @ResponseBody
-    @Auditable(value = "Edición rápida de configuración", accion = "UPDATE")
+    @Auditable
     public String editarRapido(@PathVariable Integer id,
                                @RequestParam("valor") String valor,
                                Authentication auth) {
@@ -138,7 +135,6 @@ public class ConfiguracionController {
             config.setValor(valor);
             config.setIdUsuarioActualiza(usuarioAdmin.getIdUsuario());
             config.setFechaActualizacion(LocalDateTime.now());
-            
             configuracionService.update(config);
             
             return "SUCCESS: Configuración actualizada correctamente";
@@ -202,7 +198,7 @@ public class ConfiguracionController {
     }
 
     @PostMapping("/restaurar/{id}")
-    @Auditable(value = "Restauración de configuración a valor por defecto", accion = "UPDATE")
+    @Auditable
     public String restaurarValorPorDefecto(@PathVariable Integer id,
                                            Authentication auth,
                                            RedirectAttributes redirectAttributes) {
@@ -223,7 +219,6 @@ public class ConfiguracionController {
             
             redirectAttributes.addFlashAttribute("mensaje", "Configuración restaurada a su valor por defecto.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
             return "redirect:/admin/configuracion";
             
         } catch (Exception e) {
@@ -270,19 +265,23 @@ public class ConfiguracionController {
         }
         
         switch (tipoDato) {
-            case "DECIMAL":
+            case "DECIMAL" -> {
                 try {
                     double d = Double.parseDouble(valor);
                     return String.format("%.2f", d);
                 } catch (NumberFormatException e) {
                     return valor;
                 }
-            case "BOOLEAN":
+            }
+            case "BOOLEAN" -> {
                 return "true".equalsIgnoreCase(valor) ? "Sí" : "No";
-            case "DATE":
+            }
+            case "DATE" -> {
                 return valor;
-            default:
+            }
+            default -> {
                 return valor;
+            }
         }
     }
 

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensajes · STAMOS</title>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_exito                                      -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_exito" th:if="${mensaje != null and mensaje != ''}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #10B981;">
+        <i class="ti ti-circle-check" style="font-size:20px; color:#10B981;"></i>
+        <span th:text="${mensaje}" style="font-weight:500;">Mensaje de éxito</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_error                                      -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_error" th:if="${error != null and error != ''}">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #EF4444;">
+        <i class="ti ti-alert-circle" style="font-size:20px; color:#EF4444;"></i>
+        <span th:text="${error}" style="font-weight:500;">Mensaje de error</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_advertencia                                -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_advertencia" th:if="${warning != null and warning != ''}">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #F59E0B;">
+        <i class="ti ti-alert-triangle" style="font-size:20px; color:#F59E0B;"></i>
+        <span th:text="${warning}" style="font-weight:500;">Mensaje de advertencia</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_info                                       -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_info" th:if="${info != null and info != ''}">
+    <div class="alert alert-info alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #3B82F6;">
+        <i class="ti ti-info-circle" style="font-size:20px; color:#3B82F6;"></i>
+        <span th:text="${info}" style="font-weight:500;">Mensaje informativo</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_validacion_formulario                     -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_validacion" th:if="${#fields.hasErrors()}">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px; border-left: 4px solid #EF4444;">
+        <div style="display:flex; align-items:flex-start; gap:10px;">
+            <i class="ti ti-list-check" style="font-size:20px; color:#EF4444; margin-top:2px;"></i>
+            <div>
+                <strong><i class="ti ti-alert-circle" style="margin-right:6px;"></i>Por favor, corrige los siguientes errores:</strong>
+                <ul style="margin:8px 0 0 20px; padding:0; list-style:disc;">
+                    <li th:each="err : ${#fields.allErrors()}" th:text="${err}" style="margin-bottom:4px; font-weight:400;"></li>
+                </ul>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_confirmacion                              -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_confirmacion" th:if="${confirmacion != null and confirmacion != ''}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #10B981;">
+        <i class="ti ti-check" style="font-size:20px; color:#10B981;"></i>
+        <span th:text="${confirmacion}" style="font-weight:500;">Confirmación</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_sin_resultados                            -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_sin_resultados">
+    <div class="text-center py-5" style="background:#FAFAFA; border-radius:12px; border:1px dashed #D0D0D0;">
+        <i class="ti ti-search-off" style="font-size:48px; color:#D0D0D0; display:block; margin-bottom:16px;"></i>
+        <h5 style="font-weight:600; color:#1A1F2E;">No se encontraron resultados</h5>
+        <p style="color:#8A8A8A; font-size:14px; max-width:400px; margin:8px auto 0;">Prueba con otros filtros o realiza una búsqueda diferente.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_cargando                                   -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_cargando">
+    <div class="text-center py-4">
+        <div class="spinner-border text-warning" role="status" style="width:40px; height:40px; border-color:#F5C400; border-right-color:transparent;">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p style="color:#8A8A8A; font-size:14px; margin-top:12px;">Cargando información, por favor espera...</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_guardado_exitoso                          -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_guardado_exitoso">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #10B981;">
+        <i class="ti ti-device-floppy" style="font-size:20px; color:#10B981;"></i>
+        <span style="font-weight:500;">Los datos se guardaron correctamente.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_eliminado_exitoso                         -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_eliminado_exitoso">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #10B981;">
+        <i class="ti ti-trash" style="font-size:20px; color:#10B981;"></i>
+        <span style="font-weight:500;">El registro se eliminó correctamente.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_confirmacion_eliminar                     -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_confirmacion_eliminar">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #F59E0B;">
+        <i class="ti ti-alert-triangle" style="font-size:20px; color:#F59E0B;"></i>
+        <span style="font-weight:500;">¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_registro_inactivo                         -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_registro_inactivo">
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #6B7280;">
+        <i class="ti ti-user-off" style="font-size:20px; color:#6B7280;"></i>
+        <span style="font-weight:500;">Este registro está inactivo. Puede reactivarlo si lo necesita.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_registro_activo                           -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_registro_activo">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #10B981;">
+        <i class="ti ti-user-check" style="font-size:20px; color:#10B981;"></i>
+        <span style="font-weight:500;">Este registro está activo.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_no_permisos                               -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_no_permisos">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #EF4444;">
+        <i class="ti ti-lock" style="font-size:20px; color:#EF4444;"></i>
+        <span style="font-weight:500;">No tienes permisos para realizar esta acción.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_sesion_expirada                           -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_sesion_expirada">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #F59E0B;">
+        <i class="ti ti-clock" style="font-size:20px; color:#F59E0B;"></i>
+        <span style="font-weight:500;">Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: mensaje_formulario_incompleto                    -->
+<!-- ============================================================ -->
+<div th:fragment="mensaje_formulario_incompleto">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display:flex; align-items:center; gap:10px; border-radius:12px; border-left: 4px solid #EF4444;">
+        <i class="ti ti-file-alert" style="font-size:20px; color:#EF4444;"></i>
+        <span style="font-weight:500;">Por favor, completa todos los campos obligatorios del formulario.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+
+</body>
+</html>

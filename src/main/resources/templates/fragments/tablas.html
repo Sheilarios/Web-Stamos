@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tablas · STAMOS</title>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: tabla_estandar                                     -->
+<!-- ============================================================ -->
+<div th:fragment="tabla_estandar">
+    <div class="table-responsive" style="border-radius:12px; border:1px solid #E8E8E8; overflow:hidden;">
+        <table class="table table-hover align-middle" style="margin:0; font-size:14px;">
+            <!-- Header -->
+            <thead style="background:#000000; color:#FFFFFF;">
+                <tr>
+                    <th scope="col" style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;" th:replace="${tablaHeader} ?: '#'">ID</th>
+                    <th scope="col" style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;" th:replace="${tablaHeader2} ?: '#'">Nombre</th>
+                    <th scope="col" style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;" th:replace="${tablaHeader3} ?: '#'">Estado</th>
+                    <th scope="col" style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;" th:replace="${tablaHeader4} ?: '#'">Acciones</th>
+                </tr>
+            </thead>
+            <!-- Body -->
+            <tbody>
+                <tr th:each="item : ${items}" th:replace="${tablaBody} ?: 'fragments/tablas :: fila_vacia'">
+                    <td th:text="${item.id}" style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">1</td>
+                    <td th:text="${item.nombre}" style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">Nombre</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${item.activo} ? 'badge-success' : 'badge-danger'" th:text="${item.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm" style="background:#F5C400; color:#000000; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-edit" style="font-size:14px;"></i>
+                            </button>
+                            <button class="btn btn-sm" style="background:#EF4444; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-trash" style="font-size:14px;"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(items)}" th:replace="fragments/tablas :: fila_vacia"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: fila_vacia                                         -->
+<!-- ============================================================ -->
+<tr th:fragment="fila_vacia">
+    <td colspan="10" class="text-center py-4" style="color:#8A8A8A; font-size:14px;">
+        <i class="ti ti-search-off" style="font-size:32px; display:block; margin-bottom:8px; color:#D0D0D0;"></i>
+        <span>No hay registros disponibles</span>
+    </td>
+</tr>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: tabla_clientes                                     -->
+<!-- ============================================================ -->
+<div th:fragment="tabla_clientes">
+    <div class="table-responsive" style="border-radius:12px; border:1px solid #E8E8E8; overflow:hidden;">
+        <table class="table table-hover align-middle" style="margin:0; font-size:14px;">
+            <thead style="background:#000000; color:#FFFFFF;">
+                <tr>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; width:60px;">ID</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Cliente</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">RUC</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Teléfono</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Email</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Estado</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; text-align:center; width:160px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cliente : ${clientes}">
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" th:text="${cliente.idCliente}">1</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span th:text="${cliente.nombreRazonSocial}">Nombre del cliente</span>
+                        <div style="font-size:11px; color:#8A8A8A;" th:text="${cliente.tipoPersona} == 'Juridica' ? 'Persona Jurídica' : 'Persona Natural'">Persona Natural</div>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${cliente.ruc} ?: '-'">20549500715</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${cliente.telefono}">987 000 000</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${cliente.email}">cliente@email.com</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${cliente.estado} == 'Activo' ? 'badge-success' : 'badge-danger'" 
+                              th:text="${cliente.estado}">Activo</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; text-align:center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a th:href="@{/admin/clientes/editar/{id}(id=${cliente.idCliente})}" 
+                               class="btn btn-sm" style="background:#F5C400; color:#000000; border:none; border-radius:6px; padding:4px 10px; font-size:12px; text-decoration:none;">
+                                <i class="ti ti-edit" style="font-size:14px;"></i>
+                            </a>
+                            <button class="btn btn-sm btn-eliminar" 
+                                    th:data-id="${cliente.idCliente}" 
+                                    th:data-nombre="${cliente.nombreRazonSocial}"
+                                    style="background:#EF4444; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-trash" style="font-size:14px;"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(clientes)}" th:replace="fragments/tablas :: fila_vacia"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: tabla_proyectos                                    -->
+<!-- ============================================================ -->
+<div th:fragment="tabla_proyectos">
+    <div class="table-responsive" style="border-radius:12px; border:1px solid #E8E8E8; overflow:hidden;">
+        <table class="table table-hover align-middle" style="margin:0; font-size:14px;">
+            <thead style="background:#000000; color:#FFFFFF;">
+                <tr>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; width:80px;">Código</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Proyecto</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Cliente</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Estado</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Monto</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Progreso</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; text-align:center; width:140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="proyecto : ${proyectos}">
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600; font-size:12px;" 
+                        th:text="${proyecto.codigoProyecto} ?: 'PRO-' + ${proyecto.idProyecto}">PRO-00001</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${proyecto.nombreProyecto}">Proyecto Ejemplo</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${proyecto.nombreCliente} ?: 'Cliente'">Cliente</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${proyecto.estado} == 'Aprobado' ? 'badge-info' : 
+                                                      ${proyecto.estado} == 'En Diseño' ? 'badge-warning' : 
+                                                      ${proyecto.estado} == 'En Producción' ? 'badge-primary' : 
+                                                      ${proyecto.estado} == 'Instalación/Montaje' ? 'badge-purple' : 
+                                                      ${proyecto.estado} == 'Entregado' ? 'badge-success' : 
+                                                      ${proyecto.estado} == 'Anulado' ? 'badge-danger' : 'badge-secondary'"
+                              th:text="${proyecto.estado} ?: 'Sin estado'">Aprobado</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" 
+                        th:text="${#numbers.formatDecimal(proyecto.montoTotal, 0, 'COMMA', 2, 'POINT')} ?: 'S/ 0.00'">S/ 1,200.00</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress" style="flex:1; height:8px; border-radius:4px; background:#F0F0F0;">
+                                <div class="progress-bar" role="progressbar" 
+                                     th:style="'width:' + ${proyecto.progreso} + '%; background:' + ${proyecto.progreso >= 100 ? '#10B981' : proyecto.progreso >= 60 ? '#3B82F6' : proyecto.progreso >= 30 ? '#F59E0B' : '#EF4444'}"
+                                     th:aria-valuenow="${proyecto.progreso}" aria-valuemin="0" aria-valuemax="100"
+                                     th:text="${proyecto.progreso} + '%'"
+                                     style="height:8px; border-radius:4px; font-size:9px; line-height:8px; color:#000000; font-weight:600; min-width:30px;">
+                                    0%
+                                </div>
+                            </div>
+                            <span style="font-size:11px; color:#8A8A8A; min-width:32px;" th:text="${proyecto.progreso} + '%'">0%</span>
+                        </div>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; text-align:center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" 
+                               class="btn btn-sm" style="background:#3B82F6; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px; text-decoration:none;">
+                                <i class="ti ti-eye" style="font-size:14px;"></i>
+                            </a>
+                            <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto.idProyecto})}" 
+                               class="btn btn-sm" style="background:#F5C400; color:#000000; border:none; border-radius:6px; padding:4px 10px; font-size:12px; text-decoration:none;" 
+                               th:unless="${proyecto.estado == 'Entregado' or proyecto.estado == 'Anulado'}">
+                                <i class="ti ti-arrows-exchange" style="font-size:14px;"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(proyectos)}" th:replace="fragments/tablas :: fila_vacia"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: tabla_pagos                                        -->
+<!-- ============================================================ -->
+<div th:fragment="tabla_pagos">
+    <div class="table-responsive" style="border-radius:12px; border:1px solid #E8E8E8; overflow:hidden;">
+        <table class="table table-hover align-middle" style="margin:0; font-size:14px;">
+            <thead style="background:#000000; color:#FFFFFF;">
+                <tr>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; width:70px;">ID</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Proyecto</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Monto</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Método</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Fecha</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Estado</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; text-align:center; width:160px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="pago : ${pagos}">
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" th:text="${pago.idPago}">1</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${pago.nombreProyecto} ?: 'Proyecto'">Proyecto</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" 
+                        th:text="${#numbers.formatDecimal(pago.monto, 0, 'COMMA', 2, 'POINT')}">S/ 1,200.00</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span th:text="${pago.metodoPago}" style="display:inline-flex; align-items:center; gap:4px;">
+                            <i class="ti ti-credit-card" style="font-size:14px;"></i> Transferencia
+                        </span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" 
+                        th:text="${#dates.format(pago.fechaPago, 'dd/MM/yyyy')} ?: '-'">26/06/2026</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${pago.estadoPago} == 'Validado' ? 'badge-success' : 
+                                                      ${pago.estadoPago} == 'Pendiente' ? 'badge-warning' : 
+                                                      ${pago.estadoPago} == 'Rechazado' ? 'badge-danger' : 'badge-secondary'"
+                              th:text="${pago.estadoPago} ?: 'Pendiente'">Pendiente</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; text-align:center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a th:href="@{/admin/pagos/detalle/{id}(id=${pago.idPago})}" 
+                               class="btn btn-sm" style="background:#3B82F6; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px; text-decoration:none;">
+                                <i class="ti ti-eye" style="font-size:14px;"></i>
+                            </a>
+                            <button th:if="${pago.estadoPago == 'Pendiente'}" 
+                                    class="btn btn-sm btn-validar-pago" 
+                                    th:data-id="${pago.idPago}"
+                                    style="background:#10B981; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-check" style="font-size:14px;"></i>
+                            </button>
+                            <button th:if="${pago.estadoPago == 'Pendiente'}" 
+                                    class="btn btn-sm btn-rechazar-pago" 
+                                    th:data-id="${pago.idPago}"
+                                    style="background:#EF4444; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-x" style="font-size:14px;"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pagos)}" th:replace="fragments/tablas :: fila_vacia"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: tabla_inventario                                   -->
+<!-- ============================================================ -->
+<div th:fragment="tabla_inventario">
+    <div class="table-responsive" style="border-radius:12px; border:1px solid #E8E8E8; overflow:hidden;">
+        <table class="table table-hover align-middle" style="margin:0; font-size:14px;">
+            <thead style="background:#000000; color:#FFFFFF;">
+                <tr>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; width:70px;">ID</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Producto</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Serial</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Ubicación</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Estado</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Valor</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; text-align:center; width:140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="equipo : ${inventario}">
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" th:text="${equipo.idInventario}">1</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${equipo.nombreProducto} ?: 'Producto'">Producto</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-family:monospace; font-size:12px;" th:text="${equipo.codigoSerial}">SN-0001</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${equipo.ubicacion} ?: '-'">Almacén A</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${equipo.estadoFisico} == 'Disponible' ? 'badge-success' : 
+                                                      ${equipo.estadoFisico} == 'En uso' ? 'badge-primary' : 
+                                                      ${equipo.estadoFisico} == 'Mantenimiento' ? 'badge-warning' : 
+                                                      ${equipo.estadoFisico} == 'Dañado' ? 'badge-danger' : 'badge-secondary'"
+                              th:text="${equipo.estadoFisico} ?: 'Disponible'">Disponible</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" 
+                        th:text="${#numbers.formatDecimal(equipo.valorCompra, 0, 'COMMA', 2, 'POINT')} ?: 'S/ 0.00'">S/ 1,200.00</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; text-align:center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a th:href="@{/admin/inventario/editar/{id}(id=${equipo.idInventario})}" 
+                               class="btn btn-sm" style="background:#F5C400; color:#000000; border:none; border-radius:6px; padding:4px 10px; font-size:12px; text-decoration:none;">
+                                <i class="ti ti-edit" style="font-size:14px;"></i>
+                            </a>
+                            <button class="btn btn-sm btn-cambiar-estado" 
+                                    th:data-id="${equipo.idInventario}" 
+                                    th:data-estado="${equipo.estadoFisico}"
+                                    style="background:#3B82F6; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-arrows-exchange" style="font-size:14px;"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(inventario)}" th:replace="fragments/tablas :: fila_vacia"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: tabla_productos                                    -->
+<!-- ============================================================ -->
+<div th:fragment="tabla_productos">
+    <div class="table-responsive" style="border-radius:12px; border:1px solid #E8E8E8; overflow:hidden;">
+        <table class="table table-hover align-middle" style="margin:0; font-size:14px;">
+            <thead style="background:#000000; color:#FFFFFF;">
+                <tr>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; width:70px;">ID</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Producto</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Categoría</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Tipo</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Precio</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Estado</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; text-align:center; width:140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="producto : ${productos}">
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" th:text="${producto.idProducto}">1</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${producto.nombreItem}">Producto</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${producto.nombreCategoria} ?: 'Categoría'">Categoría</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${producto.tipo} == 'Alquiler' ? 'badge-info' : 
+                                                      ${producto.tipo} == 'Venta' ? 'badge-success' : 
+                                                      ${producto.tipo} == 'Servicio' ? 'badge-purple' : 'badge-secondary'"
+                              th:text="${producto.tipo} ?: 'Servicio'">Alquiler</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" 
+                        th:text="${#numbers.formatDecimal(producto.precioBase, 0, 'COMMA', 2, 'POINT')}">S/ 1,200.00</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${producto.activo} ? 'badge-success' : 'badge-danger'" 
+                              th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; text-align:center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" 
+                               class="btn btn-sm" style="background:#F5C400; color:#000000; border:none; border-radius:6px; padding:4px 10px; font-size:12px; text-decoration:none;">
+                                <i class="ti ti-edit" style="font-size:14px;"></i>
+                            </a>
+                            <button class="btn btn-sm btn-toggle-producto" 
+                                    th:data-id="${producto.idProducto}" 
+                                    th:data-activo="${producto.activo}"
+                                    style="background:#3B82F6; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-power" style="font-size:14px;"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(productos)}" th:replace="fragments/tablas :: fila_vacia"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: tabla_cotizaciones                                 -->
+<!-- ============================================================ -->
+<div th:fragment="tabla_cotizaciones">
+    <div class="table-responsive" style="border-radius:12px; border:1px solid #E8E8E8; overflow:hidden;">
+        <table class="table table-hover align-middle" style="margin:0; font-size:14px;">
+            <thead style="background:#000000; color:#FFFFFF;">
+                <tr>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; width:100px;">Código</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Cliente</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Fecha</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Total</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Estado</th>
+                    <th style="padding:14px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; text-align:center; width:160px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cotizacion : ${cotizaciones}">
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600; font-size:12px;" 
+                        th:text="${cotizacion.codigoCotizacion} ?: 'COT-' + ${cotizacion.idCotizacion}">COT-00001</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" th:text="${cotizacion.nombreCliente} ?: 'Cliente'">Cliente</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;" 
+                        th:text="${#dates.format(cotizacion.fechaEmision, 'dd/MM/yyyy')} ?: '-'">26/06/2026</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-weight:600;" 
+                        th:text="${#numbers.formatDecimal(cotizacion.total, 0, 'COMMA', 2, 'POINT')}">S/ 1,200.00</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0;">
+                        <span class="badge" th:class="${cotizacion.estado} == 'Aprobada' ? 'badge-success' : 
+                                                      ${cotizacion.estado} == 'Pendiente' ? 'badge-warning' : 
+                                                      ${cotizacion.estado} == 'Anulada' ? 'badge-danger' : 'badge-secondary'"
+                              th:text="${cotizacion.estado} ?: 'Pendiente'">Pendiente</span>
+                    </td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; text-align:center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a th:href="@{/admin/cotizaciones/detalle/{id}(id=${cotizacion.idCotizacion})}" 
+                               class="btn btn-sm" style="background:#3B82F6; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px; text-decoration:none;">
+                                <i class="ti ti-eye" style="font-size:14px;"></i>
+                            </a>
+                            <button th:if="${cotizacion.estado == 'Pendiente'}" 
+                                    class="btn btn-sm btn-aprobar-cotizacion" 
+                                    th:data-id="${cotizacion.idCotizacion}"
+                                    style="background:#10B981; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-check" style="font-size:14px;"></i>
+                            </button>
+                            <button th:if="${cotizacion.estado == 'Pendiente'}" 
+                                    class="btn btn-sm btn-anular-cotizacion" 
+                                    th:data-id="${cotizacion.idCotizacion}"
+                                    style="background:#EF4444; color:#FFFFFF; border:none; border-radius:6px; padding:4px 10px; font-size:12px;">
+                                <i class="ti ti-x" style="font-size:14px;"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(cotizaciones)}" th:replace="fragments/tablas :: fila_vacia"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCRIPTS PARA FUNCIONALIDAD DE TABLAS                        -->
+<!-- ============================================================ -->
+<script>
+    // ===== ELIMINAR REGISTRO =====
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-eliminar');
+        if (btn) {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            const nombre = btn.getAttribute('data-nombre') || 'este registro';
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Estás a punto de eliminar "' + nombre + '". Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/admin/eliminar/' + id;
+                    }
+                });
+            } else {
+                if (confirm('¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.')) {
+                    window.location.href = '/admin/eliminar/' + id;
+                }
+            }
+        }
+    });
+
+    // ===== VALIDAR PAGO =====
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-validar-pago');
+        if (btn) {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: '¿Validar este pago?',
+                    text: 'El pago será marcado como validado. Esta acción no se puede deshacer.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10B981',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Sí, validar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/admin/pagos/validar/' + id;
+                    }
+                });
+            }
+        }
+    });
+
+    // ===== RECHAZAR PAGO =====
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-rechazar-pago');
+        if (btn) {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: '¿Rechazar este pago?',
+                    text: 'El pago será marcado como rechazado. Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Sí, rechazar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/admin/pagos/rechazar/' + id;
+                    }
+                });
+            }
+        }
+    });
+
+    // ===== APROBAR COTIZACIÓN =====
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-aprobar-cotizacion');
+        if (btn) {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: '¿Aprobar esta cotización?',
+                    text: 'La cotización será aprobada y se generará un proyecto automáticamente.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10B981',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Sí, aprobar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/admin/cotizaciones/aprobar/' + id;
+                    }
+                });
+            }
+        }
+    });
+
+    console.log('✅ Scripts de tablas cargados correctamente');
+</script>
+
+</body>
+</html>

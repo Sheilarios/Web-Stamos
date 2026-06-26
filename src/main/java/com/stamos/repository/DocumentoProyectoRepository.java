@@ -235,8 +235,6 @@ public interface DocumentoProyectoRepository extends JpaRepository<DocumentoProy
     @Query("DELETE FROM DocumentoProyecto d WHERE d.fechaSubida < :fecha")
     int deleteOlderThan(@Param("fecha") LocalDateTime fecha);
 
-    // Método eliminado: deleteByProyectosAnulados() - no se utiliza y causa error
-
     @Modifying
     @Transactional
     @Query("UPDATE DocumentoProyecto d SET d.urlArchivo = :nuevaUrl, d.fechaSubida = CURRENT_TIMESTAMP WHERE d.idDocumento = :idDocumento")

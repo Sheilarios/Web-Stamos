@@ -1,6 +1,7 @@
 package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
+import com.stamos.controller.BaseController;
 import com.stamos.model.*;
 import com.stamos.repository.EstadoProyectoRepository;
 import com.stamos.service.*;
@@ -29,7 +30,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/proyectos")
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'DISEÑADOR', 'PRODUCCION', 'SOPORTE_TECNICO')")
-public class ProyectoController {
+public class ProyectoController extends BaseController {
 
     @Autowired
     private ProyectoService proyectoService;
@@ -84,13 +85,6 @@ public class ProyectoController {
                 proyecto.setSaldoPendiente(saldoPendiente);
             }
             
-            long totalProyectos = proyectoService.count();
-            long totalActivos = proyectoService.countByEstadoNotIn(Arrays.asList("Entregado", "Anulado"));
-            long totalEntregados = proyectoService.countByEstado("Entregado");
-            long totalAnulados = proyectoService.countByEstado("Anulado");
-            
-            List<EstadoProyecto> estados = estadoProyectoRepository.findAllOrderByOrdenFlujo();
-            
             model.addAttribute("proyectos", proyectosPage.getContent());
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", proyectosPage.getTotalPages());
@@ -101,11 +95,12 @@ public class ProyectoController {
             model.addAttribute("fechaInicio", fechaInicio);
             model.addAttribute("fechaFin", fechaFin);
             model.addAttribute("clientes", clienteService.findAll());
-            model.addAttribute("estados", estados);
-            model.addAttribute("totalProyectos", totalProyectos);
-            model.addAttribute("totalActivos", totalActivos);
-            model.addAttribute("totalEntregados", totalEntregados);
-            model.addAttribute("totalAnulados", totalAnulados);
+            model.addAttribute("estados", estadoProyectoRepository.findAllOrderByOrdenFlujo());
+            model.addAttribute("totalProyectos", proyectoService.count());
+            model.addAttribute("totalActivos", proyectoService.countByEstadoNotIn(Arrays.asList("Entregado", "Anulado")));
+            model.addAttribute("totalEntregados", proyectoService.countByEstado("Entregado"));
+            model.addAttribute("totalAnulados", proyectoService.countByEstado("Anulado"));
+            addCommonAttributes(model);
             
             return "admin/proyectos/lista";
         } catch (Exception e) {
@@ -148,10 +143,6 @@ public class ProyectoController {
                 }
             }
             
-            List<EstadoProyecto> estadosDisponibles = estadoProyectoRepository.findEstadosDisponibles(
-                proyecto.getIdEstadoActual()
-            );
-            
             model.addAttribute("proyecto", proyecto);
             model.addAttribute("cotizacion", cotizacion);
             model.addAttribute("detallesCotizacion", detallesCotizacion);
@@ -160,7 +151,9 @@ public class ProyectoController {
             model.addAttribute("totalPagado", totalPagado);
             model.addAttribute("saldoPendiente", saldoPendiente);
             model.addAttribute("porcentajePagado", porcentajePagado);
-            model.addAttribute("estadosDisponibles", estadosDisponibles);
+            model.addAttribute("estadosDisponibles", 
+                estadoProyectoRepository.findEstadosDisponibles(proyecto.getIdEstadoActual()));
+            addCommonAttributes(model);
             
             return "admin/proyectos/detalle";
         } catch (Exception e) {
@@ -170,7 +163,7 @@ public class ProyectoController {
     }
 
     @PostMapping("/cambiar-estado/{id}")
-    @Auditable(value = "Cambio de estado de proyecto", accion = "STATE_CHANGE")
+    @Auditable
     public String cambiarEstado(@PathVariable Integer id,
                                 @RequestParam Integer idEstadoNuevo,
                                 @RequestParam(required = false) String comentario,
@@ -184,37 +177,20 @@ public class ProyectoController {
             }
 
             if (proyecto.getIdEstadoActual().equals(idEstadoNuevo)) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "El proyecto ya se encuentra en ese estado.");
+                redirectAttributes.addFlashAttribute("error", "El proyecto ya se encuentra en ese estado.");
                 return "redirect:/admin/proyectos/detalle/" + id;
             }
 
             String estadoActual = proyecto.getEstado();
-            if (estadoActual == null) {
-                estadoActual = "";
-            }
-            
-            if (estadoActual.equals("Entregado") || estadoActual.equals("Anulado")) {
+            if (estadoActual == null || estadoActual.equals("Entregado") || estadoActual.equals("Anulado")) {
                 redirectAttributes.addFlashAttribute("error", 
-                    "No se puede cambiar el estado de un proyecto " + estadoActual.toLowerCase() + ".");
+                    "No se puede cambiar el estado de un proyecto " + (estadoActual != null ? estadoActual.toLowerCase() : "finalizado") + ".");
                 return "redirect:/admin/proyectos/detalle/" + id;
             }
 
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
             if (usuario == null) {
                 redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
-                return "redirect:/admin/proyectos/detalle/" + id;
-            }
-
-            String rol = usuario.getNombreRol();
-            if (rol == null) {
-                rol = "USER";
-            }
-            
-            boolean puedeTransicionar = validarTransicionPorRol(rol, estadoActual, idEstadoNuevo);
-            if (!puedeTransicionar) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "No tienes permisos para realizar esta transición de estado.");
                 return "redirect:/admin/proyectos/detalle/" + id;
             }
 
@@ -243,48 +219,16 @@ public class ProyectoController {
                 return "redirect:/admin/proyectos";
             }
 
-            List<EstadoProyecto> estadosDisponibles = estadoProyectoRepository.findEstadosDisponibles(
-                proyecto.getIdEstadoActual()
-            );
-
             model.addAttribute("proyecto", proyecto);
-            model.addAttribute("estadosDisponibles", estadosDisponibles);
+            model.addAttribute("estadosDisponibles", 
+                estadoProyectoRepository.findEstadosDisponibles(proyecto.getIdEstadoActual()));
+            addCommonAttributes(model);
             
             return "admin/proyectos/cambiar_estado";
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
             return "redirect:/admin/proyectos";
         }
-    }
-
-    private boolean validarTransicionPorRol(String rol, String estadoActual, Integer idEstadoNuevo) {
-        EstadoProyecto estadoNuevo = estadoProyectoRepository.findById(idEstadoNuevo).orElse(null);
-        if (estadoNuevo == null) {
-            return false;
-        }
-        String estadoNuevoNombre = estadoNuevo.getNombreEstado();
-
-        if (estadoNuevoNombre.equals("Anulado")) {
-            return "Administrador".equals(rol);
-        }
-
-        if (estadoNuevoNombre.equals("Entregado")) {
-            return "Administrador".equals(rol) || "Soporte Técnico".equals(rol);
-        }
-
-        if ("Vendedor".equals(rol)) {
-            return "Aprobado".equals(estadoActual) && "En Diseño".equals(estadoNuevoNombre);
-        }
-
-        if ("Diseñador".equals(rol)) {
-            return "En Diseño".equals(estadoActual) && "En Producción".equals(estadoNuevoNombre);
-        }
-
-        if ("Producción".equals(rol)) {
-            return "En Producción".equals(estadoActual) && "Instalación/Montaje".equals(estadoNuevoNombre);
-        }
-
-        return "Administrador".equals(rol);
     }
 
     @GetMapping("/estado/{estado}")
@@ -372,6 +316,7 @@ public class ProyectoController {
         };
     }
 
+    @Override
     public String getEstadoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";
         return switch (estado) {
@@ -398,6 +343,7 @@ public class ProyectoController {
         };
     }
 
+    @Override
     public String getEstadoColor(String estado) {
         if (estado == null) return "#6B7280";
         return switch (estado) {
@@ -411,20 +357,21 @@ public class ProyectoController {
         };
     }
 
+    @Override
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
+    @Override
     public String formatearFecha(LocalDate fecha) {
         if (fecha == null) return "-";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return fecha.format(formatter);
+        return fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
+    @Override
     public String formatearFechaHora(LocalDateTime fecha) {
         if (fecha == null) return "-";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return fecha.format(formatter);
+        return fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 }

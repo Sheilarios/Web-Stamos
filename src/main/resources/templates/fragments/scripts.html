@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Scripts · STAMOS</title>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: scripts_global                                     -->
+<!-- ============================================================ -->
+<script th:fragment="scripts_global">
+    // ============================================================
+    // CONFIGURACIÓN GLOBAL DE STAMOS
+    // ============================================================
+    const STAMOS = {
+        // Datos de la empresa (desde el backend)
+        empresa: /*[[${empresa}]]*/ 'STAMOS LINARES S.R.L.',
+        ruc: /*[[${ruc}]]*/ '20549500715',
+        telefono: /*[[${telefono}]]*/ '01 7046345',
+        email: /*[[${email}]]*/ 'info@stamosl.com',
+        direccion: /*[[${direccion}]]*/ 'Jr. Antisuyo 438, Zárate — SJL, Lima',
+        horario: /*[[${horario}]]*/ 'Lun–Vie 9:00–21:00 · Sáb 9:00–13:00',
+        
+        // URLs base
+        baseUrl: /*[[@{/}]]*/ '/',
+        apiUrl: /*[[@{/api}]]*/ '/api',
+        
+        // Usuario actual (desde el backend)
+        usuario: /*[[${usuario}]]*/ null,
+        rol: /*[[${rol}]]*/ null,
+        isAuthenticated: /*[[${#authorization.expression('isAuthenticated()')}]]*/ false
+    };
+
+    // ============================================================
+    // CONSOLA DE BIENVENIDA
+    // ============================================================
+    console.log('%c🟡 STAMOS LINARES S.R.L.', 'font-size:20px; font-weight:bold; color:#F5C400;');
+    console.log('%c📞 ' + STAMOS.telefono, 'font-size:13px; color:#8A8A8A;');
+    console.log('%c✉️ ' + STAMOS.email, 'font-size:13px; color:#8A8A8A;');
+    console.log('%c📍 ' + STAMOS.direccion, 'font-size:13px; color:#8A8A8A;');
+    console.log('%c🚀 Sistema de Gestión Empresarial v2.0', 'font-size:13px; color:#F5C400;');
+    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color:#333;');
+
+    if (STAMOS.isAuthenticated) {
+        console.log('%c✅ Usuario autenticado: ' + (STAMOS.usuario?.nombreCompleto || STAMOS.usuario?.email || 'Desconocido'), 'color:#10B981;');
+        console.log('%c🔑 Rol: ' + (STAMOS.rol || 'Sin rol'), 'color:#3B82F6;');
+    }
+
+    // ============================================================
+    // MANEJO DE ERRORES GLOBAL
+    // ============================================================
+    window.addEventListener('error', function(e) {
+        console.error('⚠️ Error global:', e.message, e.filename, e.lineno);
+        // Mostrar notificación al usuario
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error inesperado',
+                text: 'Ocurrió un error. Por favor, recarga la página o contacta con soporte.',
+                confirmButtonColor: '#F5C400',
+                confirmButtonText: 'Entendido'
+            });
+        }
+    });
+
+    // ============================================================
+    // DETECCIÓN DE CONEXIÓN
+    // ============================================================
+    window.addEventListener('online', function() {
+        console.log('✅ Conexión restablecida');
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Conexión restablecida',
+                text: 'La conexión a internet ha sido restablecida.',
+                timer: 2000,
+                showConfirmButton: false,
+                confirmButtonColor: '#F5C400'
+            });
+        }
+    });
+
+    window.addEventListener('offline', function() {
+        console.warn('⚠️ Sin conexión a internet');
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sin conexión',
+                text: 'Has perdido la conexión a internet. Algunas funciones pueden no estar disponibles.',
+                confirmButtonColor: '#F5C400',
+                confirmButtonText: 'Entendido'
+            });
+        }
+    });
+
+    // ============================================================
+    // FUNCIONES DE UTILIDAD
+    // ============================================================
+
+    // Formatear moneda (Soles)
+    window.formatearMoneda = function(monto) {
+        if (monto === null || monto === undefined || isNaN(monto)) return 'S/ 0.00';
+        return 'S/ ' + parseFloat(monto).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
+    // Formatear fecha (DD/MM/YYYY)
+    window.formatearFecha = function(fecha) {
+        if (!fecha) return '-';
+        const d = new Date(fecha);
+        if (isNaN(d.getTime())) return '-';
+        const dia = String(d.getDate()).padStart(2, '0');
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const anio = d.getFullYear();
+        return dia + '/' + mes + '/' + anio;
+    };
+
+    // Formatear fecha y hora (DD/MM/YYYY HH:MM)
+    window.formatearFechaHora = function(fecha) {
+        if (!fecha) return '-';
+        const d = new Date(fecha);
+        if (isNaN(d.getTime())) return '-';
+        const dia = String(d.getDate()).padStart(2, '0');
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const anio = d.getFullYear();
+        const horas = String(d.getHours()).padStart(2, '0');
+        const minutos = String(d.getMinutes()).padStart(2, '0');
+        return dia + '/' + mes + '/' + anio + ' ' + horas + ':' + minutos;
+    };
+
+    // Truncar texto
+    window.truncarTexto = function(texto, maxLength) {
+        if (!texto) return '';
+        if (texto.length <= maxLength) return texto;
+        return texto.substring(0, maxLength) + '...';
+    };
+
+    // Obtener parámetros de URL
+    window.getParamUrl = function(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    };
+
+    // ============================================================
+    // FUNCIONES DE ALERTAS (SweetAlert2)
+    // ============================================================
+    window.mostrarExito = function(titulo, mensaje) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: titulo || '¡Operación exitosa!',
+                text: mensaje || 'La operación se realizó correctamente.',
+                confirmButtonColor: '#F5C400',
+                confirmButtonText: 'Aceptar'
+            });
+        } else {
+            alert(titulo + ': ' + mensaje);
+        }
+    };
+
+    window.mostrarError = function(titulo, mensaje) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: titulo || '¡Ocurrió un error!',
+                text: mensaje || 'Hubo un problema al realizar la operación.',
+                confirmButtonColor: '#EF4444',
+                confirmButtonText: 'Cerrar'
+            });
+        } else {
+            alert('Error: ' + titulo + ' - ' + mensaje);
+        }
+    };
+
+    window.mostrarAdvertencia = function(titulo, mensaje, callback) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: titulo || '¡Atención!',
+                text: mensaje || '¿Estás seguro de continuar?',
+                showCancelButton: true,
+                confirmButtonColor: '#F5C400',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Sí, continuar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed && callback) {
+                    callback();
+                }
+            });
+        } else {
+            if (confirm(titulo + ': ' + mensaje)) {
+                if (callback) callback();
+            }
+        }
+    };
+
+    window.mostrarConfirmacionEliminar = function(nombre, callback) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Estás a punto de eliminar "' + (nombre || 'este registro') + '". Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed && callback) {
+                    callback();
+                }
+            });
+        } else {
+            if (confirm('¿Eliminar "' + (nombre || 'este registro') + '"? Esta acción no se puede deshacer.')) {
+                if (callback) callback();
+            }
+        }
+    };
+
+    // ============================================================
+    // FUNCIONES AJAX (fetch con manejo de errores)
+    // ============================================================
+    window.apiRequest = async function(url, options) {
+        const defaultOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        };
+        
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        // Mostrar loading si no está deshabilitado
+        if (finalOptions.showLoading !== false) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Cargando...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            }
+        }
+        
+        try {
+            const response = await fetch(url, finalOptions);
+            
+            if (finalOptions.showLoading !== false && typeof Swal !== 'undefined') {
+                Swal.close();
+            }
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Error en la solicitud: ' + response.status);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            if (finalOptions.showLoading !== false && typeof Swal !== 'undefined') {
+                Swal.close();
+            }
+            console.error('API Request Error:', error);
+            throw error;
+        }
+    };
+
+    // ============================================================
+    // INICIALIZACIÓN DE COMPONENTES
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(' DOM cargado correctamente');
+
+        // ===== DESTACAR ENLACE ACTIVO EN NAVBAR =====
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.navbar .nav-link').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href !== '#' && href !== '/') {
+                if (currentPath === href || currentPath.startsWith(href + '/')) {
+                    link.style.color = '#F5C400';
+                    link.style.fontWeight = '600';
+                }
+            }
+            if (href === '/' && currentPath === '/') {
+                link.style.color = '#F5C400';
+                link.style.fontWeight = '600';
+            }
+        });
+
+        // ===== AUTO-CERRAR ALERTAS DESPUÉS DE 5 SEGUNDOS =====
+        document.querySelectorAll('.alert-dismissible').forEach(alert => {
+            setTimeout(() => {
+                const bsAlert = bootstrap.Alert.getInstance(alert);
+                if (bsAlert) {
+                    bsAlert.close();
+                } else {
+                    alert.classList.add('fade');
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        });
+
+        // ===== TOOLTIPS =====
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // ===== POPOVERS =====
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl);
+        });
+
+        // ===== MÁSCARA DE TELÉFONO (ejemplo básico) =====
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 9) value = value.substring(0, 9);
+                if (value.length > 6) {
+                    value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6);
+                } else if (value.length > 3) {
+                    value = value.substring(0, 3) + ' ' + value.substring(3);
+                }
+                this.value = value;
+            });
+        });
+
+        // ===== MÁSCARA DE RUC =====
+        document.querySelectorAll('input[name="ruc"], input[id*="ruc"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 11) value = value.substring(0, 11);
+                this.value = value;
+            });
+        });
+
+        console.log(' Componentes inicializados correctamente');
+    });
+</script>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: scripts_bootstrap                                  -->
+<!-- ============================================================ -->
+<script th:fragment="scripts_bootstrap">
+    // Bootstrap 5 JS (ya incluido en el CDN)
+    // Para usar con fragmentos, se debe incluir el script en la página base
+</script>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: scripts_jquery                                     -->
+<!-- ============================================================ -->
+<script th:fragment="scripts_jquery">
+    // jQuery para funciones adicionales
+    // Puede ser usado con SweetAlert2 para confirmaciones
+
+    $(document).ready(function() {
+        console.log('✅ jQuery cargado correctamente');
+
+        // ===== CONFIRMACIÓN DE ELIMINACIÓN CON JQUERY =====
+        $('.btn-eliminar-confirm').on('click', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            const nombre = $(this).data('nombre') || 'este registro';
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Estás a punto de eliminar "' + nombre + '". Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            } else {
+                if (confirm('¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.')) {
+                    form.submit();
+                }
+            }
+        });
+
+        // ===== ACTIVAR/DESACTIVAR CON JQUERY =====
+        $('.btn-toggle-estado').on('click', function() {
+            const id = $(this).data('id');
+            const estado = $(this).data('estado');
+            const url = $(this).data('url');
+
+            if (typeof Swal !== 'undefined') {
+                const action = estado === 'Activo' ? 'desactivar' : 'activar';
+                Swal.fire({
+                    title: '¿Confirmar acción?',
+                    text: '¿Estás seguro de ' + action + ' este registro?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#F5C400',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Sí, ' + action,
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url + '/' + id,
+                            type: 'POST',
+                            success: function() {
+                                location.reload();
+                            },
+                            error: function() {
+                                if (typeof Swal !== 'undefined') {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Ocurrió un error al cambiar el estado.',
+                                        confirmButtonColor: '#EF4444'
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: scripts_admin                                      -->
+<!-- ============================================================ -->
+<script th:fragment="scripts_admin">
+    // ============================================================
+    // FUNCIONES ESPECÍFICAS DEL PANEL ADMIN
+    // ============================================================
+
+    // ===== DASHBOARD: ACTUALIZAR ESTADÍSTICAS =====
+    window.actualizarDashboard = function() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Actualizando...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
+
+        fetch(STAMOS.apiUrl + '/dashboard/estadisticas')
+            .then(response => response.json())
+            .then(data => {
+                if (typeof Swal !== 'undefined') Swal.close();
+
+                // Actualizar contadores
+                document.querySelectorAll('[data-stat]').forEach(el => {
+                    const key = el.getAttribute('data-stat');
+                    if (data[key] !== undefined) {
+                        el.textContent = data[key];
+                    }
+                });
+
+                // Actualizar gráficos (si existen)
+                if (typeof actualizarGraficos === 'function') {
+                    actualizarGraficos(data);
+                }
+
+                console.log('✅ Dashboard actualizado:', data);
+            })
+            .catch(error => {
+                if (typeof Swal !== 'undefined') Swal.close();
+                console.error('Error actualizando dashboard:', error);
+            });
+    };
+
+    // ===== EXPORTAR A EXCEL =====
+    window.exportarExcel = function(url, filename) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Generando archivo...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
+
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                if (typeof Swal !== 'undefined') Swal.close();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename || 'reporte.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => {
+                if (typeof Swal !== 'undefined') Swal.close();
+                console.error('Error exportando:', error);
+                mostrarError('Error', 'No se pudo generar el archivo.');
+            });
+    };
+
+    // ===== IMPRIMIR REPORTE =====
+    window.imprimirReporte = function(selector) {
+        const content = document.querySelector(selector);
+        if (!content) return;
+
+        const win = window.open('', '_blank');
+        win.document.write('<html><head><title>Reporte STAMOS</title>');
+        win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">');
+        win.document.write('<style>body{padding:40px;}</style>');
+        win.document.write('</head><body>');
+        win.document.write(content.innerHTML);
+        win.document.write('</body></html>');
+        win.document.close();
+        win.print();
+    };
+
+    console.log(' Scripts Admin cargados correctamente');
+</script>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: scripts_cliente                                    -->
+<!-- ============================================================ -->
+<script th:fragment="scripts_cliente">
+    // ============================================================
+    // FUNCIONES ESPECÍFICAS DEL PORTAL CLIENTE
+    // ============================================================
+
+    // ===== VER DOCUMENTO (Render, Plano, Boceto) =====
+    window.verDocumento = function(url, tipo) {
+        const modal = new bootstrap.Modal(document.getElementById('modalDocumento'));
+        const iframe = document.getElementById('iframeDocumento');
+        const titulo = document.getElementById('tituloDocumento');
+
+        if (titulo) titulo.textContent = tipo || 'Documento';
+        if (iframe) {
+            iframe.src = url;
+            iframe.onload = function() {
+                console.log('✅ Documento cargado');
+            };
+        }
+
+        modal.show();
+    };
+
+    // ===== SEGUIMIENTO DE PROYECTO (Actualización automática) =====
+    let intervaloProyecto = null;
+
+    window.iniciarSeguimientoProyecto = function(idProyecto) {
+        if (intervaloProyecto) clearInterval(intervaloProyecto);
+
+        intervaloProyecto = setInterval(function() {
+            fetch(STAMOS.apiUrl + '/cliente/proyecto/' + idProyecto + '/estado')
+                .then(response => response.json())
+                .then(data => {
+                    const estadoEl = document.getElementById('estadoProyecto');
+                    const progresoEl = document.getElementById('progresoProyecto');
+
+                    if (estadoEl && data.estado) {
+                        estadoEl.textContent = data.estado;
+                    }
+                    if (progresoEl && data.progreso !== undefined) {
+                        progresoEl.style.width = data.progreso + '%';
+                        progresoEl.textContent = data.progreso + '%';
+                    }
+                })
+                .catch(error => console.error('Error en seguimiento:', error));
+        }, 30000); // Actualizar cada 30 segundos
+    };
+
+    window.detenerSeguimientoProyecto = function() {
+        if (intervaloProyecto) {
+            clearInterval(intervaloProyecto);
+            intervaloProyecto = null;
+        }
+    };
+
+    console.log(' Scripts Cliente cargados correctamente');
+</script>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: scripts_contacto                                   -->
+<!-- ============================================================ -->
+<script th:fragment="scripts_contacto">
+    // ============================================================
+    // FUNCIONES PARA EL FORMULARIO DE CONTACTO
+    // ============================================================
+
+    // ===== SELECTOR DE SERVICIOS (Tags) =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const serviceTags = document.querySelectorAll('.service-tag');
+        if (serviceTags.length > 0) {
+            serviceTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    actualizarServiciosSeleccionados();
+                });
+            });
+        }
+
+        // Validación de formulario de contacto
+        const formContacto = document.querySelector('form[action*="contacto/enviar"]');
+        if (formContacto) {
+            formContacto.addEventListener('submit', function(e) {
+                const nombre = this.querySelector('input[name="nombre"]')?.value.trim();
+                const email = this.querySelector('input[name="email"]')?.value.trim();
+                const mensaje = this.querySelector('textarea[name="mensaje"]')?.value.trim();
+
+                if (!nombre) {
+                    e.preventDefault();
+                    mostrarError('Campo requerido', 'Por favor, ingresa tu nombre completo.');
+                    return false;
+                }
+
+                if (!email || !email.includes('@')) {
+                    e.preventDefault();
+                    mostrarError('Campo requerido', 'Por favor, ingresa un correo electrónico válido.');
+                    return false;
+                }
+
+                if (!mensaje || mensaje.length < 10) {
+                    e.preventDefault();
+                    mostrarError('Campo requerido', 'Por favor, ingresa un mensaje de al menos 10 caracteres.');
+                    return false;
+                }
+
+                return true;
+            });
+        }
+    });
+
+    function actualizarServiciosSeleccionados() {
+        const selected = document.querySelectorAll('.service-tag.selected');
+        const hiddenInput = document.getElementById('serviciosHidden');
+        if (hiddenInput) {
+            hiddenInput.value = Array.from(selected)
+                .map(t => t.textContent.trim())
+                .join(', ');
+        }
+    }
+
+    console.log(' Scripts Contacto cargados correctamente');
+</script>
+
+</body>
+</html>

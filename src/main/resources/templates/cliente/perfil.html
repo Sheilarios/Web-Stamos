@@ -379,8 +379,7 @@
         }
         
         .btn-primary:hover {
-            background: var(--yellow-dark);
-            color: white;
+            background: var(--yellow-mid);
         }
         
         .btn-primary:disabled {
@@ -611,15 +610,15 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li><a href="/cliente/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
-            <li><a href="/cliente/proyectos"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
-            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
-            <li><a href="/cliente/pagos"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
-            <li><a href="/cliente/perfil" class="active"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+            <li><a th:href="@{/cliente/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/cliente/proyectos}"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a th:href="@{/cliente/documentos}"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a th:href="@{/cliente/pagos}"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a th:href="@{/cliente/perfil}" class="active"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
         </ul>
         
         <div class="sidebar-footer">
-            <a href="/logout">
+            <a th:href="@{/logout}">
                 <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
@@ -635,12 +634,12 @@
             </div>
             <div class="user-info">
                 <i class="ti ti-user-circle"></i>
-                <span th:text="${cliente.nombreRazonSocial}">Cliente</span>
+                <span th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Cliente</span>
             </div>
         </div>
 
-        <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
-        <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
+        <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+        <div th:replace="fragments/mensajes :: mensaje_error"></div>
 
         <div class="perfil-container">
             
@@ -650,17 +649,17 @@
                         <div class="avatar-section">
                             <div class="avatar">
                                 <i class="ti ti-user"></i>
-                                <div class="badge-estado" th:classappend="${cliente.estado == 'Activo'} ? '' : 'inactivo'">
-                                    <i class="ti ti-check" th:if="${cliente.estado == 'Activo'}"></i>
-                                    <i class="ti ti-x" th:unless="${cliente.estado == 'Activo'}"></i>
+                                <div class="badge-estado" th:classappend="${cliente != null and cliente.estado == 'Activo'} ? '' : 'inactivo'">
+                                    <i class="ti ti-check" th:if="${cliente != null and cliente.estado == 'Activo'}"></i>
+                                    <i class="ti ti-x" th:unless="${cliente != null and cliente.estado == 'Activo'}"></i>
                                 </div>
                             </div>
-                            <div class="avatar-nombre" th:text="${cliente.nombreRazonSocial}">Nombre del Cliente</div>
-                            <div class="avatar-tipo" th:text="${cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}">Persona Natural</div>
-                            <div class="avatar-ruc" th:if="${cliente.ruc}" th:text="'RUC: ' + ${cliente.ruc}">RUC: 12345678901</div>
+                            <div class="avatar-nombre" th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Nombre del Cliente</div>
+                            <div class="avatar-tipo" th:text="${cliente != null and cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}">Persona Natural</div>
+                            <div class="avatar-ruc" th:if="${cliente != null and cliente.ruc}" th:text="'RUC: ' + ${cliente.ruc}">RUC: 12345678901</div>
                             <div class="avatar-tipo" style="margin-top:8px; font-size:12px; color:var(--text-3);">
-                                <span class="status-badge" th:classappend="${cliente.estado == 'Activo'} ? 'status-validado' : 'status-rechazado'"
-                                      th:text="${cliente.estado}">Activo</span>
+                                <span class="status-badge" th:classappend="${cliente != null and cliente.estado == 'Activo'} ? 'status-validado' : 'status-rechazado'"
+                                      th:text="${cliente != null ? cliente.estado : 'Inactivo'}">Activo</span>
                             </div>
                         </div>
                     </div>
@@ -675,19 +674,19 @@
                     <div class="card-body">
                         <div class="stats-grid">
                             <div class="stat-item">
-                                <div class="stat-number" th:text="${totalProyectos}">0</div>
+                                <div class="stat-number" th:text="${totalProyectos != null ? totalProyectos : 0}">0</div>
                                 <div class="stat-label">Proyectos</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number" th:text="${totalCotizado}">0</div>
+                                <div class="stat-number" th:text="${totalCotizado != null ? totalCotizado : 0}">0</div>
                                 <div class="stat-label">Cotizado</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number" th:text="${totalPagado}">0</div>
+                                <div class="stat-number" th:text="${totalPagado != null ? totalPagado : 0}">0</div>
                                 <div class="stat-label">Pagado</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number" th:text="${saldoPendiente}">0</div>
+                                <div class="stat-number" th:text="${saldoPendiente != null ? saldoPendiente : 0}">0</div>
                                 <div class="stat-label">Pendiente</div>
                             </div>
                         </div>
@@ -695,7 +694,7 @@
                         <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
                             <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-2);">
                                 <span>Cliente desde:</span>
-                                <span th:text="${#temporals.format(cliente.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</span>
+                                <span th:text="${cliente != null and cliente.fechaRegistro != null ? #temporals.format(cliente.fechaRegistro, 'dd/MM/yyyy') : '-'}">01/01/2024</span>
                             </div>
                             <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-2); margin-top:4px;">
                                 <span>Último acceso:</span>
@@ -709,7 +708,7 @@
             
             <div>
                 <form id="formPerfil" th:action="@{/cliente/perfil/actualizar}" method="post">
-                    <input type="hidden" name="idCliente" th:value="${cliente.idCliente}">
+                    <input type="hidden" name="idCliente" th:value="${cliente != null ? cliente.idCliente : ''}">
                     
                     <div class="perfil-card">
                         <div class="card-header">
@@ -725,7 +724,7 @@
                             <div class="form-group">
                                 <label>Tipo de Persona</label>
                                 <input type="text" class="form-control" 
-                                       th:value="${cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}"
+                                       th:value="${cliente != null and cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}"
                                        disabled readonly>
                             </div>
                             
@@ -733,7 +732,7 @@
                                 <label for="nombreRazonSocial">Nombre / Razón Social <span class="required">*</span></label>
                                 <input type="text" id="nombreRazonSocial" name="nombreRazonSocial" 
                                        class="form-control" 
-                                       th:value="${cliente.nombreRazonSocial}"
+                                       th:value="${cliente != null ? cliente.nombreRazonSocial : ''}"
                                        required>
                             </div>
                             
@@ -741,7 +740,7 @@
                                 <label for="ruc">RUC</label>
                                 <input type="text" id="ruc" name="ruc" 
                                        class="form-control" 
-                                       th:value="${cliente.ruc}"
+                                       th:value="${cliente != null ? cliente.ruc : ''}"
                                        placeholder="12345678901"
                                        maxlength="11">
                             </div>
@@ -750,7 +749,7 @@
                                 <label for="telefono">Teléfono <span class="required">*</span></label>
                                 <input type="tel" id="telefono" name="telefono" 
                                        class="form-control" 
-                                       th:value="${cliente.telefono}"
+                                       th:value="${cliente != null ? cliente.telefono : ''}"
                                        required>
                             </div>
                             
@@ -758,7 +757,7 @@
                                 <label for="email">Correo Electrónico <span class="required">*</span></label>
                                 <input type="email" id="email" name="email" 
                                        class="form-control" 
-                                       th:value="${cliente.email}"
+                                       th:value="${cliente != null ? cliente.email : ''}"
                                        required>
                             </div>
                             
@@ -766,7 +765,7 @@
                                 <label for="direccion">Dirección</label>
                                 <input type="text" id="direccion" name="direccion" 
                                        class="form-control" 
-                                       th:value="${cliente.direccion}"
+                                       th:value="${cliente != null ? cliente.direccion : ''}"
                                        placeholder="Jr. Antisuyo 438, San Juan de Lurigancho">
                             </div>
                             
@@ -791,7 +790,7 @@
                     </div>
                     <div class="card-body">
                         <form id="formPassword" th:action="@{/cliente/perfil/cambiar-password}" method="post">
-                            <input type="hidden" name="idCliente" th:value="${cliente.idCliente}">
+                            <input type="hidden" name="idCliente" th:value="${cliente != null ? cliente.idCliente : ''}">
                             
                             <div class="form-group">
                                 <label for="passwordActual">Contraseña Actual <span class="required">*</span></label>
@@ -837,31 +836,21 @@
         </div>
     </main>
 
-    <div class="toast" id="toast">
-        <i class="ti ti-check-circle toast-icon-success" id="toastIcon"></i>
-        <span id="toastMessage">Perfil actualizado correctamente</span>
-        <button class="toast-close" onclick="cerrarToast()">&times;</button>
-    </div>
-
     <script>
-        function resetForm() {
-            window.location.reload();
-        }
-        
         document.getElementById('formPassword').addEventListener('submit', function(e) {
-            const passwordNueva = document.getElementById('passwordNueva').value;
-            const passwordConfirmar = document.getElementById('passwordConfirmar').value;
+            var passwordNueva = document.getElementById('passwordNueva').value;
+            var passwordConfirmar = document.getElementById('passwordConfirmar').value;
             
             if (passwordNueva !== passwordConfirmar) {
                 e.preventDefault();
-                mostrarToast('Las contraseñas no coinciden', 'error');
+                alert('Las contraseñas no coinciden');
                 document.getElementById('passwordConfirmar').classList.add('is-invalid');
                 return false;
             }
             
             if (passwordNueva.length < 6) {
                 e.preventDefault();
-                mostrarToast('La contraseña debe tener al menos 6 caracteres', 'error');
+                alert('La contraseña debe tener al menos 6 caracteres');
                 document.getElementById('passwordNueva').classList.add('is-invalid');
                 return false;
             }
@@ -871,8 +860,8 @@
         });
         
         document.getElementById('passwordConfirmar').addEventListener('input', function() {
-            const passwordNueva = document.getElementById('passwordNueva').value;
-            const passwordConfirmar = this.value;
+            var passwordNueva = document.getElementById('passwordNueva').value;
+            var passwordConfirmar = this.value;
             
             if (passwordConfirmar && passwordNueva !== passwordConfirmar) {
                 this.classList.add('is-invalid');
@@ -882,7 +871,7 @@
         });
         
         document.getElementById('passwordNueva').addEventListener('input', function() {
-            const passwordConfirmar = document.getElementById('passwordConfirmar').value;
+            var passwordConfirmar = document.getElementById('passwordConfirmar').value;
             if (passwordConfirmar && this.value !== passwordConfirmar) {
                 document.getElementById('passwordConfirmar').classList.add('is-invalid');
             } else {
@@ -890,42 +879,8 @@
             }
         });
         
-        function mostrarToast(mensaje, tipo) {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toastIcon');
-            const message = document.getElementById('toastMessage');
-            
-            message.textContent = mensaje;
-            
-            if (tipo === 'error') {
-                toast.className = 'toast show error';
-                icon.className = 'ti ti-alert-circle toast-icon-error';
-            } else {
-                toast.className = 'toast show';
-                icon.className = 'ti ti-check-circle toast-icon-success';
-            }
-            
-            setTimeout(cerrarToast, 5000);
-        }
-        
-        function cerrarToast() {
-            document.getElementById('toast').classList.remove('show');
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const alertExito = document.querySelector('.alert-success');
-            const alertError = document.querySelector('.alert-danger');
-            
-            if (alertExito) {
-                mostrarToast(alertExito.textContent, 'success');
-            }
-            if (alertError) {
-                mostrarToast(alertError.textContent, 'error');
-            }
-        });
-        
         document.getElementById('formPerfil').addEventListener('submit', function() {
-            const btn = document.getElementById('btnGuardar');
+            var btn = document.getElementById('btnGuardar');
             btn.disabled = true;
             btn.innerHTML = '<i class="ti ti-loader ti-spin"></i> Guardando...';
         });

@@ -302,17 +302,17 @@
         <div class="page-title">
             <i class="ti ti-package"></i>
             <span>Detalle de Producto</span>
-            <small th:text="'#' + ${producto.idProducto}">#0</small>
+            <small th:text="'#' + ${producto != null ? producto.idProducto : ''}">#0</small>
         </div>
         <a th:href="@{/admin/productos}" class="btn-secondary">
             <i class="ti ti-arrow-left"></i> Volver
         </a>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
-    <div class="producto-header">
+    <div class="producto-header" th:if="${producto != null}">
         <div class="producto-imagen">
             <div th:if="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}">
                 <img th:src="${producto.imagenUrl}" th:alt="${producto.nombreItem}">
@@ -333,7 +333,7 @@
                 </span>
             </div>
             <div class="descripcion" th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">—</div>
-            <div class="precio" th:text="${producto.precioBaseFormateado}">S/ 0.00</div>
+            <div class="precio" th:text="${producto.precioBaseFormateado != null ? producto.precioBaseFormateado : 'S/ 0.00'}">S/ 0.00</div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <span class="badge-tipo" 
                       th:classappend="${producto.tipo == 'Alquiler'} ? 'badge-alquiler' : 
@@ -343,13 +343,13 @@
                       th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
                       th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
                 <span style="font-size:12px; color:var(--text-3);" 
-                      th:if="${producto.categoria != null}" 
-                      th:text="'Categoría: ' + ${producto.categoria}">Categoría: —</span>
+                      th:if="${producto.nombreCategoria != null}" 
+                      th:text="'Categoría: ' + ${producto.nombreCategoria}">Categoría: —</span>
             </div>
         </div>
     </div>
 
-    <div class="info-card">
+    <div class="info-card" th:if="${producto != null}">
         <div class="info-row">
             <span class="label">ID del Producto</span>
             <span class="value" th:text="${producto.idProducto}">0</span>
@@ -372,7 +372,7 @@
         </div>
         <div class="info-row">
             <span class="label">Precio Base</span>
-            <span class="value" style="font-weight:700; color:var(--yellow-dark);" th:text="${producto.precioBaseFormateado}">S/ 0.00</span>
+            <span class="value" style="font-weight:700; color:var(--yellow-dark);" th:text="${producto.precioBaseFormateado != null ? producto.precioBaseFormateado : 'S/ 0.00'}">S/ 0.00</span>
         </div>
         <div class="info-row">
             <span class="label">Estado</span>
@@ -392,7 +392,7 @@
         </div>
     </div>
 
-    <div class="action-buttons">
+    <div class="action-buttons" th:if="${producto != null}">
         <a th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" class="btn-primary">
             <i class="ti ti-edit"></i> Editar Producto
         </a>

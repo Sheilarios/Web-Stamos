@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Paginación · STAMOS</title>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: paginacion_bootstrap                               -->
+<!-- ============================================================ -->
+<div th:fragment="paginacion_bootstrap" th:if="${page != null and page.totalPages > 1}">
+    <nav aria-label="Navegación de páginas" class="mt-4">
+        <ul class="pagination justify-content-center" style="gap:4px; flex-wrap:wrap;">
+
+            <!-- Anterior -->
+            <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasPrevious()} ? @{'?page=' + (page.number - 1) + '&size=' + page.size + ${paramQuery != null ? '&' + paramQuery : ''}} : '#'"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 14px; font-size:13px; transition:all 0.2s;">
+                    <i class="ti ti-chevron-left" style="font-size:14px;"></i> Anterior
+                </a>
+            </li>
+
+            <!-- Números de página -->
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active' : ''">
+                <a class="page-link" th:href="@{'?page=' + ${i} + '&size=' + ${page.size} + ${paramQuery != null ? '&' + paramQuery : ''}}"
+                   th:text="${i + 1}"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 14px; font-size:13px; min-width:40px; text-align:center; transition:all 0.2s;">
+                </a>
+            </li>
+
+            <!-- Siguiente -->
+            <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasNext()} ? @{'?page=' + (page.number + 1) + '&size=' + page.size + ${paramQuery != null ? '&' + paramQuery : ''}} : '#'"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 14px; font-size:13px; transition:all 0.2s;">
+                    Siguiente <i class="ti ti-chevron-right" style="font-size:14px;"></i>
+                </a>
+            </li>
+
+        </ul>
+
+        <!-- Información de resultados -->
+        <div class="text-center text-muted mt-2" style="font-size:13px; color:#8A8A8A;">
+            <span th:text="'Mostrando ' + ${page.numberOfElements} + ' de ' + ${page.totalElements} + ' resultados'">
+                Mostrando 0 de 0 resultados
+            </span>
+            <span th:if="${page.totalPages > 1}" style="margin-left:12px;">
+                <i class="ti ti-file" style="font-size:12px;"></i>
+                <span th:text="'Página ' + (${page.number} + 1) + ' de ' + ${page.totalPages}">
+                    Página 1 de 1
+                </span>
+            </span>
+        </div>
+    </nav>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: paginacion_compacta                                -->
+<!-- ============================================================ -->
+<div th:fragment="paginacion_compacta" th:if="${page != null and page.totalPages > 1}">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+        <div style="font-size:13px; color:#8A8A8A;">
+            <i class="ti ti-file" style="font-size:13px;"></i>
+            <span th:text="'Página ' + (${page.number} + 1) + ' de ' + ${page.totalPages}">
+                Página 1 de 1
+            </span>
+            <span class="ms-2" th:text="'(' + ${page.totalElements} + ' registros)'">
+                (0 registros)
+            </span>
+        </div>
+
+        <ul class="pagination" style="margin:0; gap:4px;">
+            <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasPrevious()} ? @{'?page=' + (page.number - 1) + '&size=' + page.size + ${paramQuery != null ? '&' + paramQuery : ''}} : '#'"
+                   style="border-radius:6px; border:1px solid #E0E0E0; color:#555; padding:6px 12px; font-size:12px;">
+                    <i class="ti ti-chevron-left" style="font-size:12px;"></i>
+                </a>
+            </li>
+
+            <li class="page-item active">
+                <span class="page-link" style="border-radius:6px; background:#F5C400; border-color:#F5C400; color:#000000; padding:6px 12px; font-size:12px; font-weight:700;">
+                    <span th:text="${page.number + 1}">1</span>
+                </span>
+            </li>
+
+            <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasNext()} ? @{'?page=' + (page.number + 1) + '&size=' + page.size + ${paramQuery != null ? '&' + paramQuery : ''}} : '#'"
+                   style="border-radius:6px; border:1px solid #E0E0E0; color:#555; padding:6px 12px; font-size:12px;">
+                    <i class="ti ti-chevron-right" style="font-size:12px;"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: paginacion_con_filtros                             -->
+<!-- ============================================================ -->
+<div th:fragment="paginacion_con_filtros" th:if="${page != null and page.totalPages > 1}">
+    <nav aria-label="Navegación de páginas" class="mt-4">
+        <ul class="pagination justify-content-center" style="gap:4px; flex-wrap:wrap;">
+
+            <!-- Primera -->
+            <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasPrevious()} ? @{'?page=0&size=' + ${page.size} + ${filtrosUrl != null ? filtrosUrl : ''}} : '#'"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 12px; font-size:13px; transition:all 0.2s;">
+                    <i class="ti ti-chevrons-left" style="font-size:14px;"></i>
+                </a>
+            </li>
+
+            <!-- Anterior -->
+            <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasPrevious()} ? @{'?page=' + (page.number - 1) + '&size=' + page.size + ${filtrosUrl != null ? filtrosUrl : ''}} : '#'"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 14px; font-size:13px; transition:all 0.2s;">
+                    <i class="ti ti-chevron-left" style="font-size:14px;"></i> Anterior
+                </a>
+            </li>
+
+            <!-- Páginas con elipsis -->
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:if="${i == 0 or i == page.totalPages - 1 or (i >= page.number - 1 and i <= page.number + 1)}"
+                th:classappend="${i == page.number} ? 'active' : ''">
+                <a class="page-link" th:href="@{'?page=' + ${i} + '&size=' + ${page.size} + ${filtrosUrl != null ? filtrosUrl : ''}}"
+                   th:text="${i + 1}"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 14px; font-size:13px; min-width:40px; text-align:center; transition:all 0.2s;">
+                </a>
+            </li>
+
+            <!-- Elipsis -->
+            <li class="page-item disabled" th:if="${page.totalPages > 5 and page.number > 2}">
+                <span class="page-link" style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 14px; font-size:13px; background:transparent;">
+                    …
+                </span>
+            </li>
+
+            <!-- Siguiente -->
+            <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasNext()} ? @{'?page=' + (page.number + 1) + '&size=' + page.size + ${filtrosUrl != null ? filtrosUrl : ''}} : '#'"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 14px; font-size:13px; transition:all 0.2s;">
+                    Siguiente <i class="ti ti-chevron-right" style="font-size:14px;"></i>
+                </a>
+            </li>
+
+            <!-- Última -->
+            <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled' : ''">
+                <a class="page-link" th:href="${page.hasNext()} ? @{'?page=' + (page.totalPages - 1) + '&size=' + page.size + ${filtrosUrl != null ? filtrosUrl : ''}} : '#'"
+                   style="border-radius:8px; border:1px solid #E0E0E0; color:#555; padding:8px 12px; font-size:13px; transition:all 0.2s;">
+                    <i class="ti ti-chevrons-right" style="font-size:14px;"></i>
+                </a>
+            </li>
+
+        </ul>
+
+        <!-- Información con filtros -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+            <span style="font-size:13px; color:#8A8A8A;">
+                <i class="ti ti-file" style="font-size:13px;"></i>
+                <span th:text="'Mostrando ' + ${page.numberOfElements} + ' de ' + ${page.totalElements} + ' resultados'">
+                    Mostrando 0 de 0 resultados
+                </span>
+            </span>
+            <span style="font-size:12px; color:#B0B0B0;">
+                <i class="ti ti-filter" style="font-size:12px;"></i>
+                <span th:if="${filtrosActivos != null and !#lists.isEmpty(filtrosActivos)}" th:text="${filtrosActivos}">
+                    Filtros activos
+                </span>
+                <span th:unless="${filtrosActivos != null and !#lists.isEmpty(filtrosActivos)}">
+                    Sin filtros
+                </span>
+            </span>
+        </div>
+    </nav>
+</div>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: paginacion_scroll                                  -->
+<!-- ============================================================ -->
+<div th:fragment="paginacion_scroll" th:if="${page != null and page.totalPages > 1}">
+    <div class="text-center mt-4">
+        <button class="btn-cargar-mas" 
+                th:data-page="${page.number + 1}"
+                th:data-total="${page.totalPages}"
+                style="background:#F5C400; color:#000000; padding:12px 32px; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:8px;">
+            <i class="ti ti-arrow-down" style="font-size:18px;"></i>
+            <span th:text="'Cargar más resultados'">Cargar más resultados</span>
+        </button>
+        <div style="font-size:12px; color:#8A8A8A; margin-top:8px;">
+            <span th:text="'Mostrando ' + ${page.numberOfElements} + ' de ' + ${page.totalElements} + ' resultados'">
+                Mostrando 0 de 0 resultados
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ESTILOS PARA PAGINACIÓN                                      -->
+<!-- ============================================================ -->
+<style>
+    /* Estilos para paginación activa */
+    .page-item.active .page-link {
+        background: #F5C400 !important;
+        border-color: #F5C400 !important;
+        color: #000000 !important;
+        font-weight: 700 !important;
+    }
+
+    .page-item .page-link:hover {
+        background: #F5F5F5;
+        border-color: #F5C400;
+        color: #000000;
+    }
+
+    .page-item.disabled .page-link {
+        opacity: 0.4;
+        pointer-events: none;
+        background: #F5F5F5;
+    }
+
+    /* Efecto hover en botón cargar más */
+    .btn-cargar-mas:hover {
+        background: #E0B000 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(245, 196, 0, 0.3);
+    }
+</style>
+
+<!-- ============================================================ -->
+<!-- SCRIPT PARA PAGINACIÓN SCROLL (carga infinita)              -->
+<!-- ============================================================ -->
+<script>
+    // ===== CARGA INFINITA (SCROLL) =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnCargarMas = document.querySelector('.btn-cargar-mas');
+        if (btnCargarMas) {
+            let currentPage = parseInt(btnCargarMas.getAttribute('data-page')) || 0;
+            const totalPages = parseInt(btnCargarMas.getAttribute('data-total')) || 1;
+            let loading = false;
+
+            btnCargarMas.addEventListener('click', function() {
+                if (loading || currentPage >= totalPages) return;
+                loading = true;
+
+                const url = new URL(window.location.href);
+                url.searchParams.set('page', currentPage);
+                url.searchParams.set('size', 6); // o el tamaño que uses
+
+                fetch(url.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    // Extraer el contenido de la lista y agregarlo
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newItems = doc.querySelector('.grid-items')?.innerHTML || '';
+                    if (newItems) {
+                        document.querySelector('.grid-items').innerHTML += newItems;
+                    }
+                    currentPage++;
+                    btnCargarMas.setAttribute('data-page', currentPage);
+                    if (currentPage >= totalPages) {
+                        btnCargarMas.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error cargando más:', error))
+                .finally(() => {
+                    loading = false;
+                });
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

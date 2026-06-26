@@ -1,26 +1,13 @@
 package com.stamos.dto;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO (Data Transfer Object) para la entidad Cotizacion.
- * 
- * <p>Este DTO se utiliza para transferir datos de cotizaciones entre la capa de
- * servicio y la capa de presentación, evitando exponer directamente la entidad
- * y permitiendo una mejor organización de los datos.</p>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 public class CotizacionDTO {
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     private Integer idCotizacion;
     private Integer idCliente;
@@ -37,25 +24,11 @@ public class CotizacionDTO {
     private Integer versionActual;
     private String observaciones;
     private LocalDateTime fechaActualizacion;
-
-    // ============================================
-    // CAMPOS CALCULADOS
-    // ============================================
-
     private BigDecimal subtotal;
     private BigDecimal igv;
     private BigDecimal total;
     private BigDecimal tasaIgv;
-
-    // ============================================
-    // DETALLES DE LA COTIZACIÓN
-    // ============================================
-
     private List<CotizacionDetalleDTO> detalles = new ArrayList<>();
-
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
 
     public CotizacionDTO() {
         this.subtotal = BigDecimal.ZERO;
@@ -69,22 +42,14 @@ public class CotizacionDTO {
 
     public CotizacionDTO(Integer idCotizacion, Integer idCliente, String nombreCliente, 
                          LocalDateTime fechaEmision, String estado, BigDecimal total) {
+        this();
         this.idCotizacion = idCotizacion;
         this.idCliente = idCliente;
         this.nombreCliente = nombreCliente;
         this.fechaEmision = fechaEmision;
         this.estado = estado;
         this.total = total;
-        this.subtotal = BigDecimal.ZERO;
-        this.igv = BigDecimal.ZERO;
-        this.tasaIgv = new BigDecimal("18.00");
-        this.versionActual = 1;
-        this.detalles = new ArrayList<>();
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdCotizacion() {
         return idCotizacion;
@@ -246,15 +211,6 @@ public class CotizacionDTO {
         this.detalles = detalles;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Agrega un detalle a la cotización y recalcula los totales.
-     * 
-     * @param detalle Detalle a agregar
-     */
     public void agregarDetalle(CotizacionDetalleDTO detalle) {
         if (detalle == null) {
             return;
@@ -263,11 +219,6 @@ public class CotizacionDTO {
         recalcularTotales();
     }
 
-    /**
-     * Elimina un detalle de la cotización y recalcula los totales.
-     * 
-     * @param index Índice del detalle a eliminar
-     */
     public void eliminarDetalle(int index) {
         if (index >= 0 && index < this.detalles.size()) {
             this.detalles.remove(index);
@@ -275,9 +226,6 @@ public class CotizacionDTO {
         }
     }
 
-    /**
-     * Recalcula el subtotal, IGV y total basado en los detalles.
-     */
     public void recalcularTotales() {
         this.subtotal = this.detalles.stream()
                 .map(CotizacionDetalleDTO::getSubtotalLinea)
@@ -289,16 +237,11 @@ public class CotizacionDTO {
         }
 
         this.igv = this.subtotal.multiply(this.tasaIgv)
-                .divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+                .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
 
         this.total = this.subtotal.add(this.igv);
     }
 
-    /**
-     * Verifica si la cotización está vencida.
-     * 
-     * @return true si está vencida, false en caso contrario
-     */
     public boolean estaVencida() {
         if (fechaValidez == null) {
             return false;
@@ -306,190 +249,34 @@ public class CotizacionDTO {
         return LocalDate.now().isAfter(fechaValidez);
     }
 
-    /**
-     * Verifica si la cotización está pendiente.
-     * 
-     * @return true si está pendiente, false en caso contrario
-     */
     public boolean estaPendiente() {
         return "Pendiente".equals(this.estado);
     }
 
-    /**
-     * Verifica si la cotización está aprobada.
-     * 
-     * @return true si está aprobada, false en caso contrario
-     */
     public boolean estaAprobada() {
         return "Aprobada".equals(this.estado);
     }
 
-    /**
-     * Verifica si la cotización está anulada.
-     * 
-     * @return true si está anulada, false en caso contrario
-     */
     public boolean estaAnulada() {
         return "Anulada".equals(this.estado);
     }
 
-    /**
-     * Verifica si la cotización puede ser editada.
-     * 
-     * @return true si se puede editar, false en caso contrario
-     */
     public boolean puedeEditar() {
         return estaPendiente();
     }
 
-    /**
-     * Verifica si la cotización puede ser aprobada.
-     * 
-     * @return true si se puede aprobar, false en caso contrario
-     */
     public boolean puedeAprobar() {
         return estaPendiente() && !estaVencida();
     }
 
-    /**
-     * Verifica si la cotización puede ser anulada.
-     * 
-     * @return true si se puede anular, false en caso contrario
-     */
     public boolean puedeAnular() {
         return estaPendiente();
     }
 
-    /**
-     * Obtiene el número de ítems en la cotización.
-     * 
-     * @return Número de ítems
-     */
     public int getNumeroItems() {
         return this.detalles != null ? this.detalles.size() : 0;
     }
 
-    /**
-     * Obtiene el total de la cotización en formato de moneda.
-     * 
-     * @return Total formateado
-     */
-    public String getTotalFormateado() {
-        if (total == null) {
-            return "S/ 0.00";
-        }
-        return "S/ " + total.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-    }
-
-    /**
-     * Obtiene el subtotal en formato de moneda.
-     * 
-     * @return Subtotal formateado
-     */
-    public String getSubtotalFormateado() {
-        if (subtotal == null) {
-            return "S/ 0.00";
-        }
-        return "S/ " + subtotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-    }
-
-    /**
-     * Obtiene el IGV en formato de moneda.
-     * 
-     * @return IGV formateado
-     */
-    public String getIgvFormateado() {
-        if (igv == null) {
-            return "S/ 0.00";
-        }
-        return "S/ " + igv.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-    }
-
-    /**
-     * Obtiene la clase CSS para el badge del estado.
-     * 
-     * @return Clase CSS
-     */
-    public String getEstadoBadgeClass() {
-        if (estado == null) return "status-pendiente";
-        
-        switch (estado) {
-            case "Pendiente":
-                return "status-pendiente";
-            case "Aprobada":
-                return "status-validado";
-            case "Anulada":
-                return "status-rechazado";
-            default:
-                return "status-pendiente";
-        }
-    }
-
-    /**
-     * Obtiene el estado en formato legible.
-     * 
-     * @return Estado legible
-     */
-    public String getEstadoLegible() {
-        if (estado == null) return "Sin estado";
-        
-        switch (estado) {
-            case "Pendiente":
-                return "Pendiente";
-            case "Aprobada":
-                return "Aprobada";
-            case "Anulada":
-                return "Anulada";
-            default:
-                return estado;
-        }
-    }
-
-    /**
-     * Obtiene el ícono para el estado.
-     * 
-     * @return Ícono CSS
-     */
-    public String getEstadoIcono() {
-        if (estado == null) return "ti ti-circle";
-        
-        switch (estado) {
-            case "Pendiente":
-                return "ti ti-clock";
-            case "Aprobada":
-                return "ti ti-check-circle";
-            case "Anulada":
-                return "ti ti-x-circle";
-            default:
-                return "ti ti-circle";
-        }
-    }
-
-    /**
-     * Obtiene el color para el estado.
-     * 
-     * @return Color en hexadecimal
-     */
-    public String getEstadoColor() {
-        if (estado == null) return "#6B7280";
-        
-        switch (estado) {
-            case "Pendiente":
-                return "#F59E0B"; // Amarillo
-            case "Aprobada":
-                return "#10B981"; // Verde
-            case "Anulada":
-                return "#EF4444"; // Rojo
-            default:
-                return "#6B7280";
-        }
-    }
-
-    /**
-     * Obtiene el código de la cotización en formato legible.
-     * 
-     * @return Código de cotización
-     */
     public String getCodigoCotizacion() {
         if (idCotizacion == null) {
             return "COT-00000";
@@ -497,49 +284,13 @@ public class CotizacionDTO {
         return "COT-" + String.format("%05d", idCotizacion);
     }
 
-    /**
-     * Verifica si la cotización tiene detalles.
-     * 
-     * @return true si tiene detalles, false en caso contrario
-     */
     public boolean tieneDetalles() {
         return detalles != null && !detalles.isEmpty();
     }
 
-    /**
-     * Verifica si la cotización tiene observaciones.
-     * 
-     * @return true si tiene observaciones, false en caso contrario
-     */
     public boolean tieneObservaciones() {
         return observaciones != null && !observaciones.isEmpty();
     }
-
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
-    public String toJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"idCotizacion\":").append(idCotizacion).append(",");
-        sb.append("\"codigo\":\"").append(getCodigoCotizacion()).append("\",");
-        sb.append("\"cliente\":\"").append(nombreCliente != null ? nombreCliente : "").append("\",");
-        sb.append("\"estado\":\"").append(estado != null ? estado : "").append("\",");
-        sb.append("\"total\":").append(total != null ? total : 0).append(",");
-        sb.append("\"fechaEmision\":\"").append(fechaEmision != null ? fechaEmision.toString() : "").append("\"");
-        sb.append("}");
-        return sb.toString();
-    }
-
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -569,14 +320,7 @@ public class CotizacionDTO {
         return idCotizacion != null ? idCotizacion.hashCode() : 0;
     }
 
-    // ============================================
-    // CLASE INTERNA PARA DETALLE DE COTIZACIÓN
-    // ============================================
-
-    /**
-     * DTO para los detalles de la cotización.
-     */
-    public static class CotizacionDetalleDTO {
+    public static final class CotizacionDetalleDTO {
         
         private Integer idDetalleVersion;
         private Integer idVersion;
@@ -590,7 +334,6 @@ public class CotizacionDTO {
         private BigDecimal descuento;
         private BigDecimal subtotalLinea;
 
-        // Constructores
         public CotizacionDetalleDTO() {
             this.cantidad = 1;
             this.precioUnitario = BigDecimal.ZERO;
@@ -608,7 +351,6 @@ public class CotizacionDTO {
             calcularSubtotal();
         }
 
-        // Getters y Setters
         public Integer getIdDetalleVersion() { return idDetalleVersion; }
         public void setIdDetalleVersion(Integer idDetalleVersion) { this.idDetalleVersion = idDetalleVersion; }
 
@@ -651,7 +393,6 @@ public class CotizacionDTO {
         public BigDecimal getSubtotalLinea() { return subtotalLinea; }
         public void setSubtotalLinea(BigDecimal subtotalLinea) { this.subtotalLinea = subtotalLinea; }
 
-        // Métodos de negocio
         public void calcularSubtotal() {
             if (cantidad != null && precioUnitario != null) {
                 BigDecimal subtotal = precioUnitario.multiply(new BigDecimal(cantidad));
@@ -661,25 +402,10 @@ public class CotizacionDTO {
                 if (subtotal.compareTo(BigDecimal.ZERO) < 0) {
                     subtotal = BigDecimal.ZERO;
                 }
-                this.subtotalLinea = subtotal;
+                this.subtotalLinea = subtotal.setScale(2, RoundingMode.HALF_UP);
             } else {
                 this.subtotalLinea = BigDecimal.ZERO;
             }
-        }
-
-        public String getSubtotalFormateado() {
-            if (subtotalLinea == null) return "S/ 0.00";
-            return "S/ " + subtotalLinea.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-        }
-
-        public String getPrecioUnitarioFormateado() {
-            if (precioUnitario == null) return "S/ 0.00";
-            return "S/ " + precioUnitario.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-        }
-
-        public String getDescuentoFormateado() {
-            if (descuento == null) return "S/ 0.00";
-            return "S/ " + descuento.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         }
 
         public boolean tieneDescuento() {

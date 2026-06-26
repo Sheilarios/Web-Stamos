@@ -8,25 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Entidad ReservaInventario.
- * 
- * <p>Esta entidad representa las reservas de equipos y mobiliario del inventario
- * asignados a proyectos específicos, gestionando la disponibilidad y el uso
- * de los recursos físicos de STAMOS S.L.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-14: No se puede asignar un equipo si no hay disponibilidad para las fechas requeridas</li>
- *   <li>RF-18: Asignar equipos y mobiliario a proyectos de acuerdo con las fechas programadas</li>
- *   <li>RF-19: Descontar temporalmente la disponibilidad de equipos al realizar una reserva</li>
- *   <li>RF-20: Bloquear asignaciones cuando no exista disponibilidad o exista solapamiento de fechas</li>
- *   <li>RF-21: Consultar la disponibilidad de equipos por rango de fechas</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "ReservaInventario",
        indexes = {
@@ -38,17 +19,9 @@ import java.time.format.DateTimeFormatter;
        })
 public class ReservaInventario {
 
-    // ============================================
-    // CONSTANTES PARA ESTADOS DE RESERVA
-    // ============================================
-
     public static final String ESTADO_ACTIVA = "Activa";
     public static final String ESTADO_COMPLETADA = "Completada";
     public static final String ESTADO_CANCELADA = "Cancelada";
-
-    // ============================================
-    // ATRIBUTOS PRINCIPALES
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,10 +54,6 @@ public class ReservaInventario {
     @Column(name = "notas", columnDefinition = "TEXT")
     private String notas;
 
-    // ============================================
-    // CAMPOS DE AUDITORÍA
-    // ============================================
-
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 
@@ -93,10 +62,6 @@ public class ReservaInventario {
 
     @Column(name = "id_usuario_actualizacion")
     private Integer idUsuarioActualizacion;
-
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
 
     @Transient
     private String nombreEquipo;
@@ -112,6 +77,9 @@ public class ReservaInventario {
 
     @Transient
     private String codigoProyecto;
+
+    @Transient
+    private String estadoProyecto;
 
     @Transient
     private String estadoReservaLegible;
@@ -136,10 +104,6 @@ public class ReservaInventario {
 
     @Transient
     private Boolean estaVigente;
-
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
 
     public ReservaInventario() {
         this.estadoReserva = ESTADO_ACTIVA;
@@ -169,10 +133,6 @@ public class ReservaInventario {
         this(idInventario, idProyecto, fechaInicio, fechaFin);
         this.notas = notas;
     }
-
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdReserva() {
         return idReserva;
@@ -307,6 +267,14 @@ public class ReservaInventario {
         this.codigoProyecto = codigoProyecto;
     }
 
+    public String getEstadoProyecto() {
+        return estadoProyecto;
+    }
+
+    public void setEstadoProyecto(String estadoProyecto) {
+        this.estadoProyecto = estadoProyecto;
+    }
+
     public String getEstadoReservaLegible() {
         return estadoReservaLegible;
     }
@@ -371,56 +339,46 @@ public class ReservaInventario {
         this.estaVigente = estaVigente;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Actualiza los campos transient basados en el estado de la reserva.
-     */
     private void actualizarCamposTransient() {
         if (estadoReserva != null) {
             switch (estadoReserva) {
-                case ESTADO_ACTIVA:
+                case ESTADO_ACTIVA -> {
                     this.estadoReservaLegible = "Activa";
                     this.colorEstado = "#3B82F6";
                     this.iconoEstado = "ti ti-clock";
                     this.estaActiva = true;
                     this.estaCompletada = false;
                     this.estaCancelada = false;
-                    break;
-                case ESTADO_COMPLETADA:
+                }
+                case ESTADO_COMPLETADA -> {
                     this.estadoReservaLegible = "Completada";
                     this.colorEstado = "#10B981";
                     this.iconoEstado = "ti ti-check-circle";
                     this.estaActiva = false;
                     this.estaCompletada = true;
                     this.estaCancelada = false;
-                    break;
-                case ESTADO_CANCELADA:
+                }
+                case ESTADO_CANCELADA -> {
                     this.estadoReservaLegible = "Cancelada";
                     this.colorEstado = "#EF4444";
                     this.iconoEstado = "ti ti-x-circle";
                     this.estaActiva = false;
                     this.estaCompletada = false;
                     this.estaCancelada = true;
-                    break;
-                default:
+                }
+                default -> {
                     this.estadoReservaLegible = estadoReserva;
                     this.colorEstado = "#6B7280";
                     this.iconoEstado = "ti ti-circle";
                     this.estaActiva = false;
                     this.estaCompletada = false;
                     this.estaCancelada = false;
-                    break;
+                }
             }
         }
         actualizarVigencia();
     }
 
-    /**
-     * Calcula la duración de la reserva en días.
-     */
     private void calcularDuracion() {
         if (fechaInicio != null && fechaFin != null) {
             this.duracionDias = (int) java.time.temporal.ChronoUnit.DAYS.between(fechaInicio, fechaFin) + 1;
@@ -432,9 +390,6 @@ public class ReservaInventario {
         }
     }
 
-    /**
-     * Actualiza si la reserva está vigente.
-     */
     private void actualizarVigencia() {
         if (estaActiva != null && estaActiva) {
             LocalDate hoy = LocalDate.now();
@@ -448,87 +403,46 @@ public class ReservaInventario {
         }
     }
 
-    /**
-     * Verifica si la reserva está activa.
-     * 
-     * @return true si está activa, false en caso contrario
-     */
     public boolean isActiva() {
         return estaActiva != null && estaActiva;
     }
 
-    /**
-     * Verifica si la reserva está completada.
-     * 
-     * @return true si está completada, false en caso contrario
-     */
     public boolean isCompletada() {
         return estaCompletada != null && estaCompletada;
     }
 
-    /**
-     * Verifica si la reserva está cancelada.
-     * 
-     * @return true si está cancelada, false en caso contrario
-     */
     public boolean isCancelada() {
         return estaCancelada != null && estaCancelada;
     }
 
-    /**
-     * Verifica si la reserva está vigente (en el rango de fechas actual).
-     * 
-     * @return true si está vigente, false en caso contrario
-     */
     public boolean isVigente() {
         return estaVigente != null && estaVigente;
     }
 
-    /**
-     * Completa la reserva.
-     */
     public void completar() {
         this.estadoReserva = ESTADO_COMPLETADA;
         this.fechaActualizacion = LocalDateTime.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Cancela la reserva.
-     */
     public void cancelar() {
         this.estadoReserva = ESTADO_CANCELADA;
         this.fechaActualizacion = LocalDateTime.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Reactiva una reserva cancelada o completada.
-     */
     public void reactivar() {
         this.estadoReserva = ESTADO_ACTIVA;
         this.fechaActualizacion = LocalDateTime.now();
         actualizarCamposTransient();
     }
 
-    /**
-     * Verifica si la reserva está en el rango de fechas actual.
-     * 
-     * @return true si está en el rango actual, false en caso contrario
-     */
     public boolean estaEnRangoActual() {
         LocalDate hoy = LocalDate.now();
         return fechaInicio != null && fechaFin != null &&
                !hoy.isAfter(fechaFin) && !hoy.isBefore(fechaInicio);
     }
 
-    /**
-     * Verifica si la reserva se solapa con otro rango de fechas.
-     * 
-     * @param otraFechaInicio Fecha de inicio de la otra reserva
-     * @param otraFechaFin Fecha de fin de la otra reserva
-     * @return true si hay solapamiento, false en caso contrario
-     */
     public boolean seSolapaCon(LocalDate otraFechaInicio, LocalDate otraFechaFin) {
         if (fechaInicio == null || fechaFin == null || 
             otraFechaInicio == null || otraFechaFin == null) {
@@ -537,20 +451,10 @@ public class ReservaInventario {
         return !(fechaFin.isBefore(otraFechaInicio) || fechaInicio.isAfter(otraFechaFin));
     }
 
-    /**
-     * Verifica si la reserva tiene notas.
-     * 
-     * @return true si tiene notas, false en caso contrario
-     */
     public boolean tieneNotas() {
         return notas != null && !notas.trim().isEmpty();
     }
 
-    /**
-     * Obtiene el rango de fechas en formato legible.
-     * 
-     * @return Rango de fechas legible
-     */
     public String getRangoFechasLegible() {
         if (fechaInicio == null && fechaFin == null) {
             return "Sin fechas";
@@ -564,83 +468,40 @@ public class ReservaInventario {
         return getFechaInicioFormateada() + " - " + getFechaFinFormateada();
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
-
-    /**
-     * Obtiene el estado en formato legible.
-     * 
-     * @return Estado legible
-     */
     public String getEstadoLegible() {
         return estadoReservaLegible != null ? estadoReservaLegible : estadoReserva;
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del estado.
-     * 
-     * @return Clase CSS
-     */
     public String getEstadoBadgeClass() {
         if (estadoReserva == null) return "status-pendiente";
         
-        switch (estadoReserva) {
-            case ESTADO_ACTIVA:
-                return "status-produccion";
-            case ESTADO_COMPLETADA:
-                return "status-validado";
-            case ESTADO_CANCELADA:
-                return "status-rechazado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (estadoReserva) {
+            case ESTADO_ACTIVA -> "status-produccion";
+            case ESTADO_COMPLETADA -> "status-validado";
+            case ESTADO_CANCELADA -> "status-rechazado";
+            default -> "status-pendiente";
+        };
     }
 
-    /**
-     * Obtiene el estado con ícono.
-     * 
-     * @return Estado con ícono
-     */
     public String getEstadoConIcono() {
         return "<i class='" + iconoEstado + "'></i> " + getEstadoLegible();
     }
 
-    /**
-     * Obtiene la fecha de inicio formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaInicioFormateada() {
         if (fechaInicio == null) return "-";
         return fechaInicio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la fecha de fin formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaFinFormateada() {
         if (fechaFin == null) return "-";
         return fechaFin.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la fecha de reserva formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaReservaFormateada() {
         if (fechaReserva == null) return "-";
         return fechaReserva.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    /**
-     * Obtiene la duración en días formateada.
-     * 
-     * @return Duración formateada
-     */
     public String getDuracionFormateada() {
         if (duracionDias == null) return "-";
         if (duracionDias == 0) return "Menos de 1 día";
@@ -648,11 +509,6 @@ public class ReservaInventario {
         return duracionDias + " días";
     }
 
-    /**
-     * Obtiene el equipo en formato legible.
-     * 
-     * @return Equipo legible
-     */
     public String getEquipoLegible() {
         if (nombreProducto != null && codigoSerial != null) {
             return nombreProducto + " (" + codigoSerial + ")";
@@ -666,11 +522,6 @@ public class ReservaInventario {
         return "Equipo ID: " + idInventario;
     }
 
-    /**
-     * Obtiene el proyecto en formato legible.
-     * 
-     * @return Proyecto legible
-     */
     public String getProyectoLegible() {
         if (nombreProyecto != null && codigoProyecto != null) {
             return codigoProyecto + " - " + nombreProyecto;
@@ -681,11 +532,6 @@ public class ReservaInventario {
         return "Proyecto ID: " + idProyecto;
     }
 
-    /**
-     * Obtiene el resumen de la reserva.
-     * 
-     * @return Resumen
-     */
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append("Reserva de ").append(getEquipoLegible());
@@ -695,11 +541,6 @@ public class ReservaInventario {
         return sb.toString();
     }
 
-    /**
-     * Obtiene la clase CSS para el badge de vigencia.
-     * 
-     * @return Clase CSS
-     */
     public String getVigenciaBadgeClass() {
         if (isVigente()) {
             return "badge-success";
@@ -710,11 +551,6 @@ public class ReservaInventario {
         return "badge-secondary";
     }
 
-    /**
-     * Obtiene el texto de vigencia.
-     * 
-     * @return Texto de vigencia
-     */
     public String getVigenciaTexto() {
         if (isVigente()) {
             return "Vigente";
@@ -725,15 +561,6 @@ public class ReservaInventario {
         return "Finalizada";
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
-
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -756,11 +583,6 @@ public class ReservaInventario {
         return sb.toString();
     }
 
-    /**
-     * Convierte a JSON con todos los campos.
-     * 
-     * @return JSON completo
-     */
     public String toJsonCompleto() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -797,10 +619,6 @@ public class ReservaInventario {
         return sb.toString();
     }
 
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
-
     @Override
     public String toString() {
         return "ReservaInventario{" +
@@ -826,46 +644,17 @@ public class ReservaInventario {
         return idReserva != null ? idReserva.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
-
-    /**
-     * Crea una reserva activa para un equipo y proyecto.
-     * 
-     * @param idInventario ID del inventario
-     * @param idProyecto ID del proyecto
-     * @param fechaInicio Fecha de inicio
-     * @param fechaFin Fecha de fin
-     * @return Reserva de inventario
-     */
     public static ReservaInventario crearReserva(Integer idInventario, Integer idProyecto,
                                                  LocalDate fechaInicio, LocalDate fechaFin) {
         return new ReservaInventario(idInventario, idProyecto, fechaInicio, fechaFin);
     }
 
-    /**
-     * Crea una reserva activa con notas.
-     * 
-     * @param idInventario ID del inventario
-     * @param idProyecto ID del proyecto
-     * @param fechaInicio Fecha de inicio
-     * @param fechaFin Fecha de fin
-     * @param notas Notas adicionales
-     * @return Reserva de inventario
-     */
     public static ReservaInventario crearReservaConNotas(Integer idInventario, Integer idProyecto,
                                                          LocalDate fechaInicio, LocalDate fechaFin,
                                                          String notas) {
         return new ReservaInventario(idInventario, idProyecto, fechaInicio, fechaFin, notas);
     }
 
-    /**
-     * Crea una reserva desde un DTO.
-     * 
-     * @param dto DTO de la reserva
-     * @return Reserva de inventario
-     */
     public static ReservaInventario fromDTO(com.stamos.dto.ReservaInventarioDTO dto) {
         if (dto == null) {
             return null;
@@ -883,11 +672,6 @@ public class ReservaInventario {
         return reserva;
     }
 
-    /**
-     * Convierte la reserva a un DTO.
-     * 
-     * @return DTO de la reserva
-     */
     public com.stamos.dto.ReservaInventarioDTO toDTO() {
         com.stamos.dto.ReservaInventarioDTO dto = new com.stamos.dto.ReservaInventarioDTO();
         dto.setIdReserva(this.idReserva);
@@ -901,6 +685,7 @@ public class ReservaInventario {
         dto.setCodigoSerial(this.codigoSerial);
         dto.setNombreProyecto(this.nombreProyecto);
         dto.setCodigoProyecto(this.codigoProyecto);
+        dto.setEstadoProyecto(this.estadoProyecto);
         dto.setEstadoReservaLegible(this.estadoReservaLegible);
         dto.setColorEstado(this.colorEstado);
         dto.setIconoEstado(this.iconoEstado);
@@ -908,9 +693,5 @@ public class ReservaInventario {
         dto.setEstaActiva(isActiva());
         dto.setEstaVigente(isVigente());
         return dto;
-    }
-
-    public String getEstadoProyecto() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

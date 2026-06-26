@@ -6,17 +6,14 @@ import com.stamos.model.Usuario;
 import com.stamos.repository.ClienteRepository;
 import com.stamos.repository.RolRepository;
 import com.stamos.repository.UsuarioRepository;
-import com.stamos.repository.LogAccesoClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,13 +24,13 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
 
     @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
     private RolRepository rolRepository;
-
-    @Autowired
-    private LogAccesoClienteRepository logAccesoClienteRepository;
 
     @Autowired
     @Lazy
@@ -41,204 +38,146 @@ public class ClienteService {
 
     @Transactional(rollbackFor = Exception.class)
     public Cliente registrar(Cliente cliente, String password) {
-        try {
-            // Validar que el email no esté registrado
-            if (usuarioRepository.existsByEmail(cliente.getEmail())) {
-                throw new RuntimeException("El email ya está registrado en el sistema");
-            }
-
-            // Validar RUC si existe
-            if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
-                clienteRepository.existsByRuc(cliente.getRuc())) {
-                throw new RuntimeException("El RUC ya está registrado en el sistema");
-            }
-
-            // Validar teléfono si existe
-            if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty() &&
-                clienteRepository.existsByTelefono(cliente.getTelefono())) {
-                throw new RuntimeException("El teléfono ya está registrado en el sistema");
-            }
-
-            // Obtener rol Cliente
-            Rol rolCliente = rolRepository.findByNombreRol("Cliente")
-                    .orElseThrow(() -> new RuntimeException("Rol de cliente no encontrado"));
-
-            // Validar contraseña
-            if (password == null || password.length() < 6) {
-                throw new RuntimeException("La contraseña debe tener al menos 6 caracteres");
-            }
-
-            // Crear usuario
-            Usuario usuario = new Usuario();
-            usuario.setIdRol(rolCliente.getIdRol());
-            usuario.setNombreCompleto(cliente.getNombreRazonSocial());
-            usuario.setEmail(cliente.getEmail());
-            usuario.setPasswordHash(passwordEncoder.encode(password));
-            usuario.setTelefono(cliente.getTelefono());
-            usuario.setActivo(true);
-            usuario.setFechaCreacion(LocalDateTime.now());
-            usuario.setFechaActualizacion(LocalDateTime.now());
-
-            Usuario usuarioGuardado = usuarioRepository.save(usuario);
-
-            // Crear cliente
-            cliente.setIdUsuario(usuarioGuardado.getIdUsuario());
-            cliente.setIdUsuarioRegis(usuarioGuardado.getIdUsuario());
-            cliente.setEstado("Activo");
-            cliente.setFechaRegistro(LocalDateTime.now());
-            cliente.setFechaActualizacion(LocalDateTime.now());
-
-            return clienteRepository.save(cliente);
-
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error al registrar el cliente: " + e.getMessage(), e);
+        if (usuarioRepository.existsByEmail(cliente.getEmail())) {
+            throw new RuntimeException("El email ya está registrado en el sistema");
         }
+
+        if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
+            clienteRepository.existsByRuc(cliente.getRuc())) {
+            throw new RuntimeException("El RUC ya está registrado en el sistema");
+        }
+
+        if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty() &&
+            clienteRepository.existsByTelefono(cliente.getTelefono())) {
+            throw new RuntimeException("El teléfono ya está registrado en el sistema");
+        }
+
+        Rol rolCliente = rolRepository.findByNombreRol("Cliente")
+                .orElseThrow(() -> new RuntimeException("Rol de cliente no encontrado"));
+
+        if (password == null || password.length() < 6) {
+            throw new RuntimeException("La contraseña debe tener al menos 6 caracteres");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setIdRol(rolCliente.getIdRol());
+        usuario.setNombreCompleto(cliente.getNombreRazonSocial());
+        usuario.setEmail(cliente.getEmail());
+        usuario.setPasswordHash(passwordEncoder.encode(password));
+        usuario.setTelefono(cliente.getTelefono());
+        usuario.setActivo(true);
+        usuario.setFechaCreacion(LocalDateTime.now());
+        usuario.setFechaActualizacion(LocalDateTime.now());
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        cliente.setIdUsuario(usuarioGuardado.getIdUsuario());
+        cliente.setIdUsuarioRegis(usuarioGuardado.getIdUsuario());
+        cliente.setEstado("Activo");
+        cliente.setFechaRegistro(LocalDateTime.now());
+        cliente.setFechaActualizacion(LocalDateTime.now());
+
+        return clienteRepository.save(cliente);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public Cliente actualizar(Cliente cliente) {
-        try {
-            Cliente existente = clienteRepository.findById(cliente.getIdCliente())
-                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        Cliente existente = clienteRepository.findById(cliente.getIdCliente())
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-            // Validar email único
-            if (!existente.getEmail().equals(cliente.getEmail()) &&
-                usuarioRepository.existsByEmail(cliente.getEmail())) {
-                throw new RuntimeException("El email ya está registrado en el sistema");
-            }
-
-            // Validar RUC único
-            if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
-                !existente.getRuc().equals(cliente.getRuc()) &&
-                clienteRepository.existsByRuc(cliente.getRuc())) {
-                throw new RuntimeException("El RUC ya está registrado en el sistema");
-            }
-
-            // Validar teléfono único
-            if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty() &&
-                !existente.getTelefono().equals(cliente.getTelefono()) &&
-                clienteRepository.existsByTelefono(cliente.getTelefono())) {
-                throw new RuntimeException("El teléfono ya está registrado en el sistema");
-            }
-
-            // Actualizar cliente
-            existente.setTipoPersona(cliente.getTipoPersona());
-            existente.setNombreRazonSocial(cliente.getNombreRazonSocial());
-            existente.setRuc(cliente.getRuc());
-            existente.setTelefono(cliente.getTelefono());
-            existente.setEmail(cliente.getEmail());
-            existente.setDireccion(cliente.getDireccion());
-            existente.setFechaActualizacion(LocalDateTime.now());
-
-            // Actualizar usuario asociado
-            if (existente.getIdUsuario() != null) {
-                Usuario usuario = usuarioRepository.findById(existente.getIdUsuario()).orElse(null);
-                if (usuario != null) {
-                    usuario.setNombreCompleto(cliente.getNombreRazonSocial());
-                    usuario.setEmail(cliente.getEmail());
-                    usuario.setTelefono(cliente.getTelefono());
-                    usuario.setFechaActualizacion(LocalDateTime.now());
-                    usuarioRepository.save(usuario);
-                }
-            }
-
-            return clienteRepository.save(existente);
-
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error al actualizar el cliente: " + e.getMessage(), e);
+        if (!existente.getEmail().equals(cliente.getEmail()) &&
+            usuarioRepository.existsByEmail(cliente.getEmail())) {
+            throw new RuntimeException("El email ya está registrado en el sistema");
         }
+
+        if (cliente.getRuc() != null && !cliente.getRuc().isEmpty() &&
+            !existente.getRuc().equals(cliente.getRuc()) &&
+            clienteRepository.existsByRuc(cliente.getRuc())) {
+            throw new RuntimeException("El RUC ya está registrado en el sistema");
+        }
+
+        if (cliente.getTelefono() != null && !cliente.getTelefono().isEmpty() &&
+            !existente.getTelefono().equals(cliente.getTelefono()) &&
+            clienteRepository.existsByTelefono(cliente.getTelefono())) {
+            throw new RuntimeException("El teléfono ya está registrado en el sistema");
+        }
+
+        existente.setTipoPersona(cliente.getTipoPersona());
+        existente.setNombreRazonSocial(cliente.getNombreRazonSocial());
+        existente.setRuc(cliente.getRuc());
+        existente.setTelefono(cliente.getTelefono());
+        existente.setEmail(cliente.getEmail());
+        existente.setDireccion(cliente.getDireccion());
+        existente.setFechaActualizacion(LocalDateTime.now());
+
+        if (existente.getIdUsuario() != null) {
+            Usuario usuario = usuarioRepository.findById(existente.getIdUsuario()).orElse(null);
+            if (usuario != null) {
+                usuario.setNombreCompleto(cliente.getNombreRazonSocial());
+                usuario.setEmail(cliente.getEmail());
+                usuario.setTelefono(cliente.getTelefono());
+                usuario.setFechaActualizacion(LocalDateTime.now());
+                usuarioRepository.save(usuario);
+            }
+        }
+
+        return clienteRepository.save(existente);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void cambiarPassword(Integer idUsuario, String newPassword) {
-        try {
-            if (newPassword == null || newPassword.length() < 6) {
-                throw new RuntimeException("La contraseña debe tener al menos 6 caracteres");
-            }
-
-            Usuario usuario = usuarioRepository.findById(idUsuario)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-            usuario.setPasswordHash(passwordEncoder.encode(newPassword));
-            usuario.setFechaActualizacion(LocalDateTime.now());
-            usuarioRepository.save(usuario);
-
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error al cambiar la contraseña: " + e.getMessage(), e);
-        }
+        usuarioService.cambiarPassword(idUsuario, newPassword);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void deshabilitar(Integer idCliente, Integer idUsuarioAdministrador) {
-        try {
-            Cliente cliente = clienteRepository.findById(idCliente)
-                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        Cliente cliente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-            if (!"Activo".equals(cliente.getEstado())) {
-                throw new RuntimeException("El cliente ya está deshabilitado");
+        if (!"Activo".equals(cliente.getEstado())) {
+            throw new RuntimeException("El cliente ya está deshabilitado");
+        }
+
+        cliente.setEstado("Deshabilitado");
+        cliente.setFechaActualizacion(LocalDateTime.now());
+        cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
+        clienteRepository.save(cliente);
+
+        if (cliente.getIdUsuario() != null) {
+            Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
+            if (usuario != null) {
+                usuario.setActivo(false);
+                usuario.setFechaActualizacion(LocalDateTime.now());
+                usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
+                usuarioRepository.save(usuario);
             }
-
-            cliente.setEstado("Deshabilitado");
-            cliente.setFechaActualizacion(LocalDateTime.now());
-            cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
-            clienteRepository.save(cliente);
-
-            if (cliente.getIdUsuario() != null) {
-                Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
-                if (usuario != null) {
-                    usuario.setActivo(false);
-                    usuario.setFechaActualizacion(LocalDateTime.now());
-                    usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
-                    usuarioRepository.save(usuario);
-                }
-            }
-
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error al deshabilitar el cliente: " + e.getMessage(), e);
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void habilitar(Integer idCliente, Integer idUsuarioAdministrador) {
-        try {
-            Cliente cliente = clienteRepository.findById(idCliente)
-                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        Cliente cliente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-            if ("Activo".equals(cliente.getEstado())) {
-                throw new RuntimeException("El cliente ya está activo");
+        if ("Activo".equals(cliente.getEstado())) {
+            throw new RuntimeException("El cliente ya está activo");
+        }
+
+        cliente.setEstado("Activo");
+        cliente.setFechaActualizacion(LocalDateTime.now());
+        cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
+        clienteRepository.save(cliente);
+
+        if (cliente.getIdUsuario() != null) {
+            Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
+            if (usuario != null) {
+                usuario.setActivo(true);
+                usuario.setFechaActualizacion(LocalDateTime.now());
+                usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
+                usuarioRepository.save(usuario);
             }
-
-            cliente.setEstado("Activo");
-            cliente.setFechaActualizacion(LocalDateTime.now());
-            cliente.setIdUsuarioActualizacion(idUsuarioAdministrador);
-            clienteRepository.save(cliente);
-
-            if (cliente.getIdUsuario() != null) {
-                Usuario usuario = usuarioRepository.findById(cliente.getIdUsuario()).orElse(null);
-                if (usuario != null) {
-                    usuario.setActivo(true);
-                    usuario.setFechaActualizacion(LocalDateTime.now());
-                    usuario.setIdUsuarioActualizacion(idUsuarioAdministrador);
-                    usuarioRepository.save(usuario);
-                }
-            }
-
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error al habilitar el cliente: " + e.getMessage(), e);
         }
     }
 
-    // Métodos de consulta (sin transacción o solo lectura)
     public Cliente findById(Integer idCliente) {
         return clienteRepository.findById(idCliente).orElse(null);
     }

@@ -26,10 +26,6 @@ import java.util.UUID;
 @Service
 public class DocumentoService {
 
-    public static List<DocumentoProyecto> findTop5ByOrderByFechaSubidaDesc() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     @Autowired
     private DocumentoProyectoRepository documentoRepository;
 
@@ -250,6 +246,25 @@ public class DocumentoService {
         return documentoRepository.existsByIdProyectoAndNombreArchivo(idProyecto, nombreArchivo);
     }
 
+    @Transactional
+    public void delete(Integer id) {
+        DocumentoProyecto documento = documentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Documento no encontrado con ID: " + id));
+        documentoRepository.delete(documento);
+    }
+
+    @Transactional
+    public void save(DocumentoProyecto documento) {
+        if (documento == null) {
+            throw new RuntimeException("Documento inválido para guardar");
+        }
+        if (documento.getIdProyecto() == null) {
+            throw new RuntimeException("El proyecto es obligatorio");
+        }
+        documento.setFechaSubida(LocalDateTime.now());
+        documentoRepository.save(documento);
+    }
+
     private String getFileExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) {
             return "";
@@ -269,35 +284,35 @@ public class DocumentoService {
 
     public String getTipoLegible(String tipoDocumento) {
         if (tipoDocumento == null) return "Otro";
-        switch (tipoDocumento) {
-            case "Render": return "Render";
-            case "Plano": return "Plano";
-            case "Boceto": return "Boceto";
-            case "Contrato": return "Contrato";
-            default: return "Otro";
-        }
+        return switch (tipoDocumento) {
+            case "Render" -> "Render";
+            case "Plano" -> "Plano";
+            case "Boceto" -> "Boceto";
+            case "Contrato" -> "Contrato";
+            default -> "Otro";
+        };
     }
 
     public String getIconoByTipo(String tipoDocumento) {
         if (tipoDocumento == null) return "ti ti-file";
-        switch (tipoDocumento) {
-            case "Render": return "ti ti-photo";
-            case "Plano": return "ti ti-ruler-2";
-            case "Boceto": return "ti ti-pencil";
-            case "Contrato": return "ti ti-file-contract";
-            default: return "ti ti-file";
-        }
+        return switch (tipoDocumento) {
+            case "Render" -> "ti ti-photo";
+            case "Plano" -> "ti ti-ruler-2";
+            case "Boceto" -> "ti ti-pencil";
+            case "Contrato" -> "ti ti-file-contract";
+            default -> "ti ti-file";
+        };
     }
 
     public String getColorByTipo(String tipoDocumento) {
         if (tipoDocumento == null) return "#6B7280";
-        switch (tipoDocumento) {
-            case "Render": return "#8B5CF6";
-            case "Plano": return "#3B82F6";
-            case "Boceto": return "#F59E0B";
-            case "Contrato": return "#10B981";
-            default: return "#6B7280";
-        }
+        return switch (tipoDocumento) {
+            case "Render" -> "#8B5CF6";
+            case "Plano" -> "#3B82F6";
+            case "Boceto" -> "#F59E0B";
+            case "Contrato" -> "#10B981";
+            default -> "#6B7280";
+        };
     }
 
     public String getBadgeClassByTipo(String tipoDocumento) {
@@ -347,13 +362,5 @@ public class DocumentoService {
         }
         double mb = kb / 1024.0;
         return String.format("%.1f MB", mb);
-    }
-
-    public void delete(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void save(DocumentoProyecto documento) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

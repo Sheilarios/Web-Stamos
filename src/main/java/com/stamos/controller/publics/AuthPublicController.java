@@ -1,5 +1,6 @@
 package com.stamos.controller.publics;
 
+import com.stamos.controller.BaseController;
 import com.stamos.model.Cliente;
 import com.stamos.model.Usuario;
 import com.stamos.service.ClienteService;
@@ -19,11 +20,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/auth")
-public class AuthPublicController {
+public class AuthPublicController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
@@ -42,6 +42,7 @@ public class AuthPublicController {
             model.addAttribute("cliente", new Cliente());
         }
         model.addAttribute("titulo", "Registro de Cliente");
+        addCommonAttributes(model);
         return "public/registro";
     }
 
@@ -53,51 +54,44 @@ public class AuthPublicController {
                                    RedirectAttributes redirectAttributes) {
         try {
             if (password == null || password.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "La contrasena es obligatoria.");
+                redirectAttributes.addFlashAttribute("error", "La contrasena es obligatoria.");
                 redirectAttributes.addFlashAttribute("cliente", cliente);
                 return "redirect:/auth/registro";
             }
 
             if (password.length() < 6) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "La contrasena debe tener al menos 6 caracteres.");
+                redirectAttributes.addFlashAttribute("error", "La contrasena debe tener al menos 6 caracteres.");
                 redirectAttributes.addFlashAttribute("cliente", cliente);
                 return "redirect:/auth/registro";
             }
 
             if (!password.equals(confirmPassword)) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "Las contrasenas no coinciden.");
+                redirectAttributes.addFlashAttribute("error", "Las contrasenas no coinciden.");
                 redirectAttributes.addFlashAttribute("cliente", cliente);
                 return "redirect:/auth/registro";
             }
 
             if (cliente.getNombreRazonSocial() == null || cliente.getNombreRazonSocial().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "El nombre o razon social es obligatorio.");
+                redirectAttributes.addFlashAttribute("error", "El nombre o razon social es obligatorio.");
                 redirectAttributes.addFlashAttribute("cliente", cliente);
                 return "redirect:/auth/registro";
             }
 
             if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "El correo electronico es obligatorio.");
+                redirectAttributes.addFlashAttribute("error", "El correo electronico es obligatorio.");
                 redirectAttributes.addFlashAttribute("cliente", cliente);
                 return "redirect:/auth/registro";
             }
 
             if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "El telefono es obligatorio.");
+                redirectAttributes.addFlashAttribute("error", "El telefono es obligatorio.");
                 redirectAttributes.addFlashAttribute("cliente", cliente);
                 return "redirect:/auth/registro";
             }
 
             Usuario usuarioExistente = clienteService.findUsuarioByEmail(cliente.getEmail().trim());
             if (usuarioExistente != null) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "El correo electronico ya esta registrado.");
+                redirectAttributes.addFlashAttribute("error", "El correo electronico ya esta registrado.");
                 redirectAttributes.addFlashAttribute("cliente", cliente);
                 return "redirect:/auth/registro";
             }
@@ -105,8 +99,7 @@ public class AuthPublicController {
             if (cliente.getRuc() != null && !cliente.getRuc().trim().isEmpty()) {
                 Cliente clienteRucExistente = clienteService.findByRuc(cliente.getRuc().trim());
                 if (clienteRucExistente != null) {
-                    redirectAttributes.addFlashAttribute("error", 
-                        "El RUC ya esta registrado.");
+                    redirectAttributes.addFlashAttribute("error", "El RUC ya esta registrado.");
                     redirectAttributes.addFlashAttribute("cliente", cliente);
                     return "redirect:/auth/registro";
                 }
@@ -123,8 +116,7 @@ public class AuthPublicController {
             return "redirect:/login";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", 
-                "Error al registrar el cliente: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error al registrar el cliente: " + e.getMessage());
             redirectAttributes.addFlashAttribute("cliente", cliente);
             return "redirect:/auth/registro";
         }
@@ -159,8 +151,7 @@ public class AuthPublicController {
 
             Usuario usuario = clienteService.findUsuarioByEmail(email);
             if (usuario == null) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "Usuario no encontrado.");
+                redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
                 redirectAttributes.addFlashAttribute("errorClass", "alert-danger");
                 return "redirect:/login";
             }
@@ -248,15 +239,11 @@ public class AuthPublicController {
 
     public String getTipoPersonaLegible(String tipoPersona) {
         if (tipoPersona == null) return "No especificado";
-        
-        switch (tipoPersona) {
-            case "Natural":
-                return "Persona Natural";
-            case "Juridica":
-                return "Persona Juridica";
-            default:
-                return tipoPersona;
-        }
+        return switch (tipoPersona) {
+            case "Natural" -> "Persona Natural";
+            case "Juridica" -> "Persona Juridica";
+            default -> tipoPersona;
+        };
     }
 
     public String formatearTelefono(String telefono) {

@@ -1,9 +1,7 @@
 package com.stamos.service;
 
 import com.stamos.model.EstadoProyecto;
-import com.stamos.model.Proyecto;
 import com.stamos.repository.EstadoProyectoRepository;
-import com.stamos.repository.ProyectoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,16 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EstadoProyectoService {
 
     @Autowired
     private EstadoProyectoRepository estadoProyectoRepository;
-
-    @Autowired
-    private ProyectoRepository proyectoRepository;
 
     public static final String ESTADO_APROBADO = "Aprobado";
     public static final String ESTADO_EN_DISENO = "En Diseño";
@@ -271,54 +265,54 @@ public class EstadoProyectoService {
 
     public String getEstadoBadgeClass(String nombreEstado) {
         if (nombreEstado == null) return "status-pendiente";
-        switch (nombreEstado) {
-            case ESTADO_APROBADO: return "status-aprobado";
-            case ESTADO_EN_DISENO: return "status-diseno";
-            case ESTADO_EN_PRODUCCION: return "status-produccion";
-            case ESTADO_INSTALACION_MONTAJE: return "status-instalacion";
-            case ESTADO_ENTREGADO: return "status-entregado";
-            case ESTADO_ANULADO: return "status-anulado";
-            default: return "status-pendiente";
-        }
+        return switch (nombreEstado) {
+            case ESTADO_APROBADO -> "status-aprobado";
+            case ESTADO_EN_DISENO -> "status-diseno";
+            case ESTADO_EN_PRODUCCION -> "status-produccion";
+            case ESTADO_INSTALACION_MONTAJE -> "status-instalacion";
+            case ESTADO_ENTREGADO -> "status-entregado";
+            case ESTADO_ANULADO -> "status-anulado";
+            default -> "status-pendiente";
+        };
     }
 
     public String getEstadoColor(String nombreEstado) {
         if (nombreEstado == null) return "#6B7280";
-        switch (nombreEstado) {
-            case ESTADO_APROBADO: return "#1A56DB";
-            case ESTADO_EN_DISENO: return "#F59E0B";
-            case ESTADO_EN_PRODUCCION: return "#3B82F6";
-            case ESTADO_INSTALACION_MONTAJE: return "#8B5CF6";
-            case ESTADO_ENTREGADO: return "#10B981";
-            case ESTADO_ANULADO: return "#EF4444";
-            default: return "#6B7280";
-        }
+        return switch (nombreEstado) {
+            case ESTADO_APROBADO -> "#1A56DB";
+            case ESTADO_EN_DISENO -> "#F59E0B";
+            case ESTADO_EN_PRODUCCION -> "#3B82F6";
+            case ESTADO_INSTALACION_MONTAJE -> "#8B5CF6";
+            case ESTADO_ENTREGADO -> "#10B981";
+            case ESTADO_ANULADO -> "#EF4444";
+            default -> "#6B7280";
+        };
     }
 
     public String getEstadoIcono(String nombreEstado) {
         if (nombreEstado == null) return "ti ti-circle";
-        switch (nombreEstado) {
-            case ESTADO_APROBADO: return "ti ti-check-circle";
-            case ESTADO_EN_DISENO: return "ti ti-pencil";
-            case ESTADO_EN_PRODUCCION: return "ti ti-tools";
-            case ESTADO_INSTALACION_MONTAJE: return "ti ti-truck";
-            case ESTADO_ENTREGADO: return "ti ti-check";
-            case ESTADO_ANULADO: return "ti ti-x-circle";
-            default: return "ti ti-circle";
-        }
+        return switch (nombreEstado) {
+            case ESTADO_APROBADO -> "ti ti-check-circle";
+            case ESTADO_EN_DISENO -> "ti ti-pencil";
+            case ESTADO_EN_PRODUCCION -> "ti ti-tools";
+            case ESTADO_INSTALACION_MONTAJE -> "ti ti-truck";
+            case ESTADO_ENTREGADO -> "ti ti-check";
+            case ESTADO_ANULADO -> "ti ti-x-circle";
+            default -> "ti ti-circle";
+        };
     }
 
     public int getProgresoByEstado(String nombreEstado) {
         if (nombreEstado == null) return 0;
-        switch (nombreEstado) {
-            case ESTADO_APROBADO: return 10;
-            case ESTADO_EN_DISENO: return 30;
-            case ESTADO_EN_PRODUCCION: return 60;
-            case ESTADO_INSTALACION_MONTAJE: return 85;
-            case ESTADO_ENTREGADO: return 100;
-            case ESTADO_ANULADO: return 0;
-            default: return 0;
-        }
+        return switch (nombreEstado) {
+            case ESTADO_APROBADO -> 10;
+            case ESTADO_EN_DISENO -> 30;
+            case ESTADO_EN_PRODUCCION -> 60;
+            case ESTADO_INSTALACION_MONTAJE -> 85;
+            case ESTADO_ENTREGADO -> 100;
+            case ESTADO_ANULADO -> 0;
+            default -> 0;
+        };
     }
 
     public String getProgresoColor(int progreso) {

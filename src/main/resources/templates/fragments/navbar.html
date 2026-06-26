@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar · STAMOS</title>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: navbar                                             -->
+<!-- ============================================================ -->
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark sticky-top" style="background:#000000; border-bottom:1px solid #222; padding:12px 56px;">
+    <div class="container-fluid" style="padding:0;">
+
+        <!-- ===== LOGO ===== -->
+        <a class="navbar-brand" th:href="@{/}" style="font-size:24px; font-weight:800; letter-spacing:1px; padding:0;">
+            STAMOS<span style="color:#F5C400;">.</span>
+        </a>
+
+        <!-- ===== TOGGLER (Mobile) ===== -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" 
+                aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation"
+                style="padding:8px; color:#FFFFFF;">
+            <i class="ti ti-menu-2" style="font-size:28px;"></i>
+        </button>
+
+        <!-- ===== NAVEGACIÓN ===== -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="gap:8px;">
+
+                <!-- Inicio -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}" style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px; transition:all 0.2s;">
+                        <i class="ti ti-home" style="font-size:16px; vertical-align:middle; margin-right:6px;"></i> Inicio
+                    </a>
+                </li>
+
+                <!-- Servicios (con dropdown) -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="serviciosDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false"
+                       style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px; transition:all 0.2s;">
+                        <i class="ti ti-box" style="font-size:16px; vertical-align:middle; margin-right:6px;"></i> Servicios
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="serviciosDropdown" 
+                        style="background:#1A1A1A; border:1px solid #333; border-radius:12px; padding:8px; min-width:220px; margin-top:8px;">
+                        <li><a class="dropdown-item" th:href="@{/servicios}" style="color:#C0C0C0; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s;">
+                            <i class="ti ti-layout" style="font-size:14px; margin-right:10px; color:#F5C400;"></i> Stands publicitarios
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/servicios}" style="color:#C0C0C0; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s;">
+                            <i class="ti ti-device-tv" style="font-size:14px; margin-right:10px; color:#F5C400;"></i> Video walls & LED
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/servicios}" style="color:#C0C0C0; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s;">
+                            <i class="ti ti-armchair" style="font-size:14px; margin-right:10px; color:#F5C400;"></i> Mobiliario ferial
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/servicios}" style="color:#C0C0C0; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s;">
+                            <i class="ti ti-3d-cube-sphere" style="font-size:14px; margin-right:10px; color:#F5C400;"></i> Diseño 3D
+                        </a></li>
+                        <li><hr class="dropdown-divider" style="border-color:#333; margin:4px 0;"></li>
+                        <li><a class="dropdown-item" th:href="@{/servicios}" style="color:#C0C0C0; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s; font-weight:600;">
+                            <i class="ti ti-list" style="font-size:14px; margin-right:10px; color:#F5C400;"></i> Ver todos los servicios
+                        </a></li>
+                    </ul>
+                </li>
+
+                <!-- Galería -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/galeria}" style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px; transition:all 0.2s;">
+                        <i class="ti ti-photo" style="font-size:16px; vertical-align:middle; margin-right:6px;"></i> Galería
+                    </a>
+                </li>
+
+                <!-- Contacto -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/contacto}" style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px; transition:all 0.2s;">
+                        <i class="ti ti-message" style="font-size:16px; vertical-align:middle; margin-right:6px;"></i> Contacto
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- ===== LADO DERECHO ===== -->
+            <div class="d-flex align-items-center gap-3" style="flex-wrap:wrap;">
+
+                <!-- Teléfono -->
+                <span class="nav-phone" style="color:#FFFFFF; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px;">
+                    <i class="ti ti-phone" style="color:#F5C400; font-size:16px;"></i>
+                    <span class="d-none d-lg-inline">01 704-6345</span>
+                </span>
+
+                <!-- Si el usuario está autenticado (admin/cliente) -->
+                <div th:if="${usuario != null and usuario.isAuthenticated()}">
+                    <!-- Dropdown de usuario -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" 
+                                data-bs-toggle="dropdown" aria-expanded="false"
+                                style="border-radius:10px; padding:6px 16px; font-size:13px; font-weight:600; border-color:#444; color:#FFFFFF; display:flex; align-items:center; gap:8px;">
+                            <i class="ti ti-user" style="font-size:16px;"></i>
+                            <span th:text="${usuario.nombreCompleto} ?: ${usuario.email}">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown"
+                            style="background:#1A1A1A; border:1px solid #333; border-radius:12px; padding:8px; min-width:200px; margin-top:8px;">
+                            <li th:if="${usuario.rol == 'Cliente'}">
+                                <a class="dropdown-item" th:href="@{/cliente/dashboard}" style="color:#C0C0C0; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s;">
+                                    <i class="ti ti-dashboard" style="font-size:14px; margin-right:10px; color:#F5C400;"></i> Mi dashboard
+                                </a>
+                            </li>
+                            <li th:if="${usuario.rol != 'Cliente'}">
+                                <a class="dropdown-item" th:href="@{/admin/dashboard}" style="color:#C0C0C0; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s;">
+                                    <i class="ti ti-dashboard" style="font-size:14px; margin-right:10px; color:#F5C400;"></i> Panel de control
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider" style="border-color:#333; margin:4px 0;"></li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/logout}" style="color:#EF4444; border-radius:8px; padding:8px 16px; font-size:13px; transition:all 0.2s;">
+                                    <i class="ti ti-logout" style="font-size:14px; margin-right:10px;"></i> Cerrar sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Si NO está autenticado -->
+                <div th:if="${usuario == null or !usuario.isAuthenticated()}">
+                    <a th:href="@{/login}" class="nav-cta" 
+                       style="background:#F5C400; color:#000000; padding:8px 22px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition:background 0.2s;">
+                        <i class="ti ti-login" style="font-size:16px;"></i> <span class="d-none d-sm-inline">Portal cliente</span>
+                    </a>
+                </div>
+
+                <!-- Enlace "Solicitar cotización" (siempre visible) -->
+                <a th:href="@{/contacto}" class="btn-cotizar" 
+                   style="background:#F5C400; color:#000000; padding:8px 18px; border-radius:10px; font-size:12px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s;">
+                    <i class="ti ti-send" style="font-size:14px;"></i> Cotizar
+                </a>
+
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: navbar_simple (sin dropdowns, para páginas públicas) -->
+<!-- ============================================================ -->
+<nav th:fragment="navbar_simple" class="navbar navbar-expand-lg navbar-dark sticky-top" style="background:#000000; border-bottom:1px solid #222; padding:12px 56px;">
+    <div class="container-fluid" style="padding:0;">
+
+        <a class="navbar-brand" th:href="@{/}" style="font-size:24px; font-weight:800; letter-spacing:1px; padding:0;">
+            STAMOS<span style="color:#F5C400;">.</span>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSimple" 
+                aria-controls="navbarSimple" aria-expanded="false" aria-label="Toggle navigation"
+                style="padding:8px; color:#FFFFFF;">
+            <i class="ti ti-menu-2" style="font-size:28px;"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSimple">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="gap:8px;">
+                <li class="nav-item"><a class="nav-link" th:href="@{/}" style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px;">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/servicios}" style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px;">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/galeria}" style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px;">Galería</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/contacto}" style="color:#C0C0C0; font-weight:500; font-size:14px; padding:8px 16px; border-radius:8px;">Contacto</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-3">
+                <a th:href="@{/login}" class="nav-cta" style="background:#F5C400; color:#000000; padding:8px 22px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                    <i class="ti ti-login" style="font-size:16px;"></i> Portal cliente
+                </a>
+                <a th:href="@{/contacto}" class="btn-cotizar" style="background:#F5C400; color:#000000; padding:8px 18px; border-radius:10px; font-size:12px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    <i class="ti ti-send" style="font-size:14px;"></i> Cotizar
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- FRAGMENT: navbar_admin (para el panel de administración)     -->
+<!-- ============================================================ -->
+<nav th:fragment="navbar_admin" class="navbar navbar-expand-lg navbar-dark" style="background:#1A1A2E; border-bottom:2px solid #F5C400; padding:10px 32px;">
+    <div class="container-fluid" style="padding:0;">
+
+        <a class="navbar-brand" th:href="@{/admin/dashboard}" style="font-size:20px; font-weight:800; letter-spacing:1px; color:#FFFFFF;">
+            <i class="ti ti-layout-dashboard" style="color:#F5C400; font-size:24px; vertical-align:middle; margin-right:8px;"></i>
+            STAMOS <span style="color:#F5C400; font-weight:400; font-size:13px;">| Admin</span>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin" 
+                aria-controls="navbarAdmin" aria-expanded="false" aria-label="Toggle navigation"
+                style="padding:8px; color:#FFFFFF;">
+            <i class="ti ti-menu-2" style="font-size:28px;"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="gap:4px;">
+
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/dashboard}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-home" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Dashboard
+                    </a>
+                </li>
+
+                <!-- Clientes -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/clientes}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-users" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Clientes
+                    </a>
+                </li>
+
+                <!-- Proyectos -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/proyectos}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-folder" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Proyectos
+                    </a>
+                </li>
+
+                <!-- Cotizaciones -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/cotizaciones}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-file" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Cotizaciones
+                    </a>
+                </li>
+
+                <!-- Pagos -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/pagos}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-currency-dollar" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Pagos
+                    </a>
+                </li>
+
+                <!-- Inventario -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/inventario}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-box" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Inventario
+                    </a>
+                </li>
+
+                <!-- Productos -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/productos}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-package" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Productos
+                    </a>
+                </li>
+
+                <!-- Documentos -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/documentos}" 
+                       style="color:#C0C0C0; font-weight:500; font-size:13px; padding:6px 14px; border-radius:6px; transition:all 0.2s;">
+                        <i class="ti ti-file" style="font-size:14px; vertical-align:middle; margin-right:4px;"></i> Documentos
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- Lado derecho - Admin -->
+            <div class="d-flex align-items-center gap-3">
+                <span style="color:#8A8A8A; font-size:12px;">
+                    <i class="ti ti-user" style="color:#F5C400;"></i>
+                    <span th:text="${usuario.nombreCompleto} ?: 'Administrador'">Administrador</span>
+                </span>
+                <a th:href="@{/logout}" class="btn btn-sm" style="color:#EF4444; background:transparent; border:1px solid #EF4444; border-radius:8px; padding:6px 16px; font-size:12px; font-weight:600; text-decoration:none; transition:all 0.2s;">
+                    <i class="ti ti-logout"></i> Salir
+                </a>
+                <a th:href="@{/}" class="btn btn-sm" style="color:#FFFFFF; background:transparent; border:1px solid #444; border-radius:8px; padding:6px 16px; font-size:12px; font-weight:600; text-decoration:none; transition:all 0.2s;">
+                    <i class="ti ti-world"></i> Web
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- SCRIPTS PARA DESTACAR EL ENLACE ACTIVO                      -->
+<!-- ============================================================ -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Destacar enlace activo en navbar
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.navbar .nav-link').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href !== '#' && currentPath === href) {
+                link.style.color = '#F5C400';
+                link.style.fontWeight = '600';
+            }
+            // Para enlaces con subrutas (ej: /admin/clientes también destaca /admin)
+            if (href && href !== '#' && currentPath.startsWith(href) && href !== '/') {
+                link.style.color = '#F5C400';
+                link.style.fontWeight = '600';
+            }
+        });
+
+        // Cerrar dropdown al hacer clic en un enlace dentro de él (para móvil)
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const dropdown = this.closest('.dropdown-menu');
+                if (dropdown) {
+                    const toggle = dropdown.previousElementSibling;
+                    if (toggle && toggle.classList.contains('dropdown-toggle')) {
+                        const bsDropdown = bootstrap.Dropdown.getInstance(toggle);
+                        if (bsDropdown) {
+                            bsDropdown.hide();
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

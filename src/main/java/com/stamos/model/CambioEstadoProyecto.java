@@ -7,23 +7,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Entidad CambioEstadoProyecto.
- * 
- * <p>Esta entidad registra el historial de cambios de estado de un proyecto,
- * permitiendo la trazabilidad completa de su evolución a lo largo del tiempo.</p>
- * 
- * <p>Implementa los requerimientos:</p>
- * <ul>
- *   <li>RN-07: Los proyectos deben seguir la secuencia de estados</li>
- *   <li>RN-08: Proyectos en "Entregado" o "Anulado" no pueden retroceder</li>
- *   <li>RN-09: Registrar fecha y responsable de cada cambio</li>
- *   <li>RF-15: Registrar fecha, responsable y cambio de estado</li>
- * </ul>
- * 
- * @author STAMOS S.L.
- * @version 1.0
- */
 @Entity
 @Table(name = "CambioEstadoProyecto",
        indexes = {
@@ -34,10 +17,6 @@ import java.time.format.DateTimeFormatter;
            @Index(name = "idx_cambio_fecha", columnList = "fecha_cambio")
        })
 public class CambioEstadoProyecto {
-
-    // ============================================
-    // ATRIBUTOS
-    // ============================================
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,10 +46,6 @@ public class CambioEstadoProyecto {
     @Column(name = "comentario", columnDefinition = "TEXT")
     private String comentario;
 
-    // ============================================
-    // CAMPOS ADICIONALES (NO EN BD)
-    // ============================================
-
     @Transient
     private String nombreProyecto;
 
@@ -85,10 +60,6 @@ public class CambioEstadoProyecto {
 
     @Transient
     private String responsableEmail;
-
-    // ============================================
-    // CONSTRUCTORES
-    // ============================================
 
     public CambioEstadoProyecto() {
         this.fechaCambio = LocalDateTime.now();
@@ -110,9 +81,6 @@ public class CambioEstadoProyecto {
         this.comentario = comentario;
     }
 
-    // ============================================
-    // GETTERS Y SETTERS
-    // ============================================
 
     public Integer getIdCambio() {
         return idCambio;
@@ -210,28 +178,13 @@ public class CambioEstadoProyecto {
         this.responsableEmail = responsableEmail;
     }
 
-    // ============================================
-    // MÉTODOS DE NEGOCIO
-    // ============================================
-
-    /**
-     * Verifica si el cambio fue un avance en el flujo (hacia adelante).
-     * 
-     * @return true si fue un avance
-     */
     public boolean esAvance() {
         if (idEstadoAnterior == null || idEstadoNuevo == null) {
             return false;
         }
-        // Considerando que los IDs de estado están en orden secuencial
         return idEstadoNuevo > idEstadoAnterior;
     }
 
-    /**
-     * Verifica si el cambio fue un retroceso en el flujo (hacia atrás).
-     * 
-     * @return true si fue un retroceso
-     */
     public boolean esRetroceso() {
         if (idEstadoAnterior == null || idEstadoNuevo == null) {
             return false;
@@ -239,58 +192,31 @@ public class CambioEstadoProyecto {
         return idEstadoNuevo < idEstadoAnterior;
     }
 
-    /**
-     * Verifica si el cambio fue a "Entregado".
-     * 
-     * @return true si el nuevo estado es "Entregado"
-     */
+
     public boolean esEntrega() {
         return "Entregado".equals(this.estadoNuevoNombre);
     }
 
-    /**
-     * Verifica si el cambio fue a "Anulado".
-     * 
-     * @return true si el nuevo estado es "Anulado"
-     */
+
     public boolean esAnulacion() {
         return "Anulado".equals(this.estadoNuevoNombre);
     }
 
-    /**
-     * Verifica si el cambio fue desde "Aprobado" a "En Diseño".
-     * 
-     * @return true si es el inicio del proyecto
-     */
     public boolean esInicioProyecto() {
         return "Aprobado".equals(this.estadoAnteriorNombre) && 
                "En Diseño".equals(this.estadoNuevoNombre);
     }
 
-    /**
-     * Verifica si el cambio fue desde "Instalación/Montaje" a "Entregado".
-     * 
-     * @return true si es la finalización del proyecto
-     */
+
     public boolean esFinalizacionProyecto() {
         return "Instalación/Montaje".equals(this.estadoAnteriorNombre) && 
                "Entregado".equals(this.estadoNuevoNombre);
     }
 
-    /**
-     * Verifica si el cambio tiene comentario.
-     * 
-     * @return true si tiene comentario
-     */
     public boolean tieneComentario() {
         return comentario != null && !comentario.trim().isEmpty();
     }
 
-    /**
-     * Obtiene el tipo de cambio en formato legible.
-     * 
-     * @return Tipo de cambio
-     */
     public String getTipoCambioLegible() {
         if (esInicioProyecto()) {
             return "Inicio de Proyecto";
@@ -310,11 +236,6 @@ public class CambioEstadoProyecto {
         return "Cambio de Estado";
     }
 
-    /**
-     * Obtiene la clase CSS para el tipo de cambio.
-     * 
-     * @return Clase CSS
-     */
     public String getTipoCambioBadgeClass() {
         if (esInicioProyecto()) {
             return "badge-success";
@@ -334,11 +255,6 @@ public class CambioEstadoProyecto {
         return "badge-secondary";
     }
 
-    /**
-     * Obtiene el ícono para el tipo de cambio.
-     * 
-     * @return Ícono CSS
-     */
     public String getTipoCambioIcono() {
         if (esInicioProyecto()) {
             return "ti ti-play";
@@ -358,117 +274,67 @@ public class CambioEstadoProyecto {
         return "ti ti-arrows-exchange";
     }
 
-    // ============================================
-    // MÉTODOS DE FORMATO PARA LA VISTA
-    // ============================================
 
-    /**
-     * Obtiene la fecha de cambio formateada.
-     * 
-     * @return Fecha formateada
-     */
     public String getFechaCambioFormateada() {
         if (fechaCambio == null) return "-";
         return fechaCambio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     }
 
-    /**
-     * Obtiene la fecha de cambio formateada (solo fecha).
-     * 
-     * @return Fecha formateada
-     */
+
     public String getFechaFormateada() {
         if (fechaCambio == null) return "-";
         return fechaCambio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    /**
-     * Obtiene la hora de cambio formateada.
-     * 
-     * @return Hora formateada
-     */
+
     public String getHoraFormateada() {
         if (fechaCambio == null) return "-";
         return fechaCambio.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
     }
 
-    /**
-     * Obtiene el estado anterior en formato legible.
-     * 
-     * @return Estado anterior legible
-     */
+
     public String getEstadoAnteriorLegible() {
         if (estadoAnteriorNombre == null) return "-";
         return estadoAnteriorNombre;
     }
 
-    /**
-     * Obtiene el estado nuevo en formato legible.
-     * 
-     * @return Estado nuevo legible
-     */
+
     public String getEstadoNuevoLegible() {
         if (estadoNuevoNombre == null) return "-";
         return estadoNuevoNombre;
     }
 
-    /**
-     * Obtiene la clase CSS para el badge del estado nuevo.
-     * 
-     * @return Clase CSS
-     */
+
     public String getEstadoNuevoBadgeClass() {
         if (estadoNuevoNombre == null) return "status-pendiente";
         
-        switch (estadoNuevoNombre) {
-            case "Aprobado":
-                return "status-aprobado";
-            case "En Diseño":
-                return "status-diseno";
-            case "En Producción":
-                return "status-produccion";
-            case "Instalación/Montaje":
-                return "status-instalacion";
-            case "Entregado":
-                return "status-entregado";
-            case "Anulado":
-                return "status-anulado";
-            default:
-                return "status-pendiente";
-        }
+        return switch (estadoNuevoNombre) {
+            case "Aprobado" -> "status-aprobado";
+            case "En Diseño" -> "status-diseno";
+            case "En Producción" -> "status-produccion";
+            case "Instalación/Montaje" -> "status-instalacion";
+            case "Entregado" -> "status-entregado";
+            case "Anulado" -> "status-anulado";
+            default -> "status-pendiente";
+        };
     }
 
-    /**
-     * Obtiene el color para el estado nuevo.
-     * 
-     * @return Color en hexadecimal
-     */
+
     public String getEstadoNuevoColor() {
         if (estadoNuevoNombre == null) return "#6B7280";
         
-        switch (estadoNuevoNombre) {
-            case "Aprobado":
-                return "#1A56DB";
-            case "En Diseño":
-                return "#F59E0B";
-            case "En Producción":
-                return "#3B82F6";
-            case "Instalación/Montaje":
-                return "#8B5CF6";
-            case "Entregado":
-                return "#10B981";
-            case "Anulado":
-                return "#EF4444";
-            default:
-                return "#6B7280";
-        }
+        return switch (estadoNuevoNombre) {
+            case "Aprobado" -> "#1A56DB";
+            case "En Diseño" -> "#F59E0B";
+            case "En Producción" -> "#3B82F6";
+            case "Instalación/Montaje" -> "#8B5CF6";
+            case "Entregado" -> "#10B981";
+            case "Anulado" -> "#EF4444";
+            default -> "#6B7280";
+        };
     }
 
-    /**
-     * Obtiene el responsable en formato legible.
-     * 
-     * @return Responsable legible
-     */
+
     public String getResponsableLegible() {
         if (responsableNombre != null && !responsableNombre.isEmpty()) {
             return responsableNombre;
@@ -479,11 +345,7 @@ public class CambioEstadoProyecto {
         return "Usuario ID: " + idUsuarioResponsable;
     }
 
-    /**
-     * Obtiene el resumen del cambio.
-     * 
-     * @return Resumen
-     */
+
     public String getResumen() {
         StringBuilder sb = new StringBuilder();
         sb.append("Cambio de estado");
@@ -497,37 +359,19 @@ public class CambioEstadoProyecto {
         return sb.toString();
     }
 
-    /**
-     * Obtiene el comentario truncado.
-     * 
-     * @param maxLength Longitud máxima
-     * @return Comentario truncado
-     */
+
     public String getComentarioTruncado(int maxLength) {
         if (comentario == null) return "";
         if (comentario.length() <= maxLength) return comentario;
         return comentario.substring(0, maxLength) + "...";
     }
 
-    /**
-     * Obtiene el número de orden del cambio en el historial.
-     * 
-     * @param index Índice en el historial
-     * @return Número de orden
-     */
+
     public String getNumeroOrden(int index) {
         return "#" + (index + 1);
     }
 
-    // ============================================
-    // MÉTODOS DE CONVERSIÓN
-    // ============================================
 
-    /**
-     * Convierte a una representación JSON simple.
-     * 
-     * @return JSON como String
-     */
     public String toJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -544,9 +388,6 @@ public class CambioEstadoProyecto {
         return sb.toString();
     }
 
-    // ============================================
-    // MÉTODOS OVERRIDE
-    // ============================================
 
     @Override
     public String toString() {
@@ -574,35 +415,14 @@ public class CambioEstadoProyecto {
         return idCambio != null ? idCambio.hashCode() : 0;
     }
 
-    // ============================================
-    // MÉTODOS ESTÁTICOS DE FÁBRICA
-    // ============================================
 
-    /**
-     * Crea un cambio de estado para el inicio de un proyecto.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param idUsuarioResponsable ID del usuario responsable
-     * @param comentario Comentario opcional
-     * @return Cambio de estado
-     */
     public static CambioEstadoProyecto crearInicioProyecto(Integer idProyecto, 
                                                           Integer idUsuarioResponsable,
                                                           String comentario) {
-        // ID de estado "Aprobado" = 1, "En Diseño" = 2
         return new CambioEstadoProyecto(idProyecto, 1, 2, idUsuarioResponsable, comentario);
     }
 
-    /**
-     * Crea un cambio de estado para avanzar al siguiente estado.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param idEstadoActual ID del estado actual
-     * @param idEstadoNuevo ID del nuevo estado
-     * @param idUsuarioResponsable ID del usuario responsable
-     * @param comentario Comentario opcional
-     * @return Cambio de estado
-     */
+
     public static CambioEstadoProyecto crearAvanceEstado(Integer idProyecto,
                                                         Integer idEstadoActual,
                                                         Integer idEstadoNuevo,
@@ -612,48 +432,25 @@ public class CambioEstadoProyecto {
                                        idUsuarioResponsable, comentario);
     }
 
-    /**
-     * Crea un cambio de estado para anular un proyecto.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param idEstadoActual ID del estado actual
-     * @param idUsuarioResponsable ID del usuario responsable
-     * @param comentario Comentario opcional
-     * @return Cambio de estado
-     */
+
     public static CambioEstadoProyecto crearAnulacionProyecto(Integer idProyecto,
                                                              Integer idEstadoActual,
                                                              Integer idUsuarioResponsable,
                                                              String comentario) {
-        // ID de estado "Anulado" = 6
         return new CambioEstadoProyecto(idProyecto, idEstadoActual, 6, 
                                        idUsuarioResponsable, comentario);
     }
 
-    /**
-     * Crea un cambio de estado para entregar un proyecto.
-     * 
-     * @param idProyecto ID del proyecto
-     * @param idEstadoActual ID del estado actual
-     * @param idUsuarioResponsable ID del usuario responsable
-     * @param comentario Comentario opcional
-     * @return Cambio de estado
-     */
+
     public static CambioEstadoProyecto crearEntregaProyecto(Integer idProyecto,
                                                            Integer idEstadoActual,
                                                            Integer idUsuarioResponsable,
                                                            String comentario) {
-        // ID de estado "Entregado" = 5
         return new CambioEstadoProyecto(idProyecto, idEstadoActual, 5, 
                                        idUsuarioResponsable, comentario);
     }
 
-    /**
-     * Crea un cambio de estado desde un DTO.
-     * 
-     * @param dto DTO del cambio de estado
-     * @return Cambio de estado
-     */
+
     public static CambioEstadoProyecto fromDTO(com.stamos.dto.ProyectoDTO.CambioEstadoDTO dto) {
         CambioEstadoProyecto cambio = new CambioEstadoProyecto();
         if (dto.getIdCambio() != null) {
@@ -661,7 +458,6 @@ public class CambioEstadoProyecto {
         }
         cambio.setIdProyecto(dto.getIdProyecto());
         cambio.setComentario(dto.getComentario());
-        // Los IDs de estado se deben mapear desde los nombres
         cambio.setEstadoAnteriorNombre(dto.getEstadoAnterior());
         cambio.setEstadoNuevoNombre(dto.getEstadoNuevo());
         return cambio;
