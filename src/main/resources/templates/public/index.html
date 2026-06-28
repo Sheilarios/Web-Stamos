@@ -192,7 +192,6 @@
             background: #000000;
             border-radius: 16px;
             height: 380px;
-            background-image: url('https://stamosl.com/img/slider/slider01.jpg');
             background-size: cover;
             background-position: center;
             position: relative;
@@ -244,7 +243,9 @@
             text-transform: uppercase;
         }
 
-        /* ===== CATEGORÍAS ===== */
+        /* ============================================================
+           CATEGORÍAS CON IMÁGENES (¿Qué ofrecemos?) - SIN ICONOS
+           ============================================================ */
         .category-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -253,32 +254,53 @@
         .category-card {
             background: #000000;
             border-radius: 14px;
-            padding: 32px 24px;
-            text-align: center;
+            overflow: hidden;
             transition: all 0.3s;
             text-decoration: none;
             color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            min-height: 260px;
         }
         .category-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
-        .category-card i {
-            font-size: 40px;
-            color: #F5C400;
-            margin-bottom: 12px;
-            display: block;
+        .category-card .cat-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: #1A1A1A;
         }
-        .category-card h4 {
+        .category-card .cat-body {
+            padding: 20px 24px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .category-card .cat-body h4 {
             font-family: 'Syne', sans-serif;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            color: #FFFFFF;
         }
-        .category-card p {
+        .category-card .cat-body p {
             font-size: 13px;
             color: #C0C0C0;
-            line-height: 1.6;
+            line-height: 1.5;
+            margin: 0;
+            flex: 1;
+        }
+        .category-card .cat-body .arrow {
+            margin-top: 12px;
+            color: #F5C400;
+            font-size: 18px;
+            transition: transform 0.3s;
+            align-self: flex-start;
+        }
+        .category-card:hover .cat-body .arrow {
+            transform: translateX(4px);
         }
 
         /* ===== GALERÍA SCROLL HORIZONTAL ===== */
@@ -468,28 +490,51 @@
         }
         .client-item.highlight { color: #F5C400; }
 
-        /* ===== CTA CONTACTO ===== */
+        /* ============================================================
+           CTA CONTACTO - DOS COLUMNAS
+           ============================================================ */
+        .cta-section-wrapper {
+            background: #F5C400;
+            padding: 48px 0;
+            width: 100%;
+        }
         .cta-contact {
-            background: #000000;
-            border-radius: 16px;
-            padding: 48px 56px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 56px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 24px;
+            gap: 40px;
         }
-        .cta-contact h2 {
+        .cta-contact .cta-text {
+            flex: 1;
+        }
+        .cta-contact .cta-text h2 {
             font-family: 'Syne', sans-serif;
             font-size: 32px;
             font-weight: 700;
+            color: #000000;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .cta-contact .cta-text h2 span {
             color: #FFFFFF;
         }
-        .cta-contact h2 span { color: #F5C400; }
+        .cta-contact .cta-text p {
+            font-size: 15px;
+            color: #3A2E00;
+            margin: 0;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+        .cta-contact .cta-button {
+            flex-shrink: 0;
+        }
         .cta-contact .btn-contact {
-            background: #F5C400;
-            color: #000000;
-            padding: 14px 36px;
+            background: #000000;
+            color: #FFFFFF;
+            padding: 14px 40px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 700;
@@ -497,17 +542,23 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            transition: background 0.2s;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
             white-space: nowrap;
         }
-        .cta-contact .btn-contact:hover { background: #E0B000; }
+        .cta-contact .btn-contact:hover {
+            background: #1A1A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        }
 
         /* ===== FOOTER ===== */
         .footer {
             background: #000000;
             border-top: 1px solid #222;
             padding: 48px 56px 32px;
-            margin-top: 40px;
+            margin-top: 0;
         }
         .footer-grid {
             display: grid;
@@ -585,13 +636,16 @@
             .gallery-scroll-wrapper { padding: 0 16px; }
             .gallery-scroll-item { flex: 0 0 220px; height: 200px; }
             .clients-section { padding: 40px 24px; }
-            .cta-contact { padding: 32px 24px; flex-direction: column; text-align: center; }
-            .cta-contact h2 { font-size: 26px; }
+            .cta-section-wrapper { padding: 32px 0; }
+            .cta-contact { padding: 0 24px; flex-direction: column; text-align: center; gap: 20px; }
+            .cta-contact .cta-text p { max-width: 100%; }
+            .cta-contact .btn-contact { width: 100%; justify-content: center; }
             .footer-grid { grid-template-columns: 1fr; gap: 24px; }
             .footer { padding: 32px 24px; }
             .gallery-scroll-section .section-header { padding: 0 24px; }
             .ver-todos-wrap { padding: 0 24px; }
             .scroll-btn { display: none; }
+            .category-card .cat-img { height: 130px; }
         }
         @media (max-width: 600px) {
             .category-grid { grid-template-columns: 1fr; }
@@ -599,10 +653,14 @@
             .slider-slide h2 { font-size: 22px; }
             .about-stats { flex-wrap: wrap; gap: 20px; }
             .clients-section h2 { font-size: 28px; }
-            .cta-contact h2 { font-size: 22px; }
+            .cta-contact .cta-text h2 { font-size: 24px; }
             .clients-grid { gap: 20px 30px; }
             .gallery-scroll-item { flex: 0 0 180px; height: 160px; }
             .gallery-scroll { gap: 12px; }
+            .category-card .cat-img { height: 120px; }
+            .category-card .cat-body { padding: 16px 18px 18px; }
+            .category-card .cat-body h4 { font-size: 14px; }
+            .category-card .cat-body p { font-size: 12px; }
         }
     </style>
 </head>
@@ -624,42 +682,42 @@
 <!-- ===== SLIDER ===== -->
 <div class="slider">
     <div class="slider-track">
-        <div class="slider-slide" style="background-image: url('/img/slider/slider05.jpg');">
+        <div class="slider-slide" th:style="'background-image: url(' + @{https://stamosl.com/img/slider/slider05.jpg} + ');'">
             <div class="content">
                 <h2>Diseño y construcción de <span>stands</span> a medida</h2>
                 <p>Más de 10 años de experiencia en eventos corporativos. Creamos espacios que conquistan ferias.</p>
                 <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Solicitar cotización</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('/img/slider/slider06.jpg');">
+        <div class="slider-slide" th:style="'background-image: url(' + @{https://stamosl.com/img/slider/slider06.jpg} + ');'">
             <div class="content">
                 <h2>Video walls y <span>pantallas LED</span> de alto impacto</h2>
                 <p>Alquiler e instalación de pantallas interactivas para eventos y activaciones de marca.</p>
                 <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Ver más</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('/img/slider/slider01.jpg');">
+        <div class="slider-slide" th:style="'background-image: url(' + @{https://stamosl.com/img/slider/slider01.jpg} + ');'">
             <div class="content">
                 <h2>Mobiliario ferial en <span>alquiler</span></h2>
                 <p>Mesas altas, sillas lounge, módulos de exhibición y mucho más para tu evento.</p>
                 <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Cotizar</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('/img/slider/slider02.jpg');">
+        <div class="slider-slide" th:style="'background-image: url(' + @{https://stamosl.com/img/slider/slider02.jpg} + ');'">
             <div class="content">
                 <h2>Pantallas táctiles y <span>software interactivo</span></h2>
                 <p>La tecnología interactiva está cambiando los eventos. Lleva tu marca al siguiente nivel.</p>
                 <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Cotizar</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('/img/slider/slider03.jpg');">
+        <div class="slider-slide" th:style="'background-image: url(' + @{https://stamosl.com/img/slider/slider03.jpg} + ');'">
             <div class="content">
                 <h2>Diseño 3D y <span>renders fotorrealistas</span></h2>
                 <p>Visualiza tu stand antes de construirlo. Aprobación sin sorpresas.</p>
                 <a th:href="@{/contacto}" class="btn-slider"><i class="bi bi-send"></i> Cotizar</a>
             </div>
         </div>
-        <div class="slider-slide" style="background-image: url('/img/slider/slider04.jpg');">
+        <div class="slider-slide" th:style="'background-image: url(' + @{https://stamosl.com/img/slider/slider04.jpg} + ');'">
             <div class="content">
                 <h2>Ambientación de tiendas y <span>espacios comerciales</span></h2>
                 <p>Soluciones gráficas, mobiliario y decoración para tu local o evento.</p>
@@ -672,7 +730,7 @@
 <!-- ===== QUIÉNES SOMOS ===== -->
 <section class="section">
     <div class="about-grid">
-        <div class="about-image" style="background-image: url('/img/slider/slider01.jpg');">
+        <div class="about-image" th:style="'background-image: url(' + @{https://stamosl.com/img/slider/slider01.jpg} + ');'">
             <div class="tag">+10 años de experiencia</div>
         </div>
         <div class="about-text">
@@ -689,7 +747,9 @@
     </div>
 </section>
 
-<!-- ===== CATEGORÍAS ===== -->
+<!-- ============================================================
+     CATEGORÍAS CON IMÁGENES (¿Qué ofrecemos?) - SIN ICONOS
+     ============================================================ -->
 <section class="section" style="background:#F8F8F8;border-radius:0;padding:60px 56px;max-width:100%;">
     <div style="max-width:1400px;margin:0 auto;">
         <div class="section-header">
@@ -698,35 +758,64 @@
             <p>Diseño, producción, alquiler y montaje para tu evento corporativo.</p>
         </div>
         <div class="category-grid">
+            <!-- Stands publicitarios -->
             <a th:href="@{/servicios}" class="category-card">
-                <i class="bi bi-layout"></i>
-                <h4>Stands publicitarios</h4>
-                <p>Modulares y personalizados para ferias y exposiciones</p>
+                <img class="cat-img" src="https://stamosl.com/img/slider/slider05.jpg" alt="Stands publicitarios" onerror="this.style.display='none'">
+                <div class="cat-body">
+                    <h4>Stands publicitarios</h4>
+                    <p>Modulares y personalizados para ferias y exposiciones</p>
+                    <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+                </div>
             </a>
+
+            <!-- Video walls & LED -->
             <a th:href="@{/servicios}" class="category-card">
-                <i class="bi bi-tv"></i>
-                <h4>Video walls & LED</h4>
-                <p>Pantallas de gran formato y alta resolución</p>
+                <img class="cat-img" src="https://stamosl.com/img/slider/slider06.jpg" alt="Video walls & LED" onerror="this.style.display='none'">
+                <div class="cat-body">
+                    <h4>Video walls & LED</h4>
+                    <p>Pantallas de gran formato y alta resolución</p>
+                    <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+                </div>
             </a>
+
+            <!-- Mobiliario ferial -->
             <a th:href="@{/servicios}" class="category-card">
-                <i class="bi bi-sofa"></i>
-                <h4>Mobiliario ferial</h4>
-                <p>Alquiler de mesas, sillas, módulos y counters</p>
+                <img class="cat-img" src="https://stamosl.com/img/slider/slider01.jpg" alt="Mobiliario ferial" onerror="this.style.display='none'">
+                <div class="cat-body">
+                    <h4>Mobiliario ferial</h4>
+                    <p>Alquiler de mesas, sillas, módulos y counters</p>
+                    <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+                </div>
             </a>
+
+            <!-- Pantallas táctiles -->
             <a th:href="@{/servicios}" class="category-card">
-                <i class="bi bi-tablet"></i>
-                <h4>Pantallas táctiles</h4>
-                <p>Kioscos interactivos y software a medida</p>
+                <img class="cat-img" src="https://stamosl.com/img/slider/slider02.jpg" alt="Pantallas táctiles" onerror="this.style.display='none'">
+                <div class="cat-body">
+                    <h4>Pantallas táctiles</h4>
+                    <p>Kioscos interactivos y software a medida</p>
+                    <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+                </div>
             </a>
+
+            <!-- Diseño 3D -->
             <a th:href="@{/servicios}" class="category-card">
-                <i class="bi bi-cube"></i>
-                <h4>Diseño 3D</h4>
-                <p>Renders fotorrealistas y planos técnicos</p>
+                <img class="cat-img" src="https://stamosl.com/img/slider/slider03.jpg" alt="Diseño 3D" onerror="this.style.display='none'">
+                <div class="cat-body">
+                    <h4>Diseño 3D</h4>
+                    <p>Renders fotorrealistas y planos técnicos</p>
+                    <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+                </div>
             </a>
+
+            <!-- Montaje y logística -->
             <a th:href="@{/servicios}" class="category-card">
-                <i class="bi bi-truck"></i>
-                <h4>Montaje y logística</h4>
-                <p>Instalación, supervisión y desmontaje en evento</p>
+                <img class="cat-img" src="https://stamosl.com/img/slider/slider04.jpg" alt="Montaje y logística" onerror="this.style.display='none'">
+                <div class="cat-body">
+                    <h4>Montaje y logística</h4>
+                    <p>Instalación, supervisión y desmontaje en evento</p>
+                    <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+                </div>
             </a>
         </div>
     </div>
@@ -777,13 +866,20 @@
     </div>
 </section>
 
-<!-- ===== CTA CONTACTO ===== -->
-<section class="section">
+<!-- ============================================================
+     CTA CONTACTO - DOS COLUMNAS
+     ============================================================ -->
+<section class="cta-section-wrapper">
     <div class="cta-contact">
-        <h2>¿Tienes un próximo evento? <span>¡Cotiza ahora!</span></h2>
-        <a th:href="@{/contacto}" class="btn-contact">
-            <i class="bi bi-send"></i> Contactar
-        </a>
+        <div class="cta-text">
+            <h2>¿Tienes un próximo evento? <span>¡Cotiza ahora!</span></h2>
+            <p>Cuéntanos sobre tu proyecto y recibe una cotización personalizada en menos de 24 horas. Sin costo y sin compromiso.</p>
+        </div>
+        <div class="cta-button">
+            <a th:href="@{/contacto}" class="btn-contact">
+                <i class="bi bi-send"></i> Solicitar cotización
+            </a>
+        </div>
     </div>
 </section>
 
@@ -823,56 +919,81 @@
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
-    // ===== DATOS DE PROYECTOS PARA EL SCROLL CON IMÁGENES LOCALES =====
+    // ===== DATOS DE PROYECTOS =====
     const proyectosScroll = [
         {
-            nombre: 'Dinet',
-            imagen: '/img/portfolio/small/diseno/01%20(2).jpg',
-            categoria: 'interactivo'
-        },
-        {
             nombre: 'GSK',
-            imagen: '/img/portfolio/small/diseno/01%20(4).jpg',
+            imagen: 'https://stamosl.com/img/slider/slider05.jpg',
             categoria: 'stand'
         },
         {
-            nombre: 'Soldamundo',
-            imagen: '/img/portfolio/small/diseno/1%20(5).jpg',
-            categoria: 'stand'
-        },
-        {
-            nombre: 'Scharff',
-            imagen: '/img/portfolio/small/diseno/1%20(11).jpg',
-            categoria: 'stand'
-        },
-        {
-            nombre: 'Andino',
-            imagen: '/img/portfolio/small/diseno/ANDINO%203MT%20X%202MT%20X%203MT.jpg',
-            categoria: 'stand'
-        },
-        {
-            nombre: 'Energigas',
-            imagen: '/img/portfolio/small/diseno/energigas%201%20(1).jpg',
-            categoria: 'stand'
-        },
-        {
-            nombre: 'Brenta',
-            imagen: '/img/portfolio/small/diseno/brenta%202.jpg',
+            nombre: 'DINET',
+            imagen: 'https://stamosl.com/img/slider/slider06.jpg',
             categoria: 'interactivo'
         },
         {
-            nombre: 'Hunter',
-            imagen: '/img/portfolio/small/diseno/hunter%201%20(1).jpg',
+            nombre: 'CENFOTUR',
+            imagen: 'https://stamosl.com/img/slider/slider01.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'HUNTER',
+            imagen: 'https://stamosl.com/img/slider/slider02.jpg',
             categoria: 'mobiliario'
         },
         {
-            nombre: 'Petroperú',
-            imagen: '/img/portfolio/small/diseno/petroperu%201%20(1).jpg',
+            nombre: 'SOLDEXA',
+            imagen: 'https://stamosl.com/img/slider/slider03.jpg',
             categoria: 'stand'
         },
         {
-            nombre: 'Bago',
-            imagen: '/img/portfolio/small/diseno/bago%201%20(1).jpg',
+            nombre: 'ANDINO',
+            imagen: 'https://stamosl.com/img/slider/slider04.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'BCP',
+            imagen: 'https://stamosl.com/img/slider/slider05.jpg',
+            categoria: 'interactivo'
+        },
+        {
+            nombre: 'Alicorp',
+            imagen: 'https://stamosl.com/img/slider/slider06.jpg',
+            categoria: 'grafica'
+        },
+        {
+            nombre: 'CAPECO',
+            imagen: 'https://stamosl.com/img/slider/slider01.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'PETROPERÚ',
+            imagen: 'https://stamosl.com/img/slider/slider02.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'BRENTA',
+            imagen: 'https://stamosl.com/img/slider/slider03.jpg',
+            categoria: 'interactivo'
+        },
+        {
+            nombre: 'SOLDAMUNDO',
+            imagen: 'https://stamosl.com/img/slider/slider04.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'SCHARFF',
+            imagen: 'https://stamosl.com/img/slider/slider05.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'ENERGIGAS',
+            imagen: 'https://stamosl.com/img/slider/slider06.jpg',
+            categoria: 'stand'
+        },
+        {
+            nombre: 'BAGÓ',
+            imagen: 'https://stamosl.com/img/slider/slider01.jpg',
             categoria: 'stand'
         }
     ];
@@ -881,12 +1002,11 @@
     function renderGalleryScroll() {
         const container = document.getElementById('galleryScroll');
         
-        // Duplicar items para efecto de scroll continuo
         const items = [...proyectosScroll, ...proyectosScroll];
         
         container.innerHTML = items.map(p => `
             <div class="gallery-scroll-item" onclick="verProyecto('${p.nombre}')">
-                <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onerror="this.src='/img/placeholder.jpg'">
+                <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#F5C400'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.parentElement.innerHTML='<div style=\\'text-align:center;color:#000;font-weight:700;font-size:14px;\\'>STAMOS<br><span style=\\'font-size:11px;color:#666;\\'>Imagen no disponible</span></div>'">
                 <span class="badge">${p.categoria.toUpperCase()}</span>
                 <div class="overlay">
                     <span><i class="bi bi-eye"></i> ${p.nombre}</span>

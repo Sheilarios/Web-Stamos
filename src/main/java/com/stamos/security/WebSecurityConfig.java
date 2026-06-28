@@ -80,11 +80,12 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder)
-                .and()
-                .build();
+        // 🔧 CORREGIDO: Removido el método .and() que estaba deprecated
+        AuthenticationManagerBuilder authManagerBuilder = 
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authManagerBuilder.userDetailsService(customUserDetailsService)
+                          .passwordEncoder(passwordEncoder);
+        return authManagerBuilder.build();
     }
 
     @Bean
@@ -111,7 +112,8 @@ public class WebSecurityConfig {
                     "/fonts/**",
                     "/webjars/**",
                     "/favicon.ico",
-                    "/manifest.json"
+                    "/manifest.json",
+                    "/img/**"
                 ).permitAll()
                 
                 .requestMatchers("/productos/imagen/**").permitAll()
@@ -176,12 +178,14 @@ public class WebSecurityConfig {
                 .frameOptions(frameOptions -> frameOptions.deny())
                 .xssProtection(xss -> xss.disable())
                 .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; " +
-                                     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; " +
-                                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-                                     "font-src 'self' https://fonts.gstatic.com; " +
-                                     "img-src 'self' data:; " +
-                                     "frame-src 'none'")
+                    .policyDirectives(
+                        "default-src 'self'; " +
+                        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://code.jquery.com; " +
+                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
+                        "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; " +
+                        "img-src 'self' data: https://stamosl.com; " +
+                        "frame-src 'none'"
+                    )
                 )
             )
             .csrf(csrf -> csrf
