@@ -617,7 +617,6 @@
             <a href="/admin/usuarios" class="btn btn-sm btn-warning">Limpiar</a>
         </div>
 
-        <!-- Tabla de usuarios -->
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
@@ -700,7 +699,6 @@
                 </div>
             </div>
 
-            <!-- Paginación -->
             <div th:if="${totalPages != null && totalPages > 1}" class="pagination">
                 <a th:if="${currentPage > 0}" 
                    th:href="@{/admin/usuarios(page=${currentPage - 1}, size=${size}, search=${search})}">
@@ -731,7 +729,6 @@
     </main>
 
     <script>
-        // Permitir buscar con Enter
         document.getElementById('searchInput').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') {
                 window.location.href = '/admin/usuarios?search=' + encodeURIComponent(this.value);

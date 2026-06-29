@@ -243,9 +243,6 @@
             text-transform: uppercase;
         }
 
-        /* ============================================================
-           CATEGORÍAS CON IMÁGENES (¿Qué ofrecemos?) - SIN ICONOS
-           ============================================================ */
         .category-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -303,7 +300,6 @@
             transform: translateX(4px);
         }
 
-        /* ===== GALERÍA SCROLL HORIZONTAL ===== */
         .gallery-scroll-section {
             background: #F8F8F8;
             padding: 60px 0 80px 0;
@@ -396,7 +392,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ===== BOTONES DE NAVEGACIÓN SCROLL ===== */
         .scroll-btn {
             position: absolute;
             top: 50%;
@@ -490,9 +485,6 @@
         }
         .client-item.highlight { color: #F5C400; }
 
-        /* ============================================================
-           CTA CONTACTO - DOS COLUMNAS
-           ============================================================ */
         .cta-section-wrapper {
             background: #F5C400;
             padding: 48px 0;
@@ -747,9 +739,6 @@
     </div>
 </section>
 
-<!-- ============================================================
-     CATEGORÍAS CON IMÁGENES (¿Qué ofrecemos?) - SIN ICONOS
-     ============================================================ -->
 <section class="section" style="background:#F8F8F8;border-radius:0;padding:60px 56px;max-width:100%;">
     <div style="max-width:1400px;margin:0 auto;">
         <div class="section-header">
@@ -821,7 +810,6 @@
     </div>
 </section>
 
-<!-- ===== GALERÍA SCROLL HORIZONTAL ===== -->
 <section class="gallery-scroll-section">
     <div class="section-header">
         <div class="label">Nuestros proyectos</div>
@@ -849,7 +837,6 @@
     </div>
 </section>
 
-<!-- ===== CLIENTES ===== -->
 <section class="clients-section">
     <div class="label">Confían en nosotros</div>
     <h2>Nuestros <span>clientes</span></h2>
@@ -866,9 +853,6 @@
     </div>
 </section>
 
-<!-- ============================================================
-     CTA CONTACTO - DOS COLUMNAS
-     ============================================================ -->
 <section class="cta-section-wrapper">
     <div class="cta-contact">
         <div class="cta-text">
@@ -883,7 +867,6 @@
     </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="footer-grid">
         <div>
@@ -917,9 +900,7 @@
     </div>
 </footer>
 
-<!-- ===== JAVASCRIPT ===== -->
 <script>
-    // ===== DATOS DE PROYECTOS =====
     const proyectosScroll = [
         {
             nombre: 'GSK',
@@ -984,7 +965,6 @@
         }
     ];
 
-    // ===== RENDERIZAR GALERÍA SCROLL =====
     function renderGalleryScroll() {
         const container = document.getElementById('galleryScroll');
         
@@ -1001,12 +981,10 @@
         `).join('');
     }
 
-    // ===== FUNCIÓN PARA VER PROYECTO =====
     function verProyecto(nombre) {
         window.location.href = '/galeria';
     }
 
-    // ===== SCROLL CON BOTONES =====
     function scrollGallery(direction) {
         const container = document.getElementById('galleryScroll');
         const scrollAmount = 320;
@@ -1016,7 +994,6 @@
         });
     }
 
-    // ===== SCROLL CON RUEDA DEL MOUSE =====
     document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('galleryScroll');
         
@@ -1026,7 +1003,6 @@
         }, { passive: false });
     });
 
-    // ===== INICIALIZAR =====
     document.addEventListener('DOMContentLoaded', function() {
         renderGalleryScroll();
     });

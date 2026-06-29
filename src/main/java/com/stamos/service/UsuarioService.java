@@ -314,6 +314,17 @@ public class UsuarioService {
         return usuarioRepository.countByNombreRol(nombreRol);
     }
 
+    public long countByActivo(boolean activo) {
+        return usuarioRepository.countByActivo(activo);
+    }
+
+    public Page<Usuario> findByActivo(Boolean activo, Pageable pageable) {
+        if (activo == null) {
+            return usuarioRepository.findAll(pageable);
+        }
+        return usuarioRepository.findByActivo(activo, pageable);
+    }
+
     public boolean existsByEmail(String email) {
         return usuarioRepository.existsByEmail(email);
     }

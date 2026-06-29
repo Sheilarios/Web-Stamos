@@ -633,18 +633,12 @@
     <p>Cuéntanos sobre tu evento y te enviamos una cotización formal en menos de 24 horas.</p>
 </div>
 
-<!-- ============================================================
-     BREADCRUMB
-     ============================================================ -->
 <div class="breadcrumb">
     <a th:href="@{/}"><i class="bi bi-house" style="font-size:13px;"></i> Inicio</a>
     <span class="sep"><i class="bi bi-chevron-right" style="font-size:11px;"></i></span>
     <span class="current">Contacto</span>
 </div>
 
-<!-- ============================================================
-     CONTACTO - DOS COLUMNAS
-     ============================================================ -->
 <section class="contact-section">
     <div class="contact-grid">
         
@@ -685,7 +679,6 @@
             </div>
         </div>
 
-        <!-- LADO DERECHO: FORMULARIO -->
         <div class="form-side">
             <div class="form-card">
                 <div class="form-title">Solicita tu cotización</div>
@@ -761,9 +754,6 @@
     </div>
 </section>
 
-<!-- ============================================================
-     MAPA - CON IMAGEN REAL DE OPENSTREETMAP + BOTÓN PEQUEÑO
-     ============================================================ -->
 <section class="map-section">
     <div class="map-label"><i class="bi bi-geo-alt-fill"></i> Nuestra ubicación</div>
     <div class="map-card">
@@ -788,7 +778,6 @@
                     <!-- Fondo base -->
                     <rect width="600" height="260" fill="#1A2A3A"/>
                     
-                    <!-- Cuadrícula de calles (estilo mapa) -->
                     <!-- Calles principales -->
                     <g opacity="0.25">
                         <!-- Calle horizontal 1 -->
@@ -805,7 +794,6 @@
                         <line x1="450" y1="0" x2="450" y2="260" stroke="#4A7A9A" stroke-width="2"/>
                     </g>
                     
-                    <!-- Calles secundarias -->
                     <g opacity="0.15">
                         <line x1="0" y1="50" x2="600" y2="50" stroke="#5A8AAA" stroke-width="1"/>
                         <line x1="0" y1="105" x2="600" y2="105" stroke="#5A8AAA" stroke-width="1"/>
@@ -818,7 +806,6 @@
                         <line x1="525" y1="0" x2="525" y2="260" stroke="#5A8AAA" stroke-width="1"/>
                     </g>
                     
-                    <!-- Manzanas (bloques) -->
                     <g opacity="0.08">
                         <rect x="10" y="10" width="80" height="50" rx="2" fill="#6A9ABA"/>
                         <rect x="100" y="10" width="80" height="50" rx="2" fill="#6A9ABA"/>
@@ -846,10 +833,8 @@
                         <rect x="460" y="190" width="80" height="50" rx="2" fill="#6A9ABA"/>
                     </g>
                     
-                    <!-- Glow en el centro -->
                     <circle cx="300" cy="130" r="100" fill="url(#mapGlow)"/>
                     
-                    <!-- Círculo de ubicación (efecto pulsante) -->
                     <circle cx="300" cy="130" r="35" fill="none" stroke="rgba(245,196,0,0.3)" stroke-width="2">
                         <animate attributeName="r" from="35" to="50" dur="2s" repeatCount="indefinite"/>
                         <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite"/>
@@ -859,25 +844,18 @@
                         <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" begin="0.5s"/>
                     </circle>
                     
-                    <!-- Marcador principal -->
                     <g transform="translate(300, 130)" filter="url(#shadow)">
-                        <!-- Sombra del pin -->
                         <ellipse cx="0" cy="30" rx="12" ry="4" fill="rgba(0,0,0,0.3)"/>
-                        <!-- Cuerpo del pin -->
                         <path d="M0,-25 C-14,-25 -24,-15 -24,-2 C-24,12 -12,24 0,28 C12,24 24,12 24,-2 C24,-15 14,-25 0,-25Z" fill="#F5C400" stroke="#FFFFFF" stroke-width="2.5"/>
-                        <!-- Círculo interior -->
                         <circle cx="0" cy="-2" r="7" fill="#000000"/>
-                        <!-- Brillo -->
                         <circle cx="-4" cy="-8" r="3" fill="rgba(255,255,255,0.3)"/>
                     </g>
                     
-                    <!-- Etiqueta de ubicación -->
                     <rect x="200" y="172" width="200" height="28" rx="6" fill="rgba(0,0,0,0.7)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
                     <text x="300" y="191" text-anchor="middle" fill="#FFFFFF" font-family="'DM Sans',sans-serif" font-size="12" font-weight="600">
                         <tspan fill="#F5C400">●</tspan> STAMOS - Jr. Antisuyo 438
                     </text>
                     
-                    <!-- Esquina del mapa (brújula) -->
                     <g transform="translate(540, 25)">
                         <circle cx="0" cy="0" r="18" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
                         <polygon points="0,-12 3,-4 -3,-4" fill="#F5C400"/>
@@ -898,7 +876,6 @@
                     </g>
                 </svg>
                 
-                <!-- Botón pequeño en la esquina inferior derecha -->
                 <div style="position:absolute; bottom:14px; right:14px; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); color:#FFFFFF; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.15); transition:all 0.2s; z-index:2; pointer-events:none;">
                     <i class="bi bi-map" style="font-size:13px;"></i> Ver mapa
                 </div>

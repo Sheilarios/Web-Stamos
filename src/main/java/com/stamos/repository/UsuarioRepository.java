@@ -262,4 +262,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     @Query("SELECT r.nombreRol FROM Rol r WHERE r.idRol = :idRol")
     String findNombreRolByIdRol(@Param("idRol") Integer idRol);
+
+    public long countByActivo(boolean activo);
 }

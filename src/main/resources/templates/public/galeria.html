@@ -406,7 +406,6 @@
             pointer-events: none;
         }
 
-        /* ===== NO RESULTS ===== */
         .no-results {
             text-align: center;
             padding: 48px 24px;
@@ -416,9 +415,6 @@
         .no-results h4 { font-size: 18px; color: #000000; margin-bottom: 8px; }
         .no-results p { font-size: 13px; }
 
-        /* ============================================================
-           CTA SECTION - FONDO AMARILLO (IGUAL QUE SERVICIOS.HTML)
-           ============================================================ */
         .cta-section-wrapper {
             background: #F5C400;
             padding: 48px 0;
@@ -669,7 +665,6 @@
         </button>
     </aside>
 
-    <!-- ===== GALLERY ===== -->
     <section class="gallery-section">
         <div class="gallery-header">
             <span class="results-count"><strong id="resultCount">15</strong> proyectos encontrados</span>
@@ -694,9 +689,6 @@
     </section>
 </div>
 
-<!-- ============================================================
-     CTA SECTION - FONDO AMARILLO (IGUAL QUE SERVICIOS.HTML)
-     ============================================================ -->
 <div class="cta-section-wrapper">
     <div class="cta-section-inner">
         <div class="cta-text">
@@ -711,7 +703,6 @@
     </div>
 </div>
 
-<!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="footer-grid">
         <div>
@@ -746,7 +737,6 @@
 </footer>
 
 <script>
-    // ===== DATOS DE PROYECTOS =====
     const proyectos = [
         { id: 1, nombre: "GSK — Stand farmacéutico con video wall", cliente: "GSK", categoria: "stand", entorno: "interior", equipamiento: ["videowall", "led"], estructura: "custom", img: "https://stamosl.com/img/slider/slider05.jpg", desc: "Estructura 6×4m con video wall curvo y pantalla táctil" },
         { id: 2, nombre: "DINET — Stand tecnológico", cliente: "DINET", categoria: "interactivo", entorno: "interior", equipamiento: ["totem", "led"], estructura: "modular", img: "https://stamosl.com/img/slider/slider06.jpg", desc: "Pantallas táctiles interactivas + software personalizado" },
@@ -765,13 +755,11 @@
         { id: 15, nombre: "BAGÓ — Stand farmacéutico", cliente: "BAGÓ", categoria: "stand", entorno: "interior", equipamiento: ["led", "iluminacion"], estructura: "modular", img: "https://stamosl.com/img/slider/slider01.jpg", desc: "Módulos 3×4m con mostradores y zonas de atención" }
     ];
 
-    // ===== ESTADO =====
     let currentPage = 1;
     const perPage = 9;
     let filteredProjects = [...proyectos];
     let selectedClient = 'todos';
 
-    // ===== FUNCIONES DE FILTRADO =====
     function filterProjects() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
         const selectedEquipamiento = [...document.querySelectorAll('.filter-group input[type="checkbox"]')]
@@ -819,7 +807,6 @@
         filterProjects();
     }
 
-    // ===== ORDENAMIENTO =====
     function sortProjects(order) {
         switch(order) {
             case 'nombre':
@@ -836,7 +823,6 @@
         renderGallery();
     }
 
-    // ===== RENDERIZADO =====
     function renderGallery() {
         const total = filteredProjects.length;
         const totalPages = Math.ceil(total / perPage);
@@ -897,7 +883,6 @@
         window.scrollTo({ top: document.querySelector('.gallery-section').offsetTop - 20, behavior: 'smooth' });
     }
 
-    // ===== INICIALIZACIÓN =====
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.client-tag[data-client="todos"]')?.classList.add('active');
         renderGallery();

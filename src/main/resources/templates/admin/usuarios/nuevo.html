@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' · STAMOS'">Nuevo Usuario · STAMOS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --sidebar-width: 260px;
+            --radius: 16px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 24px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 4px; }
+
+        .sidebar-brand {
+            padding: 0 20px 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        .sidebar-brand h2 span { color: var(--yellow); }
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+        .sidebar-menu li { margin-bottom: 2px; }
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+        .sidebar-menu li a:hover {
+            background: var(--yellow-light);
+            color: var(--text);
+        }
+        .sidebar-menu li a.active {
+            background: var(--yellow-light);
+            color: var(--yellow-dark);
+            font-weight: 600;
+        }
+        .sidebar-menu li a.active i { color: var(--yellow-dark); }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--red);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .sidebar-footer a:hover { background: var(--red-light); }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 36px;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-title i { color: var(--yellow-dark); }
+        .page-title small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-3);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .user-info {
+            background: var(--card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .user-info i { color: var(--yellow-dark); }
+
+        /* ========== FORMULARIO ========== */
+        .form-container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            max-width: 700px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 6px;
+        }
+        .form-group label .required {
+            color: var(--red);
+            margin-left: 2px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.15s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.2);
+        }
+        .form-control.is-invalid {
+            border-color: var(--red);
+        }
+        .form-control.is-invalid:focus {
+            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.2);
+        }
+        .form-text {
+            font-size: 12px;
+            color: var(--text-3);
+            margin-top: 4px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: var(--yellow);
+            color: var(--text);
+        }
+        .btn-primary:hover {
+            background: var(--yellow-mid);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 196, 0, 0.3);
+        }
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text-2);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--yellow);
+            color: var(--text);
+            background: var(--yellow-light);
+        }
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+        .btn-danger:hover { background: #A93226; }
+
+        .alert {
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .alert-success {
+            background: var(--green-light);
+            border: 1px solid #A7F3D0;
+            color: var(--green);
+        }
+        .alert-danger {
+            background: var(--red-light);
+            border: 1px solid #FECACA;
+            color: var(--red);
+        }
+        .alert-warning {
+            background: var(--yellow-light);
+            border: 1px solid var(--yellow-border);
+            color: var(--yellow-dark);
+        }
+
+        .footer-bar {
+            text-align: center;
+            padding: 16px 0 8px;
+            font-size: 12px;
+            color: var(--text-3);
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .sidebar { width: 72px; padding: 16px 0; }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span { display: none; }
+            .sidebar-menu li a { justify-content: center; padding: 12px; }
+            .sidebar-menu li a i { font-size: 22px; width: auto; }
+            .sidebar-footer a span { display: none; }
+            .sidebar-footer a { justify-content: center; }
+            .main-content { margin-left: 72px; padding: 20px; }
+        }
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%; height: auto; position: relative;
+                flex-direction: row; padding: 12px 16px;
+                border-right: none; border-bottom: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+            .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
+            .sidebar-brand h2 { font-size: 20px; }
+            .sidebar-brand small { display: block; font-size: 10px; }
+            .sidebar-menu {
+                display: flex; flex-wrap: wrap; gap: 4px;
+                padding: 0; flex: 1;
+            }
+            .sidebar-menu li { margin-bottom: 0; }
+            .sidebar-menu li a { padding: 6px 10px; font-size: 12px; }
+            .sidebar-menu li a i { font-size: 16px; }
+            .sidebar-menu li a span { display: inline; font-size: 11px; }
+            .sidebar-footer { border-top: none; padding: 0; margin: 0; }
+            .main-content { margin-left: 0; padding: 16px; }
+            .form-container { padding: 20px; }
+            .form-actions { flex-direction: column; }
+            .form-actions .btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Administración</small>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-box"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-package"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/documentos}"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a th:href="@{/admin/usuarios}" class="active"><i class="ti ti-user-shield"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}">
+                <i class="ti ti-logout"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="page-title">
+                <i class="ti ti-user-plus"></i>
+                <span th:text="${titulo} + ' · STAMOS'">Nuevo Usuario</span>
+            </div>
+            <div class="user-info">
+                <i class="ti ti-user-circle"></i>
+                <span th:text="${username}">Admin</span>
+            </div>
+        </div>
+
+        <!-- ALERTAS -->
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="ti ti-alert-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+        <div th:if="${mensaje}" class="alert alert-success">
+            <i class="ti ti-check-circle"></i>
+            <span th:text="${mensaje}"></span>
+        </div>
+
+        <!-- FORMULARIO -->
+        <div class="form-container">
+            <form th:action="@{/admin/usuarios/crear}" th:object="${usuario}" method="post">
+                
+                <!-- Nombre Completo -->
+                <div class="form-group">
+                    <label for="nombreCompleto">Nombre Completo <span class="required">*</span></label>
+                    <input type="text" id="nombreCompleto" name="nombreCompleto" 
+                           th:field="*{nombreCompleto}" class="form-control" 
+                           placeholder="Ej: Juan Pérez" required>
+                    <div class="form-text">Ingresa el nombre completo del usuario.</div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Correo Electrónico <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" 
+                           th:field="*{email}" class="form-control" 
+                           placeholder="ejemplo@stamos.com" required>
+                    <div class="form-text">El email será usado para iniciar sesión.</div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono" 
+                           th:field="*{telefono}" class="form-control" 
+                           placeholder="Ej: 987654321">
+                    <div class="form-text">Opcional. Número de contacto del usuario.</div>
+                </div>
+
+                <!-- Rol -->
+                <div class="form-group">
+                    <label for="idRol">Rol <span class="required">*</span></label>
+                    <select id="idRol" name="idRol" th:field="*{idRol}" class="form-control" required>
+                        <option value="">Seleccionar rol...</option>
+                        <option th:each="rol : ${roles}" 
+                                th:value="${rol.idRol}" 
+                                th:text="${rol.nombreRol}"></option>
+                    </select>
+                    <div class="form-text">El rol define los permisos del usuario en el sistema.</div>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-group">
+                    <label for="password">Contraseña <span class="required">*</span></label>
+                    <input type="password" id="password" name="password" 
+                           class="form-control" placeholder="Mínimo 6 caracteres" required>
+                    <div class="form-text">La contraseña debe tener al menos 6 caracteres.</div>
+                </div>
+
+                <!-- Confirmar Contraseña -->
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Contraseña <span class="required">*</span></label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" 
+                           class="form-control" placeholder="Repite la contraseña" required>
+                </div>
+
+                <!-- Botones -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ti ti-device-floppy"></i> Guardar Usuario
+                    </button>
+                    <a th:href="@{/admin/usuarios}" class="btn btn-secondary">
+                        <i class="ti ti-arrow-left"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-bar">
+            <span th:text="${fechaActual}"></span>
+        </div>
+
+    </main>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Validación de contraseñas en tiempo real
+        document.addEventListener('DOMContentLoaded', function() {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            function validarContrasenas() {
+                if (password.value !== confirmPassword.value) {
+                    confirmPassword.setCustomValidity('Las contraseñas no coinciden');
+                } else {
+                    confirmPassword.setCustomValidity('');
+                }
+            }
+            
+            if (password && confirmPassword) {
+                password.addEventListener('change', validarContrasenas);
+                confirmPassword.addEventListener('keyup', validarContrasenas);
+            }
+
+            // Mostrar mensajes flash con SweetAlert
+            const errorMsg = /*[[${error}]]*/ null;
+            const successMsg = /*[[${mensaje}]]*/ null;
+
+            if (errorMsg) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMsg,
+                    confirmButtonColor: '#C0392B',
+                    confirmButtonText: 'Entendido'
+                });
+            }
+
+            if (successMsg) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: successMsg,
+                    confirmButtonColor: '#F5C400',
+                    confirmButtonText: 'Perfecto',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+        });
+    </script>
+</body>
+</html>
