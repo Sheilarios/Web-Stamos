@@ -60,6 +60,17 @@ public class CotizacionController extends BaseController {
                 cotizacionesPage = cotizacionService.findAll(pageable);
             }
             
+            List<Cotizacion> cotizaciones = cotizacionesPage.getContent();
+            for (Cotizacion c : cotizaciones) {
+                List<CotizacionVersion> versiones = cotizacionService.getVersionesByCotizacion(c.getIdCotizacion());
+                if (!versiones.isEmpty()) {
+                    CotizacionVersion version = versiones.get(0);
+                    c.setSubtotal(version.getSubtotal());
+                    c.setIgv(version.getIgv());
+                    c.setTotal(version.getTotal());
+                }
+            }
+            
             long totalPendientes = cotizacionService.countByEstado("Pendiente");
             long totalAprobadas = cotizacionService.countByEstado("Aprobada");
             long totalAnuladas = cotizacionService.countByEstado("Anulada");
@@ -67,7 +78,7 @@ public class CotizacionController extends BaseController {
             
             List<Cliente> clientes = clienteService.findAll();
             
-            model.addAttribute("cotizaciones", cotizacionesPage.getContent());
+            model.addAttribute("cotizaciones", cotizaciones);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", cotizacionesPage.getTotalPages());
             model.addAttribute("totalItems", cotizacionesPage.getTotalElements());
@@ -115,6 +126,7 @@ public class CotizacionController extends BaseController {
             model.addAttribute("tasaIgv", tasaIgv);
             model.addAttribute("titulo", "Nueva Cotización");
             model.addAttribute("accion", "crear");
+            model.addAttribute("detalles", new ArrayList<>());
             addCommonAttributes(model);
             
             return "admin/cotizaciones/formulario";
@@ -135,8 +147,7 @@ public class CotizacionController extends BaseController {
             }
             
             if ("Aprobada".equals(cotizacion.getEstado())) {
-                model.addAttribute("error", "No se puede modificar una cotización aprobada. " +
-                                           "Si deseas cambios, crea una nueva versión.");
+                model.addAttribute("error", "No se puede modificar una cotización aprobada. Si deseas cambios, crea una nueva versión.");
                 return "redirect:/admin/cotizaciones/versiones/" + id;
             }
             
@@ -174,30 +185,32 @@ public class CotizacionController extends BaseController {
                                   @RequestParam(value = "preciosUnitarios", required = false) List<BigDecimal> preciosUnitarios,
                                   @RequestParam(value = "descuentos", required = false) List<BigDecimal> descuentos,
                                   Authentication auth,
+                                  Model model,
                                   RedirectAttributes redirectAttributes) {
         try {
             if (result.hasErrors()) {
-                redirectAttributes.addFlashAttribute("error", "Por favor, corrige los errores en el formulario.");
-                return "redirect:/admin/cotizaciones/nuevo";
+                cargarDatosFormulario(model, cotizacion, "crear", "Nueva Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             if (productosIds == null || productosIds.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "La cotización debe incluir al menos un producto o servicio.");
-                return "redirect:/admin/cotizaciones/nuevo";
+                model.addAttribute("error", "La cotización debe incluir al menos un producto o servicio.");
+                cargarDatosFormulario(model, cotizacion, "crear", "Nueva Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             if (productosIds.size() != cantidades.size() || 
                 productosIds.size() != preciosUnitarios.size()) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "Error en los datos de los productos. Verifica la información.");
-                return "redirect:/admin/cotizaciones/nuevo";
+                model.addAttribute("error", "Error en los datos de los productos. Verifica la información.");
+                cargarDatosFormulario(model, cotizacion, "crear", "Nueva Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
             if (usuario == null) {
-                redirectAttributes.addFlashAttribute("error", "Usuario vendedor no encontrado.");
-                return "redirect:/admin/cotizaciones/nuevo";
+                model.addAttribute("error", "Usuario vendedor no encontrado.");
+                cargarDatosFormulario(model, cotizacion, "crear", "Nueva Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             cotizacion.setIdUsuarioVendedor(usuario.getIdUsuario());
@@ -210,51 +223,61 @@ public class CotizacionController extends BaseController {
             );
 
             redirectAttributes.addFlashAttribute("mensaje", 
-                "Cotización creada exitosamente. ID: COT-" + String.format("%05d", cotizacionCreada.getIdCotizacion()));
+                "Cotización creada exitosamente. ID: " + cotizacionCreada.getCodigoCotizacion());
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             
             return "redirect:/admin/cotizaciones";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al crear la cotización: " + e.getMessage());
-            return "redirect:/admin/cotizaciones/nuevo";
+            model.addAttribute("error", "Error al crear la cotización: " + e.getMessage());
+            cargarDatosFormulario(model, cotizacion, "crear", "Nueva Cotización");
+            return "admin/cotizaciones/formulario";
         }
     }
 
     @PostMapping("/actualizar/{id}")
     @Auditable
     public String actualizarCotizacion(@PathVariable Integer id,
-                                       @ModelAttribute("cotizacion") Cotizacion cotizacion,
+                                       @Valid @ModelAttribute("cotizacion") Cotizacion cotizacion,
+                                       BindingResult result,
                                        @RequestParam(value = "productosIds", required = false) List<Integer> productosIds,
                                        @RequestParam(value = "cantidades", required = false) List<Integer> cantidades,
                                        @RequestParam(value = "preciosUnitarios", required = false) List<BigDecimal> preciosUnitarios,
                                        @RequestParam(value = "descuentos", required = false) List<BigDecimal> descuentos,
                                        @RequestParam(value = "motivoCambio", required = false) String motivoCambio,
                                        Authentication auth,
+                                       Model model,
                                        RedirectAttributes redirectAttributes) {
         try {
+            if (result.hasErrors()) {
+                cargarDatosFormulario(model, cotizacion, "editar", "Editar Cotización");
+                return "admin/cotizaciones/formulario";
+            }
+
             Cotizacion cotizacionExistente = cotizacionService.findById(id);
             if (cotizacionExistente == null) {
-                redirectAttributes.addFlashAttribute("error", "Cotización no encontrada.");
-                return "redirect:/admin/cotizaciones";
+                model.addAttribute("error", "Cotización no encontrada.");
+                cargarDatosFormulario(model, cotizacion, "editar", "Editar Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             if ("Aprobada".equals(cotizacionExistente.getEstado())) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "No se puede modificar una cotización aprobada. Crea una nueva versión desde el historial.");
-                return "redirect:/admin/cotizaciones/versiones/" + id;
+                model.addAttribute("error", "No se puede modificar una cotización aprobada. Crea una nueva versión desde el historial.");
+                cargarDatosFormulario(model, cotizacion, "editar", "Editar Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             if (productosIds == null || productosIds.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "La cotización debe incluir al menos un producto o servicio.");
-                return "redirect:/admin/cotizaciones/editar/" + id;
+                model.addAttribute("error", "La cotización debe incluir al menos un producto o servicio.");
+                cargarDatosFormulario(model, cotizacion, "editar", "Editar Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
             if (usuario == null) {
-                redirectAttributes.addFlashAttribute("error", "Usuario vendedor no encontrado.");
-                return "redirect:/admin/cotizaciones/editar/" + id;
+                model.addAttribute("error", "Usuario vendedor no encontrado.");
+                cargarDatosFormulario(model, cotizacion, "editar", "Editar Cotización");
+                return "admin/cotizaciones/formulario";
             }
 
             cotizacionService.crearVersion(
@@ -270,9 +293,21 @@ public class CotizacionController extends BaseController {
             return "redirect:/admin/cotizaciones";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al actualizar la cotización: " + e.getMessage());
-            return "redirect:/admin/cotizaciones/editar/" + id;
+            model.addAttribute("error", "Error al actualizar la cotización: " + e.getMessage());
+            cargarDatosFormulario(model, cotizacion, "editar", "Editar Cotización");
+            return "admin/cotizaciones/formulario";
         }
+    }
+
+    private void cargarDatosFormulario(Model model, Cotizacion cotizacion, String accion, String titulo) {
+        model.addAttribute("cotizacion", cotizacion);
+        model.addAttribute("clientes", clienteService.findAll());
+        model.addAttribute("productos", productoService.findActive());
+        model.addAttribute("tasaIgv", configuracionService.getIgv());
+        model.addAttribute("detalles", cotizacion.getDetalles() != null ? cotizacion.getDetalles() : new ArrayList<>());
+        model.addAttribute("accion", accion);
+        model.addAttribute("titulo", titulo);
+        addCommonAttributes(model);
     }
 
     @PostMapping("/aprobar/{id}")
@@ -327,8 +362,7 @@ public class CotizacionController extends BaseController {
             }
 
             if ("Aprobada".equals(cotizacion.getEstado())) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "No se puede anular una cotización aprobada.");
+                redirectAttributes.addFlashAttribute("error", "No se puede anular una cotización aprobada.");
                 return "redirect:/admin/cotizaciones";
             }
 

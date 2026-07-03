@@ -12,9 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -76,8 +75,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userDetails;
     }
 
+
     private Collection<GrantedAuthority> getAuthorities(Usuario usuario) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
+        Set<GrantedAuthority> authorities = new LinkedHashSet<>();
         String nombreRol = usuario.getNombreRol();
 
         System.out.println("=== getAuthorities ===");
@@ -98,50 +98,57 @@ public class CustomUserDetailsService implements UserDetailsService {
             }
         }
 
-        String rolNormalizado = nombreRol.trim().toUpperCase().replace(" ", "_").replace("Ó", "O").replace("É", "E").replace("Í", "I");
+        String rolNormalizado = nombreRol.trim()
+                .toUpperCase()
+                .replace(" ", "_")
+                .replace("Ó", "O")
+                .replace("É", "E")
+                .replace("Í", "I");
         System.out.println("Rol normalizado: '" + rolNormalizado + "'");
+
 
         authorities.add(new SimpleGrantedAuthority("ROLE_" + rolNormalizado));
         System.out.println("Agregado: ROLE_" + rolNormalizado);
 
-        if (rolNormalizado.equals("CLIENTE")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_CLIENTE"));
-            authorities.add(new SimpleGrantedAuthority("Cliente"));
-            System.out.println("Agregado: ROLE_CLIENTE");
-            System.out.println("Agregado: Cliente");
-        }
 
-        if (rolNormalizado.equals("ADMINISTRADOR")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"));
-            authorities.add(new SimpleGrantedAuthority("Administrador"));
-            System.out.println("Agregado: ROLE_ADMIN");
-            System.out.println("Agregado: ROLE_ADMINISTRADOR");
-            System.out.println("Agregado: Administrador");
-        }
-
-        if (rolNormalizado.equals("VENDEDOR")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
-            authorities.add(new SimpleGrantedAuthority("Vendedor"));
-            System.out.println("Agregado: ROLE_VENDEDOR");
-        }
-
-        if (rolNormalizado.equals("DISEÑADOR")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_DISEÑADOR"));
-            authorities.add(new SimpleGrantedAuthority("Disenador"));
-            System.out.println("Agregado: ROLE_DISEÑADOR");
-        }
-
-        if (rolNormalizado.equals("PRODUCCION")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_PRODUCCION"));
-            authorities.add(new SimpleGrantedAuthority("Produccion"));
-            System.out.println("Agregado: ROLE_PRODUCCION");
-        }
-
-        if (rolNormalizado.equals("SOPORTE_TECNICO")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_SOPORTE_TECNICO"));
-            authorities.add(new SimpleGrantedAuthority("SoporteTecnico"));
-            System.out.println("Agregado: ROLE_SOPORTE_TECNICO");
+        switch (rolNormalizado) {
+            case "ADMINISTRADOR" -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"));
+                authorities.add(new SimpleGrantedAuthority("Administrador"));
+                System.out.println("Agregado: ROLE_ADMIN");
+                System.out.println("Agregado: ROLE_ADMINISTRADOR");
+                System.out.println("Agregado: Administrador");
+            }
+            case "VENDEDOR" -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
+                authorities.add(new SimpleGrantedAuthority("Vendedor"));
+                System.out.println("Agregado: ROLE_VENDEDOR");
+            }
+            case "DISEÑADOR" -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_DISEÑADOR"));
+                authorities.add(new SimpleGrantedAuthority("Disenador"));
+                System.out.println("Agregado: ROLE_DISEÑADOR");
+            }
+            case "PRODUCCION" -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_PRODUCCION"));
+                authorities.add(new SimpleGrantedAuthority("Produccion"));
+                System.out.println("Agregado: ROLE_PRODUCCION");
+            }
+            case "SOPORTE_TECNICO" -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_SOPORTE_TECNICO"));
+                authorities.add(new SimpleGrantedAuthority("SoporteTecnico"));
+                System.out.println("Agregado: ROLE_SOPORTE_TECNICO");
+            }
+            case "CLIENTE" -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_CLIENTE"));
+                authorities.add(new SimpleGrantedAuthority("Cliente"));
+                System.out.println("Agregado: ROLE_CLIENTE");
+                System.out.println("Agregado: Cliente");
+            }
+            default -> {
+                System.out.println("Rol personalizado: " + rolNormalizado);
+            }
         }
 
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
@@ -150,8 +157,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println("Agregado: " + rolNormalizado);
 
         authorities.addAll(getPermisosByRol(rolNormalizado));
-        System.out.println("=== FIN getAuthorities ===");
 
+        System.out.println("=== FIN getAuthorities ===");
         return authorities;
     }
 
@@ -165,7 +172,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         String rol = nombreRol.toUpperCase();
 
         switch (rol) {
-            case "ADMINISTRADOR":
+            case "ADMINISTRADOR" -> {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_ADMIN"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_GESTION_USUARIOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_GESTION_CLIENTES"));
@@ -180,49 +187,43 @@ public class CustomUserDetailsService implements UserDetailsService {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_ENTREGAR_PROYECTO"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_REPORTES"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_ELIMINAR_REGISTROS"));
-                break;
-
-            case "VENDEDOR":
+            }
+            case "VENDEDOR" -> {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_GESTION_CLIENTES"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_GESTION_COTIZACIONES"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_PROYECTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_INICIAR_PROYECTO"));
-                break;
-
-            case "DISEÑADOR":
+            }
+            case "DISEÑADOR" -> {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_PROYECTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_GESTION_DOCUMENTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_CAMBIAR_ESTADO_PROYECTO"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_MOVER_DISENO_PRODUCCION"));
-                break;
-
-            case "PRODUCCION":
+            }
+            case "PRODUCCION" -> {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_PROYECTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_GESTION_INVENTARIO"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_CAMBIAR_ESTADO_PROYECTO"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_MOVER_PRODUCCION_INSTALACION"));
-                break;
-
-            case "SOPORTE_TECNICO":
+            }
+            case "SOPORTE_TECNICO" -> {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_PROYECTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_GESTION_INVENTARIO"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_ENTREGAR_PROYECTO"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_CAMBIAR_ESTADO_PROYECTO"));
-                break;
-
-            case "CLIENTE":
+            }
+            case "CLIENTE" -> {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_MIS_PROYECTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_DOCUMENTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_PAGOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_EDITAR_PERFIL"));
-                break;
-
-            default:
+            }
+            default -> {
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_MIS_PROYECTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_DOCUMENTOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_VER_PAGOS"));
                 permisos.add(new SimpleGrantedAuthority("PERMISO_EDITAR_PERFIL"));
-                break;
+            }
         }
 
         return permisos;

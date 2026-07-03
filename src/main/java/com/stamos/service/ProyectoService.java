@@ -46,6 +46,9 @@ public class ProyectoService {
 
     @Transactional
     public Proyecto crearDesdeCotizacion(Integer idCotizacion, Integer idUsuarioCreacion) {
+        if (idCotizacion == null) {
+            throw new RuntimeException("El ID de la cotización no puede ser nulo");
+        }
         Cotizacion cotizacion = cotizacionRepository.findById(idCotizacion)
                 .orElseThrow(() -> new RuntimeException("Cotización no encontrada"));
 
@@ -82,6 +85,9 @@ public class ProyectoService {
     @Transactional
     public Proyecto cambiarEstado(Integer idProyecto, Integer idEstadoNuevo,
                                   Integer idUsuarioResponsable, String comentario) {
+        if (idProyecto == null || idEstadoNuevo == null || idUsuarioResponsable == null) {
+            throw new RuntimeException("Los IDs no pueden ser nulos");
+        }
         Proyecto proyecto = proyectoRepository.findById(idProyecto)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + idProyecto));
 
@@ -174,7 +180,11 @@ public class ProyectoService {
         return cambiarEstado(idProyecto, estadoSiguiente.getIdEstado(), idUsuarioResponsable, comentario);
     }
 
+    // ✅ CORREGIDO: Verifica null antes de consultar el repositorio
     public Proyecto findById(Integer idProyecto) {
+        if (idProyecto == null) {
+            return null;
+        }
         Proyecto proyecto = proyectoRepository.findById(idProyecto).orElse(null);
         if (proyecto != null) {
             enriquecerProyecto(proyecto);
@@ -198,7 +208,11 @@ public class ProyectoService {
         return proyectos;
     }
 
+    // ✅ CORREGIDO: Verifica null antes de consultar el repositorio
     public List<Proyecto> findByCliente(Integer idCliente) {
+        if (idCliente == null) {
+            return List.of();
+        }
         List<Proyecto> proyectos = proyectoRepository.findByIdClienteOrderByFechaInicioDesc(idCliente);
         for (Proyecto proyecto : proyectos) {
             enriquecerProyecto(proyecto);
@@ -206,7 +220,11 @@ public class ProyectoService {
         return proyectos;
     }
 
+    // ✅ CORREGIDO: Verifica null antes de consultar el repositorio
     public Page<Proyecto> findByCliente(Integer idCliente, Pageable pageable) {
+        if (idCliente == null) {
+            return Page.empty(pageable);
+        }
         Page<Proyecto> proyectos = proyectoRepository.findByIdCliente(idCliente, pageable);
         for (Proyecto proyecto : proyectos.getContent()) {
             enriquecerProyecto(proyecto);
@@ -322,7 +340,11 @@ public class ProyectoService {
         return proyectos;
     }
 
+    // ✅ CORREGIDO: Verifica null antes de consultar el repositorio
     public List<Proyecto> findProyectosConPagosVencidosByCliente(Integer idCliente) {
+        if (idCliente == null) {
+            return List.of();
+        }
         List<Proyecto> proyectos = proyectoRepository.findProyectosConPagosVencidosByCliente(idCliente, LocalDate.now());
         for (Proyecto proyecto : proyectos) {
             enriquecerProyecto(proyecto);
@@ -389,6 +411,9 @@ public class ProyectoService {
     }
 
     public BigDecimal sumMontoTotalByCliente(Integer idCliente) {
+        if (idCliente == null) {
+            return BigDecimal.ZERO;
+        }
         return proyectoRepository.sumMontoTotalByCliente(idCliente);
     }
 
@@ -397,6 +422,9 @@ public class ProyectoService {
     }
 
     public List<Object[]> getEstadisticasDashboardByCliente(Integer idCliente) {
+        if (idCliente == null) {
+            return List.of();
+        }
         return proyectoRepository.getEstadisticasDashboardByCliente(idCliente);
     }
 
@@ -429,10 +457,16 @@ public class ProyectoService {
     }
 
     public boolean hasProyectosActivos(Integer idCliente) {
+        if (idCliente == null) {
+            return false;
+        }
         return proyectoRepository.hasProyectosActivos(idCliente);
     }
 
     public List<Proyecto> findByClienteAndEstado(Integer idCliente, String estado) {
+        if (idCliente == null) {
+            return List.of();
+        }
         List<Proyecto> proyectos = proyectoRepository.findByClienteAndEstado(idCliente, estado);
         for (Proyecto proyecto : proyectos) {
             enriquecerProyecto(proyecto);

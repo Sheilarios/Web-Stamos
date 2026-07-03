@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' · STAMOS Administración'">STAMOS · Cotización</title>
+    <!-- Tabler Icons (asegurar carga) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
+        /* ===== RESET Y VARIABLES ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -28,43 +31,41 @@
             --blue-light: #E8F0FE;
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', sans-serif;
             background: var(--bg);
             color: var(--text);
             padding: 40px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
         
         .container {
             max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
             background: var(--card);
             border-radius: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
             padding: 32px;
         }
         
+        /* ===== HEADER ===== */
         .header {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 28px;
         }
-        
-        .header i {
-            font-size: 28px;
-            color: var(--yellow-dark);
-        }
-        
+        .header i { font-size: 28px; color: var(--yellow-dark); }
         .header h1 {
             font-family: 'Syne', sans-serif;
             font-size: 24px;
             font-weight: 700;
             color: var(--text);
         }
-        
         .header small {
             font-size: 13px;
             color: var(--text-3);
@@ -72,10 +73,8 @@
             margin-left: 8px;
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
+        /* ===== FORMULARIOS ===== */
+        .form-group { margin-bottom: 20px; }
         label {
             display: block;
             font-size: 11px;
@@ -85,16 +84,9 @@
             color: var(--text-2);
             margin-bottom: 6px;
         }
+        label .required { color: var(--red); margin-left: 2px; }
         
-        label .required {
-            color: var(--red);
-            margin-left: 2px;
-        }
-        
-        .input-wrapper {
-            position: relative;
-        }
-        
+        .input-wrapper { position: relative; }
         .input-wrapper i {
             position: absolute;
             left: 14px;
@@ -115,12 +107,10 @@
             background: white;
             outline: none;
         }
-        
         input:focus, select:focus, textarea:focus {
             border-color: var(--yellow);
-            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+            box-shadow: 0 0 0 3px rgba(245,196,0,0.15);
         }
-        
         textarea {
             resize: vertical;
             min-height: 60px;
@@ -133,6 +123,7 @@
             gap: 16px;
         }
         
+        /* ===== ALERTAS ===== */
         .alert {
             padding: 12px 16px;
             border-radius: 10px;
@@ -142,32 +133,37 @@
             align-items: center;
             gap: 10px;
         }
-        
         .alert-danger {
             background: var(--red-light);
             border: 1px solid #FECACA;
             color: var(--red);
         }
-        
         .alert-success {
             background: var(--green-light);
             border: 1px solid #A7F3D0;
             color: var(--green);
         }
-        
         .alert-warning {
             background: var(--yellow-light);
             border: 1px solid var(--yellow-border);
             color: var(--yellow-dark);
         }
         
+        .is-invalid { border-color: var(--red) !important; }
+        .invalid-feedback {
+            color: var(--red) !important;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+        
+        /* ===== SECCIÓN DE PRODUCTOS ===== */
         .items-section {
             margin-top: 24px;
             border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
         }
-        
         .items-header {
             background: var(--yellow-light);
             padding: 12px 16px;
@@ -179,7 +175,6 @@
             grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
             gap: 12px;
         }
-        
         .item-row {
             display: grid;
             grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
@@ -188,35 +183,25 @@
             padding: 10px 16px;
             border-bottom: 1px solid var(--border);
         }
-        
-        .item-row:last-child {
-            border-bottom: none;
-        }
-        
+        .item-row:last-child { border-bottom: none; }
         .item-row input, .item-row select {
             padding: 8px 10px;
             margin: 0;
             border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 13px;
-            font-family: 'DM Sans', sans-serif;
-            outline: none;
-            transition: all 0.15s;
             background: white;
             width: 100%;
         }
-        
         .item-row input:focus, .item-row select:focus {
             border-color: var(--yellow);
-            box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
+            box-shadow: 0 0 0 3px rgba(245,196,0,0.15);
         }
-        
         .item-row .item-subtotal {
             font-weight: 600;
             color: var(--text);
             text-align: right;
         }
-        
         .item-row .btn-remove {
             background: transparent;
             border: 1px solid var(--border);
@@ -230,7 +215,6 @@
             align-items: center;
             justify-content: center;
         }
-        
         .item-row .btn-remove:hover {
             border-color: var(--red);
             background: var(--red-light);
@@ -250,7 +234,6 @@
             transition: all 0.15s;
             font-size: 13px;
         }
-        
         .btn-add-item:hover {
             background: var(--yellow-light);
             border-color: var(--yellow);
@@ -264,27 +247,14 @@
             border-radius: 12px;
             text-align: right;
         }
-        
-        .totals p {
-            margin: 4px 0;
-            font-size: 14px;
-            color: var(--text-2);
-        }
-        
+        .totals p { margin: 4px 0; font-size: 14px; color: var(--text-2); }
         .totals .total {
             font-size: 20px;
             font-weight: 700;
             color: var(--yellow-dark);
         }
-        
-        .totals .total span {
-            font-size: 24px;
-        }
-        
-        .totals .igv-label {
-            font-size: 12px;
-            color: var(--text-3);
-        }
+        .totals .total span { font-size: 24px; }
+        .totals .igv-label { font-size: 12px; color: var(--text-3); }
         
         .form-actions {
             display: flex;
@@ -310,10 +280,7 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
-        .btn-primary:hover {
-            background: var(--yellow-mid);
-        }
+        .btn-primary:hover { background: var(--yellow-mid); }
         
         .btn-secondary {
             background: transparent;
@@ -331,7 +298,6 @@
             gap: 8px;
             transition: all 0.15s;
         }
-        
         .btn-secondary:hover {
             border-color: var(--yellow);
             color: var(--yellow-dark);
@@ -352,10 +318,7 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
-        .btn-success:hover {
-            background: #155D34;
-        }
+        .btn-success:hover { background: #155D34; }
         
         .info-box {
             background: var(--blue-light);
@@ -369,18 +332,14 @@
             gap: 10px;
             margin-bottom: 16px;
         }
-        
-        .info-box i {
-            font-size: 18px;
-            margin-top: 2px;
-        }
+        .info-box i { font-size: 18px; margin-top: 2px; }
         
         @media (max-width: 768px) {
             body { padding: 20px; }
             .container { padding: 20px; }
             .form-row { grid-template-columns: 1fr; gap: 0; }
             .items-header { display: none; }
-            .item-row { 
+            .item-row {
                 grid-template-columns: 1fr;
                 gap: 8px;
                 padding: 12px 16px;
@@ -395,253 +354,213 @@
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="header">
-        <i th:if="${accion == 'crear'}" class="ti ti-file-plus"></i>
-        <i th:unless="${accion == 'crear'}" class="ti ti-file-edit"></i>
-        <h1 th:text="${titulo}">Formulario Cotización</h1>
-        <small th:if="${cotizacion != null and cotizacion.idCotizacion != null}" 
-               th:text="'ID: COT-' + ${#strings.padLeft(cotizacion.idCotizacion, 5, '0')}">ID: COT-00000</small>
-    </div>
-
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-    <div th:if="${warning}" class="alert alert-warning" th:text="${warning}"></div>
-
-    <div class="info-box" th:if="${accion == 'editar' and cotizacion.estado == 'Aprobada'}">
-        <i class="ti ti-alert-triangle"></i>
-        <div>
-            <strong>Cotización aprobada</strong><br>
-            Esta cotización ya fue aprobada y no puede ser modificada. 
-            Si necesitas cambios, crea una nueva versión desde el historial.
+    <div class="container">
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <i th:if="${accion == 'crear'}" class="ti ti-file-plus"></i>
+            <i th:unless="${accion == 'crear'}" class="ti ti-file-edit"></i>
+            <h1 th:text="${titulo}">Formulario Cotización</h1>
+            <small th:if="${cotizacion != null and cotizacion.idCotizacion != null}" 
+                   th:text="'ID: COT-' + ${#strings.padLeft(cotizacion.idCotizacion, 5, '0')}">ID: COT-00000</small>
         </div>
+
+        <!-- ===== MENSAJES FLASH ===== -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+        <div th:if="${warning}" class="alert alert-warning" th:text="${warning}"></div>
+
+        <!-- ===== AVISO COTIZACIÓN APROBADA ===== -->
+        <div class="info-box" th:if="${accion == 'editar' and cotizacion.estado == 'Aprobada'}">
+            <i class="ti ti-alert-triangle"></i>
+            <div>
+                <strong>Cotización aprobada</strong><br>
+                Esta cotización ya fue aprobada y no puede ser modificada. 
+                Si necesitas cambios, crea una nueva versión desde el historial.
+            </div>
+        </div>
+
+        <!-- ===== FORMULARIO ===== -->
+        <form th:action="@{${accion == 'crear' ? '/admin/cotizaciones/crear' : '/admin/cotizaciones/actualizar/' + cotizacion.idCotizacion}}" 
+              th:object="${cotizacion}" method="post" id="cotizacionForm">
+
+            <!-- ===== ERRORES DE VALIDACIÓN ===== -->
+            <div th:if="${#fields.hasErrors()}">
+                <div class="alert alert-danger">
+                    <i class="ti ti-alert-circle"></i>
+                    <div>
+                        <strong>Por favor, corrige los siguientes errores:</strong>
+                        <ul style="margin:6px 0 0 20px; padding:0; list-style:disc;">
+                            <li th:each="err : ${#fields.allErrors()}" th:text="${err}" style="margin-bottom:4px;"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" th:field="*{idCotizacion}">
+
+            <!-- ===== FILA: CLIENTE + FECHA VALIDEZ ===== -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="idCliente">Cliente <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="ti ti-user"></i>
+                        <select id="idCliente" th:field="*{idCliente}" 
+                                th:classappend="${#fields.hasErrors('idCliente')} ? 'is-invalid' : ''" required>
+                            <option value="">Seleccione un cliente</option>
+                            <option th:each="c : ${clientes}" th:value="${c.idCliente}" 
+                                    th:text="${c.nombreRazonSocial + ' (' + c.tipoPersona + ')'}" 
+                                    th:selected="${cotizacion.idCliente == c.idCliente}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('idCliente')}" th:errors="*{idCliente}" class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fechaValidez">Fecha de validez</label>
+                    <div class="input-wrapper">
+                        <i class="ti ti-calendar"></i>
+                        <input type="date" id="fechaValidez" th:field="*{fechaValidez}"
+                               th:classappend="${#fields.hasErrors('fechaValidez')} ? 'is-invalid' : ''">
+                        <div th:if="${#fields.hasErrors('fechaValidez')}" th:errors="*{fechaValidez}" class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== OBSERVACIONES ===== -->
+            <div class="form-group">
+                <label for="observaciones">Observaciones</label>
+                <div class="input-wrapper">
+                    <i class="ti ti-notes"></i>
+                    <textarea id="observaciones" th:field="*{observaciones}" rows="2" 
+                              th:classappend="${#fields.hasErrors('observaciones')} ? 'is-invalid' : ''"
+                              placeholder="Observaciones generales de la cotización..."></textarea>
+                    <div th:if="${#fields.hasErrors('observaciones')}" th:errors="*{observaciones}" class="invalid-feedback"></div>
+                </div>
+            </div>
+
+            <!-- ===== SECCIÓN DE PRODUCTOS ===== -->
+            <div class="items-section">
+                <div class="items-header">
+                    <span>Producto / Servicio</span>
+                    <span>Cantidad</span>
+                    <span>Precio Unitario</span>
+                    <span>Subtotal</span>
+                    <span></span>
+                </div>
+                <div id="itemsContainer">
+                    <div th:each="detalle, iterStat : ${detalles}" class="item-row" data-index="${iterStat.index}">
+                        <select class="item-producto" required>
+                            <option value="">Seleccionar producto</option>
+                            <option th:each="p : ${productos}" th:value="${p.idProducto}" 
+                                    th:text="${p.nombreItem + ' (' + p.tipo + ') - S/ ' + #numbers.formatDecimal(p.precioBase, 0, 2)}"
+                                    th:selected="${detalle.idProducto == p.idProducto}"
+                                    th:data-precio="${p.precioBase}"></option>
+                        </select>
+                        <input type="number" class="item-cantidad" th:value="${detalle.cantidad}" 
+                               step="1" min="1" required>
+                        <input type="number" class="item-precio" th:value="${detalle.precioUnitario}" 
+                               step="0.01" min="0" required>
+                        <span class="item-subtotal" th:text="'S/ ' + ${detalle.subtotalLinea != null ? #numbers.formatDecimal(detalle.subtotalLinea, 0, 2) : '0.00'}">S/ 0.00</span>
+                        <button type="button" class="btn-remove" onclick="removeItem(this)">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                        <input type="hidden" name="productosIds" th:value="${detalle.idProducto}">
+                        <input type="hidden" name="cantidades" th:value="${detalle.cantidad}">
+                        <input type="hidden" name="preciosUnitarios" th:value="${detalle.precioUnitario}">
+                        <input type="hidden" name="descuentos" th:value="${detalle.descuento != null ? detalle.descuento : 0}">
+                        <input type="hidden" name="detallesIds" th:value="${detalle.idDetalleVersion}">
+                    </div>
+                </div>
+                <button type="button" class="btn-add-item" onclick="addItem()">
+                    <i class="ti ti-plus"></i> Agregar ítem
+                </button>
+            </div>
+
+            <!-- ===== TOTALES ===== -->
+            <div class="totals">
+                <p>Subtotal: <strong id="subtotal">S/ 0.00</strong></p>
+                <p class="igv-label">IGV (<span id="tasaIgv" th:text="${tasaIgv}">18</span>%): <strong id="igv">S/ 0.00</strong></p>
+                <p class="total">Total: <span id="total">S/ 0.00</span></p>
+            </div>
+
+            <!-- ===== BOTONES ===== -->
+            <div class="form-actions">
+                <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
+                    <i class="ti ti-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn-primary" th:if="${accion == 'crear' or cotizacion.estado == 'Pendiente'}">
+                    <i class="ti ti-device-floppy"></i> 
+                    <span th:text="${accion == 'crear' ? 'Crear Cotización' : 'Actualizar Cotización'}">Guardar</span>
+                </button>
+                <button type="submit" class="btn-success" th:if="${accion == 'editar' and cotizacion.estado == 'Pendiente'}" 
+                        formaction="@{/admin/cotizaciones/aprobar/{id}(id=${cotizacion.idCotizacion})}" 
+                        onclick="return confirm('¿Aprobar esta cotización? Se generará un proyecto automáticamente.');">
+                    <i class="ti ti-check"></i> Aprobar
+                </button>
+            </div>
+        </form>
     </div>
 
-    <form th:action="@{${accion == 'crear' ? '/admin/cotizaciones/crear' : '/admin/cotizaciones/actualizar/' + cotizacion.idCotizacion}}" 
-          th:object="${cotizacion}" method="post" id="cotizacionForm">
+    <!-- ===== JAVASCRIPT ===== -->
+    <script th:inline="javascript">
+        var productosData = /*[[${productos}]]*/ [];
         
-        <input type="hidden" th:field="*{idCotizacion}">
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="idCliente">Cliente <span class="required">*</span></label>
-                <div class="input-wrapper">
-                    <i class="ti ti-user"></i>
-                    <select id="idCliente" th:field="*{idCliente}" required>
-                        <option value="">Seleccione un cliente</option>
-                        <option th:each="c : ${clientes}" th:value="${c.idCliente}" 
-                                th:text="${c.nombreRazonSocial + ' (' + c.tipoPersona + ')'}" 
-                                th:selected="${cotizacion.idCliente == c.idCliente}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="fechaValidez">Fecha de validez</label>
-                <div class="input-wrapper">
-                    <i class="ti ti-calendar"></i>
-                    <input type="date" id="fechaValidez" th:field="*{fechaValidez}">
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="observaciones">Observaciones</label>
-            <div class="input-wrapper">
-                <i class="ti ti-notes"></i>
-                <textarea id="observaciones" th:field="*{observaciones}" rows="2" 
-                          placeholder="Observaciones generales de la cotización..."></textarea>
-            </div>
-        </div>
-
-        <div class="items-section">
-            <div class="items-header">
-                <span>Producto / Servicio</span>
-                <span>Cantidad</span>
-                <span>Precio Unitario</span>
-                <span>Subtotal</span>
-                <span></span>
-            </div>
-            <div id="itemsContainer">
-                <div th:each="detalle, iterStat : ${detalles}" class="item-row" data-index="${iterStat.index}">
-                    <select class="item-producto" required>
-                        <option value="">Seleccionar producto</option>
-                        <option th:each="p : ${productos}" th:value="${p.idProducto}" 
-                                th:text="${p.nombreItem + ' (' + p.tipo + ') - S/ ' + #numbers.formatDecimal(p.precioBase, 0, 2)}"
-                                th:selected="${detalle.idProducto == p.idProducto}"
-                                th:data-precio="${p.precioBase}"></option>
-                    </select>
-                    <input type="number" class="item-cantidad" th:value="${detalle.cantidad}" 
-                           step="1" min="1" required>
-                    <input type="number" class="item-precio" th:value="${detalle.precioUnitario}" 
-                           step="0.01" min="0" required>
-                    <span class="item-subtotal" th:text="'S/ ' + ${detalle.subtotalLinea != null ? #numbers.formatDecimal(detalle.subtotalLinea, 0, 2) : '0.00'}">S/ 0.00</span>
-                    <button type="button" class="btn-remove" onclick="removeItem(this)">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                    <input type="hidden" name="productosIds" th:value="${detalle.idProducto}">
-                    <input type="hidden" name="cantidades" th:value="${detalle.cantidad}">
-                    <input type="hidden" name="preciosUnitarios" th:value="${detalle.precioUnitario}">
-                    <input type="hidden" name="descuentos" th:value="${detalle.descuento != null ? detalle.descuento : 0}">
-                    <input type="hidden" name="detallesIds" th:value="${detalle.idDetalleVersion}">
-                </div>
-            </div>
-            <button type="button" class="btn-add-item" onclick="addItem()">
-                <i class="ti ti-plus"></i> Agregar ítem
-            </button>
-        </div>
-
-        <div class="totals">
-            <p>Subtotal: <strong id="subtotal">S/ 0.00</strong></p>
-            <p class="igv-label">IGV (<span id="tasaIgv" th:text="${tasaIgv}">18</span>%): <strong id="igv">S/ 0.00</strong></p>
-            <p class="total">Total: <span id="total">S/ 0.00</span></p>
-        </div>
-
-        <div class="form-actions">
-            <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
-                <i class="ti ti-arrow-left"></i> Cancelar
-            </a>
-            <button type="submit" class="btn-primary" th:if="${accion == 'crear' or cotizacion.estado == 'Pendiente'}">
-                <i class="ti ti-device-floppy"></i> 
-                <span th:text="${accion == 'crear' ? 'Crear Cotización' : 'Actualizar Cotización'}">Guardar</span>
-            </button>
-            <button type="submit" class="btn-success" th:if="${accion == 'editar' and cotizacion.estado == 'Pendiente'}" 
-                    formaction="@{/admin/cotizaciones/aprobar/{id}(id=${cotizacion.idCotizacion})}" 
-                    onclick="return confirm('¿Aprobar esta cotización? Se generará un proyecto automáticamente.');">
-                <i class="ti ti-check"></i> Aprobar
-            </button>
-        </div>
-    </form>
-</div>
-
-<script th:inline="javascript">
-    var productosData = /*[[${productos}]]*/ [];
-    
-    function getProductOptions(selectedValue) {
-        var optionsHtml = '<option value="">Seleccionar producto</option>';
-        if (productosData && productosData.length > 0) {
-            for (var i = 0; i < productosData.length; i++) {
-                var p = productosData[i];
-                var selected = (selectedValue && p.idProducto == selectedValue) ? 'selected' : '';
-                var precioFormateado = parseFloat(p.precioBase).toFixed(2);
-                optionsHtml += '<option value="' + p.idProducto + '" data-precio="' + p.precioBase + '" ' + selected + '>' + 
-                               p.nombreItem + ' (' + p.tipo + ') - S/ ' + precioFormateado + 
-                               '</option>';
-            }
-        } else {
-            optionsHtml += '<option value="" disabled>⚠️ No hay productos disponibles</option>';
-        }
-        return optionsHtml;
-    }
-
-    function actualizarCamposOcultos(row) {
-        var select = row.querySelector('.item-producto');
-        var cantidad = row.querySelector('.item-cantidad');
-        var precio = row.querySelector('.item-precio');
-        var hiddenProducto = row.querySelector('input[name="productosIds"]');
-        var hiddenCantidad = row.querySelector('input[name="cantidades"]');
-        var hiddenPrecio = row.querySelector('input[name="preciosUnitarios"]');
-        var hiddenDescuento = row.querySelector('input[name="descuentos"]');
-        if (hiddenProducto) hiddenProducto.value = select ? select.value : '';
-        if (hiddenCantidad) hiddenCantidad.value = cantidad ? cantidad.value : 1;
-        if (hiddenPrecio) hiddenPrecio.value = precio ? precio.value : 0;
-        if (hiddenDescuento) hiddenDescuento.value = 0;
-    }
-
-    function addItem() {
-        var container = document.getElementById('itemsContainer');
-        if (!productosData || productosData.length === 0) {
-            alert('No hay productos disponibles en el catálogo. Registra productos primero.');
-            return;
-        }
-        var newRow = document.createElement('div');
-        newRow.className = 'item-row';
-        var optionsHtml = getProductOptions();
-        newRow.innerHTML = `
-            <select class="item-producto" required>
-                ${optionsHtml}
-            </select>
-            <input type="number" class="item-cantidad" value="1" step="1" min="1" required>
-            <input type="number" class="item-precio" value="0.00" step="0.01" min="0" required>
-            <span class="item-subtotal">S/ 0.00</span>
-            <button type="button" class="btn-remove" onclick="removeItem(this)">
-                <i class="ti ti-trash"></i>
-            </button>
-            <input type="hidden" name="productosIds" value="">
-            <input type="hidden" name="cantidades" value="1">
-            <input type="hidden" name="preciosUnitarios" value="0.00">
-            <input type="hidden" name="descuentos" value="0">
-        `;
-        container.appendChild(newRow);
-        var inputs = newRow.querySelectorAll('input, select');
-        for (var j = 0; j < inputs.length; j++) {
-            inputs[j].addEventListener('input', function() {
-                var row = this.closest('.item-row');
-                actualizarCamposOcultos(row);
-                recalculateTotals();
-            });
-            inputs[j].addEventListener('change', function() {
-                var row = this.closest('.item-row');
-                actualizarCamposOcultos(row);
-                recalculateTotals();
-            });
-        }
-        var select = newRow.querySelector('.item-producto');
-        select.addEventListener('change', function() {
-            var row = this.closest('.item-row');
-            var selectedOption = this.options[this.selectedIndex];
-            if (selectedOption && selectedOption.value) {
-                var precio = parseFloat(selectedOption.dataset.precio) || 0;
-                var precioInput = row.querySelector('.item-precio');
-                if (precioInput) {
-                    precioInput.value = precio.toFixed(2);
+        function getProductOptions(selectedValue) {
+            var optionsHtml = '<option value="">Seleccionar producto</option>';
+            if (productosData && productosData.length > 0) {
+                for (var i = 0; i < productosData.length; i++) {
+                    var p = productosData[i];
+                    var selected = (selectedValue && p.idProducto == selectedValue) ? 'selected' : '';
+                    var precioFormateado = parseFloat(p.precioBase).toFixed(2);
+                    optionsHtml += '<option value="' + p.idProducto + '" data-precio="' + p.precioBase + '" ' + selected + '>' + 
+                                   p.nombreItem + ' (' + p.tipo + ') - S/ ' + precioFormateado + 
+                                   '</option>';
                 }
-                actualizarCamposOcultos(row);
-                recalculateTotals();
+            } else {
+                optionsHtml += '<option value="" disabled>⚠️ No hay productos disponibles</option>';
             }
-        });
-        actualizarCamposOcultos(newRow);
-        recalculateTotals();
-    }
-
-    function removeItem(btn) {
-        var row = btn.closest('.item-row');
-        if (document.querySelectorAll('#itemsContainer .item-row').length > 1) {
-            row.remove();
-            recalculateTotals();
-        } else {
-            alert('La cotización debe incluir al menos un producto o servicio.');
+            return optionsHtml;
         }
-    }
 
-    function recalculateTotals() {
-        var subtotal = 0;
-        var rows = document.querySelectorAll('#itemsContainer .item-row');
-        var tasa = parseFloat(document.getElementById('tasaIgv').textContent) || 18;
-        for (var i = 0; i < rows.length; i++) {
-            var row = rows[i];
-            var qty = parseFloat(row.querySelector('.item-cantidad').value) || 0;
-            var price = parseFloat(row.querySelector('.item-precio').value) || 0;
-            var subtotalRow = qty * price;
-            var subtotalSpan = row.querySelector('.item-subtotal');
-            if (subtotalSpan) {
-                subtotalSpan.textContent = 'S/ ' + subtotalRow.toFixed(2);
+        function actualizarCamposOcultos(row) {
+            var select = row.querySelector('.item-producto');
+            var cantidad = row.querySelector('.item-cantidad');
+            var precio = row.querySelector('.item-precio');
+            var hiddenProducto = row.querySelector('input[name="productosIds"]');
+            var hiddenCantidad = row.querySelector('input[name="cantidades"]');
+            var hiddenPrecio = row.querySelector('input[name="preciosUnitarios"]');
+            var hiddenDescuento = row.querySelector('input[name="descuentos"]');
+            if (hiddenProducto) hiddenProducto.value = select ? select.value : '';
+            if (hiddenCantidad) hiddenCantidad.value = cantidad ? cantidad.value : 1;
+            if (hiddenPrecio) hiddenPrecio.value = precio ? precio.value : 0;
+            if (hiddenDescuento) hiddenDescuento.value = 0;
+        }
+
+        function addItem() {
+            var container = document.getElementById('itemsContainer');
+            if (!productosData || productosData.length === 0) {
+                alert('No hay productos disponibles en el catálogo. Registra productos primero.');
+                return;
             }
-            subtotal += subtotalRow;
-            actualizarCamposOcultos(row);
-        }
-        var igv = subtotal * (tasa / 100);
-        var total = subtotal + igv;
-        document.getElementById('subtotal').textContent = 'S/ ' + subtotal.toFixed(2);
-        document.getElementById('igv').textContent = 'S/ ' + igv.toFixed(2);
-        document.getElementById('total').textContent = 'S/ ' + total.toFixed(2);
-    }
-
-    function bindInputEvents() {
-        var rows = document.querySelectorAll('#itemsContainer .item-row');
-        for (var i = 0; i < rows.length; i++) {
-            var row = rows[i];
-            var inputs = row.querySelectorAll('input, select');
+            var newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            var optionsHtml = getProductOptions();
+            newRow.innerHTML = `
+                <select class="item-producto" required>
+                    ${optionsHtml}
+                </select>
+                <input type="number" class="item-cantidad" value="1" step="1" min="1" required>
+                <input type="number" class="item-precio" value="0.00" step="0.01" min="0" required>
+                <span class="item-subtotal">S/ 0.00</span>
+                <button type="button" class="btn-remove" onclick="removeItem(this)">
+                    <i class="ti ti-trash"></i>
+                </button>
+                <input type="hidden" name="productosIds" value="">
+                <input type="hidden" name="cantidades" value="1">
+                <input type="hidden" name="preciosUnitarios" value="0.00">
+                <input type="hidden" name="descuentos" value="0">
+            `;
+            container.appendChild(newRow);
+            var inputs = newRow.querySelectorAll('input, select');
             for (var j = 0; j < inputs.length; j++) {
                 inputs[j].addEventListener('input', function() {
                     var row = this.closest('.item-row');
@@ -654,70 +573,137 @@
                     recalculateTotals();
                 });
             }
-            var select = row.querySelector('.item-producto');
-            if (select) {
-                select.addEventListener('change', function() {
-                    var row = this.closest('.item-row');
-                    var selectedOption = this.options[this.selectedIndex];
-                    if (selectedOption && selectedOption.value) {
-                        var precio = parseFloat(selectedOption.dataset.precio) || 0;
-                        var precioInput = row.querySelector('.item-precio');
-                        if (precioInput) {
-                            precioInput.value = precio.toFixed(2);
-                        }
+            var select = newRow.querySelector('.item-producto');
+            select.addEventListener('change', function() {
+                var row = this.closest('.item-row');
+                var selectedOption = this.options[this.selectedIndex];
+                if (selectedOption && selectedOption.value) {
+                    var precio = parseFloat(selectedOption.dataset.precio) || 0;
+                    var precioInput = row.querySelector('.item-precio');
+                    if (precioInput) {
+                        precioInput.value = precio.toFixed(2);
+                    }
+                    actualizarCamposOcultos(row);
+                    recalculateTotals();
+                }
+            });
+            actualizarCamposOcultos(newRow);
+            recalculateTotals();
+        }
+
+        function removeItem(btn) {
+            var row = btn.closest('.item-row');
+            if (document.querySelectorAll('#itemsContainer .item-row').length > 1) {
+                row.remove();
+                recalculateTotals();
+            } else {
+                alert('La cotización debe incluir al menos un producto o servicio.');
+            }
+        }
+
+        function recalculateTotals() {
+            var subtotal = 0;
+            var rows = document.querySelectorAll('#itemsContainer .item-row');
+            var tasa = parseFloat(document.getElementById('tasaIgv').textContent) || 18;
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var qty = parseFloat(row.querySelector('.item-cantidad').value) || 0;
+                var price = parseFloat(row.querySelector('.item-precio').value) || 0;
+                var subtotalRow = qty * price;
+                var subtotalSpan = row.querySelector('.item-subtotal');
+                if (subtotalSpan) {
+                    subtotalSpan.textContent = 'S/ ' + subtotalRow.toFixed(2);
+                }
+                subtotal += subtotalRow;
+                actualizarCamposOcultos(row);
+            }
+            var igv = subtotal * (tasa / 100);
+            var total = subtotal + igv;
+            document.getElementById('subtotal').textContent = 'S/ ' + subtotal.toFixed(2);
+            document.getElementById('igv').textContent = 'S/ ' + igv.toFixed(2);
+            document.getElementById('total').textContent = 'S/ ' + total.toFixed(2);
+        }
+
+        function bindInputEvents() {
+            var rows = document.querySelectorAll('#itemsContainer .item-row');
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var inputs = row.querySelectorAll('input, select');
+                for (var j = 0; j < inputs.length; j++) {
+                    inputs[j].addEventListener('input', function() {
+                        var row = this.closest('.item-row');
                         actualizarCamposOcultos(row);
                         recalculateTotals();
-                    }
-                });
+                    });
+                    inputs[j].addEventListener('change', function() {
+                        var row = this.closest('.item-row');
+                        actualizarCamposOcultos(row);
+                        recalculateTotals();
+                    });
+                }
+                var select = row.querySelector('.item-producto');
+                if (select) {
+                    select.addEventListener('change', function() {
+                        var row = this.closest('.item-row');
+                        var selectedOption = this.options[this.selectedIndex];
+                        if (selectedOption && selectedOption.value) {
+                            var precio = parseFloat(selectedOption.dataset.precio) || 0;
+                            var precioInput = row.querySelector('.item-precio');
+                            if (precioInput) {
+                                precioInput.value = precio.toFixed(2);
+                            }
+                            actualizarCamposOcultos(row);
+                            recalculateTotals();
+                        }
+                    });
+                }
+                actualizarCamposOcultos(row);
             }
-            actualizarCamposOcultos(row);
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        bindInputEvents();
-        recalculateTotals();
-        if (document.querySelectorAll('#itemsContainer .item-row').length === 0) {
-            if (productosData && productosData.length > 0) {
-                addItem();
+        document.addEventListener('DOMContentLoaded', function() {
+            bindInputEvents();
+            recalculateTotals();
+            if (document.querySelectorAll('#itemsContainer .item-row').length === 0) {
+                if (productosData && productosData.length > 0) {
+                    addItem();
+                }
             }
-        }
-    });
+        });
 
-    var form = document.getElementById('cotizacionForm');
-    form.addEventListener('submit', function(e) {
-        var rows = document.querySelectorAll('#itemsContainer .item-row');
-        var hasValidItems = false;
-        for (var i = 0; i < rows.length; i++) {
-            var row = rows[i];
-            var select = row.querySelector('.item-producto');
-            var qty = parseFloat(row.querySelector('.item-cantidad').value) || 0;
-            var price = parseFloat(row.querySelector('.item-precio').value) || 0;
-            actualizarCamposOcultos(row);
-            if (select && select.value && qty > 0 && price >= 0) {
-                hasValidItems = true;
+        var form = document.getElementById('cotizacionForm');
+        form.addEventListener('submit', function(e) {
+            var rows = document.querySelectorAll('#itemsContainer .item-row');
+            var hasValidItems = false;
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var select = row.querySelector('.item-producto');
+                var qty = parseFloat(row.querySelector('.item-cantidad').value) || 0;
+                var price = parseFloat(row.querySelector('.item-precio').value) || 0;
+                actualizarCamposOcultos(row);
+                if (select && select.value && qty > 0 && price >= 0) {
+                    hasValidItems = true;
+                }
             }
-        }
-        if (!hasValidItems) {
-            e.preventDefault();
-            alert('La cotización debe incluir al menos un producto o servicio con cantidad y precio válidos.');
-            return;
-        }
-        var hiddenProductos = document.querySelectorAll('input[name="productosIds"]');
-        var tieneValores = false;
-        for (var i = 0; i < hiddenProductos.length; i++) {
-            if (hiddenProductos[i].value) {
-                tieneValores = true;
-                break;
+            if (!hasValidItems) {
+                e.preventDefault();
+                alert('La cotización debe incluir al menos un producto o servicio con cantidad y precio válidos.');
+                return;
             }
-        }
-        if (!tieneValores) {
-            e.preventDefault();
-            alert('Error: No se han seleccionado productos válidos.');
-            return;
-        }
-    });
-</script>
-
+            var hiddenProductos = document.querySelectorAll('input[name="productosIds"]');
+            var tieneValores = false;
+            for (var i = 0; i < hiddenProductos.length; i++) {
+                if (hiddenProductos[i].value) {
+                    tieneValores = true;
+                    break;
+                }
+            }
+            if (!tieneValores) {
+                e.preventDefault();
+                alert('Error: No se han seleccionado productos válidos.');
+                return;
+            }
+        });
+    </script>
 </body>
 </html>

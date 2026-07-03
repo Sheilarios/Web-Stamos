@@ -111,6 +111,8 @@ public class Proyecto {
         this.estaVencido = false;
     }
 
+    // ========== GETTERS Y SETTERS ==========
+
     public Integer getIdProyecto() {
         return idProyecto;
     }
@@ -349,6 +351,8 @@ public class Proyecto {
         this.observaciones = observaciones;
     }
 
+    // ========== MÉTODOS PRIVADOS DE ACTUALIZACIÓN ==========
+
     private void actualizarEstadoPorId(Integer idEstado) {
         if (idEstado == null) return;
         
@@ -398,6 +402,8 @@ public class Proyecto {
         }
     }
 
+    // ========== MÉTODOS DE NEGOCIO ==========
+
     public boolean isEntregado() {
         return idEstadoActual != null && idEstadoActual == 5;
     }
@@ -423,9 +429,17 @@ public class Proyecto {
         return idEstadoActual >= 1 && idEstadoActual <= 4;
     }
 
+    // ========== MÉTODOS DE FORMATO ==========
+
     public String getCodigoProyecto() {
         if (idProyecto == null) return "PRO-00000";
         return "PRO-" + String.format("%05d", idProyecto);
+    }
+
+    // ✅ NUEVO MÉTODO: Código de cotización formateado
+    public String getCodigoCotizacion() {
+        if (idCotizacion == null) return "COT-00000";
+        return "COT-" + String.format("%05d", idCotizacion);
     }
 
     public String getEstadoBadgeClass() {
@@ -576,18 +590,7 @@ public class Proyecto {
         return saldoPendiente != null && saldoPendiente.compareTo(BigDecimal.ZERO) == 0;
     }
 
-    public void setDiasRestantes(int dias) {
-        this.diasRestantes = dias;
-    }
-
-    public void setDiasTranscurridos(int dias) {
-        this.diasTranscurridos = dias;
-    }
-
-    public void setEstaVencido(boolean vencido) {
-        this.estaVencido = vencido;
-    }
-
+    // ========== MÉTODOS SOBRESCRITOS ==========
 
     @Override
     public String toString() {

@@ -179,6 +179,9 @@ public class ClienteService {
     }
 
     public Cliente findById(Integer idCliente) {
+        if (idCliente == null) {
+            return null;
+        }
         return clienteRepository.findById(idCliente).orElse(null);
     }
 
@@ -202,6 +205,9 @@ public class ClienteService {
     }
 
     public Cliente findByUsuarioId(Integer idUsuario) {
+        if (idUsuario == null) {
+            return null;
+        }
         return clienteRepository.findByIdUsuario(idUsuario).orElse(null);
     }
 
@@ -262,6 +268,9 @@ public class ClienteService {
     }
 
     public Usuario findUsuarioById(Integer idUsuario) {
+        if (idUsuario == null) {
+            return null;
+        }
         return usuarioRepository.findById(idUsuario).orElse(null);
     }
 
@@ -316,14 +325,17 @@ public class ClienteService {
     }
 
     public boolean hasProyectos(Integer idCliente) {
+        if (idCliente == null) return false;
         return clienteRepository.hasProyectos(idCliente);
     }
 
     public boolean hasCotizaciones(Integer idCliente) {
+        if (idCliente == null) return false;
         return clienteRepository.hasCotizaciones(idCliente);
     }
 
     public boolean hasPagos(Integer idCliente) {
+        if (idCliente == null) return false;
         return clienteRepository.hasPagos(idCliente);
     }
 

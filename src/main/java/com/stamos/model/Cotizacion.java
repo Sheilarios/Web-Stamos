@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +32,8 @@ public class Cotizacion {
     @Column(name = "id_cliente", nullable = false)
     private Integer idCliente;
 
-    @NotNull(message = "El vendedor es obligatorio")
+    // ===== ✅ CORREGIDO: Eliminada la anotación @NotNull =====
+    // El vendedor se asigna automáticamente desde el usuario autenticado en el controlador
     @Column(name = "id_usuario_vendedor", nullable = false)
     private Integer idUsuarioVendedor;
 
@@ -42,7 +44,8 @@ public class Cotizacion {
     private LocalDate fechaValidez;
 
     @Column(name = "estado", nullable = false)
-    private String estado; 
+    private String estado;
+
     @Column(name = "version_actual", nullable = false)
     private Integer versionActual = 1;
 
@@ -107,6 +110,7 @@ public class Cotizacion {
     @Transient
     private Integer idProyectoAsociado;
 
+
     public Cotizacion() {
         this.estado = "Pendiente";
         this.versionActual = 1;
@@ -129,6 +133,7 @@ public class Cotizacion {
         this(idCliente, idUsuarioVendedor);
         this.fechaValidez = fechaValidez;
     }
+
 
     public Integer getIdCotizacion() {
         return idCotizacion;
@@ -346,6 +351,7 @@ public class Cotizacion {
         this.idProyectoAsociado = idProyectoAsociado;
     }
 
+
     public boolean isPendiente() {
         return "Pendiente".equals(this.estado);
     }
@@ -423,7 +429,7 @@ public class Cotizacion {
         }
 
         this.igv = this.subtotal.multiply(this.tasaIgv)
-                .divide(new BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP);
+                .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
 
         this.total = this.subtotal.add(this.igv);
         this.cantidadItems = detalles.size();
@@ -443,9 +449,9 @@ public class Cotizacion {
         }
     }
 
+
     public String getEstadoLegible() {
         if (estado == null) return "Sin estado";
-        
         return switch (estado) {
             case "Pendiente" -> "Pendiente";
             case "Aprobada" -> "Aprobada";
@@ -456,7 +462,6 @@ public class Cotizacion {
 
     public String getEstadoBadgeClass() {
         if (estado == null) return "status-pendiente";
-        
         return switch (estado) {
             case "Pendiente" -> "status-pendiente";
             case "Aprobada" -> "status-validado";
@@ -467,7 +472,6 @@ public class Cotizacion {
 
     public String getEstadoIcono() {
         if (estado == null) return "ti ti-circle";
-        
         return switch (estado) {
             case "Pendiente" -> "ti ti-clock";
             case "Aprobada" -> "ti ti-check-circle";
@@ -478,7 +482,6 @@ public class Cotizacion {
 
     public String getEstadoColor() {
         if (estado == null) return "#6B7280";
-        
         return switch (estado) {
             case "Pendiente" -> "#F59E0B";
             case "Aprobada" -> "#10B981";
@@ -526,17 +529,17 @@ public class Cotizacion {
 
     public String getSubtotalFormateado() {
         if (subtotal == null) return "S/ 0.00";
-        return "S/ " + subtotal.setScale(2, java.math.RoundingMode.HALF_UP).toString();
+        return "S/ " + subtotal.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
     public String getIgvFormateado() {
         if (igv == null) return "S/ 0.00";
-        return "S/ " + igv.setScale(2, java.math.RoundingMode.HALF_UP).toString();
+        return "S/ " + igv.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
     public String getTotalFormateado() {
         if (total == null) return "S/ 0.00";
-        return "S/ " + total.setScale(2, java.math.RoundingMode.HALF_UP).toString();
+        return "S/ " + total.setScale(2, RoundingMode.HALF_UP).toString();
     }
 
     public String getVendedorLegible() {

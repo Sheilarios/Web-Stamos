@@ -28,7 +28,7 @@ public interface CotizacionVersionRepository extends JpaRepository<CotizacionVer
     @Query("SELECT v FROM CotizacionVersion v WHERE v.idCotizacion = :idCotizacion ORDER BY v.numeroVersion ASC")
     List<CotizacionVersion> findByIdCotizacionOrderByNumeroVersionAsc(@Param("idCotizacion") Integer idCotizacion);
 
-    @Query("SELECT v FROM CotizacionVersion v WHERE v.idCotizacion = :idCotizacion ORDER BY v.numeroVersion DESC")
+    @Query(value = "SELECT * FROM VersionCotizacion WHERE id_cotizacion = :idCotizacion ORDER BY numero_version DESC LIMIT 1", nativeQuery = true)
     Optional<CotizacionVersion> findVersionActual(@Param("idCotizacion") Integer idCotizacion);
 
     Optional<CotizacionVersion> findByIdCotizacionAndNumeroVersion(Integer idCotizacion, Integer numeroVersion);

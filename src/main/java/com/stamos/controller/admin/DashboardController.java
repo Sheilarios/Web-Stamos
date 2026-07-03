@@ -63,6 +63,9 @@ public class DashboardController extends BaseController {
                 rol = "Administrador";
             }
             
+            // 🔹 Aseguramos que el rol esté disponible para el sidebar
+            model.addAttribute("rolUsuario", rol);
+
             model.addAttribute("usuario", usuarioActual);
             model.addAttribute("rol", rol);
             model.addAttribute("nombreUsuario", usuarioActual.getNombreCompleto() != null ? 

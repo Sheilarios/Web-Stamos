@@ -1,14 +1,28 @@
 package com.stamos.controller;
 
+import com.stamos.dto.MenuItem;
+import com.stamos.model.Usuario;
+import com.stamos.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BaseController {
+
+    @Autowired
+    private UsuarioService usuarioService;
+
 
     protected String formatearFecha(LocalDate fecha) {
         if (fecha == null) return "-";
@@ -64,5 +78,54 @@ public abstract class BaseController {
     protected void addCommonAttributes(Model model) {
         model.addAttribute("fechaActual", LocalDateTime.now());
         model.addAttribute("anioActual", LocalDateTime.now().getYear());
+    }
+
+    @ModelAttribute("rolUsuario")
+    public String getRolUsuario() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
+            return "ANONIMO";
+        }
+        try {
+            Usuario usuario = usuarioService.findByEmail(auth.getName());
+            return usuario != null ? usuario.getNombreRol() : "ANONIMO";
+        } catch (Exception e) {
+            return "ANONIMO";
+        }
+    }
+
+    @ModelAttribute("menuItems")
+    public List<MenuItem> getMenuItems() {
+        String rol = getRolUsuario();
+        List<MenuItem> items = new ArrayList<>();
+
+        items.add(new MenuItem("Dashboard", "/admin/dashboard", "ti ti-layout-dashboard"));
+
+        if ("Administrador".equals(rol) || "Vendedor".equals(rol)) {
+            items.add(new MenuItem("Clientes", "/admin/clientes", "ti ti-users"));
+            items.add(new MenuItem("Cotizaciones", "/admin/cotizaciones", "ti ti-file-invoice"));
+            items.add(new MenuItem("Pagos", "/admin/pagos", "ti ti-credit-card"));
+        }
+
+        if (!"Cliente".equals(rol) && !"ANONIMO".equals(rol)) {
+            items.add(new MenuItem("Proyectos", "/admin/proyectos", "ti ti-folder-open"));
+        }
+
+        if ("Administrador".equals(rol) || "Producción".equals(rol) || "Soporte Técnico".equals(rol)) {
+            items.add(new MenuItem("Inventario", "/admin/inventario", "ti ti-box"));
+        }
+
+        if ("Administrador".equals(rol)) {
+            items.add(new MenuItem("Configuración", "/admin/configuracion", "ti ti-settings"));
+            items.add(new MenuItem("Usuarios", "/admin/usuarios", "ti ti-user-cog"));
+        }
+
+        return items;
+    }
+
+  
+    @ModelAttribute("currentPath")
+    public String getCurrentPath(HttpServletRequest request) {
+        return request.getRequestURI();
     }
 }

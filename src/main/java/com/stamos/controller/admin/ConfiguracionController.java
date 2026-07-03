@@ -22,7 +22,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin/configuracion")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMINISTRADOR')")
 public class ConfiguracionController extends BaseController {
 
     @Autowired
@@ -30,6 +30,7 @@ public class ConfiguracionController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
+
 
     @GetMapping
     public String listarConfiguraciones(Model model) {
@@ -62,6 +63,7 @@ public class ConfiguracionController extends BaseController {
         }
     }
 
+
     @PostMapping("/actualizar/{id}")
     @Auditable
     public String actualizarConfiguracion(@PathVariable Integer id,
@@ -90,20 +92,20 @@ public class ConfiguracionController extends BaseController {
             config.setIdConfig(id);
             config.setIdUsuarioActualiza(usuarioAdmin.getIdUsuario());
             config.setFechaActualizacion(LocalDateTime.now());
-            
+
             configuracionService.update(config);
-            
+
             if ("tasa_igv".equals(config.getParametro())) {
-                redirectAttributes.addFlashAttribute("mensaje", 
-                    "La tasa IGV ha sido actualizada a " + config.getValor() + "%. " +
-                    "Las nuevas cotizaciones usarán este valor. Las cotizaciones existentes mantienen su tasa original.");
+                redirectAttributes.addFlashAttribute("mensaje",
+                        "La tasa IGV ha sido actualizada a " + config.getValor() + "%. " +
+                        "Las nuevas cotizaciones usarán este valor. Las cotizaciones existentes mantienen su tasa original.");
             } else {
                 redirectAttributes.addFlashAttribute("mensaje", "Configuración actualizada exitosamente.");
             }
-            
+
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             return "redirect:/admin/configuracion";
-            
+
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al actualizar la configuración: " + e.getMessage());
             return "redirect:/admin/configuracion/editar/" + id;
@@ -136,13 +138,14 @@ public class ConfiguracionController extends BaseController {
             config.setIdUsuarioActualiza(usuarioAdmin.getIdUsuario());
             config.setFechaActualizacion(LocalDateTime.now());
             configuracionService.update(config);
-            
+
             return "SUCCESS: Configuración actualizada correctamente";
-            
+
         } catch (Exception e) {
             return "ERROR: " + e.getMessage();
         }
     }
+
 
     @GetMapping("/valor")
     @ResponseBody
@@ -216,16 +219,17 @@ public class ConfiguracionController extends BaseController {
             }
 
             configuracionService.restaurarValorPorDefecto(id, usuarioAdmin.getIdUsuario());
-            
+
             redirectAttributes.addFlashAttribute("mensaje", "Configuración restaurada a su valor por defecto.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             return "redirect:/admin/configuracion";
-            
+
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al restaurar la configuración: " + e.getMessage());
             return "redirect:/admin/configuracion";
         }
     }
+
 
     @GetMapping("/existe")
     @ResponseBody
@@ -259,35 +263,30 @@ public class ConfiguracionController extends BaseController {
         }
     }
 
+
     public String formatearValor(String valor, String tipoDato) {
         if (valor == null || tipoDato == null) {
             return valor;
         }
-        
-        switch (tipoDato) {
+
+        return switch (tipoDato) {
             case "DECIMAL" -> {
                 try {
                     double d = Double.parseDouble(valor);
-                    return String.format("%.2f", d);
+                    yield String.format("%.2f", d);
                 } catch (NumberFormatException e) {
-                    return valor;
+                    yield valor;
                 }
             }
-            case "BOOLEAN" -> {
-                return "true".equalsIgnoreCase(valor) ? "Sí" : "No";
-            }
-            case "DATE" -> {
-                return valor;
-            }
-            default -> {
-                return valor;
-            }
-        }
+            case "BOOLEAN" -> "true".equalsIgnoreCase(valor) ? "Sí" : "No";
+            case "DATE" -> valor;
+            default -> valor;
+        };
     }
 
     public String getTipoDatoClass(String tipoDato) {
         if (tipoDato == null) return "badge-secondary";
-        
+
         return switch (tipoDato) {
             case "DECIMAL" -> "badge-info";
             case "STRING" -> "badge-primary";

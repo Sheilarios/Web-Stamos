@@ -414,8 +414,9 @@
         </a>
     </div>
 
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <!-- Mensajes con sintaxis actualizada (sin warnings) -->
+    <div th:replace="~{fragments/mensajes :: mensaje_exito}"></div>
+    <div th:replace="~{fragments/mensajes :: mensaje_error}"></div>
 
     <div class="stats-row">
         <div class="stat-card">
@@ -478,7 +479,8 @@
             </thead>
             <tbody>
                 <tr th:each="cotizacion : ${cotizaciones}">
-                    <td th:text="'COT-' + ${#strings.padLeft(cotizacion.idCotizacion, 5, '0')}">COT-00000</td>
+                    <!-- ✅ CORREGIDO: usa el método getCodigoCotizacion() de la entidad -->
+                    <td th:text="${cotizacion.codigoCotizacion}">COT-00000</td>
                     <td th:text="${cotizacion.nombreCliente != null ? cotizacion.nombreCliente : 'Cliente ID: ' + cotizacion.idCliente}">—</td>
                     <td th:text="${#temporals.format(cotizacion.fechaEmision, 'dd/MM/yyyy HH:mm')}">—</td>
                     <td th:text="'S/ ' + ${#numbers.formatDecimal(cotizacion.subtotal, 0, 2)}">S/ 0.00</td>

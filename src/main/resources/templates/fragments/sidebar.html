@@ -1,0 +1,60 @@
+<ul class="sidebar-menu">
+    <!-- ===== PRINCIPAL ===== -->
+    <li class="menu-label">Principal</li>
+    <li><a href="/admin/dashboard" class="active">
+        <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+    </a></li>
+
+    <!-- ===== GESTIÓN ===== -->
+    <li class="menu-label">Gestión</li>
+
+    <!-- Clientes: visible para todos los roles internos -->
+    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Vendedor'}">
+        <a href="/admin/clientes">
+            <i class="ti ti-users"></i><span>Clientes</span>
+        </a>
+    </li>
+
+    <!-- Cotizaciones: visible para Administrador y Vendedor -->
+    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Vendedor'}">
+        <a href="/admin/cotizaciones">
+            <i class="ti ti-file-invoice"></i><span>Cotizaciones</span>
+        </a>
+    </li>
+
+    <!-- Proyectos: visible para todos los roles internos -->
+    <li th:if="${rolUsuario != 'Cliente'}">
+        <a href="/admin/proyectos">
+            <i class="ti ti-folder-open"></i><span>Proyectos</span>
+        </a>
+    </li>
+
+    <!-- Inventario: visible para Administrador, Producción y Soporte Técnico -->
+    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Producción' or rolUsuario == 'Soporte Técnico'}">
+        <a href="/admin/inventario">
+            <i class="ti ti-box"></i><span>Inventario</span>
+        </a>
+    </li>
+
+    <!-- Pagos: visible para Administrador y Vendedor -->
+    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Vendedor'}">
+        <a href="/admin/pagos">
+            <i class="ti ti-credit-card"></i><span>Pagos</span>
+        </a>
+    </li>
+
+    <!-- ===== CONFIGURACIÓN (SOLO ADMIN) ===== -->
+    <li th:if="${rolUsuario == 'Administrador'}" class="menu-label">Configuración</li>
+
+    <li th:if="${rolUsuario == 'Administrador'}">
+        <a href="/admin/configuracion">
+            <i class="ti ti-settings"></i><span>Configuración</span>
+        </a>
+    </li>
+
+    <li th:if="${rolUsuario == 'Administrador'}">
+        <a href="/admin/usuarios">
+            <i class="ti ti-user-cog"></i><span>Usuarios</span>
+        </a>
+    </li>
+</ul>

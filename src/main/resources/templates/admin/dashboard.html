@@ -121,15 +121,6 @@
             color: var(--yellow-dark);
         }
         
-        .sidebar-menu .menu-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-3);
-            padding: 16px 16px 8px;
-            font-weight: 600;
-        }
-        
         .sidebar-footer {
             padding: 16px 20px;
             border-top: 1px solid var(--border);
@@ -458,9 +449,6 @@
             .sidebar-menu li a i {
                 font-size: 16px;
             }
-            .sidebar-menu .menu-label {
-                display: none;
-            }
             .sidebar-footer {
                 border-top: none;
                 padding: 0;
@@ -492,23 +480,18 @@
             <h2>STAMOS<span>.</span></h2>
             <small>Sistema de Gestión</small>
         </div>
-        
+
+        <!-- ========== MENÚ DINÁMICO ========== -->
         <ul class="sidebar-menu">
-            <li class="menu-label">Principal</li>
-            <li><a href="/admin/dashboard" class="active"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
-            
-            <li class="menu-label">Gestión</li>
-            <li><a href="/admin/clientes"><i class="ti ti-users"></i><span>Clientes</span></a></li>
-            <li><a href="/admin/cotizaciones"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
-            <li><a href="/admin/proyectos"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
-            <li><a href="/admin/inventario"><i class="ti ti-box"></i><span>Inventario</span></a></li>
-            <li><a href="/admin/pagos"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
-            
-            <li class="menu-label">Configuración</li>
-            <li><a href="/admin/configuracion"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
-            <li><a href="/admin/usuarios"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li th:each="item : ${menuItems}">
+                <a th:href="${item.url}" 
+                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
+                    <i th:class="${item.icon}"></i>
+                    <span th:text="${item.label}"></span>
+                </a>
+            </li>
         </ul>
-        
+
         <div class="sidebar-footer">
             <a href="/logout">
                 <i class="ti ti-logout"></i>

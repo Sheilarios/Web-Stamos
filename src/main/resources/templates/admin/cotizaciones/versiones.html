@@ -331,12 +331,12 @@
         <div class="page-title">
             <i class="ti ti-history"></i>
             <span>Historial de Versiones</span>
-            <small th:text="'COT-' + ${#strings.leftPad(cotizacion.idCotizacion, 5, '0')}">COT-00000</small>
+            <small th:text="'COT-' + ${cotizacion != null && cotizacion.idCotizacion != null ? #strings.padLeft(cotizacion.idCotizacion, 5, '0') : '00000'}">COT-00000</small>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <a th:href="@{/admin/cotizaciones/editar/{id}(id=${cotizacion.idCotizacion})}" 
                class="btn-primary" 
-               th:if="${cotizacion.estado == 'Pendiente'}">
+               th:if="${cotizacion != null && cotizacion.estado == 'Pendiente'}">
                 <i class="ti ti-edit"></i> Editar cotización
             </a>
             <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
@@ -374,7 +374,7 @@
         </div>
         <div class="info-item" th:if="${cotizacion.tieneProyectoAsociado}">
             <span class="info-label">Proyecto:</span>
-            <span class="info-value" th:text="'PRO-' + ${#strings.leftPad(cotizacion.idProyectoAsociado, 5, '0')}">PRO-00000</span>
+            <span class="info-value" th:text="'PRO-' + ${#strings.padLeft(cotizacion.idProyectoAsociado, 5, '0')}">PRO-00000</span>
         </div>
     </div>
 
@@ -447,7 +447,7 @@
             </a>
             <a th:href="@{/admin/cotizaciones/editar/{id}(id=${cotizacion.idCotizacion})}" 
                class="btn-primary" 
-               th:if="${cotizacion.estado == 'Pendiente'}">
+               th:if="${cotizacion != null && cotizacion.estado == 'Pendiente'}">
                 <i class="ti ti-file-plus"></i> Crear nueva versión
             </a>
         </div>

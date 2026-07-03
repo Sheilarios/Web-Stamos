@@ -481,22 +481,23 @@
         </a>
     </div>
 
-    <div th:replace="fragments/mensajes :: mensaje_error"></div>
-    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+    <!-- ✅ Fragmentos con sintaxis moderna -->
+    <div th:replace="~{fragments/mensajes :: mensaje_error}"></div>
+    <div th:replace="~{fragments/mensajes :: mensaje_exito}"></div>
 
     <div class="info-card" th:if="${pago != null}">
         <div class="info-item">
             <div class="label">Proyecto</div>
-            <div class="value" th:text="${pago.nombreProyecto}">—</div>
+            <div class="value" th:text="${pago.nombreProyecto != null ? pago.nombreProyecto : '—'}">—</div>
         </div>
         <div class="info-item">
             <div class="label">Cliente</div>
-            <div class="value" th:text="${pago.nombreCliente}">—</div>
+            <div class="value" th:text="${pago.nombreCliente != null ? pago.nombreCliente : '—'}">—</div>
         </div>
         <div class="info-item">
             <div class="label">Monto</div>
             <div class="value">
-                <span class="monto" th:text="${pago.montoFormateado != null ? pago.montoFormateado : 'S/ 0.00'}">S/ 0.00</span>
+                <span class="monto" th:text="${pago.monto != null ? 'S/ ' + #numbers.formatDecimal(pago.monto, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
             </div>
         </div>
         <div class="info-item">
@@ -505,7 +506,7 @@
                 <span class="status-badge" 
                       th:classappend="${pago.estadoPago == 'Validado'} ? 'status-validado' : 
                                       (pago.estadoPago == 'Pendiente' ? 'status-pendiente' : 'status-rechazado')"
-                      th:text="${pago.estadoPago}">—</span>
+                      th:text="${pago.estadoPago != null ? pago.estadoPago : '—'}">—</span>
             </div>
         </div>
         <div class="info-item">
@@ -515,12 +516,12 @@
                       th:classappend="${pago.metodoPago == 'Efectivo'} ? 'metodo-efectivo' : 
                                       (pago.metodoPago == 'Transferencia' ? 'metodo-transferencia' : 
                                       (pago.metodoPago == 'Tarjeta' ? 'metodo-tarjeta' : 'metodo-cheque'))"
-                      th:text="${pago.metodoPago}">—</span>
+                      th:text="${pago.metodoPago != null ? pago.metodoPago : '—'}">—</span>
             </div>
         </div>
         <div class="info-item">
             <div class="label">Fecha de Pago</div>
-            <div class="value" th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm')}">—</div>
+            <div class="value" th:text="${pago.fechaPago != null ? #temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm') : '—'}">—</div>
         </div>
     </div>
 
@@ -533,11 +534,11 @@
         <div class="section-body" th:if="${comprobante != null}">
             <div class="detail-row">
                 <span class="label">Tipo</span>
-                <span class="value" th:text="${comprobante.tipoComprobante}">—</span>
+                <span class="value" th:text="${comprobante.tipoComprobante != null ? comprobante.tipoComprobante : '—'}">—</span>
             </div>
             <div class="detail-row">
                 <span class="label">Número</span>
-                <span class="value" th:text="${comprobante.numeroComprobante}">—</span>
+                <span class="value" th:text="${comprobante.numeroComprobante != null ? comprobante.numeroComprobante : '—'}">—</span>
             </div>
             <div class="detail-row">
                 <span class="label">Estado</span>
@@ -558,7 +559,7 @@
             <div th:if="${comprobante.archivoUrl != null}" class="comprobante-preview">
                 <i class="ti ti-file-pdf"></i>
                 <div class="info">
-                    <div class="nombre" th:text="${comprobante.nombreArchivo}">comprobante.pdf</div>
+                    <div class="nombre" th:text="${comprobante.nombreArchivo != null ? comprobante.nombreArchivo : 'comprobante.pdf'}">comprobante.pdf</div>
                     <div class="meta">Archivo adjunto</div>
                 </div>
                 <button class="btn-ver" onclick="abrirComprobante()">
@@ -581,15 +582,16 @@
         <div class="section-body">
             <div class="detail-row">
                 <span class="label">Monto Total del Proyecto</span>
-                <span class="value" th:text="${pago.montoTotalProyectoFormateado != null ? pago.montoTotalProyectoFormateado : 'S/ 0.00'}">S/ 0.00</span>
+                <span class="value" th:text="${pago.montoTotalProyecto != null ? 'S/ ' + #numbers.formatDecimal(pago.montoTotalProyecto, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
             </div>
             <div class="detail-row">
                 <span class="label">Total Pagado</span>
-                <span class="value" style="color:var(--green);" th:text="${pago.totalPagadoFormateado != null ? pago.totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</span>
+                <span class="value" style="color:var(--green);" 
+                      th:text="${pago.montoTotalProyecto != null && pago.saldoPendiente != null ? 'S/ ' + #numbers.formatDecimal(pago.montoTotalProyecto - pago.saldoPendiente, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
             </div>
             <div class="detail-row">
                 <span class="label">Saldo Pendiente</span>
-                <span class="value" style="color:var(--red);" th:text="${pago.saldoPendienteFormateado != null ? pago.saldoPendienteFormateado : 'S/ 0.00'}">S/ 0.00</span>
+                <span class="value" style="color:var(--red);" th:text="${pago.saldoPendiente != null ? 'S/ ' + #numbers.formatDecimal(pago.saldoPendiente, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
             </div>
             <div class="detail-row">
                 <span class="label">Porcentaje Pagado</span>

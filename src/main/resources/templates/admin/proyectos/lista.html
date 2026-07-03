@@ -369,8 +369,9 @@
         </div>
     </div>
 
-    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
-    <div th:replace="fragments/mensajes :: mensaje_error"></div>
+    <!-- ✅ Mensajes con sintaxis actualizada (sin warnings) -->
+    <div th:replace="~{fragments/mensajes :: mensaje_exito}"></div>
+    <div th:replace="~{fragments/mensajes :: mensaje_error}"></div>
 
     <div class="stats-row">
         <div class="stat-card">
@@ -457,7 +458,8 @@
                     </td>
                     <td th:text="${proyecto.nombreCliente}">—</td>
                     <td>
-                        <span th:text="${proyecto.codigoCotizacion != null ? proyecto.codigoCotizacion : 'COT-' + #strings.leftPad(proyecto.idCotizacion, 5, '0')}">COT-00000</span>
+                        <!-- ✅ CORREGIDO: usa el método getCodigoCotizacion() de la entidad -->
+                        <span th:text="${proyecto.codigoCotizacion}">COT-00000</span>
                     </td>
                     <td>
                         <strong th:text="${proyecto.montoTotalFormateado}">S/ 0.00</strong>

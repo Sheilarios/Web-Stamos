@@ -228,7 +228,16 @@ public class CotizacionService {
             throw new RuntimeException("La cotización ya está " + cotizacion.getEstado().toLowerCase());
         }
 
-        if (!cotizacion.tieneDetalles()) {
+        List<CotizacionVersion> versiones = cotizacionVersionRepository
+                .findByIdCotizacionOrderByNumeroVersionDesc(idCotizacion);
+        if (versiones.isEmpty()) {
+            throw new RuntimeException("La cotización no tiene versiones");
+        }
+        CotizacionVersion versionActual = versiones.get(0);
+
+        List<CotizacionDetalle> detalles = cotizacionDetalleRepository
+                .findByIdVersion(versionActual.getIdVersion());
+        if (detalles == null || detalles.isEmpty()) {
             throw new RuntimeException("La cotización no tiene detalles");
         }
 
@@ -247,7 +256,7 @@ public class CotizacionService {
         proyecto.setIdCliente(cotizacion.getIdCliente());
         proyecto.setNombreProyecto("Proyecto - " + cotizacion.getCodigoCotizacion());
         proyecto.setIdEstadoActual(estadoAprobado.getIdEstado());
-        proyecto.setMontoTotal(cotizacion.getTotal());
+        proyecto.setMontoTotal(versionActual.getTotal());
         proyecto.setFechaInicio(LocalDate.now());
         proyecto.setFechaCreacion(LocalDateTime.now());
         proyecto.setIdUsuarioCreacion(idUsuarioAprobacion);
@@ -324,7 +333,8 @@ public class CotizacionService {
     }
 
     public List<CotizacionVersion> getVersionesByCotizacion(Integer idCotizacion) {
-        List<CotizacionVersion> versiones = cotizacionVersionRepository.findByIdCotizacionOrderByNumeroVersionDesc(idCotizacion);
+        List<CotizacionVersion> versiones = cotizacionVersionRepository
+                .findByIdCotizacionOrderByNumeroVersionDesc(idCotizacion);
         
         Cotizacion cotizacion = findById(idCotizacion);
         if (cotizacion != null) {
