@@ -614,4 +614,16 @@ public class Proyecto {
     public int hashCode() {
         return idProyecto != null ? idProyecto.hashCode() : 0;
     }
+
+    public void setMontoTotalFormateado(String formatearMoneda) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setTotalPagadoFormateado(String formatearMoneda) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setSaldoPendienteFormateado(String formatearMoneda) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

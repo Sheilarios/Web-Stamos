@@ -407,7 +407,6 @@
             margin-top: 32px;
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .sidebar { width: 72px; padding: 16px 0; }
             .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span { display: none; }
@@ -449,7 +448,6 @@
 </head>
 <body>
 
-    <!-- ===== SIDEBAR DINÁMICO ===== -->
     <aside class="sidebar">
         <div class="sidebar-brand">
             <h2>STAMOS<span>.</span></h2>
@@ -473,11 +471,8 @@
             </a>
         </div>
     </aside>
-
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <main class="main-content">
 
-        <!-- HEADER -->
         <div class="header">
             <div class="page-title">
                 <i class="bi bi-plus-circle"></i>
@@ -491,15 +486,12 @@
             </div>
         </div>
 
-        <!-- MENSAJES -->
         <div th:replace="fragments/mensajes :: mensaje_error"></div>
         <div th:replace="fragments/mensajes :: mensaje_exito"></div>
 
-        <!-- FORMULARIO -->
         <div class="form-container">
             <form th:action="@{/admin/configuracion/crear}" th:object="${configuracion}" method="post">
 
-                <!-- Nombre del parámetro -->
                 <div class="form-group">
                     <label for="parametro">Nombre del parámetro <span class="required">*</span></label>
                     <div class="input-wrapper">
@@ -512,7 +504,6 @@
                     </div>
                 </div>
 
-                <!-- Tipo de dato -->
                 <div class="form-group">
                     <label for="tipoDato">Tipo de dato <span class="required">*</span></label>
                     <div class="tipo-selector" id="tipoSelector">
@@ -526,7 +517,6 @@
                     <div class="form-text">Selecciona el tipo de dato que almacenará el parámetro.</div>
                 </div>
 
-                <!-- Valor -->
                 <div class="form-group">
                     <label for="valor">Valor <span class="required">*</span></label>
                     <div class="input-wrapper">
@@ -539,7 +529,6 @@
                     </div>
                 </div>
 
-                <!-- Descripción -->
                 <div class="form-group">
                     <label for="descripcion">Descripción</label>
                     <div class="input-wrapper">
@@ -561,16 +550,13 @@
             </form>
         </div>
 
-        <!-- FOOTER -->
         <div class="footer-bar">
             <span th:text="${fechaActual}"></span>
         </div>
 
     </main>
 
-    <!-- SCRIPT PARA SELECCIONAR TIPO Y VALIDAR -->
     <script>
-        // Seleccionar tipo de dato y actualizar icono/placeholder
         function selectTipo(el) {
             document.querySelectorAll('.tipo-option').forEach(opt => opt.classList.remove('selected'));
             el.classList.add('selected');
@@ -596,14 +582,12 @@
             document.getElementById('valor').placeholder = 'Ingresa el valor (' + tipo.toLowerCase() + ')';
         }
 
-        // Marcar el primer tipo como seleccionado por defecto
         document.addEventListener('DOMContentLoaded', function() {
             const firstOption = document.querySelector('.tipo-option');
             if (firstOption) {
                 selectTipo(firstOption);
             }
 
-            // Resaltar enlace activo en el sidebar
             const currentPath = window.location.pathname;
             document.querySelectorAll('.sidebar-menu li a').forEach(link => {
                 const href = link.getAttribute('href');

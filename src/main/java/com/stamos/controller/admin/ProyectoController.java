@@ -2,6 +2,7 @@ package com.stamos.controller.admin;
 
 import com.stamos.annotation.Auditable;
 import com.stamos.controller.BaseController;
+import com.stamos.dto.TimelinePasoDTO;
 import com.stamos.model.*;
 import com.stamos.repository.EstadoProyectoRepository;
 import com.stamos.service.*;
@@ -23,9 +24,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/proyectos")
@@ -83,6 +82,7 @@ public class ProyectoController extends BaseController {
                     saldoPendiente = BigDecimal.ZERO;
                 }
                 proyecto.setSaldoPendiente(saldoPendiente);
+                proyecto.setEstado(getEstadoNombrePorId(proyecto.getIdEstadoActual()));
             }
             
             model.addAttribute("proyectos", proyectosPage.getContent());
@@ -142,7 +142,80 @@ public class ProyectoController extends BaseController {
                     porcentajePagado = 100;
                 }
             }
+
+            List<TimelinePasoDTO> pasosTimeline = new ArrayList<>();
+            Integer progresoPorcentaje = 0;
             
+            if (proyecto != null) {
+                List<CambioEstadoProyecto> cambios = cambioEstadoService.findByProyecto(proyecto.getIdProyecto());
+                
+                List<String> ordenEstados = Arrays.asList("Aprobado", "En Diseño", "En Producción", "Instalación/Montaje", "Entregado");
+                Map<String, Integer> ordenMap = new HashMap<>();
+                for (int i = 0; i < ordenEstados.size(); i++) {
+                    ordenMap.put(ordenEstados.get(i), i + 1);
+                }
+                
+                Map<String, Object[]> estadoInfo = new HashMap<>();
+                estadoInfo.put("Aprobado", new Object[]{"bi bi-check-circle", "Proyecto aprobado e iniciado"});
+                estadoInfo.put("En Diseño", new Object[]{"bi bi-pencil", "Diseño 3D y planos en desarrollo"});
+                estadoInfo.put("En Producción", new Object[]{"bi bi-tools", "Fabricación de componentes"});
+                estadoInfo.put("Instalación/Montaje", new Object[]{"bi bi-truck", "Instalación en sitio del cliente"});
+                estadoInfo.put("Entregado", new Object[]{"bi bi-package", "Proyecto finalizado y entregado"});
+                
+                String estadoActual = getEstadoNombrePorId(proyecto.getIdEstadoActual());
+                int indiceActual = ordenMap.getOrDefault(estadoActual, 1);
+                
+                for (String estado : ordenEstados) {
+                    String titulo = estado;
+                    String icono = (String) estadoInfo.get(estado)[0];
+                    String descripcion = (String) estadoInfo.get(estado)[1];
+                    int indiceEstado = ordenMap.get(estado);
+                    
+                    String estadoPaso;
+                    String estadoTexto;
+                    LocalDate fecha = null;
+                    
+                    if (cambios != null && !cambios.isEmpty()) {
+                        for (CambioEstadoProyecto cambio : cambios) {
+                            String nombreEstadoNuevo = cambio.getEstadoNuevoNombre();
+                            if (nombreEstadoNuevo != null && nombreEstadoNuevo.equals(estado)) {
+                                fecha = cambio.getFechaCambio().toLocalDate();
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (indiceEstado < indiceActual) {
+                        estadoPaso = "COMPLETADO";
+                        estadoTexto = "Completado";
+                    } else if (indiceEstado == indiceActual) {
+                        estadoPaso = "ACTUAL";
+                        estadoTexto = "En progreso";
+                    } else {
+                        estadoPaso = "PENDIENTE";
+                        estadoTexto = "Pendiente";
+                    }
+                    
+                    if (estado.equals("Aprobado") && fecha == null && proyecto.getFechaInicio() != null) {
+                        fecha = proyecto.getFechaInicio();
+                    }
+                    
+                    pasosTimeline.add(new TimelinePasoDTO(
+                            titulo,
+                            descripcion,
+                            estadoPaso,
+                            estadoTexto,
+                            icono,
+                            fecha,
+                            indiceEstado
+                    ));
+                }
+                
+                progresoPorcentaje = (int) Math.round(((double) indiceActual / ordenEstados.size()) * 100);
+                if (progresoPorcentaje > 100) progresoPorcentaje = 100;
+            }
+            
+
             model.addAttribute("proyecto", proyecto);
             model.addAttribute("cotizacion", cotizacion);
             model.addAttribute("detallesCotizacion", detallesCotizacion);
@@ -151,6 +224,11 @@ public class ProyectoController extends BaseController {
             model.addAttribute("totalPagado", totalPagado);
             model.addAttribute("saldoPendiente", saldoPendiente);
             model.addAttribute("porcentajePagado", porcentajePagado);
+            
+            model.addAttribute("pasosTimeline", pasosTimeline);
+            model.addAttribute("progresoPorcentaje", progresoPorcentaje);
+            model.addAttribute("proyectoActivo", proyecto);
+            
             model.addAttribute("estadosDisponibles", 
                 estadoProyectoRepository.findEstadosDisponibles(proyecto.getIdEstadoActual()));
             addCommonAttributes(model);
@@ -303,6 +381,19 @@ public class ProyectoController extends BaseController {
         }
     }
 
+    public String getEstadoNombrePorId(Integer idEstado) {
+        if (idEstado == null) return "Sin estado";
+        switch (idEstado) {
+            case 1: return "Aprobado";
+            case 2: return "En Diseño";
+            case 3: return "En Producción";
+            case 4: return "Instalación/Montaje";
+            case 5: return "Entregado";
+            case 6: return "Anulado";
+            default: return "Desconocido";
+        }
+    }
+
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
         return switch (estado) {
@@ -331,15 +422,15 @@ public class ProyectoController extends BaseController {
     }
 
     public String getEstadoIcono(String estado) {
-        if (estado == null) return "ti ti-circle";
+        if (estado == null) return "bi bi-circle";
         return switch (estado) {
-            case "Aprobado" -> "ti ti-check-circle";
-            case "En Diseño" -> "ti ti-pencil";
-            case "En Producción" -> "ti ti-tools";
-            case "Instalación/Montaje" -> "ti ti-truck";
-            case "Entregado" -> "ti ti-check";
-            case "Anulado" -> "ti ti-x-circle";
-            default -> "ti ti-circle";
+            case "Aprobado" -> "bi bi-check-circle";
+            case "En Diseño" -> "bi bi-pencil";
+            case "En Producción" -> "bi bi-tools";
+            case "Instalación/Montaje" -> "bi bi-truck";
+            case "Entregado" -> "bi bi-check";
+            case "Anulado" -> "bi bi-x-circle";
+            default -> "bi bi-circle";
         };
     }
 

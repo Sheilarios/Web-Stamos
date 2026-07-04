@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Timeline</title>
+</head>
+<body>
+
+<div th:fragment="timeline(proyecto, pasos, progreso)">
+    <div class="timeline-section">
+        <div class="timeline-header">
+            <div class="timeline-title">
+                <i class="bi bi-clock-history"></i>
+                Progreso del Proyecto
+                <span class="proyecto-nombre" th:if="${proyecto != null}" 
+                      th:text="'· ' + ${proyecto.nombreProyecto}"></span>
+            </div>
+            <div class="timeline-progreso" th:if="${progreso != null}">
+                <span>Avance</span>
+                <span class="porcentaje" th:text="${progreso} + '%'">0%</span>
+                <div class="barra-progreso">
+                    <div class="relleno" th:style="'width: ' + ${progreso} + '%;'"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-container" th:if="${pasos != null and !#lists.isEmpty(pasos)}">
+            <div class="timeline-steps">
+                <div th:each="paso : ${pasos}" class="timeline-step">
+                    
+                    <div class="step-date" th:if="${paso.fecha != null}">
+                        <span class="fecha" th:text="${#temporals.format(paso.fecha, 'dd/MM/yyyy')}">—</span>
+                        <span class="estado-texto" th:text="${paso.estadoTexto}"></span>
+                    </div>
+                    <div class="step-date" th:unless="${paso.fecha != null}">
+                        <span class="estado-texto" th:text="${paso.estadoTexto}"></span>
+                    </div>
+
+                    <div class="step-circle-wrapper">
+                        <div class="step-circle" 
+                             th:classappend="${paso.estado == 'COMPLETADO'} ? 'completado' : 
+                                            (${paso.estado == 'ACTUAL'} ? 'actual' : 'pendiente')">
+                            <i class="icono-paso" th:class="${paso.icono}"></i>
+                        </div>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="titulo-paso" th:text="${paso.titulo}">—</div>
+                        <div class="descripcion-paso" th:text="${paso.descripcion}">—</div>
+                        <span class="badge-paso" 
+                              th:classappend="${paso.estado == 'COMPLETADO'} ? 'completado' : 
+                                             (${paso.estado == 'ACTUAL'} ? 'actual' : 'pendiente')"
+                              th:text="${paso.estadoTexto}">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${pasos == null or #lists.isEmpty(pasos)}" class="timeline-empty">
+            <i class="bi bi-clock-off"></i>
+            <p>No hay información de progreso disponible para este proyecto.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline-section {
+        background: #FFFFFF;
+        border: 1px solid #E8E8E8;
+        border-radius: 16px;
+        padding: 24px 32px 32px;
+        margin-bottom: 28px;
+        overflow: hidden;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .timeline-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #000000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .timeline-title i {
+        color: #F5C400;
+    }
+
+    .timeline-title .proyecto-nombre {
+        font-size: 14px;
+        font-weight: 400;
+        color: #6B6B6B;
+        font-family: 'DM Sans', sans-serif;
+        margin-left: 4px;
+    }
+
+    .timeline-progreso {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+        color: #4A4A4A;
+    }
+
+    .timeline-progreso .porcentaje {
+        font-weight: 700;
+        color: #F5C400;
+        font-size: 16px;
+    }
+
+    .timeline-progreso .barra-progreso {
+        width: 120px;
+        height: 6px;
+        background: #E8E8E8;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .timeline-progreso .barra-progreso .relleno {
+        height: 100%;
+        background: #F5C400;
+        border-radius: 4px;
+        transition: width 0.6s ease;
+    }
+
+    .timeline-container {
+        position: relative;
+        padding: 20px 0 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+
+    .timeline-container::before {
+        content: '';
+        position: absolute;
+        left: 30px;
+        right: 30px;
+        top: 50%;
+        height: 3px;
+        background: #E8E8E8;
+        transform: translateY(-50%);
+        border-radius: 2px;
+    }
+
+    .timeline-steps {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: relative;
+        min-width: 600px;
+        padding: 0 10px;
+    }
+
+    .timeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        position: relative;
+        min-width: 80px;
+    }
+
+    .step-circle-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+        margin-bottom: 8px;
+    }
+
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        background: #E8E8E8;
+        color: #8A8A8A;
+        border: 3px solid #E8E8E8;
+        transition: all 0.4s ease;
+        position: relative;
+    }
+
+    .step-circle .icono-paso {
+        font-size: 18px;
+    }
+
+    .step-circle.completado {
+        background: #F5C400;
+        border-color: #F5C400;
+        color: #000000;
+    }
+
+    .step-circle.completado i {
+        color: #000000;
+    }
+
+    .step-circle.actual {
+        background: #FFFBE6;
+        border-color: #F5C400;
+        color: #9A7500;
+        animation: pulse-circle 2s infinite;
+    }
+
+    .step-circle.actual i {
+        color: #9A7500;
+    }
+
+    .step-circle.pendiente {
+        background: #F8F8F8;
+        border-color: #D0D0D0;
+        color: #B0B0B0;
+    }
+
+    .step-circle.pendiente i {
+        color: #B0B0B0;
+    }
+
+    @keyframes pulse-circle {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 196, 0, 0.4); }
+        50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(245, 196, 0, 0.15); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 196, 0, 0); }
+    }
+
+    .step-content {
+        text-align: center;
+        padding: 0 4px;
+        width: 100%;
+    }
+
+    .step-content .titulo-paso {
+        font-weight: 600;
+        color: #1A1F2E;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .step-content .descripcion-paso {
+        font-size: 10px;
+        color: #8A8A8A;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    .step-content .badge-paso {
+        display: inline-block;
+        font-size: 9px;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 12px;
+        margin-top: 4px;
+    }
+
+    .badge-paso.completado {
+        background: #EBF7F0;
+        color: #1A7040;
+    }
+
+    .badge-paso.actual {
+        background: #FFFBE6;
+        color: #9A7500;
+    }
+
+    .badge-paso.pendiente {
+        background: #F0F0F0;
+        color: #8A8A8A;
+    }
+
+    .step-date {
+        text-align: center;
+        font-size: 10px;
+        color: #8A8A8A;
+        margin-top: 4px;
+    }
+
+    .step-date .fecha {
+        font-weight: 500;
+        color: #4A4A4A;
+    }
+
+    .step-date .estado-texto {
+        display: block;
+        font-size: 9px;
+        color: #B0B0B0;
+    }
+
+    .timeline-empty {
+        text-align: center;
+        padding: 32px 24px;
+        color: #8A8A8A;
+    }
+
+    .timeline-empty i {
+        font-size: 40px;
+        color: #D0D0D0;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .timeline-container {
+            overflow-x: auto;
+            padding: 20px 0 10px;
+        }
+        .timeline-container::before {
+            left: 20px;
+            right: 20px;
+        }
+        .timeline-steps {
+            min-width: 500px;
+            padding: 0 5px;
+        }
+        .timeline-step {
+            min-width: 60px;
+        }
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            font-size: 13px;
+        }
+        .step-circle .icono-paso {
+            font-size: 14px;
+        }
+        .step-content .titulo-paso {
+            font-size: 10px;
+        }
+        .step-content .descripcion-paso {
+            font-size: 9px;
+            white-space: normal;
+        }
+        .step-date {
+            font-size: 9px;
+        }
+        .timeline-section {
+            padding: 16px;
+        }
+        .timeline-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .timeline-progreso {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .timeline-progreso .barra-progreso {
+            flex: 1;
+            max-width: 200px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .timeline-steps {
+            min-width: 400px;
+        }
+        .timeline-step {
+            min-width: 50px;
+        }
+        .step-circle {
+            width: 28px;
+            height: 28px;
+            font-size: 11px;
+        }
+        .step-circle .icono-paso {
+            font-size: 12px;
+        }
+        .timeline-section {
+            padding: 12px;
+        }
+    }
+</style>
+</body>
+</html>
