@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil · STAMOS Cliente</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -20,11 +15,11 @@
             --yellow-dark: #9A7500;
             --yellow-border: #E0C84A;
             --border: #E2E6EA;
-            --bg: #F5F6F8;
+            --bg: #F8F8F8;
             --card: #FFFFFF;
             --text: #1A1F2E;
             --text-2: #5A6478;
-            --text-3: #9BA5B7;
+            --text-3: #8A8A8A;
             --red: #C0392B;
             --red-light: #FFF0EE;
             --green: #1A7040;
@@ -33,22 +28,22 @@
             --blue-light: #E8F0FE;
             --sidebar-width: 260px;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'DM Sans', 'Segoe UI', Roboto, sans-serif;
+            background: #FFFFFF;
+            color: #1A1F2E;
             display: flex;
             min-height: 100vh;
         }
-        
+
+        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-width);
-            background: var(--card);
-            border-right: 1px solid var(--border);
-            padding: 24px 0;
+            background: #000000;
+            padding: 32px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -57,85 +52,93 @@
             z-index: 100;
             display: flex;
             flex-direction: column;
+            border-right: none;
         }
-        
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
         .sidebar-brand {
-            padding: 0 20px 24px;
-            border-bottom: 1px solid var(--border);
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
             margin-bottom: 20px;
         }
-        
+
         .sidebar-brand h2 {
             font-family: 'Syne', sans-serif;
             font-size: 24px;
             font-weight: 800;
-            color: var(--text);
+            color: #FFFFFF;
         }
-        
+
         .sidebar-brand h2 span {
-            color: var(--yellow);
+            color: #F5C400;
         }
-        
+
         .sidebar-brand small {
             display: block;
             font-size: 11px;
-            color: var(--text-3);
+            color: #8A8A8A;
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-top: 4px;
         }
-        
+
         .sidebar-menu {
             list-style: none;
             padding: 0 12px;
             flex: 1;
         }
-        
+
         .sidebar-menu li {
             margin-bottom: 2px;
         }
-        
+
         .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 10px 16px;
             border-radius: 10px;
-            color: var(--text-2);
+            color: #C0C0C0;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
             transition: all 0.15s;
         }
-        
+
         .sidebar-menu li a i {
             font-size: 18px;
             width: 22px;
             text-align: center;
         }
-        
+
         .sidebar-menu li a:hover {
-            background: var(--yellow-light);
-            color: var(--text);
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
         }
-        
+
         .sidebar-menu li a.active {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #F5C400;
+            color: #000000;
             font-weight: 600;
         }
-        
+
+        .sidebar-menu li a.active i {
+            color: #000000;
+        }
+
         .sidebar-footer {
             padding: 16px 20px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #222;
             margin-top: auto;
         }
-        
+
         .sidebar-footer a {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: var(--red);
+            color: #EF4444;
             text-decoration: none;
             font-size: 13px;
             font-weight: 500;
@@ -143,18 +146,20 @@
             border-radius: 8px;
             transition: background 0.15s;
         }
-        
+
         .sidebar-footer a:hover {
-            background: var(--red-light);
+            background: rgba(239, 68, 68, 0.10);
         }
-        
+
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 32px 36px;
+            padding: 32px 40px;
             min-height: 100vh;
+            background: #F8F8F8;
         }
-        
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -163,62 +168,63 @@
             gap: 16px;
             margin-bottom: 28px;
         }
-        
+
         .page-title {
             font-family: 'Syne', sans-serif;
             font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .page-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
             font-size: 28px;
         }
-        
+
         .page-title small {
             font-size: 14px;
             font-weight: 400;
-            color: var(--text-3);
+            color: #6B6B6B;
             font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
-        
+
         .user-info {
-            background: var(--card);
-            padding: 8px 16px;
+            background: #FFFFFF;
+            padding: 8px 20px;
             border-radius: 30px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: #1A1F2E;
         }
-        
+
         .user-info i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .card-custom {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             overflow: hidden;
             margin-bottom: 24px;
         }
-        
+
         .card-custom .card-header-custom {
             padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: transparent;
+            background: #FAFAFA;
         }
-        
+
         .card-custom .card-header-custom h3 {
             font-family: 'Syne', sans-serif;
             font-size: 18px;
@@ -226,16 +232,17 @@
             align-items: center;
             gap: 10px;
             margin: 0;
+            color: #000000;
         }
-        
+
         .card-custom .card-header-custom h3 i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .card-custom .card-body-custom {
             padding: 24px;
         }
-        
+
         .avatar-section {
             display: flex;
             flex-direction: column;
@@ -243,22 +250,22 @@
             padding: 24px;
             text-align: center;
         }
-        
+
         .avatar {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: var(--yellow-light);
-            border: 4px solid var(--yellow);
+            background: #FFFBE6;
+            border: 4px solid #F5C400;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            color: var(--yellow-dark);
+            color: #9A7500;
             margin-bottom: 16px;
             position: relative;
         }
-        
+
         .avatar .badge-estado {
             position: absolute;
             bottom: 4px;
@@ -266,89 +273,89 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: var(--green);
-            border: 3px solid var(--card);
+            background: #1A7040;
+            border: 3px solid #FFFFFF;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 14px;
         }
-        
+
         .avatar .badge-estado.inactivo {
-            background: var(--red);
+            background: #C0392B;
         }
-        
+
         .avatar-nombre {
             font-family: 'Syne', sans-serif;
             font-size: 22px;
             font-weight: 700;
-            color: var(--text);
+            color: #1A1F2E;
         }
-        
+
         .avatar-tipo {
             font-size: 14px;
-            color: var(--text-3);
+            color: #8A8A8A;
             margin-top: 4px;
         }
-        
+
         .avatar-ruc {
             font-size: 13px;
-            color: var(--text-2);
+            color: #5A6478;
             margin-top: 2px;
             font-weight: 500;
         }
-        
+
         .form-group {
             margin-bottom: 18px;
         }
-        
+
         .form-group label {
             display: block;
             font-size: 13px;
             font-weight: 600;
-            color: var(--text-2);
+            color: #5A6478;
             margin-bottom: 6px;
         }
-        
+
         .form-group label .required {
-            color: var(--red);
+            color: #C0392B;
             margin-left: 2px;
         }
-        
+
         .form-control-custom {
             width: 100%;
             padding: 10px 14px;
             border-radius: 10px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             font-size: 14px;
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background: #F8F8F8;
+            color: #1A1F2E;
             transition: all 0.15s;
             outline: none;
         }
-        
+
         .form-control-custom:focus {
-            border-color: var(--yellow);
+            border-color: #F5C400;
             box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
-            background: var(--card);
+            background: #FFFFFF;
         }
-        
+
         .form-control-custom:disabled,
         .form-control-custom[readonly] {
             background: #F0F1F3;
             cursor: not-allowed;
             opacity: 0.7;
         }
-        
+
         .form-control-custom.is-invalid {
-            border-color: var(--red);
+            border-color: #C0392B;
         }
-        
+
         .btn-custom-primary {
-            background: var(--yellow);
-            color: var(--text);
+            background: #F5C400;
+            color: #1A1F2E;
             padding: 10px 24px;
             border-radius: 10px;
             border: none;
@@ -362,21 +369,21 @@
             gap: 8px;
             text-decoration: none;
         }
-        
+
         .btn-custom-primary:hover {
-            background: var(--yellow-mid);
-            color: var(--text);
+            background: #FFE566;
+            color: #1A1F2E;
         }
-        
+
         .btn-custom-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .btn-custom-outline {
             background: transparent;
-            color: var(--text-2);
-            border: 1px solid var(--border);
+            color: #5A6478;
+            border: 1px solid #E8E8E8;
             padding: 10px 24px;
             border-radius: 10px;
             font-weight: 600;
@@ -389,40 +396,40 @@
             gap: 8px;
             text-decoration: none;
         }
-        
+
         .btn-custom-outline:hover {
-            background: var(--bg);
+            background: #F8F8F8;
         }
-        
+
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
             margin-top: 8px;
         }
-        
+
         .stat-item {
-            background: var(--bg);
+            background: #F8F8F8;
             padding: 12px 16px;
             border-radius: 10px;
             text-align: center;
         }
-        
+
         .stat-item .stat-number {
             font-family: 'Syne', sans-serif;
             font-size: 24px;
             font-weight: 700;
-            color: var(--text);
+            color: #1A1F2E;
         }
-        
+
         .stat-item .stat-label {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-weight: 600;
         }
-        
+
         .badge-status {
             display: inline-block;
             padding: 4px 12px;
@@ -430,17 +437,17 @@
             font-size: 11px;
             font-weight: 600;
         }
-        
+
         .badge-validado {
-            background: var(--green-light);
-            color: var(--green);
+            background: #EBF7F0;
+            color: #1A7040;
         }
-        
+
         .badge-rechazado {
-            background: var(--red-light);
-            color: var(--red);
+            background: #FFF0EE;
+            color: #C0392B;
         }
-        
+
         .alert-custom {
             padding: 14px 18px;
             border-radius: 12px;
@@ -451,38 +458,38 @@
             gap: 12px;
             border: 1px solid transparent;
         }
-        
+
         .alert-custom i {
             font-size: 20px;
         }
-        
+
         .alert-success-custom {
-            background: var(--green-light);
-            color: var(--green);
+            background: #EBF7F0;
+            color: #1A7040;
             border-color: #A3D8B3;
         }
-        
+
         .alert-danger-custom {
-            background: var(--red-light);
-            color: var(--red);
+            background: #FFF0EE;
+            color: #C0392B;
             border-color: #F5C6CB;
         }
-        
+
         .alert-warning-custom {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
-            border-color: var(--yellow-border);
+            background: #FFFBE6;
+            color: #9A7500;
+            border-color: #E0C84A;
         }
-        
+
         .spinner-icon {
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         @media (max-width: 1024px) {
             .sidebar { width: 72px; padding: 16px 0; }
             .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span { display: none; }
@@ -492,10 +499,10 @@
             .sidebar-footer a { justify-content: center; }
             .main-content { margin-left: 72px; padding: 20px; }
         }
-        
+
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid #222; flex-wrap: wrap; }
             .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
             .sidebar-brand h2 { font-size: 20px; }
             .sidebar-brand small { display: block; font-size: 10px; }
@@ -512,7 +519,7 @@
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .user-info { width: 100%; justify-content: center; }
         }
-        
+
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
             .card-custom .card-header-custom { flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -528,18 +535,18 @@
             <h2>STAMOS<span>.</span></h2>
             <small>Área del Cliente</small>
         </div>
-        
+
         <ul class="sidebar-menu">
-            <li><a th:href="@{/cliente/dashboard}"><i class="bi bi-layout-dashboard"></i><span>Dashboard</span></a></li>
-            <li><a th:href="@{/cliente/proyectos}"><i class="bi bi-folder-open"></i><span>Mis Proyectos</span></a></li>
-            <li><a th:href="@{/cliente/documentos}"><i class="bi bi-file-text"></i><span>Documentos</span></a></li>
-            <li><a th:href="@{/cliente/pagos}"><i class="bi bi-credit-card"></i><span>Historial de Pagos</span></a></li>
-            <li><a th:href="@{/cliente/perfil}" class="active"><i class="bi bi-person-circle"></i><span>Mi Perfil</span></a></li>
+            <li><a th:href="@{/cliente/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/cliente/proyectos}"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a th:href="@{/cliente/documentos}"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a th:href="@{/cliente/pagos}"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a th:href="@{/cliente/perfil}" class="active"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
         </ul>
-        
+
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -547,68 +554,67 @@
 
     <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content">
-        
+
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span>Mi Perfil</span>
                 <small>Gestiona tu información personal</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Cliente</span>
             </div>
         </div>
 
         <!-- Alertas -->
         <div th:if="${mensaje}" class="alert-custom alert-success-custom">
-            <i class="bi bi-check-circle-fill"></i>
+            <i class="ti ti-check-circle"></i>
             <span th:text="${mensaje}">Mensaje de éxito</span>
         </div>
         <div th:if="${error}" class="alert-custom alert-danger-custom">
-            <i class="bi bi-exclamation-circle-fill"></i>
+            <i class="ti ti-alert-circle"></i>
             <span th:text="${error}">Mensaje de error</span>
         </div>
         <div th:if="${advertencia}" class="alert-custom alert-warning-custom">
-            <i class="bi bi-exclamation-triangle-fill"></i>
+            <i class="ti ti-alert-triangle"></i>
             <span th:text="${advertencia}">Mensaje de advertencia</span>
         </div>
 
         <div class="row g-4">
-            
+
             <!-- ===== COLUMNA IZQUIERDA ===== -->
             <div class="col-lg-5 col-xl-4">
-                
+
                 <!-- Avatar -->
                 <div class="card-custom">
                     <div class="card-body-custom">
                         <div class="avatar-section">
                             <div class="avatar">
-                                <i class="bi bi-person"></i>
+                                <i class="ti ti-user"></i>
                                 <div class="badge-estado" th:classappend="${cliente != null and cliente.estado == 'Activo'} ? '' : 'inactivo'">
-                                    <i class="bi bi-check" th:if="${cliente != null and cliente.estado == 'Activo'}"></i>
-                                    <i class="bi bi-x" th:unless="${cliente != null and cliente.estado == 'Activo'}"></i>
+                                    <i class="ti ti-check" th:if="${cliente != null and cliente.estado == 'Activo'}"></i>
+                                    <i class="ti ti-x" th:unless="${cliente != null and cliente.estado == 'Activo'}"></i>
                                 </div>
                             </div>
                             <div class="avatar-nombre" th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Nombre del Cliente</div>
                             <div class="avatar-tipo" th:text="${cliente != null and cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}">Persona Natural</div>
-                            
-                            <!-- ✅ CORREGIDO: Verificación correcta para RUC -->
+
                             <div class="avatar-ruc" th:if="${cliente != null and cliente.ruc != null and cliente.ruc != ''}" th:text="'RUC: ' + ${cliente.ruc}">RUC: 12345678901</div>
-                            
-                            <div style="margin-top:8px; font-size:12px; color:var(--text-3);">
+
+                            <div style="margin-top:8px; font-size:12px; color:#8A8A8A;">
                                 <span class="badge-status" th:classappend="${cliente != null and cliente.estado == 'Activo'} ? 'badge-validado' : 'badge-rechazado'"
                                       th:text="${cliente != null ? cliente.estado : 'Inactivo'}">Activo</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Estadísticas -->
                 <div class="card-custom">
                     <div class="card-header-custom">
                         <h3>
-                            <i class="bi bi-bar-chart"></i> Mi Actividad
+                            <i class="ti ti-chart-bar"></i> Mi Actividad
                         </h3>
                     </div>
                     <div class="card-body-custom">
@@ -630,68 +636,68 @@
                                 <div class="stat-label">Pendiente</div>
                             </div>
                         </div>
-                        
-                        <hr style="border-color:var(--border); margin:16px 0;">
-                        
-                        <div class="d-flex justify-content-between" style="font-size:13px; color:var(--text-2);">
+
+                        <hr style="border-color:#E8E8E8; margin:16px 0;">
+
+                        <div class="d-flex justify-content-between" style="font-size:13px; color:#5A6478;">
                             <span>Cliente desde:</span>
                             <span th:text="${cliente != null and cliente.fechaRegistro != null ? #temporals.format(cliente.fechaRegistro, 'dd/MM/yyyy') : '-'}">01/01/2024</span>
                         </div>
-                        <div class="d-flex justify-content-between" style="font-size:13px; color:var(--text-2); margin-top:4px;">
+                        <div class="d-flex justify-content-between" style="font-size:13px; color:#5A6478; margin-top:4px;">
                             <span>Último acceso:</span>
                             <span th:if="${ultimoAcceso}" th:text="${#temporals.format(ultimoAcceso, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
-                            <span th:unless="${ultimoAcceso}" style="color:var(--text-3);">Nunca</span>
+                            <span th:unless="${ultimoAcceso}" style="color:#8A8A8A;">Nunca</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- ===== COLUMNA DERECHA ===== -->
             <div class="col-lg-7 col-xl-8">
-                
+
                 <!-- Formulario de información personal -->
                 <div class="card-custom">
                     <div class="card-header-custom">
                         <h3>
-                            <i class="bi bi-pencil-square"></i> Información Personal
+                            <i class="ti ti-pencil"></i> Información Personal
                         </h3>
-                        <span style="font-size:12px; color:var(--text-3);">
-                            <i class="bi bi-lock"></i> Solo tú puedes ver esta información
+                        <span style="font-size:12px; color:#8A8A8A;">
+                            <i class="ti ti-lock"></i> Solo tú puedes ver esta información
                         </span>
                     </div>
                     <div class="card-body-custom">
                         <form id="formPerfil" th:action="@{/cliente/perfil/actualizar}" method="post">
                             <input type="hidden" name="idCliente" th:value="${cliente != null ? cliente.idCliente : ''}">
-                            
+
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label>Tipo de Persona</label>
-                                        <input type="text" class="form-control-custom" 
+                                        <input type="text" class="form-control-custom"
                                                th:value="${cliente != null and cliente.tipoPersona == 'Natural' ? 'Persona Natural' : 'Persona Jurídica'}"
                                                disabled readonly>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="nombreRazonSocial">Nombre / Razón Social <span class="required">*</span></label>
-                                        <input type="text" id="nombreRazonSocial" name="nombreRazonSocial" 
-                                               class="form-control-custom" 
+                                        <input type="text" id="nombreRazonSocial" name="nombreRazonSocial"
+                                               class="form-control-custom"
                                                th:value="${cliente != null ? cliente.nombreRazonSocial : ''}"
                                                required>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="ruc">RUC</label>
-                                        <input type="text" id="ruc" name="ruc" 
-                                               class="form-control-custom" 
+                                        <input type="text" id="ruc" name="ruc"
+                                               class="form-control-custom"
                                                th:value="${cliente != null ? cliente.ruc : ''}"
                                                placeholder="12345678901"
                                                maxlength="11">
@@ -700,79 +706,79 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="telefono">Teléfono <span class="required">*</span></label>
-                                        <input type="tel" id="telefono" name="telefono" 
-                                               class="form-control-custom" 
+                                        <input type="tel" id="telefono" name="telefono"
+                                               class="form-control-custom"
                                                th:value="${cliente != null ? cliente.telefono : ''}"
                                                required>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="email">Correo Electrónico <span class="required">*</span></label>
-                                        <input type="email" id="email" name="email" 
-                                               class="form-control-custom" 
+                                        <input type="email" id="email" name="email"
+                                               class="form-control-custom"
                                                th:value="${cliente != null ? cliente.email : ''}"
                                                required>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="direccion">Dirección</label>
-                                        <input type="text" id="direccion" name="direccion" 
-                                               class="form-control-custom" 
+                                        <input type="text" id="direccion" name="direccion"
+                                               class="form-control-custom"
                                                th:value="${cliente != null ? cliente.direccion : ''}"
                                                placeholder="Jr. Antisuyo 438, San Juan de Lurigancho">
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="d-flex gap-3 flex-wrap mt-3">
                                 <button type="button" class="btn-custom-outline" onclick="window.location.reload()">
-                                    <i class="bi bi-arrow-counterclockwise"></i> Restaurar
+                                    <i class="ti ti-rotate"></i> Restaurar
                                 </button>
                                 <button type="submit" class="btn-custom-primary" id="btnGuardar">
-                                    <i class="bi bi-floppy"></i> Guardar Cambios
+                                    <i class="ti ti-device-floppy"></i> Guardar Cambios
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
-                
+
                 <!-- Formulario de cambio de contraseña -->
                 <div class="card-custom">
                     <div class="card-header-custom">
                         <h3>
-                            <i class="bi bi-key"></i> Cambiar Contraseña
+                            <i class="ti ti-key"></i> Cambiar Contraseña
                         </h3>
                     </div>
                     <div class="card-body-custom">
                         <form id="formPassword" th:action="@{/cliente/perfil/cambiar-password}" method="post">
                             <input type="hidden" name="idCliente" th:value="${cliente != null ? cliente.idCliente : ''}">
-                            
+
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="passwordActual">Contraseña Actual <span class="required">*</span></label>
-                                        <input type="password" id="passwordActual" name="passwordActual" 
-                                               class="form-control-custom" 
+                                        <input type="password" id="passwordActual" name="passwordActual"
+                                               class="form-control-custom"
                                                placeholder="••••••••"
                                                required>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="passwordNueva">Nueva Contraseña <span class="required">*</span></label>
-                                        <input type="password" id="passwordNueva" name="passwordNueva" 
-                                               class="form-control-custom" 
+                                        <input type="password" id="passwordNueva" name="passwordNueva"
+                                               class="form-control-custom"
                                                placeholder="••••••••"
                                                minlength="6"
                                                required>
@@ -781,26 +787,26 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="passwordConfirmar">Confirmar Contraseña <span class="required">*</span></label>
-                                        <input type="password" id="passwordConfirmar" name="passwordConfirmar" 
-                                               class="form-control-custom" 
+                                        <input type="password" id="passwordConfirmar" name="passwordConfirmar"
+                                               class="form-control-custom"
                                                placeholder="••••••••"
                                                minlength="6"
                                                required>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div style="font-size:12px; color:var(--text-3); margin-bottom:12px;">
-                                <i class="bi bi-info-circle"></i> La contraseña debe tener al menos 6 caracteres
+
+                            <div style="font-size:12px; color:#8A8A8A; margin-bottom:12px;">
+                                <i class="ti ti-info-circle"></i> La contraseña debe tener al menos 6 caracteres
                             </div>
-                            
+
                             <button type="submit" class="btn-custom-primary">
-                                <i class="bi bi-key"></i> Cambiar Contraseña
+                                <i class="ti ti-key"></i> Cambiar Contraseña
                             </button>
                         </form>
                     </div>
                 </div>
-                
+
             </div>
         </div>
 
@@ -809,38 +815,38 @@
     <!-- ===== SCRIPTS ===== -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         // ===== VALIDACIÓN DE CONTRASEÑAS =====
         document.getElementById('formPassword').addEventListener('submit', function(e) {
             var passwordNueva = document.getElementById('passwordNueva').value;
             var passwordConfirmar = document.getElementById('passwordConfirmar').value;
             var passwordActual = document.getElementById('passwordActual').value;
-            
+
             if (!passwordActual) {
                 e.preventDefault();
                 alert('Debes ingresar tu contraseña actual');
                 document.getElementById('passwordActual').classList.add('is-invalid');
                 return false;
             }
-            
+
             if (passwordNueva !== passwordConfirmar) {
                 e.preventDefault();
                 alert('Las contraseñas no coinciden');
                 document.getElementById('passwordConfirmar').classList.add('is-invalid');
                 return false;
             }
-            
+
             if (passwordNueva.length < 6) {
                 e.preventDefault();
                 alert('La contraseña debe tener al menos 6 caracteres');
                 document.getElementById('passwordNueva').classList.add('is-invalid');
                 return false;
             }
-            
+
             document.querySelectorAll('#formPassword .is-invalid').forEach(el => el.classList.remove('is-invalid'));
         });
-        
+
         // ===== VALIDACIÓN EN TIEMPO REAL =====
         document.getElementById('passwordConfirmar').addEventListener('input', function() {
             var passwordNueva = document.getElementById('passwordNueva').value;
@@ -850,7 +856,7 @@
                 this.classList.remove('is-invalid');
             }
         });
-        
+
         document.getElementById('passwordNueva').addEventListener('input', function() {
             var passwordConfirmar = document.getElementById('passwordConfirmar').value;
             if (passwordConfirmar && this.value !== passwordConfirmar) {
@@ -859,21 +865,21 @@
                 document.getElementById('passwordConfirmar').classList.remove('is-invalid');
             }
         });
-        
+
         // ===== SUBMIT PERFIL =====
         document.getElementById('formPerfil').addEventListener('submit', function() {
             var btn = document.getElementById('btnGuardar');
             btn.disabled = true;
-            btn.innerHTML = '<i class="bi bi-arrow-repeat spinner-icon"></i> Guardando...';
+            btn.innerHTML = '<i class="ti ti-rotate spinner-icon"></i> Guardando...';
         });
-        
+
         // ===== REMOVER CLASE INVALID AL ESCRIBIR =====
         document.querySelectorAll('#formPerfil .form-control-custom, #formPassword .form-control-custom').forEach(input => {
             input.addEventListener('input', function() {
                 this.classList.remove('is-invalid');
             });
         });
-        
+
         console.log('Perfil de cliente cargado correctamente');
     </script>
 

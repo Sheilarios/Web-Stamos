@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' · STAMOS Administración'">STAMOS</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+    <!-- SIDEBAR (idéntico al de dashboard) -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">...</div>
+        <ul class="sidebar-menu">
+            <li th:each="item : ${menuItems}">
+                <a th:href="${item.url}" th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
+                    <i th:class="${item.icon}"></i>
+                    <span th:text="${item.label}"></span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">...</div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+        <div th:replace="${contenido}"></div>
+    </main>
+
+    <script>
+        // Resaltado de enlace activo (igual que en dashboard)
+    </script>
+</body>
+</html>

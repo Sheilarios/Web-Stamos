@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Pago · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
+
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -26,26 +26,138 @@
             --green-light: #EBF7F0;
             --blue: #1A56DB;
             --blue-light: #E8F0FE;
+            --sidebar-width: 260px;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
+            background: #F8F8F8;
             color: var(--text);
-            padding: 40px 24px;
+            display: flex;
+            min-height: 100vh;
         }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--card);
-            border-radius: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-            padding: 32px;
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #000000;
+            padding: 32px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            border-right: none;
         }
-        
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .sidebar-brand h2 span {
+            color: #F5C400;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: #8A8A8A;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: #C0C0C0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a:hover {
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
+        }
+
+        .sidebar-menu li a.active {
+            background: #F5C400;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li a.active i {
+            color: #000000;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #222;
+            margin-top: auto;
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #EF4444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(239, 68, 68, 0.10);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+            min-height: 100vh;
+            background: #F8F8F8;
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -54,34 +166,50 @@
             gap: 16px;
             margin-bottom: 28px;
         }
-        
+
         .page-title {
             font-family: 'Syne', sans-serif;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .page-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
             font-size: 28px;
         }
-        
+
         .page-title small {
             font-size: 14px;
             font-weight: 400;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
-        
+
+        .user-info {
+            background: #FFFFFF;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid #E8E8E8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1A1F2E;
+        }
+
+        .user-info i {
+            color: #F5C400;
+        }
+
         .btn-secondary {
             background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-2);
+            border: 1px solid #E2E6EA;
+            color: #5A6478;
             padding: 8px 16px;
             border-radius: 10px;
             font-size: 13px;
@@ -94,14 +222,14 @@
             gap: 8px;
             transition: all 0.15s;
         }
-        
+
         .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+            border-color: #F5C400;
+            color: #9A7500;
         }
-        
+
         .btn-primary {
-            background: var(--yellow);
+            background: #F5C400;
             border: none;
             color: #2A1800;
             padding: 10px 20px;
@@ -116,13 +244,13 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-primary:hover {
-            background: var(--yellow-mid);
+            background: #FFE566;
         }
-        
+
         .btn-success {
-            background: var(--green);
+            background: #1A7040;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -136,13 +264,13 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-success:hover {
             background: #155D34;
         }
-        
+
         .btn-danger {
-            background: var(--red);
+            background: #C0392B;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -156,33 +284,36 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-danger:hover {
             background: #a71d2a;
         }
-        
+
         .alert {
             padding: 12px 16px;
             border-radius: 10px;
             margin-bottom: 16px;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
         .alert-danger {
-            background: var(--red-light);
+            background: #FFF0EE;
             border: 1px solid #FECACA;
-            color: var(--red);
+            color: #C0392B;
         }
-        
+
         .alert-success {
-            background: var(--green-light);
+            background: #EBF7F0;
             border: 1px solid #A7F3D0;
-            color: var(--green);
+            color: #1A7040;
         }
-        
+
         .info-card {
-            background: var(--yellow-light);
-            border: 1px solid var(--yellow-border);
+            background: #FFFBE6;
+            border: 1px solid #E0C84A;
             border-radius: 16px;
             padding: 20px 24px;
             margin-bottom: 24px;
@@ -190,27 +321,27 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
         }
-        
+
         .info-item .label {
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-weight: 600;
         }
-        
+
         .info-item .value {
             font-size: 15px;
             font-weight: 600;
-            color: var(--text);
+            color: #1A1F2E;
             margin-top: 4px;
         }
-        
+
         .info-item .value .monto {
             font-size: 18px;
-            color: var(--yellow-dark);
+            color: #9A7500;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -218,22 +349,22 @@
             font-size: 11px;
             font-weight: 600;
         }
-        
+
         .status-validado {
-            background: var(--green-light);
-            color: var(--green);
+            background: #EBF7F0;
+            color: #1A7040;
         }
-        
+
         .status-pendiente {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #FFFBE6;
+            color: #9A7500;
         }
-        
+
         .status-rechazado {
-            background: var(--red-light);
-            color: var(--red);
+            background: #FFF0EE;
+            color: #C0392B;
         }
-        
+
         .metodo-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -243,29 +374,30 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .metodo-efectivo { background: #D1FAE5; color: #047857; }
         .metodo-transferencia { background: #E8F0FE; color: #1A56DB; }
         .metodo-tarjeta { background: #FEF3C7; color: #B45309; }
         .metodo-cheque { background: #FCE4EC; color: #C62828; }
-        
+
         .section {
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             overflow: hidden;
             margin-bottom: 24px;
+            background: #FFFFFF;
         }
-        
+
         .section-header {
             padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
         }
-        
+
         .section-title {
             font-family: 'Syne', sans-serif;
             font-size: 16px;
@@ -273,91 +405,92 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            color: #000000;
         }
-        
+
         .section-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .section-body {
             padding: 16px 20px;
         }
-        
+
         .detail-row {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             font-size: 13px;
         }
-        
+
         .detail-row:last-child {
             border-bottom: none;
         }
-        
+
         .detail-row .label {
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .detail-row .value {
-            color: var(--text);
+            color: #1A1F2E;
             font-weight: 500;
         }
-        
+
         .comprobante-preview {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background: var(--bg);
+            background: #F5F6F8;
             border-radius: 10px;
             margin-top: 8px;
         }
-        
+
         .comprobante-preview i {
             font-size: 32px;
-            color: var(--yellow-dark);
+            color: #9A7500;
         }
-        
+
         .comprobante-preview .info {
             flex: 1;
         }
-        
+
         .comprobante-preview .info .nombre {
             font-weight: 600;
             font-size: 13px;
         }
-        
+
         .comprobante-preview .info .meta {
             font-size: 12px;
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .comprobante-preview .btn-ver {
             padding: 6px 14px;
             border-radius: 6px;
-            border: 1px solid var(--border);
+            border: 1px solid #E2E6EA;
             background: transparent;
-            color: var(--text-2);
+            color: #5A6478;
             cursor: pointer;
             font-size: 12px;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.15s;
             text-decoration: none;
         }
-        
+
         .comprobante-preview .btn-ver:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+            border-color: #F5C400;
+            color: #9A7500;
         }
-        
+
         .action-buttons {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             margin-top: 16px;
         }
-        
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -372,13 +505,13 @@
             align-items: center;
             padding: 24px;
         }
-        
+
         .modal-overlay.active {
             display: flex;
         }
-        
+
         .modal-content {
-            background: var(--card);
+            background: #FFFFFF;
             border-radius: 20px;
             max-width: 800px;
             width: 100%;
@@ -386,20 +519,20 @@
             overflow: hidden;
             animation: modalIn 0.25s ease;
         }
-        
+
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.95) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
-        
+
         .modal-header {
             padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .modal-header h3 {
             font-family: 'Syne', sans-serif;
             font-size: 18px;
@@ -407,27 +540,27 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .modal-header h3 i {
-            color: var(--yellow-dark);
+            color: #9A7500;
         }
-        
+
         .modal-close {
             background: none;
             border: none;
             font-size: 24px;
-            color: var(--text-3);
+            color: #8A8A8A;
             cursor: pointer;
             padding: 4px 8px;
             border-radius: 8px;
             transition: all 0.15s;
         }
-        
+
         .modal-close:hover {
-            background: var(--red-light);
-            color: var(--red);
+            background: #FFF0EE;
+            color: #C0392B;
         }
-        
+
         .modal-body {
             padding: 24px;
             overflow-y: auto;
@@ -435,243 +568,381 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--bg);
+            background: #F5F6F8;
         }
-        
+
         .modal-body img {
             max-width: 100%;
             max-height: 60vh;
             border-radius: 8px;
             object-fit: contain;
         }
-        
+
         .modal-body .pdf-container {
             width: 100%;
             height: 60vh;
         }
-        
+
         .modal-body .pdf-container iframe {
             width: 100%;
             height: 100%;
             border: none;
             border-radius: 8px;
         }
-        
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 0;
+            }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
-            body { padding: 20px; }
-            .container { padding: 20px; }
-            .info-card { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: flex-start; }
-            .action-buttons { flex-direction: column; }
-            .action-buttons .btn { width: 100%; justify-content: center; }
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-brand h2 {
+                font-size: 20px;
+            }
+            .sidebar-brand small {
+                display: block;
+                font-size: 10px;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu li a span {
+                display: inline;
+                font-size: 11px;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .info-card {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="page-title">
-            <i class="ti ti-receipt"></i>
-            <span>Detalle de Pago</span>
-            <small th:text="'#' + ${pago != null ? pago.idPago : ''}">#0</small>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Administración</small>
         </div>
-        <a th:href="@{/admin/pagos}" class="btn-secondary">
-            <i class="ti ti-arrow-left"></i> Volver
-        </a>
-    </div>
 
-    <!-- ✅ Fragmentos con sintaxis moderna -->
-    <div th:replace="~{fragments/mensajes :: mensaje_error}"></div>
-    <div th:replace="~{fragments/mensajes :: mensaje_exito}"></div>
+        <ul class="sidebar-menu">
+            <li th:each="item : ${menuItems}">
+                <a th:href="${item.url}" 
+                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
+                    <i th:class="${item.icon}"></i>
+                    <span th:text="${item.label}"></span>
+                </a>
+            </li>
+        </ul>
 
-    <div class="info-card" th:if="${pago != null}">
-        <div class="info-item">
-            <div class="label">Proyecto</div>
-            <div class="value" th:text="${pago.nombreProyecto != null ? pago.nombreProyecto : '—'}">—</div>
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
-        <div class="info-item">
-            <div class="label">Cliente</div>
-            <div class="value" th:text="${pago.nombreCliente != null ? pago.nombreCliente : '—'}">—</div>
-        </div>
-        <div class="info-item">
-            <div class="label">Monto</div>
-            <div class="value">
-                <span class="monto" th:text="${pago.monto != null ? 'S/ ' + #numbers.formatDecimal(pago.monto, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
-            </div>
-        </div>
-        <div class="info-item">
-            <div class="label">Estado</div>
-            <div class="value">
-                <span class="status-badge" 
-                      th:classappend="${pago.estadoPago == 'Validado'} ? 'status-validado' : 
-                                      (pago.estadoPago == 'Pendiente' ? 'status-pendiente' : 'status-rechazado')"
-                      th:text="${pago.estadoPago != null ? pago.estadoPago : '—'}">—</span>
-            </div>
-        </div>
-        <div class="info-item">
-            <div class="label">Método de Pago</div>
-            <div class="value">
-                <span class="metodo-badge" 
-                      th:classappend="${pago.metodoPago == 'Efectivo'} ? 'metodo-efectivo' : 
-                                      (pago.metodoPago == 'Transferencia' ? 'metodo-transferencia' : 
-                                      (pago.metodoPago == 'Tarjeta' ? 'metodo-tarjeta' : 'metodo-cheque'))"
-                      th:text="${pago.metodoPago != null ? pago.metodoPago : '—'}">—</span>
-            </div>
-        </div>
-        <div class="info-item">
-            <div class="label">Fecha de Pago</div>
-            <div class="value" th:text="${pago.fechaPago != null ? #temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm') : '—'}">—</div>
-        </div>
-    </div>
+    </aside>
 
-    <div class="section" th:if="${pago != null}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-file-invoice"></i> Información del Comprobante
+    <main class="main-content">
+
+        <div class="header">
+            <div class="page-title">
+                <i class="bi bi-receipt"></i>
+                <span>Detalle de Pago</span>
+                <small th:text="'#' + ${pago != null ? pago.idPago : ''}">#0</small>
+            </div>
+            <div class="user-info">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${username}">Administrador</span>
+                <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
         </div>
-        <div class="section-body" th:if="${comprobante != null}">
-            <div class="detail-row">
-                <span class="label">Tipo</span>
-                <span class="value" th:text="${comprobante.tipoComprobante != null ? comprobante.tipoComprobante : '—'}">—</span>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+        <div class="info-card" th:if="${pago != null}">
+            <div class="info-item">
+                <div class="label">Proyecto</div>
+                <div class="value" th:text="${pago.nombreProyecto != null ? pago.nombreProyecto : '—'}">—</div>
             </div>
-            <div class="detail-row">
-                <span class="label">Número</span>
-                <span class="value" th:text="${comprobante.numeroComprobante != null ? comprobante.numeroComprobante : '—'}">—</span>
+            <div class="info-item">
+                <div class="label">Cliente</div>
+                <div class="value" th:text="${pago.nombreCliente != null ? pago.nombreCliente : '—'}">—</div>
             </div>
-            <div class="detail-row">
-                <span class="label">Estado</span>
-                <span class="value">
-                    <span class="status-badge" 
-                          th:classappend="${comprobante.validado} ? 'status-validado' : 'status-pendiente'"
-                          th:text="${comprobante.validado} ? 'Validado' : 'Pendiente de validación'">—</span>
-                </span>
-            </div>
-            <div th:if="${comprobante.fechaValidacion != null}" class="detail-row">
-                <span class="label">Fecha de Validación</span>
-                <span class="value" th:text="${#temporals.format(comprobante.fechaValidacion, 'dd/MM/yyyy HH:mm')}">—</span>
-            </div>
-            <div th:if="${comprobante.nombreUsuarioValidador != null}" class="detail-row">
-                <span class="label">Validado por</span>
-                <span class="value" th:text="${comprobante.nombreUsuarioValidador}">—</span>
-            </div>
-            <div th:if="${comprobante.archivoUrl != null}" class="comprobante-preview">
-                <i class="ti ti-file-pdf"></i>
-                <div class="info">
-                    <div class="nombre" th:text="${comprobante.nombreArchivo != null ? comprobante.nombreArchivo : 'comprobante.pdf'}">comprobante.pdf</div>
-                    <div class="meta">Archivo adjunto</div>
+            <div class="info-item">
+                <div class="label">Monto</div>
+                <div class="value">
+                    <span class="monto" th:text="${pago.monto != null ? 'S/ ' + #numbers.formatDecimal(pago.monto, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
                 </div>
-                <button class="btn-ver" onclick="abrirComprobante()">
-                    <i class="ti ti-eye"></i> Ver
+            </div>
+            <div class="info-item">
+                <div class="label">Estado</div>
+                <div class="value">
+                    <span class="status-badge" 
+                          th:classappend="${pago.estadoPago == 'Validado'} ? 'status-validado' : 
+                                          (pago.estadoPago == 'Pendiente' ? 'status-pendiente' : 'status-rechazado')"
+                          th:text="${pago.estadoPago != null ? pago.estadoPago : '—'}">—</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="label">Método de Pago</div>
+                <div class="value">
+                    <span class="metodo-badge" 
+                          th:classappend="${pago.metodoPago == 'Efectivo'} ? 'metodo-efectivo' : 
+                                          (pago.metodoPago == 'Transferencia' ? 'metodo-transferencia' : 
+                                          (pago.metodoPago == 'Tarjeta' ? 'metodo-tarjeta' : 'metodo-cheque'))"
+                          th:text="${pago.metodoPago != null ? pago.metodoPago : '—'}">—</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="label">Fecha de Pago</div>
+                <div class="value" th:text="${pago.fechaPago != null ? #temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm') : '—'}">—</div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${pago != null}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-file-earmark"></i> Información del Comprobante
+                </div>
+            </div>
+            <div class="section-body" th:if="${comprobante != null}">
+                <div class="detail-row">
+                    <span class="label">Tipo</span>
+                    <span class="value" th:text="${comprobante.tipoComprobante != null ? comprobante.tipoComprobante : '—'}">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Número</span>
+                    <span class="value" th:text="${comprobante.numeroComprobante != null ? comprobante.numeroComprobante : '—'}">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Estado</span>
+                    <span class="value">
+                        <span class="status-badge" 
+                              th:classappend="${comprobante.validado} ? 'status-validado' : 'status-pendiente'"
+                              th:text="${comprobante.validado} ? 'Validado' : 'Pendiente de validación'">—</span>
+                    </span>
+                </div>
+                <div th:if="${comprobante.fechaValidacion != null}" class="detail-row">
+                    <span class="label">Fecha de Validación</span>
+                    <span class="value" th:text="${#temporals.format(comprobante.fechaValidacion, 'dd/MM/yyyy HH:mm')}">—</span>
+                </div>
+                <div th:if="${comprobante.nombreUsuarioValidador != null}" class="detail-row">
+                    <span class="label">Validado por</span>
+                    <span class="value" th:text="${comprobante.nombreUsuarioValidador}">—</span>
+                </div>
+                <div th:if="${comprobante.archivoUrl != null}" class="comprobante-preview">
+                    <i class="bi bi-file-pdf"></i>
+                    <div class="info">
+                        <div class="nombre" th:text="${comprobante.nombreArchivo != null ? comprobante.nombreArchivo : 'comprobante.pdf'}">comprobante.pdf</div>
+                        <div class="meta">Archivo adjunto</div>
+                    </div>
+                    <button class="btn-ver" onclick="abrirComprobante()">
+                        <i class="bi bi-eye"></i> Ver
+                    </button>
+                </div>
+                <div th:if="${comprobante == null}" style="text-align:center; padding:20px; color:#8A8A8A;">
+                    <i class="bi bi-file-earmark-x" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                    <p>No hay comprobante asociado a este pago.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${pago != null}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-credit-card"></i> Resumen Financiero
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="detail-row">
+                    <span class="label">Monto Total del Proyecto</span>
+                    <span class="value" th:text="${pago.montoTotalProyecto != null ? 'S/ ' + #numbers.formatDecimal(pago.montoTotalProyecto, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Total Pagado</span>
+                    <span class="value" style="color:#1A7040;" 
+                          th:text="${pago.montoTotalProyecto != null && pago.saldoPendiente != null ? 'S/ ' + #numbers.formatDecimal(pago.montoTotalProyecto - pago.saldoPendiente, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Saldo Pendiente</span>
+                    <span class="value" style="color:#C0392B;" th:text="${pago.saldoPendiente != null ? 'S/ ' + #numbers.formatDecimal(pago.saldoPendiente, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Porcentaje Pagado</span>
+                    <span class="value" th:text="${pago.porcentajePagado != null ? pago.porcentajePagado + '%' : '0%'}">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${pago != null and pago.observaciones != null}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-sticky"></i> Observaciones
+                </div>
+            </div>
+            <div class="section-body">
+                <p style="font-size:13px; color:#5A6478; line-height:1.6;" th:text="${pago.observaciones}">—</p>
+            </div>
+        </div>
+
+        <div class="action-buttons" th:if="${pago != null}">
+            <a th:href="@{/admin/pagos}" class="btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al listado
+            </a>
+            <a th:href="@{/admin/proyectos/detalle/{id}(id=${pago.idProyecto})}" class="btn-primary">
+                <i class="bi bi-folder"></i> Ver Proyecto
+            </a>
+            <form th:action="@{/admin/pagos/validar/{id}(id=${pago.idPago})}" method="post" style="display:inline;" 
+                  th:if="${pago.estadoPago == 'Pendiente'}">
+                <button type="submit" class="btn-success" onclick="return confirm('¿Validar este pago?');">
+                    <i class="bi bi-check-lg"></i> Validar Pago
                 </button>
+            </form>
+            <form th:action="@{/admin/pagos/rechazar/{id}(id=${pago.idPago})}" method="post" style="display:inline;" 
+                  th:if="${pago.estadoPago == 'Pendiente'}">
+                <button type="submit" class="btn-danger" onclick="return confirm('¿Rechazar este pago?');">
+                    <i class="bi bi-x-lg"></i> Rechazar Pago
+                </button>
+            </form>
+        </div>
+
+        <div style="text-align:center;padding:12px;font-size:12px;color:#8A8A8A;border-top:1px solid #E8E8E8;margin-top:12px;">
+            <span th:text="${fechaActual}"></span>
+        </div>
+
+    </main>
+
+    <div class="modal-overlay" id="modalComprobante">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="bi bi-file-earmark"></i>
+                    <span>Comprobante de Pago</span>
+                </h3>
+                <button class="modal-close" onclick="cerrarComprobante()">&times;</button>
             </div>
-            <div th:if="${comprobante == null}" style="text-align:center; padding:20px; color:var(--text-3);">
-                <i class="ti ti-file-off" style="font-size:32px; display:block; margin-bottom:8px;"></i>
-                <p>No hay comprobante asociado a este pago.</p>
+            <div class="modal-body" id="modalBody">
+                <div class="pdf-container" th:if="${comprobante != null and comprobante.archivoUrl != null}">
+                    <iframe th:src="${comprobante.archivoUrl}" allowfullscreen></iframe>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="section" th:if="${pago != null}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-credit-card"></i> Resumen Financiero
-            </div>
-        </div>
-        <div class="section-body">
-            <div class="detail-row">
-                <span class="label">Monto Total del Proyecto</span>
-                <span class="value" th:text="${pago.montoTotalProyecto != null ? 'S/ ' + #numbers.formatDecimal(pago.montoTotalProyecto, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
-            </div>
-            <div class="detail-row">
-                <span class="label">Total Pagado</span>
-                <span class="value" style="color:var(--green);" 
-                      th:text="${pago.montoTotalProyecto != null && pago.saldoPendiente != null ? 'S/ ' + #numbers.formatDecimal(pago.montoTotalProyecto - pago.saldoPendiente, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
-            </div>
-            <div class="detail-row">
-                <span class="label">Saldo Pendiente</span>
-                <span class="value" style="color:var(--red);" th:text="${pago.saldoPendiente != null ? 'S/ ' + #numbers.formatDecimal(pago.saldoPendiente, 0, 'COMMA', 2, 'POINT') : 'S/ 0.00'}">S/ 0.00</span>
-            </div>
-            <div class="detail-row">
-                <span class="label">Porcentaje Pagado</span>
-                <span class="value" th:text="${pago.porcentajePagado != null ? pago.porcentajePagado + '%' : '0%'}">0%</span>
-            </div>
-        </div>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-menu li a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '#') {
+                    link.classList.remove('active');
+                    if (currentPath === href || (href !== '/admin/dashboard' && currentPath.startsWith(href))) {
+                        link.classList.add('active');
+                    }
+                }
+            });
+        });
 
-    <div class="section" th:if="${pago != null and pago.observaciones != null}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-notes"></i> Observaciones
-            </div>
-        </div>
-        <div class="section-body">
-            <p style="font-size:13px; color:var(--text-2); line-height:1.6;" th:text="${pago.observaciones}">—</p>
-        </div>
-    </div>
+        function abrirComprobante() {
+            var modal = document.getElementById('modalComprobante');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-    <div class="action-buttons" th:if="${pago != null}">
-        <a th:href="@{/admin/pagos}" class="btn-secondary">
-            <i class="ti ti-arrow-left"></i> Volver al listado
-        </a>
-        <a th:href="@{/admin/proyectos/detalle/{id}(id=${pago.idProyecto})}" class="btn-primary">
-            <i class="ti ti-folder"></i> Ver Proyecto
-        </a>
-        <form th:action="@{/admin/pagos/validar/{id}(id=${pago.idPago})}" method="post" style="display:inline;" 
-              th:if="${pago.estadoPago == 'Pendiente'}">
-            <button type="submit" class="btn-success" onclick="return confirm('¿Validar este pago?');">
-                <i class="ti ti-check"></i> Validar Pago
-            </button>
-        </form>
-        <form th:action="@{/admin/pagos/rechazar/{id}(id=${pago.idPago})}" method="post" style="display:inline;" 
-              th:if="${pago.estadoPago == 'Pendiente'}">
-            <button type="submit" class="btn-danger" onclick="return confirm('¿Rechazar este pago?');">
-                <i class="ti ti-x"></i> Rechazar Pago
-            </button>
-        </form>
-    </div>
+        function cerrarComprobante() {
+            var modal = document.getElementById('modalComprobante');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
-</div>
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarComprobante();
+        });
 
-<div class="modal-overlay" id="modalComprobante">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>
-                <i class="ti ti-file"></i>
-                <span>Comprobante de Pago</span>
-            </h3>
-            <button class="modal-close" onclick="cerrarComprobante()">&times;</button>
-        </div>
-        <div class="modal-body" id="modalBody">
-            <div class="pdf-container" th:if="${comprobante != null and comprobante.archivoUrl != null}">
-                <iframe th:src="${comprobante.archivoUrl}" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function abrirComprobante() {
-        var modal = document.getElementById('modalComprobante');
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function cerrarComprobante() {
-        var modal = document.getElementById('modalComprobante');
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') cerrarComprobante();
-    });
-
-    document.getElementById('modalComprobante').addEventListener('click', function(e) {
-        if (e.target === this) cerrarComprobante();
-    });
-</script>
+        document.getElementById('modalComprobante').addEventListener('click', function(e) {
+            if (e.target === this) cerrarComprobante();
+        });
+    </script>
 
 </body>
 </html>

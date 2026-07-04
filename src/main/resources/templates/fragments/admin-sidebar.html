@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sidebar Admin</title>
+</head>
+<body>
+    <aside th:fragment="sidebar" class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Administración</small>
+        </div>
+
+        <!-- ===== MENÚ DINÁMICO POR ROLES ===== -->
+        <ul class="sidebar-menu">
+            <li th:each="item : ${menuItems}">
+                <a th:href="${item.url}" 
+                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
+                    <i th:class="${item.icon}"></i>
+                    <span th:text="${item.label}"></span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}">
+                <i class="ti ti-logout"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Estilos del sidebar (se incluyen en el layout) -->
+</body>
+</html>

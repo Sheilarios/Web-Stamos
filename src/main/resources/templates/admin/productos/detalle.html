@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Producto · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
+
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -28,26 +28,138 @@
             --blue-light: #E8F0FE;
             --purple: #7C3AED;
             --purple-light: #EDE9FE;
+            --sidebar-width: 260px;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
+            background: #F8F8F8;
             color: var(--text);
-            padding: 40px 24px;
+            display: flex;
+            min-height: 100vh;
         }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--card);
-            border-radius: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-            padding: 32px;
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #000000;
+            padding: 32px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            border-right: none;
         }
-        
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .sidebar-brand h2 span {
+            color: #F5C400;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: #8A8A8A;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: #C0C0C0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a:hover {
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
+        }
+
+        .sidebar-menu li a.active {
+            background: #F5C400;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li a.active i {
+            color: #000000;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #222;
+            margin-top: auto;
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #EF4444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(239, 68, 68, 0.10);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+            min-height: 100vh;
+            background: #F8F8F8;
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -56,34 +168,50 @@
             gap: 16px;
             margin-bottom: 28px;
         }
-        
+
         .page-title {
             font-family: 'Syne', sans-serif;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .page-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
             font-size: 28px;
         }
-        
+
         .page-title small {
             font-size: 14px;
             font-weight: 400;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
-        
+
+        .user-info {
+            background: #FFFFFF;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid #E8E8E8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1A1F2E;
+        }
+
+        .user-info i {
+            color: #F5C400;
+        }
+
         .btn-secondary {
             background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-2);
+            border: 1px solid #E2E6EA;
+            color: #5A6478;
             padding: 8px 16px;
             border-radius: 10px;
             font-size: 13px;
@@ -96,14 +224,14 @@
             gap: 8px;
             transition: all 0.15s;
         }
-        
+
         .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+            border-color: #F5C400;
+            color: #9A7500;
         }
-        
+
         .btn-primary {
-            background: var(--yellow);
+            background: #F5C400;
             border: none;
             color: #2A1800;
             padding: 10px 20px;
@@ -118,13 +246,13 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-primary:hover {
-            background: var(--yellow-mid);
+            background: #FFE566;
         }
-        
+
         .btn-danger {
-            background: var(--red);
+            background: #C0392B;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -138,40 +266,43 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-danger:hover {
             background: #a71d2a;
         }
-        
+
         .alert {
             padding: 12px 16px;
             border-radius: 10px;
             margin-bottom: 16px;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
         .alert-danger {
-            background: var(--red-light);
+            background: #FFF0EE;
             border: 1px solid #FECACA;
-            color: var(--red);
+            color: #C0392B;
         }
-        
+
         .alert-success {
-            background: var(--green-light);
+            background: #EBF7F0;
             border: 1px solid #A7F3D0;
-            color: var(--green);
+            color: #1A7040;
         }
-        
+
         .producto-header {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 24px;
             margin-bottom: 24px;
         }
-        
+
         .producto-imagen {
-            background: var(--bg);
-            border: 1px solid var(--border);
+            background: #F5F6F8;
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             padding: 20px;
             display: flex;
@@ -179,54 +310,54 @@
             justify-content: center;
             min-height: 250px;
         }
-        
+
         .producto-imagen img {
             max-width: 100%;
             max-height: 250px;
             border-radius: 8px;
             object-fit: contain;
         }
-        
+
         .producto-imagen .no-image {
             text-align: center;
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .producto-imagen .no-image i {
             font-size: 48px;
             display: block;
             margin-bottom: 12px;
             opacity: 0.5;
         }
-        
+
         .producto-info .nombre {
             font-family: 'Syne', sans-serif;
             font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #1A1F2E;
             margin-bottom: 8px;
         }
-        
+
         .producto-info .codigo {
             font-size: 13px;
-            color: var(--text-3);
+            color: #8A8A8A;
             margin-bottom: 12px;
         }
-        
+
         .producto-info .descripcion {
             font-size: 14px;
-            color: var(--text-2);
+            color: #5A6478;
             line-height: 1.6;
             margin-bottom: 16px;
         }
-        
+
         .producto-info .precio {
             font-size: 24px;
             font-weight: 700;
-            color: var(--yellow-dark);
+            color: #9A7500;
             margin-bottom: 16px;
         }
-        
+
         .badge-tipo {
             display: inline-block;
             padding: 4px 14px;
@@ -234,11 +365,11 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         .badge-alquiler { background: #DBEAFE; color: #2563EB; }
-        .badge-venta { background: var(--green-light); color: var(--green); }
-        .badge-servicio { background: var(--purple-light); color: var(--purple); }
-        
+        .badge-venta { background: #EBF7F0; color: #1A7040; }
+        .badge-servicio { background: #EDE9FE; color: #7C3AED; }
+
         .badge-estado {
             display: inline-block;
             padding: 4px 14px;
@@ -246,181 +377,323 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
-        .badge-activo { background: var(--green-light); color: var(--green); }
-        .badge-inactivo { background: var(--red-light); color: var(--red); }
-        
+
+        .badge-activo { background: #EBF7F0; color: #1A7040; }
+        .badge-inactivo { background: #FFF0EE; color: #C0392B; }
+
         .info-card {
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             padding: 20px 24px;
             margin-bottom: 24px;
+            background: #FFFFFF;
         }
-        
+
         .info-card .info-row {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             font-size: 13px;
         }
-        
+
         .info-card .info-row:last-child {
             border-bottom: none;
         }
-        
+
         .info-card .info-row .label {
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .info-card .info-row .value {
-            color: var(--text);
+            color: #1A1F2E;
             font-weight: 500;
         }
-        
+
         .action-buttons {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             margin-top: 16px;
         }
-        
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 0;
+            }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
-            body { padding: 20px; }
-            .container { padding: 20px; }
-            .producto-header { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: flex-start; }
-            .action-buttons { flex-direction: column; }
-            .action-buttons .btn { width: 100%; justify-content: center; }
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-brand h2 {
+                font-size: 20px;
+            }
+            .sidebar-brand small {
+                display: block;
+                font-size: 10px;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu li a span {
+                display: inline;
+                font-size: 11px;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .producto-header {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="page-title">
-            <i class="ti ti-package"></i>
-            <span>Detalle de Producto</span>
-            <small th:text="'#' + ${producto != null ? producto.idProducto : ''}">#0</small>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Administración</small>
         </div>
-        <a th:href="@{/admin/productos}" class="btn-secondary">
-            <i class="ti ti-arrow-left"></i> Volver
-        </a>
-    </div>
 
-    <div th:replace="fragments/mensajes :: mensaje_error"></div>
-    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+        <ul class="sidebar-menu">
+            <li th:each="item : ${menuItems}">
+                <a th:href="${item.url}" 
+                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
+                    <i th:class="${item.icon}"></i>
+                    <span th:text="${item.label}"></span>
+                </a>
+            </li>
+        </ul>
 
-    <div class="producto-header" th:if="${producto != null}">
-        <div class="producto-imagen">
-            <div th:if="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}">
-                <img th:src="${producto.imagenUrl}" th:alt="${producto.nombreItem}">
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="header">
+            <div class="page-title">
+                <i class="bi bi-box"></i>
+                <span>Detalle de Producto</span>
+                <small th:text="'#' + ${producto != null ? producto.idProducto : ''}">#0</small>
             </div>
-            <div th:unless="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}" class="no-image">
-                <i class="ti ti-photo-off"></i>
-                <p>Sin imagen</p>
+            <div class="user-info">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${username}">Administrador</span>
+                <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
         </div>
-        <div class="producto-info">
-            <div class="nombre" th:text="${producto.nombreItem}">—</div>
-            <div class="codigo">
-                <i class="ti ti-hash"></i> 
-                <span th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
-                <span style="margin-left:16px;">
-                    <i class="ti ti-tag"></i> 
-                    <span th:text="${producto.tipo}">Alquiler</span>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+        <div class="producto-header" th:if="${producto != null}">
+            <div class="producto-imagen">
+                <div th:if="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}">
+                    <img th:src="${producto.imagenUrl}" th:alt="${producto.nombreItem}">
+                </div>
+                <div th:unless="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}" class="no-image">
+                    <i class="bi bi-image"></i>
+                    <p>Sin imagen</p>
+                </div>
+            </div>
+            <div class="producto-info">
+                <div class="nombre" th:text="${producto.nombreItem}">—</div>
+                <div class="codigo">
+                    <i class="bi bi-hash"></i> 
+                    <span th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
+                    <span style="margin-left:16px;">
+                        <i class="bi bi-tag"></i> 
+                        <span th:text="${producto.tipo}">Alquiler</span>
+                    </span>
+                </div>
+                <div class="descripcion" th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">—</div>
+                <div class="precio" th:text="${producto.precioBaseFormateado != null ? producto.precioBaseFormateado : 'S/ 0.00'}">S/ 0.00</div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="badge-tipo" 
+                          th:classappend="${producto.tipo == 'Alquiler'} ? 'badge-alquiler' : 
+                                          (producto.tipo == 'Venta' ? 'badge-venta' : 'badge-servicio')"
+                          th:text="${producto.tipo}">Alquiler</span>
+                    <span class="badge-estado" 
+                          th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
+                          th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                    <span style="font-size:12px; color:#8A8A8A;" 
+                          th:if="${producto.nombreCategoria != null}" 
+                          th:text="'Categoría: ' + ${producto.nombreCategoria}">Categoría: —</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card" th:if="${producto != null}">
+            <div class="info-row">
+                <span class="label">ID del Producto</span>
+                <span class="value" th:text="${producto.idProducto}">0</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Código</span>
+                <span class="value" th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Nombre</span>
+                <span class="value" th:text="${producto.nombreItem}">—</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Categoría</span>
+                <span class="value" th:text="${producto.nombreCategoria != null ? producto.nombreCategoria : 'No asignada'}">—</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Tipo</span>
+                <span class="value" th:text="${producto.tipo}">—</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Precio Base</span>
+                <span class="value" style="font-weight:700; color:#9A7500;" th:text="${producto.precioBaseFormateado != null ? producto.precioBaseFormateado : 'S/ 0.00'}">S/ 0.00</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Estado</span>
+                <span class="value">
+                    <span class="badge-estado" 
+                          th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
+                          th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
                 </span>
             </div>
-            <div class="descripcion" th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">—</div>
-            <div class="precio" th:text="${producto.precioBaseFormateado != null ? producto.precioBaseFormateado : 'S/ 0.00'}">S/ 0.00</div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <span class="badge-tipo" 
-                      th:classappend="${producto.tipo == 'Alquiler'} ? 'badge-alquiler' : 
-                                      (producto.tipo == 'Venta' ? 'badge-venta' : 'badge-servicio')"
-                      th:text="${producto.tipo}">Alquiler</span>
-                <span class="badge-estado" 
-                      th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
-                      th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
-                <span style="font-size:12px; color:var(--text-3);" 
-                      th:if="${producto.nombreCategoria != null}" 
-                      th:text="'Categoría: ' + ${producto.nombreCategoria}">Categoría: —</span>
+            <div class="info-row">
+                <span class="label">Fecha de Creación</span>
+                <span class="value" th:text="${#temporals.format(producto.fechaCreacion, 'dd/MM/yyyy HH:mm')}">—</span>
+            </div>
+            <div class="info-row" th:if="${producto.fechaActualizacion != null}">
+                <span class="label">Última Actualización</span>
+                <span class="value" th:text="${#temporals.format(producto.fechaActualizacion, 'dd/MM/yyyy HH:mm')}">—</span>
             </div>
         </div>
-    </div>
 
-    <div class="info-card" th:if="${producto != null}">
-        <div class="info-row">
-            <span class="label">ID del Producto</span>
-            <span class="value" th:text="${producto.idProducto}">0</span>
+        <div class="action-buttons" th:if="${producto != null}">
+            <a th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" class="btn-primary">
+                <i class="bi bi-pencil"></i> Editar Producto
+            </a>
+            <form th:action="@{/admin/productos/activar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
+                  th:if="${!producto.activo}">
+                <button type="submit" class="btn-primary" style="background:#1A7040; color:white;" 
+                        onclick="return confirm('¿Activar este producto?');">
+                    <i class="bi bi-check-lg"></i> Activar
+                </button>
+            </form>
+            <form th:action="@{/admin/productos/desactivar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
+                  th:if="${producto.activo}">
+                <button type="submit" class="btn-secondary" style="border-color:#C0392B; color:#C0392B;" 
+                        onclick="return confirm('¿Desactivar este producto?');">
+                    <i class="bi bi-x-lg"></i> Desactivar
+                </button>
+            </form>
+            <form th:action="@{/admin/productos/eliminar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;">
+                <button type="submit" class="btn-danger" onclick="return confirm('¿Eliminar este producto permanentemente?');">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+            </form>
+            <a th:href="@{/admin/productos}" class="btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al listado
+            </a>
         </div>
-        <div class="info-row">
-            <span class="label">Código</span>
-            <span class="value" th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Nombre</span>
-            <span class="value" th:text="${producto.nombreItem}">—</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Categoría</span>
-            <span class="value" th:text="${producto.nombreCategoria != null ? producto.nombreCategoria : 'No asignada'}">—</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Tipo</span>
-            <span class="value" th:text="${producto.tipo}">—</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Precio Base</span>
-            <span class="value" style="font-weight:700; color:var(--yellow-dark);" th:text="${producto.precioBaseFormateado != null ? producto.precioBaseFormateado : 'S/ 0.00'}">S/ 0.00</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Estado</span>
-            <span class="value">
-                <span class="badge-estado" 
-                      th:classappend="${producto.activo} ? 'badge-activo' : 'badge-inactivo'"
-                      th:text="${producto.activo} ? 'Activo' : 'Inactivo'">Activo</span>
-            </span>
-        </div>
-        <div class="info-row">
-            <span class="label">Fecha de Creación</span>
-            <span class="value" th:text="${#temporals.format(producto.fechaCreacion, 'dd/MM/yyyy HH:mm')}">—</span>
-        </div>
-        <div class="info-row" th:if="${producto.fechaActualizacion != null}">
-            <span class="label">Última Actualización</span>
-            <span class="value" th:text="${#temporals.format(producto.fechaActualizacion, 'dd/MM/yyyy HH:mm')}">—</span>
-        </div>
-    </div>
 
-    <div class="action-buttons" th:if="${producto != null}">
-        <a th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" class="btn-primary">
-            <i class="ti ti-edit"></i> Editar Producto
-        </a>
-        <form th:action="@{/admin/productos/activar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
-              th:if="${!producto.activo}">
-            <button type="submit" class="btn-primary" style="background:var(--green); color:white;" 
-                    onclick="return confirm('¿Activar este producto?');">
-                <i class="ti ti-check"></i> Activar
-            </button>
-        </form>
-        <form th:action="@{/admin/productos/desactivar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
-              th:if="${producto.activo}">
-            <button type="submit" class="btn-secondary" style="border-color:var(--red); color:var(--red);" 
-                    onclick="return confirm('¿Desactivar este producto?');">
-                <i class="ti ti-x"></i> Desactivar
-            </button>
-        </form>
-        <form th:action="@{/admin/productos/eliminar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;">
-            <button type="submit" class="btn-danger" onclick="return confirm('¿Eliminar este producto permanentemente?');">
-                <i class="ti ti-trash"></i> Eliminar
-            </button>
-        </form>
-        <a th:href="@{/admin/productos}" class="btn-secondary">
-            <i class="ti ti-arrow-left"></i> Volver al listado
-        </a>
-    </div>
+        <div style="text-align:center;padding:12px;font-size:12px;color:#8A8A8A;border-top:1px solid #E8E8E8;margin-top:12px;">
+            <span th:text="${fechaActual}"></span>
+        </div>
 
-</div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-menu li a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '#') {
+                    link.classList.remove('active');
+                    if (currentPath === href || (href !== '/admin/dashboard' && currentPath.startsWith(href))) {
+                        link.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

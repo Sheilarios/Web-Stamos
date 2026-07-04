@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
+
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -15,11 +15,11 @@
             --yellow-dark: #9A7500;
             --yellow-border: #E0C84A;
             --border: #E2E6EA;
-            --bg: #F5F6F8;
+            --bg: #F8F8F8;
             --card: #FFFFFF;
             --text: #1A1F2E;
             --text-2: #5A6478;
-            --text-3: #9BA5B7;
+            --text-3: #8A8A8A;
             --red: #C0392B;
             --red-light: #FFF0EE;
             --green: #1A7040;
@@ -32,22 +32,22 @@
             --purple-light: #EDE9FE;
             --sidebar-width: 260px;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'DM Sans', 'Segoe UI', Roboto, sans-serif;
+            background: #FFFFFF;
+            color: #1A1F2E;
             display: flex;
             min-height: 100vh;
         }
-        
+
+        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-width);
-            background: var(--card);
-            border-right: 1px solid var(--border);
-            padding: 24px 0;
+            background: #000000;
+            padding: 32px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -56,93 +56,93 @@
             z-index: 100;
             display: flex;
             flex-direction: column;
+            border-right: none;
         }
-        
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
         .sidebar-brand {
-            padding: 0 20px 24px;
-            border-bottom: 1px solid var(--border);
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
             margin-bottom: 20px;
         }
-        
+
         .sidebar-brand h2 {
             font-family: 'Syne', sans-serif;
             font-size: 24px;
             font-weight: 800;
+            color: #FFFFFF;
         }
-        
+
         .sidebar-brand h2 span {
-            color: var(--yellow);
+            color: #F5C400;
         }
-        
+
         .sidebar-brand small {
             display: block;
             font-size: 11px;
-            color: var(--text-3);
+            color: #8A8A8A;
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-top: 4px;
         }
-        
+
         .sidebar-menu {
             list-style: none;
             padding: 0 12px;
             flex: 1;
         }
-        
+
         .sidebar-menu li {
             margin-bottom: 2px;
         }
-        
+
         .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 10px 16px;
             border-radius: 10px;
-            color: var(--text-2);
+            color: #C0C0C0;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
             transition: all 0.15s;
         }
-        
+
         .sidebar-menu li a i {
             font-size: 18px;
             width: 22px;
             text-align: center;
         }
-        
+
         .sidebar-menu li a:hover {
-            background: var(--yellow-light);
-            color: var(--text);
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
         }
-        
+
         .sidebar-menu li a.active {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #F5C400;
+            color: #000000;
             font-weight: 600;
         }
-        
-        .sidebar-menu .menu-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-3);
-            padding: 16px 16px 8px;
-            font-weight: 600;
+
+        .sidebar-menu li a.active i {
+            color: #000000;
         }
-        
+
         .sidebar-footer {
             padding: 16px 20px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #222;
             margin-top: auto;
         }
-        
+
         .sidebar-footer a {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: var(--red);
+            color: #EF4444;
             text-decoration: none;
             font-size: 13px;
             font-weight: 500;
@@ -150,18 +150,20 @@
             border-radius: 8px;
             transition: background 0.15s;
         }
-        
+
         .sidebar-footer a:hover {
-            background: var(--red-light);
+            background: rgba(239, 68, 68, 0.10);
         }
-        
+
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 32px 36px;
+            padding: 32px 40px;
             min-height: 100vh;
+            background: #F8F8F8;
         }
-        
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -170,45 +172,46 @@
             gap: 16px;
             margin-bottom: 28px;
         }
-        
+
         .page-title {
             font-family: 'Syne', sans-serif;
             font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .page-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
             font-size: 28px;
         }
-        
+
         .page-title small {
             font-size: 14px;
             font-weight: 400;
-            color: var(--text-3);
+            color: #6B6B6B;
             font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
-        
+
         .user-info {
-            background: var(--card);
-            padding: 8px 16px;
+            background: #FFFFFF;
+            padding: 8px 20px;
             border-radius: 30px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: #1A1F2E;
         }
-        
+
         .user-info i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -216,241 +219,247 @@
             font-size: 11px;
             font-weight: 600;
         }
-        
-        .status-aprobado { background: var(--blue-light); color: var(--blue); }
-        .status-diseno { background: var(--orange-light); color: var(--orange); }
-        .status-produccion { background: var(--blue-light); color: var(--blue); }
-        .status-instalacion { background: var(--purple-light); color: var(--purple); }
-        .status-entregado { background: var(--green-light); color: var(--green); }
-        .status-anulado { background: var(--red-light); color: var(--red); }
-        
+
+        .status-aprobado { background: #E8F0FE; color: #1A56DB; }
+        .status-diseno { background: #FEF3C7; color: #D97706; }
+        .status-produccion { background: #DBEAFE; color: #2563EB; }
+        .status-instalacion { background: #EDE9FE; color: #7C3AED; }
+        .status-entregado { background: #EBF7F0; color: #1A7040; }
+        .status-anulado { background: #FFF0EE; color: #C0392B; }
+
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
             margin-bottom: 24px;
         }
-        
+
         .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
             border-radius: 12px;
             padding: 14px 18px;
             text-align: center;
         }
-        
+
         .stat-card .numero {
             font-family: 'Syne', sans-serif;
             font-size: 24px;
             font-weight: 700;
-            color: var(--text);
+            color: #1A1F2E;
         }
-        
+
         .stat-card .etiqueta {
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-weight: 600;
             margin-top: 2px;
         }
-        
-        .stat-card .numero.azul { color: var(--blue); }
-        .stat-card .numero.verde { color: var(--green); }
-        .stat-card .numero.rojo { color: var(--red); }
-        
+
+        .stat-card .numero.azul { color: #1A56DB; }
+        .stat-card .numero.verde { color: #1A7040; }
+        .stat-card .numero.rojo { color: #C0392B; }
+
         .filters {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             margin-bottom: 24px;
-            background: var(--card);
+            background: #FFFFFF;
             padding: 16px 20px;
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             align-items: center;
         }
-        
+
         .filters label {
             font-size: 13px;
             font-weight: 600;
-            color: var(--text-2);
+            color: #5A6478;
         }
-        
+
         .filters select {
             padding: 8px 14px;
             border-radius: 10px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             font-size: 13px;
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background: #F8F8F8;
+            color: #1A1F2E;
             outline: none;
             transition: all 0.15s;
         }
-        
+
         .filters select:focus {
-            border-color: var(--yellow);
+            border-color: #F5C400;
             box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
         }
-        
+
         .section {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             overflow: hidden;
         }
-        
+
         .section-header {
             padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
+            background: #FAFAFA;
         }
-        
+
         .section-title {
             font-family: 'Syne', sans-serif;
             font-size: 18px;
             font-weight: 700;
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .section-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .table-wrapper {
             overflow-x: auto;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
         }
-        
+
         th {
             text-align: left;
             padding: 12px 16px;
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #FAFAFA;
+            color: #3A3A3A;
             font-weight: 600;
             text-transform: uppercase;
             font-size: 11px;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--yellow-border);
+            border-bottom: 1px solid #E8E8E8;
         }
-        
+
         td {
             padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-2);
+            border-bottom: 1px solid #E8E8E8;
+            color: #5A6478;
         }
-        
+
         tr:last-child td {
             border-bottom: none;
         }
-        
+
         tr:hover td {
-            background: var(--yellow-light);
+            background: #FAFAFA;
         }
-        
+
         .btn-link {
             background: transparent;
             border: none;
-            color: var(--yellow-dark);
+            color: #9A7500;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.15s;
         }
-        
+
         .btn-link:hover {
             text-decoration: underline;
         }
-        
+
         .empty-message {
             text-align: center;
             padding: 48px;
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .empty-message i {
             font-size: 48px;
             margin-bottom: 12px;
             opacity: 0.5;
+            color: #D0D0D0;
         }
-        
+
         .empty-message p {
             font-size: 14px;
         }
-        
+
         .alert {
             padding: 12px 16px;
             border-radius: 10px;
             margin-bottom: 16px;
             font-size: 13px;
+            border: 1px solid;
         }
-        
+
         .alert-danger {
-            background: var(--red-light);
-            border: 1px solid #FECACA;
-            color: var(--red);
+            background: #FFF0EE;
+            border-color: #FFCDCD;
+            color: #C0392B;
         }
-        
+
         .alert-success {
-            background: var(--green-light);
-            border: 1px solid #A7F3D0;
-            color: var(--green);
+            background: #EBF7F0;
+            border-color: #A7D8BA;
+            color: #1A7040;
         }
-        
+
         .progress-bar {
             height: 4px;
-            background: var(--bg);
+            background: #F8F8F8;
             border-radius: 4px;
             overflow: hidden;
             margin-top: 4px;
         }
-        
+
         .progress-bar .fill {
             height: 100%;
-            background: var(--yellow);
+            background: #F5C400;
             border-radius: 4px;
             transition: width 0.5s;
         }
-        
+
         @media (max-width: 1024px) {
             .sidebar { width: 72px; padding: 16px 0; }
-            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span { display: none; }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span { display: none; }
             .sidebar-menu li a { justify-content: center; padding: 12px; }
             .sidebar-menu li a i { font-size: 22px; width: auto; }
             .sidebar-footer a span { display: none; }
             .sidebar-footer a { justify-content: center; }
             .main-content { margin-left: 72px; padding: 20px; }
         }
-        
+
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid #222; flex-wrap: wrap; }
             .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
+            .sidebar-brand h2 { font-size: 20px; }
+            .sidebar-brand small { display: block; font-size: 10px; }
             .sidebar-menu { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; flex: 1; }
             .sidebar-menu li { margin-bottom: 0; }
             .sidebar-menu li a { padding: 6px 10px; font-size: 12px; }
             .sidebar-menu li a i { font-size: 16px; }
-            .sidebar-menu .menu-label { display: none; }
+            .sidebar-menu li a span { display: inline; font-size: 11px; }
             .sidebar-footer { border-top: none; padding: 0; margin: 0; }
             .main-content { margin-left: 0; padding: 16px; }
             .header { flex-direction: column; align-items: flex-start; }
             .filters { flex-direction: column; align-items: stretch; }
             .stats-row { grid-template-columns: 1fr 1fr; }
         }
-        
+
         @media (max-width: 480px) {
             .stats-row { grid-template-columns: 1fr; }
         }
@@ -458,12 +467,13 @@
 </head>
 <body>
 
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-brand">
             <h2>STAMOS<span>.</span></h2>
             <small>Área del Cliente</small>
         </div>
-        
+
         <ul class="sidebar-menu">
             <li><a th:href="@{/cliente/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
             <li><a th:href="@{/cliente/proyectos}" class="active"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
@@ -471,7 +481,7 @@
             <li><a th:href="@{/cliente/pagos}"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
             <li><a th:href="@{/cliente/perfil}"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
         </ul>
-        
+
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
                 <i class="ti ti-logout"></i>
@@ -480,6 +490,7 @@
         </div>
     </aside>
 
+    <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content">
         <div class="header">
             <div class="page-title">
@@ -493,8 +504,8 @@
             </div>
         </div>
 
-        <div th:replace="fragments/mensajes :: mensaje_error"></div>
-        <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
 
         <div class="stats-row">
             <div class="stat-card">
@@ -533,12 +544,12 @@
                 <div class="section-title">
                     <i class="ti ti-list"></i> Lista de Proyectos
                 </div>
-                <span style="font-size:12px; color:var(--text-3);">
-                    <i class="ti ti-info-circle"></i> 
+                <span style="font-size:12px; color:#8A8A8A;">
+                    <i class="ti ti-info-circle"></i>
                     <span th:text="${totalProyectos != null ? totalProyectos + ' proyectos' : '0 proyectos'}">0 proyectos</span>
                 </span>
             </div>
-            
+
             <div th:if="${proyectos != null and !#lists.isEmpty(proyectos)}">
                 <div class="table-wrapper">
                     <table>
@@ -555,7 +566,7 @@
                             </tr>
                         </thead>
                         <tbody id="tablaProyectos">
-                            <tr th:each="p : ${proyectos}" 
+                            <tr th:each="p : ${proyectos}"
                                 th:data-estado="${p.estado}">
                                 <td th:text="${p.codigoProyecto}">PRO-00000</td>
                                 <td>
@@ -570,11 +581,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="status-badge" 
-                                          th:classappend="${p.estado == 'Aprobado'} ? 'status-aprobado' : 
-                                                          (p.estado == 'En Diseño' ? 'status-diseno' : 
-                                                          (p.estado == 'En Producción' ? 'status-produccion' : 
-                                                          (p.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                    <span class="status-badge"
+                                          th:classappend="${p.estado == 'Aprobado'} ? 'status-aprobado' :
+                                                          (p.estado == 'En Diseño' ? 'status-diseno' :
+                                                          (p.estado == 'En Producción' ? 'status-produccion' :
+                                                          (p.estado == 'Instalación/Montaje' ? 'status-instalacion' :
                                                           (p.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
                                           th:text="${p.estado}">Aprobado</span>
                                 </td>
@@ -594,11 +605,11 @@
                     </table>
                 </div>
             </div>
-            
+
             <div th:if="${proyectos == null or #lists.isEmpty(proyectos)}" class="empty-message">
                 <i class="ti ti-folder-off"></i>
                 <p>No tienes proyectos registrados aún.</p>
-                <p style="font-size:12px; color:var(--text-3); margin-top:4px;">
+                <p style="font-size:12px; color:#8A8A8A; margin-top:4px;">
                     Tus proyectos aparecerán aquí cuando un vendedor los cree desde una cotización aprobada.
                 </p>
                 <a th:href="@{/cliente/dashboard}" class="btn-link" style="margin-top:12px; display:inline-block;">
@@ -624,15 +635,15 @@
         function filtrarProyectos() {
             var estadoFiltro = document.getElementById('estadoFiltro').value;
             var rows = document.querySelectorAll('#tablaProyectos tr');
-            
+
             rows.forEach(function(row) {
                 var estado = row.dataset.estado;
                 var mostrar = true;
-                
+
                 if (estadoFiltro !== 'todos' && estado !== estadoFiltro) {
                     mostrar = false;
                 }
-                
+
                 row.style.display = mostrar ? '' : 'none';
             });
         }

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
+
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -15,11 +15,11 @@
             --yellow-dark: #9A7500;
             --yellow-border: #E0C84A;
             --border: #E2E6EA;
-            --bg: #F5F6F8;
+            --bg: #F8F8F8;
             --card: #FFFFFF;
             --text: #1A1F2E;
             --text-2: #5A6478;
-            --text-3: #9BA5B7;
+            --text-3: #8A8A8A;
             --red: #C0392B;
             --red-light: #FFF0EE;
             --green: #1A7040;
@@ -28,22 +28,22 @@
             --blue-light: #E8F0FE;
             --sidebar-width: 260px;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'DM Sans', 'Segoe UI', Roboto, sans-serif;
+            background: #FFFFFF;
+            color: #1A1F2E;
             display: flex;
             min-height: 100vh;
         }
-        
+
+        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-width);
-            background: var(--card);
-            border-right: 1px solid var(--border);
-            padding: 24px 0;
+            background: #000000;
+            padding: 32px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -52,93 +52,93 @@
             z-index: 100;
             display: flex;
             flex-direction: column;
+            border-right: none;
         }
-        
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
         .sidebar-brand {
-            padding: 0 20px 24px;
-            border-bottom: 1px solid var(--border);
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
             margin-bottom: 20px;
         }
-        
+
         .sidebar-brand h2 {
             font-family: 'Syne', sans-serif;
             font-size: 24px;
             font-weight: 800;
+            color: #FFFFFF;
         }
-        
+
         .sidebar-brand h2 span {
-            color: var(--yellow);
+            color: #F5C400;
         }
-        
+
         .sidebar-brand small {
             display: block;
             font-size: 11px;
-            color: var(--text-3);
+            color: #8A8A8A;
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-top: 4px;
         }
-        
+
         .sidebar-menu {
             list-style: none;
             padding: 0 12px;
             flex: 1;
         }
-        
+
         .sidebar-menu li {
             margin-bottom: 2px;
         }
-        
+
         .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 10px 16px;
             border-radius: 10px;
-            color: var(--text-2);
+            color: #C0C0C0;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
             transition: all 0.15s;
         }
-        
+
         .sidebar-menu li a i {
             font-size: 18px;
             width: 22px;
             text-align: center;
         }
-        
+
         .sidebar-menu li a:hover {
-            background: var(--yellow-light);
-            color: var(--text);
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
         }
-        
+
         .sidebar-menu li a.active {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #F5C400;
+            color: #000000;
             font-weight: 600;
         }
-        
-        .sidebar-menu .menu-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-3);
-            padding: 16px 16px 8px;
-            font-weight: 600;
+
+        .sidebar-menu li a.active i {
+            color: #000000;
         }
-        
+
         .sidebar-footer {
             padding: 16px 20px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #222;
             margin-top: auto;
         }
-        
+
         .sidebar-footer a {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: var(--red);
+            color: #EF4444;
             text-decoration: none;
             font-size: 13px;
             font-weight: 500;
@@ -146,18 +146,20 @@
             border-radius: 8px;
             transition: background 0.15s;
         }
-        
+
         .sidebar-footer a:hover {
-            background: var(--red-light);
+            background: rgba(239, 68, 68, 0.10);
         }
-        
+
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 32px 36px;
+            padding: 32px 40px;
             min-height: 100vh;
+            background: #F8F8F8;
         }
-        
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -166,194 +168,197 @@
             gap: 16px;
             margin-bottom: 28px;
         }
-        
+
         .page-title {
             font-family: 'Syne', sans-serif;
             font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .page-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
             font-size: 28px;
         }
-        
+
         .page-title small {
             font-size: 14px;
             font-weight: 400;
-            color: var(--text-3);
+            color: #6B6B6B;
             font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
-        
+
         .user-info {
-            background: var(--card);
-            padding: 8px 16px;
+            background: #FFFFFF;
+            padding: 8px 20px;
             border-radius: 30px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: #1A1F2E;
         }
-        
+
         .user-info i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .resumen-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 32px;
         }
-        
+
         .resumen-card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             padding: 20px;
             transition: all 0.15s;
         }
-        
+
         .resumen-card:hover {
-            border-color: var(--yellow);
+            border-color: #F5C400;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-        
+
         .resumen-card .label {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-weight: 600;
         }
-        
+
         .resumen-card .value {
             font-family: 'Syne', sans-serif;
             font-size: 26px;
             font-weight: 700;
-            color: var(--text);
+            color: #1A1F2E;
             margin-top: 8px;
         }
-        
-        .resumen-card .value.pendiente { color: var(--red); }
-        .resumen-card .value.pagado { color: var(--green); }
-        .resumen-card .value.total { color: var(--blue); }
-        .resumen-card .value.warning { color: var(--yellow-dark); }
-        
+
+        .resumen-card .value.pendiente { color: #C0392B; }
+        .resumen-card .value.pagado { color: #1A7040; }
+        .resumen-card .value.total { color: #1A56DB; }
+        .resumen-card .value.warning { color: #9A7500; }
+
         .resumen-card .icon {
             float: right;
             font-size: 28px;
             opacity: 0.5;
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .filters {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             margin-bottom: 24px;
-            background: var(--card);
+            background: #FFFFFF;
             padding: 16px 20px;
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             align-items: center;
         }
-        
+
         .filters label {
             font-size: 13px;
             font-weight: 600;
-            color: var(--text-2);
+            color: #5A6478;
         }
-        
+
         .filters select {
             padding: 8px 14px;
             border-radius: 10px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             font-size: 13px;
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background: #F8F8F8;
+            color: #1A1F2E;
             outline: none;
             transition: all 0.15s;
         }
-        
+
         .filters select:focus {
-            border-color: var(--yellow);
+            border-color: #F5C400;
             box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
         }
-        
+
         .section {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             overflow: hidden;
         }
-        
+
         .section-header {
             padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
+            background: #FAFAFA;
         }
-        
+
         .section-title {
             font-family: 'Syne', sans-serif;
             font-size: 18px;
             font-weight: 700;
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .section-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .table-wrapper {
             overflow-x: auto;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
         }
-        
+
         th {
             text-align: left;
             padding: 12px 16px;
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #FAFAFA;
+            color: #3A3A3A;
             font-weight: 600;
             text-transform: uppercase;
             font-size: 11px;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--yellow-border);
+            border-bottom: 1px solid #E8E8E8;
         }
-        
+
         td {
             padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-2);
+            border-bottom: 1px solid #E8E8E8;
+            color: #5A6478;
         }
-        
+
         tr:last-child td {
             border-bottom: none;
         }
-        
+
         tr:hover td {
-            background: var(--yellow-light);
+            background: #FAFAFA;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -361,22 +366,22 @@
             font-size: 11px;
             font-weight: 600;
         }
-        
+
         .status-validado {
-            background: var(--green-light);
-            color: var(--green);
+            background: #EBF7F0;
+            color: #1A7040;
         }
-        
+
         .status-pendiente {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #FFFBE6;
+            color: #9A7500;
         }
-        
+
         .status-rechazado {
-            background: var(--red-light);
-            color: var(--red);
+            background: #FFF0EE;
+            color: #C0392B;
         }
-        
+
         .metodo-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -385,65 +390,67 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            background: var(--bg);
-            color: var(--text-2);
+            background: #F8F8F8;
+            color: #5A6478;
         }
-        
+
         .metodo-badge.efectivo { background: #D1FAE5; color: #047857; }
         .metodo-badge.transferencia { background: #E8F0FE; color: #1A56DB; }
         .metodo-badge.tarjeta { background: #FEF3C7; color: #B45309; }
         .metodo-badge.cheque { background: #FCE4EC; color: #C62828; }
-        
+
         .empty-message {
             text-align: center;
             padding: 48px;
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .empty-message i {
             font-size: 48px;
             margin-bottom: 12px;
             opacity: 0.5;
+            color: #D0D0D0;
         }
-        
+
         .empty-message p {
             font-size: 14px;
         }
-        
+
         .btn-link {
             background: transparent;
             border: none;
-            color: var(--yellow-dark);
+            color: #9A7500;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.15s;
         }
-        
+
         .btn-link:hover {
             text-decoration: underline;
         }
-        
+
         .alert {
             padding: 12px 16px;
             border-radius: 10px;
             margin-bottom: 16px;
             font-size: 13px;
+            border: 1px solid;
         }
-        
+
         .alert-danger {
-            background: var(--red-light);
-            border: 1px solid #FECACA;
-            color: var(--red);
+            background: #FFF0EE;
+            border-color: #FFCDCD;
+            color: #C0392B;
         }
-        
+
         .alert-success {
-            background: var(--green-light);
-            border: 1px solid #A7F3D0;
-            color: var(--green);
+            background: #EBF7F0;
+            border-color: #A7D8BA;
+            color: #1A7040;
         }
-        
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -458,13 +465,13 @@
             align-items: center;
             padding: 24px;
         }
-        
+
         .modal-overlay.active {
             display: flex;
         }
-        
+
         .modal-content {
-            background: var(--card);
+            background: #FFFFFF;
             border-radius: 20px;
             max-width: 500px;
             width: 100%;
@@ -472,124 +479,127 @@
             overflow: hidden;
             animation: modalIn 0.25s ease;
         }
-        
+
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.95) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
-        
+
         .modal-header {
             padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .modal-header h3 {
             font-family: 'Syne', sans-serif;
             font-size: 18px;
             display: flex;
             align-items: center;
             gap: 10px;
+            color: #1A1F2E;
         }
-        
+
         .modal-header h3 i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .modal-close {
             background: none;
             border: none;
             font-size: 28px;
-            color: var(--text-3);
+            color: #8A8A8A;
             cursor: pointer;
             padding: 4px 8px;
             border-radius: 8px;
             transition: all 0.15s;
         }
-        
+
         .modal-close:hover {
-            background: var(--red-light);
-            color: var(--red);
+            background: #FFF0EE;
+            color: #C0392B;
         }
-        
+
         .modal-body {
             padding: 24px;
         }
-        
+
         .modal-body .detalle-item {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             font-size: 14px;
         }
-        
+
         .modal-body .detalle-item:last-child {
             border-bottom: none;
         }
-        
+
         .modal-body .detalle-item .label {
-            color: var(--text-3);
+            color: #8A8A8A;
             font-weight: 500;
         }
-        
+
         .modal-body .detalle-item .value {
-            color: var(--text);
+            color: #1A1F2E;
             font-weight: 600;
         }
-        
+
         .modal-footer {
             padding: 14px 24px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #E8E8E8;
             display: flex;
             justify-content: flex-end;
         }
-        
+
         .modal-footer .btn-cerrar {
             padding: 8px 20px;
             border-radius: 10px;
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             background: transparent;
-            color: var(--text-2);
+            color: #5A6478;
             font-weight: 500;
             font-size: 13px;
             cursor: pointer;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.15s;
         }
-        
+
         .modal-footer .btn-cerrar:hover {
-            background: var(--bg);
+            background: #F8F8F8;
         }
-        
+
         @media (max-width: 1024px) {
             .sidebar { width: 72px; padding: 16px 0; }
-            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu .menu-label, .sidebar-menu li a span { display: none; }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span { display: none; }
             .sidebar-menu li a { justify-content: center; padding: 12px; }
             .sidebar-menu li a i { font-size: 22px; width: auto; }
             .sidebar-footer a span { display: none; }
             .sidebar-footer a { justify-content: center; }
             .main-content { margin-left: 72px; padding: 20px; }
         }
-        
+
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid #222; flex-wrap: wrap; }
             .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
+            .sidebar-brand h2 { font-size: 20px; }
+            .sidebar-brand small { display: block; font-size: 10px; }
             .sidebar-menu { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; flex: 1; }
             .sidebar-menu li { margin-bottom: 0; }
             .sidebar-menu li a { padding: 6px 10px; font-size: 12px; }
             .sidebar-menu li a i { font-size: 16px; }
-            .sidebar-menu .menu-label { display: none; }
+            .sidebar-menu li a span { display: inline; font-size: 11px; }
             .sidebar-footer { border-top: none; padding: 0; margin: 0; }
             .main-content { margin-left: 0; padding: 16px; }
             .header { flex-direction: column; align-items: flex-start; }
             .filters { flex-direction: column; align-items: stretch; }
             .resumen-grid { grid-template-columns: 1fr 1fr; }
         }
-        
+
         @media (max-width: 480px) {
             .resumen-grid { grid-template-columns: 1fr; }
         }
@@ -597,12 +607,13 @@
 </head>
 <body>
 
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-brand">
             <h2>STAMOS<span>.</span></h2>
             <small>Área del Cliente</small>
         </div>
-        
+
         <ul class="sidebar-menu">
             <li><a th:href="@{/cliente/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
             <li><a th:href="@{/cliente/proyectos}"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
@@ -610,7 +621,7 @@
             <li><a th:href="@{/cliente/pagos}" class="active"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
             <li><a th:href="@{/cliente/perfil}"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
         </ul>
-        
+
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
                 <i class="ti ti-logout"></i>
@@ -619,6 +630,7 @@
         </div>
     </aside>
 
+    <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content">
         <div class="header">
             <div class="page-title">
@@ -632,8 +644,8 @@
             </div>
         </div>
 
-        <div th:replace="fragments/mensajes :: mensaje_error"></div>
-        <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
 
         <div class="resumen-grid">
             <div class="resumen-card">
@@ -676,7 +688,7 @@
                 <option value="Pendiente">Pendientes</option>
                 <option value="Rechazado">Rechazados</option>
             </select>
-            
+
             <label for="metodoFiltro">Método:</label>
             <select id="metodoFiltro" onchange="filtrarPagos()">
                 <option value="todos">Todos los métodos</option>
@@ -685,7 +697,7 @@
                 <option value="Tarjeta">Tarjeta</option>
                 <option value="Cheque">Cheque</option>
             </select>
-            
+
             <label for="proyectoFiltro">Proyecto:</label>
             <select id="proyectoFiltro" onchange="filtrarPagos()">
                 <option value="todos">Todos los proyectos</option>
@@ -698,11 +710,11 @@
                 <div class="section-title">
                     <i class="ti ti-list"></i> Registro de Pagos
                 </div>
-                <span style="font-size:12px; color:var(--text-3);">
+                <span style="font-size:12px; color:#8A8A8A;">
                     <i class="ti ti-info-circle"></i> Solo pagos validados se consideran en el saldo
                 </span>
             </div>
-            
+
             <div th:if="${pagos != null and !#lists.isEmpty(pagos)}">
                 <div class="table-wrapper">
                     <table>
@@ -718,7 +730,7 @@
                             </tr>
                         </thead>
                         <tbody id="tablaPagos">
-                            <tr th:each="p : ${pagos}" 
+                            <tr th:each="p : ${pagos}"
                                 th:data-estado="${p.estadoPago}"
                                 th:data-metodo="${p.metodoPago}"
                                 th:data-proyecto="${p.idProyecto}">
@@ -727,14 +739,14 @@
                                 <td th:text="${p.montoFormateado != null ? p.montoFormateado : 'S/ 0.00'}">S/ 0.00</td>
                                 <td th:text="${#temporals.format(p.fechaPago, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
                                 <td>
-                                    <span class="metodo-badge" 
+                                    <span class="metodo-badge"
                                           th:classappend="${p.metodoPago == 'Efectivo'} ? 'efectivo' :
                                                           (p.metodoPago == 'Transferencia' ? 'transferencia' :
                                                           (p.metodoPago == 'Tarjeta' ? 'tarjeta' : 'cheque'))"
                                           th:text="${p.metodoPago}">Transferencia</span>
                                 </td>
                                 <td>
-                                    <span class="status-badge" 
+                                    <span class="status-badge"
                                           th:classappend="${p.estadoPago == 'Validado'} ? 'status-validado' :
                                                           (p.estadoPago == 'Pendiente' ? 'status-pendiente' : 'status-rechazado')"
                                           th:text="${p.estadoPago}">Validado</span>
@@ -749,32 +761,32 @@
                     </table>
                 </div>
             </div>
-            
+
             <div th:if="${pagos == null or #lists.isEmpty(pagos)}" class="empty-message">
                 <i class="ti ti-credit-card-off"></i>
                 <p>No tienes pagos registrados aún.</p>
-                <p style="font-size:12px; color:var(--text-3); margin-top:4px;">
+                <p style="font-size:12px; color:#8A8A8A; margin-top:4px;">
                     Los pagos aparecerán aquí cuando se registren en tus proyectos.
                 </p>
             </div>
         </div>
 
-        <div th:if="${proyectosVencidos != null and !#lists.isEmpty(proyectosVencidos)}" 
-             style="margin-top:24px; background:var(--red-light); border:1px solid #FECACA; border-radius:16px; padding:16px 20px;">
-            <div style="display:flex; align-items:center; gap:12px; color:var(--red);">
+        <div th:if="${proyectosVencidos != null and !#lists.isEmpty(proyectosVencidos)}"
+             style="margin-top:24px; background:#FFF0EE; border:1px solid #FFCDCD; border-radius:16px; padding:16px 20px;">
+            <div style="display:flex; align-items:center; gap:12px; color:#C0392B;">
                 <i class="ti ti-alert-triangle" style="font-size:20px;"></i>
                 <div>
                     <strong>Tienes pagos vencidos</strong>
-                    <span style="display:block; font-size:13px; color:var(--text-2);">
+                    <span style="display:block; font-size:13px; color:#5A6478;">
                         Contacta con el área de ventas para regularizar tus pagos.
                     </span>
                 </div>
             </div>
             <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;">
-                <span th:each="p : ${proyectosVencidos}" 
-                      style="background:white; padding:4px 12px; border-radius:12px; font-size:12px; border:1px solid var(--border);">
+                <span th:each="p : ${proyectosVencidos}"
+                      style="background:white; padding:4px 12px; border-radius:12px; font-size:12px; border:1px solid #E8E8E8;">
                     <span th:text="${p.nombreProyecto}">Proyecto</span>
-                    <span style="color:var(--red); font-weight:600;" th:text="' (' + ${p.diasVencidos} + ' días)'">(0 días)</span>
+                    <span style="color:#C0392B; font-weight:600;" th:text="' (' + ${p.diasVencidos} + ' días)'">(0 días)</span>
                 </span>
             </div>
         </div>
@@ -798,25 +810,25 @@
 
     <script>
         var pagosData = /*[[${pagos}]]*/ [];
-        
+
         function verDetalle(idPago) {
             var pago = pagosData.find(function(p) { return p.idPago === idPago; });
             if (!pago) return;
-            
+
             var modal = document.getElementById('modalDetallePago');
             var body = document.getElementById('modalDetalleBody');
-            
-            var estadoColor = pago.estadoPago === 'Validado' ? 'var(--green)' :
-                               pago.estadoPago === 'Pendiente' ? 'var(--yellow-dark)' : 'var(--red)';
-            
+
+            var estadoColor = pago.estadoPago === 'Validado' ? '#1A7040' :
+                               pago.estadoPago === 'Pendiente' ? '#9A7500' : '#C0392B';
+
             body.innerHTML = '<div class="detalle-item"><span class="label">ID del Pago</span><span class="value">#' + (pago.idPago || 'N/A') + '</span></div>' +
                 '<div class="detalle-item"><span class="label">Proyecto</span><span class="value">' + (pago.nombreProyecto || 'N/A') + '</span></div>' +
-                '<div class="detalle-item"><span class="label">Monto</span><span class="value" style="font-size:18px; color:var(--yellow-dark);">' + (pago.montoFormateado || 'S/ 0.00') + '</span></div>' +
+                '<div class="detalle-item"><span class="label">Monto</span><span class="value" style="font-size:18px; color:#9A7500;">' + (pago.montoFormateado || 'S/ 0.00') + '</span></div>' +
                 '<div class="detalle-item"><span class="label">Fecha</span><span class="value">' + (pago.fechaPago ? new Date(pago.fechaPago).toLocaleDateString('es-PE') : 'N/A') + '</span></div>' +
                 '<div class="detalle-item"><span class="label">Método de Pago</span><span class="value">' + (pago.metodoPago || 'N/A') + '</span></div>' +
                 '<div class="detalle-item"><span class="label">Estado</span><span class="value" style="color:' + estadoColor + '; font-weight:700;">' + (pago.estadoPago || 'N/A') + '</span></div>' +
-                (pago.observaciones ? '<div class="detalle-item"><span class="label">Observaciones</span><span class="value" style="font-weight:400; color:var(--text-2);">' + pago.observaciones + '</span></div>' : '');
-            
+                (pago.observaciones ? '<div class="detalle-item"><span class="label">Observaciones</span><span class="value" style="font-weight:400; color:#5A6478;">' + pago.observaciones + '</span></div>' : '');
+
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -838,16 +850,16 @@
             var estadoFiltro = document.getElementById('estadoFiltro').value;
             var metodoFiltro = document.getElementById('metodoFiltro').value;
             var proyectoFiltro = document.getElementById('proyectoFiltro').value;
-            
+
             var rows = document.querySelectorAll('#tablaPagos tr');
-            
+
             rows.forEach(function(row) {
                 var estado = row.dataset.estado;
                 var metodo = row.dataset.metodo;
                 var proyecto = row.dataset.proyecto;
-                
+
                 var mostrar = true;
-                
+
                 if (estadoFiltro !== 'todos' && estado !== estadoFiltro) {
                     mostrar = false;
                 }
@@ -857,7 +869,7 @@
                 if (proyectoFiltro !== 'todos' && proyecto !== proyectoFiltro) {
                     mostrar = false;
                 }
-                
+
                 row.style.display = mostrar ? '' : 'none';
             });
         }

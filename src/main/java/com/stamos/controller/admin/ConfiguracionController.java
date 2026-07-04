@@ -31,7 +31,9 @@ public class ConfiguracionController extends BaseController {
     @Autowired
     private ClienteService clienteService;
 
-
+    // ================================
+    // LISTAR TODOS LOS PARÁMETROS
+    // ================================
     @GetMapping
     public String listarConfiguraciones(Model model) {
         try {
@@ -45,6 +47,67 @@ public class ConfiguracionController extends BaseController {
         }
     }
 
+    // ================================
+    // MOSTRAR FORMULARIO PARA NUEVO PARÁMETRO
+    // ================================
+    @GetMapping("/nuevo")
+    public String mostrarFormularioNuevo(Model model) {
+        try {
+            model.addAttribute("configuracion", new ConfiguracionSistema());
+            model.addAttribute("titulo", "Nuevo Parámetro");
+            model.addAttribute("accion", "crear");
+            addCommonAttributes(model);
+            return "admin/configuracion/nuevo";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
+            return "redirect:/admin/configuracion";
+        }
+    }
+
+    // ================================
+    // CREAR NUEVO PARÁMETRO
+    // ================================
+    @PostMapping("/crear")
+    @Auditable
+    public String crearConfiguracion(@Valid @ModelAttribute("configuracion") ConfiguracionSistema config,
+                                     BindingResult result,
+                                     Authentication auth,
+                                     RedirectAttributes redirectAttributes) {
+        try {
+            if (result.hasErrors()) {
+                redirectAttributes.addFlashAttribute("error", "Por favor, corrige los errores en el formulario.");
+                return "redirect:/admin/configuracion/nuevo";
+            }
+
+            Usuario usuarioAdmin = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuarioAdmin == null) {
+                redirectAttributes.addFlashAttribute("error", "Usuario administrador no encontrado.");
+                return "redirect:/admin/configuracion/nuevo";
+            }
+
+            if (configuracionService.existsByParametro(config.getParametro())) {
+                redirectAttributes.addFlashAttribute("error", "Ya existe un parámetro con el nombre: " + config.getParametro());
+                return "redirect:/admin/configuracion/nuevo";
+            }
+
+            config.setFechaActualizacion(LocalDateTime.now());
+            config.setIdUsuarioActualiza(usuarioAdmin.getIdUsuario());
+
+            configuracionService.crear(config, usuarioAdmin.getIdUsuario());
+
+            redirectAttributes.addFlashAttribute("mensaje", "Parámetro creado exitosamente.");
+            redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
+            return "redirect:/admin/configuracion";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al crear el parámetro: " + e.getMessage());
+            return "redirect:/admin/configuracion/nuevo";
+        }
+    }
+
+    // ================================
+    // EDITAR PARÁMETRO
+    // ================================
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         try {
@@ -55,6 +118,7 @@ public class ConfiguracionController extends BaseController {
             }
             model.addAttribute("configuracion", config);
             model.addAttribute("titulo", "Editar Configuración");
+            model.addAttribute("accion", "editar");
             addCommonAttributes(model);
             return "admin/configuracion/editar";
         } catch (Exception e) {
@@ -62,7 +126,6 @@ public class ConfiguracionController extends BaseController {
             return "redirect:/admin/configuracion";
         }
     }
-
 
     @PostMapping("/actualizar/{id}")
     @Auditable
@@ -112,41 +175,42 @@ public class ConfiguracionController extends BaseController {
         }
     }
 
-    @PostMapping("/editar-rapido/{id}")
-    @ResponseBody
+    // ================================
+    // RESTAURAR VALOR POR DEFECTO
+    // ================================
+    @PostMapping("/restaurar/{id}")
     @Auditable
-    public String editarRapido(@PathVariable Integer id,
-                               @RequestParam("valor") String valor,
-                               Authentication auth) {
+    public String restaurarValorPorDefecto(@PathVariable Integer id,
+                                           Authentication auth,
+                                           RedirectAttributes redirectAttributes) {
         try {
             ConfiguracionSistema config = configuracionService.findById(id);
             if (config == null) {
-                return "ERROR: Parámetro no encontrado";
+                redirectAttributes.addFlashAttribute("error", "Parámetro de configuración no encontrado.");
+                return "redirect:/admin/configuracion";
             }
 
             Usuario usuarioAdmin = clienteService.findUsuarioByEmail(auth.getName());
             if (usuarioAdmin == null) {
-                return "ERROR: Usuario no autorizado";
+                redirectAttributes.addFlashAttribute("error", "Usuario administrador no encontrado.");
+                return "redirect:/admin/configuracion";
             }
 
-            boolean valido = configuracionService.validarValor(config.getTipoDato(), valor);
-            if (!valido) {
-                return "ERROR: El valor no es válido para el tipo " + config.getTipoDato();
-            }
+            configuracionService.restaurarValorPorDefecto(id, usuarioAdmin.getIdUsuario());
 
-            config.setValor(valor);
-            config.setIdUsuarioActualiza(usuarioAdmin.getIdUsuario());
-            config.setFechaActualizacion(LocalDateTime.now());
-            configuracionService.update(config);
-
-            return "SUCCESS: Configuración actualizada correctamente";
+            redirectAttributes.addFlashAttribute("mensaje", "Configuración restaurada a su valor por defecto.");
+            redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
+            return "redirect:/admin/configuracion";
 
         } catch (Exception e) {
-            return "ERROR: " + e.getMessage();
+            redirectAttributes.addFlashAttribute("error", "Error al restaurar la configuración: " + e.getMessage());
+            return "redirect:/admin/configuracion";
         }
     }
 
-
+    // ================================
+    // ENDPOINTS AJAX
+    // ================================
     @GetMapping("/valor")
     @ResponseBody
     public String obtenerValor(@RequestParam("parametro") String parametro) {
@@ -200,37 +264,6 @@ public class ConfiguracionController extends BaseController {
         }
     }
 
-    @PostMapping("/restaurar/{id}")
-    @Auditable
-    public String restaurarValorPorDefecto(@PathVariable Integer id,
-                                           Authentication auth,
-                                           RedirectAttributes redirectAttributes) {
-        try {
-            ConfiguracionSistema config = configuracionService.findById(id);
-            if (config == null) {
-                redirectAttributes.addFlashAttribute("error", "Parámetro de configuración no encontrado.");
-                return "redirect:/admin/configuracion";
-            }
-
-            Usuario usuarioAdmin = clienteService.findUsuarioByEmail(auth.getName());
-            if (usuarioAdmin == null) {
-                redirectAttributes.addFlashAttribute("error", "Usuario administrador no encontrado.");
-                return "redirect:/admin/configuracion";
-            }
-
-            configuracionService.restaurarValorPorDefecto(id, usuarioAdmin.getIdUsuario());
-
-            redirectAttributes.addFlashAttribute("mensaje", "Configuración restaurada a su valor por defecto.");
-            redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            return "redirect:/admin/configuracion";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al restaurar la configuración: " + e.getMessage());
-            return "redirect:/admin/configuracion";
-        }
-    }
-
-
     @GetMapping("/existe")
     @ResponseBody
     public boolean existeParametro(@RequestParam("parametro") String parametro) {
@@ -263,12 +296,11 @@ public class ConfiguracionController extends BaseController {
         }
     }
 
-
+    // ================================
+    // MÉTODOS AUXILIARES
+    // ================================
     public String formatearValor(String valor, String tipoDato) {
-        if (valor == null || tipoDato == null) {
-            return valor;
-        }
-
+        if (valor == null || tipoDato == null) return valor;
         return switch (tipoDato) {
             case "DECIMAL" -> {
                 try {
@@ -286,7 +318,6 @@ public class ConfiguracionController extends BaseController {
 
     public String getTipoDatoClass(String tipoDato) {
         if (tipoDato == null) return "badge-secondary";
-
         return switch (tipoDato) {
             case "DECIMAL" -> "badge-info";
             case "STRING" -> "badge-primary";

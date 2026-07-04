@@ -23,7 +23,7 @@ public abstract class BaseController {
     @Autowired
     private UsuarioService usuarioService;
 
-
+    // ===== MÉTODOS DE FORMATEO =====
     protected String formatearFecha(LocalDate fecha) {
         if (fecha == null) return "-";
         return fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -75,11 +75,13 @@ public abstract class BaseController {
         };
     }
 
+    // ===== ATRIBUTOS COMUNES PARA TODAS LAS VISTAS =====
     protected void addCommonAttributes(Model model) {
-        model.addAttribute("fechaActual", LocalDateTime.now());
+        model.addAttribute("fechaActual", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         model.addAttribute("anioActual", LocalDateTime.now().getYear());
     }
 
+    // ===== OBTENER ROL DEL USUARIO AUTENTICADO =====
     @ModelAttribute("rolUsuario")
     public String getRolUsuario() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -88,42 +90,48 @@ public abstract class BaseController {
         }
         try {
             Usuario usuario = usuarioService.findByEmail(auth.getName());
-            return usuario != null ? usuario.getNombreRol() : "ANONIMO";
+            if (usuario != null && usuario.getNombreRol() != null) {
+                // Normalizar: si el rol es "Administrador" (con tilde) lo convertimos a "ADMINISTRADOR"
+                String rol = usuario.getNombreRol().toUpperCase().replace(" ", "_");
+                return rol;
+            }
+            return "ANONIMO";
         } catch (Exception e) {
             return "ANONIMO";
         }
     }
 
+    // ===== MENÚ DINÁMICO SEGÚN ROL =====
     @ModelAttribute("menuItems")
     public List<MenuItem> getMenuItems() {
         String rol = getRolUsuario();
         List<MenuItem> items = new ArrayList<>();
 
-        items.add(new MenuItem("Dashboard", "/admin/dashboard", "ti ti-layout-dashboard"));
+        items.add(new MenuItem("Dashboard", "/admin/dashboard", "bi bi-layout-dashboard"));
 
-        if ("Administrador".equals(rol) || "Vendedor".equals(rol)) {
-            items.add(new MenuItem("Clientes", "/admin/clientes", "ti ti-users"));
-            items.add(new MenuItem("Cotizaciones", "/admin/cotizaciones", "ti ti-file-invoice"));
-            items.add(new MenuItem("Pagos", "/admin/pagos", "ti ti-credit-card"));
+        if ("ADMINISTRADOR".equals(rol) || "VENDEDOR".equals(rol)) {
+            items.add(new MenuItem("Clientes", "/admin/clientes", "bi bi-people"));
+            items.add(new MenuItem("Cotizaciones", "/admin/cotizaciones", "bi bi-file-earmark-text"));
+            items.add(new MenuItem("Pagos", "/admin/pagos", "bi bi-credit-card"));
         }
 
-        if (!"Cliente".equals(rol) && !"ANONIMO".equals(rol)) {
-            items.add(new MenuItem("Proyectos", "/admin/proyectos", "ti ti-folder-open"));
+        if (!"CLIENTE".equals(rol) && !"ANONIMO".equals(rol)) {
+            items.add(new MenuItem("Proyectos", "/admin/proyectos", "bi bi-folder-open"));
         }
 
-        if ("Administrador".equals(rol) || "Producción".equals(rol) || "Soporte Técnico".equals(rol)) {
-            items.add(new MenuItem("Inventario", "/admin/inventario", "ti ti-box"));
+        if ("ADMINISTRADOR".equals(rol) || "PRODUCCION".equals(rol) || "SOPORTE_TECNICO".equals(rol)) {
+            items.add(new MenuItem("Inventario", "/admin/inventario", "bi bi-box"));
         }
 
-        if ("Administrador".equals(rol)) {
-            items.add(new MenuItem("Configuración", "/admin/configuracion", "ti ti-settings"));
-            items.add(new MenuItem("Usuarios", "/admin/usuarios", "ti ti-user-cog"));
+        if ("ADMINISTRADOR".equals(rol)) {
+            items.add(new MenuItem("Configuración", "/admin/configuracion", "bi bi-gear"));
+            items.add(new MenuItem("Usuarios", "/admin/usuarios", "bi bi-person-gear"));
         }
 
         return items;
     }
 
-  
+    // ===== RUTA ACTUAL PARA DESTACAR EL ENLACE =====
     @ModelAttribute("currentPath")
     public String getCurrentPath(HttpServletRequest request) {
         return request.getRequestURI();

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Proyecto · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
+
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -30,26 +30,138 @@
             --orange-light: #FEF3C7;
             --purple: #7C3AED;
             --purple-light: #EDE9FE;
+            --sidebar-width: 260px;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
+            background: #F8F8F8;
             color: var(--text);
-            padding: 40px 24px;
+            display: flex;
+            min-height: 100vh;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--card);
-            border-radius: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-            padding: 32px;
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #000000;
+            padding: 32px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            border-right: none;
         }
-        
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .sidebar-brand h2 span {
+            color: #F5C400;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: #8A8A8A;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: #C0C0C0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a:hover {
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
+        }
+
+        .sidebar-menu li a.active {
+            background: #F5C400;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li a.active i {
+            color: #000000;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #222;
+            margin-top: auto;
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #EF4444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(239, 68, 68, 0.10);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+            min-height: 100vh;
+            background: #F8F8F8;
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -58,34 +170,50 @@
             gap: 16px;
             margin-bottom: 28px;
         }
-        
+
         .page-title {
             font-family: 'Syne', sans-serif;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #000000;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .page-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
             font-size: 28px;
         }
-        
+
         .page-title small {
             font-size: 14px;
             font-weight: 400;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
-        
+
+        .user-info {
+            background: #FFFFFF;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid #E8E8E8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1A1F2E;
+        }
+
+        .user-info i {
+            color: #F5C400;
+        }
+
         .btn-secondary {
             background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-2);
+            border: 1px solid #E2E6EA;
+            color: #5A6478;
             padding: 8px 16px;
             border-radius: 10px;
             font-size: 13px;
@@ -98,14 +226,14 @@
             gap: 8px;
             transition: all 0.15s;
         }
-        
+
         .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+            border-color: #F5C400;
+            color: #9A7500;
         }
-        
+
         .btn-primary {
-            background: var(--yellow);
+            background: #F5C400;
             border: none;
             color: #2A1800;
             padding: 10px 20px;
@@ -120,13 +248,13 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-primary:hover {
-            background: var(--yellow-mid);
+            background: #FFE566;
         }
-        
+
         .btn-success {
-            background: var(--green);
+            background: #1A7040;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -140,13 +268,13 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-success:hover {
             background: #155D34;
         }
-        
+
         .btn-danger {
-            background: var(--red);
+            background: #C0392B;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -160,30 +288,33 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-danger:hover {
             background: #a71d2a;
         }
-        
+
         .alert {
             padding: 12px 16px;
             border-radius: 10px;
             margin-bottom: 16px;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
         .alert-danger {
-            background: var(--red-light);
+            background: #FFF0EE;
             border: 1px solid #FECACA;
-            color: var(--red);
+            color: #C0392B;
         }
-        
+
         .alert-success {
-            background: var(--green-light);
+            background: #EBF7F0;
             border: 1px solid #A7F3D0;
-            color: var(--green);
+            color: #1A7040;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -191,20 +322,20 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
-        .status-aprobado { background: var(--blue-light); color: var(--blue); }
-        .status-diseno { background: var(--orange-light); color: var(--orange); }
-        .status-produccion { background: var(--blue-light); color: var(--blue); }
-        .status-instalacion { background: var(--purple-light); color: var(--purple); }
-        .status-entregado { background: var(--green-light); color: var(--green); }
-        .status-anulado { background: var(--red-light); color: var(--red); }
-        .status-pago-validado { background: var(--green-light); color: var(--green); }
-        .status-pago-pendiente { background: var(--yellow-light); color: var(--yellow-dark); }
-        .status-pago-rechazado { background: var(--red-light); color: var(--red); }
-        
+
+        .status-aprobado { background: #E8F0FE; color: #1A56DB; }
+        .status-diseno { background: #FEF3C7; color: #D97706; }
+        .status-produccion { background: #E8F0FE; color: #1A56DB; }
+        .status-instalacion { background: #EDE9FE; color: #7C3AED; }
+        .status-entregado { background: #EBF7F0; color: #1A7040; }
+        .status-anulado { background: #FFF0EE; color: #C0392B; }
+        .status-pago-validado { background: #EBF7F0; color: #1A7040; }
+        .status-pago-pendiente { background: #FFFBE6; color: #9A7500; }
+        .status-pago-rechazado { background: #FFF0EE; color: #C0392B; }
+
         .proyecto-header {
-            background: var(--yellow-light);
-            border: 1px solid var(--yellow-border);
+            background: #FFFBE6;
+            border: 1px solid #E0C84A;
             border-radius: 16px;
             padding: 20px 24px;
             margin-bottom: 24px;
@@ -212,39 +343,40 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
         }
-        
+
         .proyecto-header .item .label {
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-weight: 600;
         }
-        
+
         .proyecto-header .item .value {
             font-size: 15px;
             font-weight: 600;
-            color: var(--text);
+            color: #1A1F2E;
             margin-top: 4px;
         }
-        
+
         .section {
-            border: 1px solid var(--border);
+            border: 1px solid #E8E8E8;
             border-radius: 16px;
             overflow: hidden;
             margin-bottom: 24px;
+            background: #FFFFFF;
         }
-        
+
         .section-header {
             padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
         }
-        
+
         .section-title {
             font-family: 'Syne', sans-serif;
             font-size: 16px;
@@ -252,78 +384,79 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            color: #000000;
         }
-        
+
         .section-title i {
-            color: var(--yellow-dark);
+            color: #F5C400;
         }
-        
+
         .section-body {
             padding: 16px 20px;
         }
-        
+
         .table-wrapper {
             overflow-x: auto;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
         }
-        
+
         th {
             text-align: left;
             padding: 10px 14px;
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #FFFBE6;
+            color: #9A7500;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--yellow-border);
+            border-bottom: 1px solid #E0C84A;
         }
-        
+
         td {
             padding: 10px 14px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-2);
+            border-bottom: 1px solid #E8E8E8;
+            color: #5A6478;
         }
-        
+
         tr:last-child td {
             border-bottom: none;
         }
-        
+
         .detail-row {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #E8E8E8;
             font-size: 13px;
         }
-        
+
         .detail-row:last-child {
             border-bottom: none;
         }
-        
+
         .detail-row .label {
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .detail-row .value {
-            color: var(--text);
+            color: #1A1F2E;
             font-weight: 500;
         }
-        
+
         .action-buttons {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             margin-top: 16px;
         }
-        
+
         .btn-icon {
             background: transparent;
-            border: 1px solid var(--border);
+            border: 1px solid #E2E6EA;
             border-radius: 6px;
             padding: 6px 12px;
             cursor: pointer;
@@ -333,24 +466,24 @@
             align-items: center;
             gap: 5px;
             transition: all 0.15s;
-            color: var(--text-2);
+            color: #5A6478;
             font-family: 'DM Sans', sans-serif;
         }
-        
+
         .btn-icon:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+            border-color: #F5C400;
+            color: #9A7500;
         }
-        
-        .btn-icon.azul:hover { border-color: var(--blue); color: var(--blue); }
-        .btn-icon.verde:hover { border-color: var(--green); color: var(--green); }
-        .btn-icon.rojo:hover { border-color: var(--red); color: var(--red); }
-        
+
+        .btn-icon.azul:hover { border-color: #1A56DB; color: #1A56DB; }
+        .btn-icon.verde:hover { border-color: #1A7040; color: #1A7040; }
+        .btn-icon.rojo:hover { border-color: #C0392B; color: #C0392B; }
+
         .timeline {
             position: relative;
             padding-left: 20px;
         }
-        
+
         .timeline::before {
             content: '';
             position: absolute;
@@ -358,19 +491,19 @@
             top: 8px;
             bottom: 8px;
             width: 2px;
-            background: var(--border);
+            background: #E8E8E8;
         }
-        
+
         .timeline-item {
             position: relative;
             padding-bottom: 16px;
             padding-left: 20px;
         }
-        
+
         .timeline-item:last-child {
             padding-bottom: 0;
         }
-        
+
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -379,385 +512,528 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: var(--yellow);
-            border: 2px solid var(--card);
+            background: #F5C400;
+            border: 2px solid #FFFFFF;
         }
-        
+
         .timeline-item .estado {
             font-weight: 600;
             font-size: 14px;
         }
-        
+
         .timeline-item .fecha {
             font-size: 12px;
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .timeline-item .usuario {
             font-size: 12px;
-            color: var(--text-2);
+            color: #5A6478;
         }
-        
+
         .timeline-item .comentario {
             font-size: 12px;
-            color: var(--text-2);
+            color: #5A6478;
             margin-top: 4px;
             padding: 8px 12px;
-            background: var(--bg);
+            background: #F5F6F8;
             border-radius: 8px;
         }
-        
+
         .empty-message {
             text-align: center;
             padding: 24px;
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .empty-message i {
             font-size: 32px;
             margin-bottom: 8px;
             opacity: 0.5;
         }
-        
+
         .resumen-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
         }
-        
+
         .resumen-item {
             text-align: center;
             padding: 12px;
-            background: var(--bg);
+            background: #F5F6F8;
             border-radius: 10px;
         }
-        
+
         .resumen-item .valor {
             font-family: 'Syne', sans-serif;
             font-size: 20px;
             font-weight: 700;
         }
-        
-        .resumen-item .valor.total { color: var(--blue); }
-        .resumen-item .valor.pagado { color: var(--green); }
-        .resumen-item .valor.pendiente { color: var(--red); }
-        
+
+        .resumen-item .valor.total { color: #1A56DB; }
+        .resumen-item .valor.pagado { color: #1A7040; }
+        .resumen-item .valor.pendiente { color: #C0392B; }
+
         .resumen-item .label {
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--text-3);
+            color: #8A8A8A;
             font-weight: 600;
             margin-top: 2px;
         }
-        
+
         .progress-bar {
             height: 6px;
-            background: var(--bg);
+            background: #F5F6F8;
             border-radius: 4px;
             overflow: hidden;
             margin-top: 8px;
         }
-        
+
         .progress-bar .fill {
             height: 100%;
-            background: var(--yellow);
+            background: #F5C400;
             border-radius: 4px;
             transition: width 0.5s;
         }
-        
+
         .documento-item {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 8px 12px;
-            background: var(--bg);
+            background: #F5F6F8;
             border-radius: 8px;
             text-decoration: none;
-            color: var(--text-2);
+            color: #5A6478;
             transition: all 0.15s;
         }
-        
+
         .documento-item:hover {
-            background: var(--yellow-light);
-            color: var(--yellow-dark);
+            background: #FFFBE6;
+            color: #9A7500;
         }
-        
+
         .documento-item i {
             font-size: 18px;
-            color: var(--yellow-dark);
+            color: #9A7500;
         }
-        
+
         .documento-item .info {
             flex: 1;
         }
-        
+
         .documento-item .info .nombre {
             font-size: 13px;
             font-weight: 500;
         }
-        
+
         .documento-item .info .tipo {
             font-size: 11px;
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 0;
+            }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
-            body { padding: 20px; }
-            .container { padding: 20px; }
-            .proyecto-header { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: flex-start; }
-            .action-buttons { flex-direction: column; }
-            .action-buttons .btn { width: 100%; justify-content: center; }
-            .resumen-grid { grid-template-columns: 1fr 1fr; }
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-brand h2 {
+                font-size: 20px;
+            }
+            .sidebar-brand small {
+                display: block;
+                font-size: 10px;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu li a span {
+                display: inline;
+                font-size: 11px;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .proyecto-header {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .resumen-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
-        
+
         @media (max-width: 480px) {
-            .resumen-grid { grid-template-columns: 1fr; }
+            .resumen-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="page-title">
-            <i class="ti ti-folder"></i>
-            <span>Detalle del Proyecto</span>
-            <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Administración</small>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a th:href="@{/admin/proyectos}" class="btn-secondary">
-                <i class="ti ti-arrow-left"></i> Volver
+
+        <ul class="sidebar-menu">
+            <li th:each="item : ${menuItems}">
+                <a th:href="${item.url}" 
+                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
+                    <i th:class="${item.icon}"></i>
+                    <span th:text="${item.label}"></span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Cerrar Sesión</span>
             </a>
         </div>
-    </div>
+    </aside>
 
-    <div th:replace="fragments/mensajes :: mensaje_error"></div>
-    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+    <main class="main-content">
 
-    <div class="proyecto-header">
-        <div class="item">
-            <div class="label">Proyecto</div>
-            <div class="value" th:text="${proyecto != null ? proyecto.nombreProyecto : '—'}">—</div>
-        </div>
-        <div class="item">
-            <div class="label">Código</div>
-            <div class="value" th:text="${proyecto != null ? proyecto.codigoProyecto : '—'}">—</div>
-        </div>
-        <div class="item">
-            <div class="label">Cliente</div>
-            <div class="value" th:text="${proyecto != null ? proyecto.nombreCliente : '—'}">—</div>
-        </div>
-        <div class="item">
-            <div class="label">Estado</div>
-            <div class="value">
-                <span class="status-badge" 
-                      th:classappend="${proyecto != null and proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
-                                      (proyecto != null and proyecto.estado == 'En Diseño' ? 'status-diseno' : 
-                                      (proyecto != null and proyecto.estado == 'En Producción' ? 'status-produccion' : 
-                                      (proyecto != null and proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
-                                      (proyecto != null and proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
-                      th:text="${proyecto != null ? proyecto.estado : '—'}">Aprobado</span>
+        <div class="header">
+            <div class="page-title">
+                <i class="bi bi-folder"></i>
+                <span>Detalle del Proyecto</span>
+                <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
+            </div>
+            <div class="user-info">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${username}">Administrador</span>
+                <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
         </div>
-        <div class="item">
-            <div class="label">Monto Total</div>
-            <div class="value" style="color:var(--yellow-dark);" th:text="${proyecto != null ? proyecto.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</div>
-        </div>
-        <div class="item" th:if="${proyecto != null and proyecto.fechaInicio != null}">
-            <div class="label">Fecha Inicio</div>
-            <div class="value" th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">—</div>
-        </div>
-    </div>
 
-    <div class="section">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-wallet"></i> Resumen Financiero
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+        <div class="proyecto-header">
+            <div class="item">
+                <div class="label">Proyecto</div>
+                <div class="value" th:text="${proyecto != null ? proyecto.nombreProyecto : '—'}">—</div>
             </div>
-        </div>
-        <div class="section-body">
-            <div class="resumen-grid">
-                <div class="resumen-item">
-                    <div class="valor total" th:text="${proyecto != null ? proyecto.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</div>
-                    <div class="label">Total</div>
-                </div>
-                <div class="resumen-item">
-                    <div class="valor pagado" th:text="${totalPagadoFormateado != null ? totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</div>
-                    <div class="label">Pagado</div>
-                </div>
-                <div class="resumen-item">
-                    <div class="valor pendiente" th:text="${saldoPendienteFormateado != null ? saldoPendienteFormateado : 'S/ 0.00'}">S/ 0.00</div>
-                    <div class="label">Pendiente</div>
+            <div class="item">
+                <div class="label">Código</div>
+                <div class="value" th:text="${proyecto != null ? proyecto.codigoProyecto : '—'}">—</div>
+            </div>
+            <div class="item">
+                <div class="label">Cliente</div>
+                <div class="value" th:text="${proyecto != null ? proyecto.nombreCliente : '—'}">—</div>
+            </div>
+            <div class="item">
+                <div class="label">Estado</div>
+                <div class="value">
+                    <span class="status-badge" 
+                          th:classappend="${proyecto != null and proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
+                                          (proyecto != null and proyecto.estado == 'En Diseño' ? 'status-diseno' : 
+                                          (proyecto != null and proyecto.estado == 'En Producción' ? 'status-produccion' : 
+                                          (proyecto != null and proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                          (proyecto != null and proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
+                          th:text="${proyecto != null ? proyecto.estado : '—'}">Aprobado</span>
                 </div>
             </div>
-            <div style="margin-top: 12px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-3);">
-                    <span>Progreso de pago</span>
-                    <span th:text="${porcentajePagado != null ? porcentajePagado + '%' : '0%'}">0%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="fill" th:style="'width:' + ${porcentajePagado != null ? porcentajePagado : 0} + '%;'"></div>
-                </div>
+            <div class="item">
+                <div class="label">Monto Total</div>
+                <div class="value" style="color:#9A7500;" th:text="${proyecto != null ? proyecto.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</div>
+            </div>
+            <div class="item" th:if="${proyecto != null and proyecto.fechaInicio != null}">
+                <div class="label">Fecha Inicio</div>
+                <div class="value" th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">—</div>
             </div>
         </div>
-    </div>
 
-    <div class="section" th:if="${cotizacion != null}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-file-invoice"></i> Detalles de la Cotización
-            </div>
-            <span style="font-size:12px; color:var(--text-3);">
-                <i class="ti ti-file"></i> 
-                <span th:text="${cotizacion.codigoCotizacion != null ? cotizacion.codigoCotizacion : 'COT-' + #strings.leftPad(cotizacion.idCotizacion, 5, '0')}">COT-00000</span>
-            </span>
-        </div>
-        <div class="section-body">
-            <div class="detail-row">
-                <span class="label">Subtotal</span>
-                <span class="value" th:text="${cotizacion.subtotalFormateado != null ? cotizacion.subtotalFormateado : 'S/ 0.00'}">S/ 0.00</span>
-            </div>
-            <div class="detail-row">
-                <span class="label">IGV (<span th:text="${cotizacion.tasaIgv != null ? cotizacion.tasaIgv : 18}">18</span>%)</span>
-                <span class="value" th:text="${cotizacion.igvFormateado != null ? cotizacion.igvFormateado : 'S/ 0.00'}">S/ 0.00</span>
-            </div>
-            <div class="detail-row">
-                <span class="label">Total</span>
-                <span class="value" style="font-weight:700; color:var(--yellow-dark); font-size:16px;" 
-                      th:text="${cotizacion.totalFormateado != null ? cotizacion.totalFormateado : 'S/ 0.00'}">S/ 0.00</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="section" th:if="${detallesCotizacion != null and !#lists.isEmpty(detallesCotizacion)}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-list"></i> Productos y Servicios
-            </div>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio Unitario</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="detalle : ${detallesCotizacion}">
-                        <td th:text="${detalle.nombreProducto}">—</td>
-                        <td th:text="${detalle.cantidad}">0</td>
-                        <td th:text="${detalle.precioUnitarioFormateado != null ? detalle.precioUnitarioFormateado : 'S/ 0.00'}">S/ 0.00</td>
-                        <td th:text="${detalle.subtotalFormateado != null ? detalle.subtotalFormateado : 'S/ 0.00'}">S/ 0.00</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="section" th:if="${documentos != null and !#lists.isEmpty(documentos)}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-file-text"></i> Documentos del Proyecto
-            </div>
-            <a th:href="@{/admin/documentos(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary" style="font-size:12px;">
-                Ver todos <i class="ti ti-arrow-right"></i>
-            </a>
-        </div>
-        <div class="section-body">
-            <div th:each="doc : ${documentos}" class="documento-item" style="margin-bottom: 8px;">
-                <i th:if="${doc.tipoDocumento == 'Render'}" class="ti ti-photo"></i>
-                <i th:if="${doc.tipoDocumento == 'Plano'}" class="ti ti-ruler-2"></i>
-                <i th:if="${doc.tipoDocumento == 'Boceto'}" class="ti ti-pencil"></i>
-                <i th:if="${doc.tipoDocumento == 'Contrato'}" class="ti ti-file-contract"></i>
-                <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="ti ti-file"></i>
-                <div class="info">
-                    <div class="nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
-                    <div class="tipo" th:text="${doc.tipoDocumento} + ' · ' + ${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">Render · 01/01/2024</div>
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-wallet"></i> Resumen Financiero
                 </div>
-                <a th:href="@{/admin/documentos/ver/{id}(id=${doc.idDocumento})}" class="btn-icon azul" target="_blank">
-                    <i class="ti ti-eye"></i>
+            </div>
+            <div class="section-body">
+                <div class="resumen-grid">
+                    <div class="resumen-item">
+                        <div class="valor total" th:text="${proyecto != null ? proyecto.montoTotalFormateado : 'S/ 0.00'}">S/ 0.00</div>
+                        <div class="label">Total</div>
+                    </div>
+                    <div class="resumen-item">
+                        <div class="valor pagado" th:text="${totalPagadoFormateado != null ? totalPagadoFormateado : 'S/ 0.00'}">S/ 0.00</div>
+                        <div class="label">Pagado</div>
+                    </div>
+                    <div class="resumen-item">
+                        <div class="valor pendiente" th:text="${saldoPendienteFormateado != null ? saldoPendienteFormateado : 'S/ 0.00'}">S/ 0.00</div>
+                        <div class="label">Pendiente</div>
+                    </div>
+                </div>
+                <div style="margin-top: 12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:#8A8A8A;">
+                        <span>Progreso de pago</span>
+                        <span th:text="${porcentajePagado != null ? porcentajePagado + '%' : '0%'}">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="fill" th:style="'width:' + ${porcentajePagado != null ? porcentajePagado : 0} + '%;'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${cotizacion != null}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-file-earmark"></i> Detalles de la Cotización
+                </div>
+                <span style="font-size:12px; color:#8A8A8A;">
+                    <i class="bi bi-file"></i> 
+                    <span th:text="${cotizacion.codigoCotizacion != null ? cotizacion.codigoCotizacion : 'COT-' + #strings.leftPad(cotizacion.idCotizacion, 5, '0')}">COT-00000</span>
+                </span>
+            </div>
+            <div class="section-body">
+                <div class="detail-row">
+                    <span class="label">Subtotal</span>
+                    <span class="value" th:text="${cotizacion.subtotalFormateado != null ? cotizacion.subtotalFormateado : 'S/ 0.00'}">S/ 0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">IGV (<span th:text="${cotizacion.tasaIgv != null ? cotizacion.tasaIgv : 18}">18</span>%)</span>
+                    <span class="value" th:text="${cotizacion.igvFormateado != null ? cotizacion.igvFormateado : 'S/ 0.00'}">S/ 0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Total</span>
+                    <span class="value" style="font-weight:700; color:#9A7500; font-size:16px;" 
+                          th:text="${cotizacion.totalFormateado != null ? cotizacion.totalFormateado : 'S/ 0.00'}">S/ 0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${detallesCotizacion != null and !#lists.isEmpty(detallesCotizacion)}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-list"></i> Productos y Servicios
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="detalle : ${detallesCotizacion}">
+                            <td th:text="${detalle.nombreProducto}">—</td>
+                            <td th:text="${detalle.cantidad}">0</td>
+                            <td th:text="${detalle.precioUnitarioFormateado != null ? detalle.precioUnitarioFormateado : 'S/ 0.00'}">S/ 0.00</td>
+                            <td th:text="${detalle.subtotalFormateado != null ? detalle.subtotalFormateado : 'S/ 0.00'}">S/ 0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section" th:if="${documentos != null and !#lists.isEmpty(documentos)}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-file-text"></i> Documentos del Proyecto
+                </div>
+                <a th:href="@{/admin/documentos(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary" style="font-size:12px;">
+                    Ver todos <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
-        </div>
-    </div>
-
-    <div class="section" th:if="${pagos != null and !#lists.isEmpty(pagos)}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-credit-card"></i> Pagos Registrados
-            </div>
-            <a th:href="@{/admin/pagos}" class="btn-secondary" style="font-size:12px;">
-                Ver todos <i class="ti ti-arrow-right"></i>
-            </a>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Monto</th>
-                        <th>Fecha</th>
-                        <th>Método</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="pago : ${pagos}">
-                        <td th:text="${pago.montoFormateado != null ? pago.montoFormateado : 'S/ 0.00'}">S/ 0.00</td>
-                        <td th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy')}">—</td>
-                        <td th:text="${pago.metodoPago}">—</td>
-                        <td>
-                            <span class="status-badge" 
-                                  th:classappend="${pago.estadoPago == 'Validado'} ? 'status-pago-validado' : 
-                                                  (pago.estadoPago == 'Pendiente' ? 'status-pago-pendiente' : 'status-pago-rechazado')"
-                                  th:text="${pago.estadoPago}">—</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="section" th:if="${historialEstados != null and !#lists.isEmpty(historialEstados)}">
-        <div class="section-header">
-            <div class="section-title">
-                <i class="ti ti-clock"></i> Historial de Estados
-            </div>
-        </div>
-        <div class="section-body">
-            <div class="timeline">
-                <div th:each="cambio : ${historialEstados}" class="timeline-item">
-                    <div class="estado" th:text="${cambio.estadoNuevoNombre}">Aprobado</div>
-                    <div class="fecha" th:text="${#temporals.format(cambio.fechaCambio, 'dd/MM/yyyy HH:mm')}">—</div>
-                    <div class="usuario" th:text="'Responsable: ' + ${cambio.responsableNombre}">—</div>
-                    <div th:if="${cambio.comentario}" class="comentario" th:text="${cambio.comentario}">—</div>
+            <div class="section-body">
+                <div th:each="doc : ${documentos}" class="documento-item" style="margin-bottom: 8px;">
+                    <i th:if="${doc.tipoDocumento == 'Render'}" class="bi bi-image"></i>
+                    <i th:if="${doc.tipoDocumento == 'Plano'}" class="bi bi-rulers"></i>
+                    <i th:if="${doc.tipoDocumento == 'Boceto'}" class="bi bi-pencil"></i>
+                    <i th:if="${doc.tipoDocumento == 'Contrato'}" class="bi bi-file-contract"></i>
+                    <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="bi bi-file"></i>
+                    <div class="info">
+                        <div class="nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
+                        <div class="tipo" th:text="${doc.tipoDocumento} + ' · ' + ${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">Render · 01/01/2024</div>
+                    </div>
+                    <a th:href="@{/admin/documentos/ver/{id}(id=${doc.idDocumento})}" class="btn-icon azul" target="_blank">
+                        <i class="bi bi-eye"></i>
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="action-buttons">
-        <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary" 
-           th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
-            <i class="ti ti-arrow-forward"></i> Cambiar Estado
-        </a>
-        <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-success" 
-           th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
-            <i class="ti ti-credit-card-plus"></i> Registrar Pago
-        </a>
-        <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
-            <i class="ti ti-upload"></i> Subir Documento
-        </a>
-        <a th:href="@{/admin/proyectos}" class="btn-secondary">
-            <i class="ti ti-arrow-left"></i> Volver al listado
-        </a>
-    </div>
+        <div class="section" th:if="${pagos != null and !#lists.isEmpty(pagos)}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-credit-card"></i> Pagos Registrados
+                </div>
+                <a th:href="@{/admin/pagos}" class="btn-secondary" style="font-size:12px;">
+                    Ver todos <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Método</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="pago : ${pagos}">
+                            <td th:text="${pago.montoFormateado != null ? pago.montoFormateado : 'S/ 0.00'}">S/ 0.00</td>
+                            <td th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy')}">—</td>
+                            <td th:text="${pago.metodoPago}">—</td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="${pago.estadoPago == 'Validado'} ? 'status-pago-validado' : 
+                                                      (pago.estadoPago == 'Pendiente' ? 'status-pago-pendiente' : 'status-pago-rechazado')"
+                                      th:text="${pago.estadoPago}">—</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-</div>
+        <div class="section" th:if="${historialEstados != null and !#lists.isEmpty(historialEstados)}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="bi bi-clock"></i> Historial de Estados
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="timeline">
+                    <div th:each="cambio : ${historialEstados}" class="timeline-item">
+                        <div class="estado" th:text="${cambio.estadoNuevoNombre}">Aprobado</div>
+                        <div class="fecha" th:text="${#temporals.format(cambio.fechaCambio, 'dd/MM/yyyy HH:mm')}">—</div>
+                        <div class="usuario" th:text="'Responsable: ' + ${cambio.responsableNombre}">—</div>
+                        <div th:if="${cambio.comentario}" class="comentario" th:text="${cambio.comentario}">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary" 
+               th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
+                <i class="bi bi-arrow-right"></i> Cambiar Estado
+            </a>
+            <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-success" 
+               th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
+                <i class="bi bi-credit-card-plus"></i> Registrar Pago
+            </a>
+            <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
+                <i class="bi bi-upload"></i> Subir Documento
+            </a>
+            <a th:href="@{/admin/proyectos}" class="btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al listado
+            </a>
+        </div>
+
+        <div style="text-align:center;padding:12px;font-size:12px;color:#8A8A8A;border-top:1px solid #E8E8E8;margin-top:12px;">
+            <span th:text="${fechaActual}"></span>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-menu li a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '#') {
+                    link.classList.remove('active');
+                    if (currentPath === href || (href !== '/admin/dashboard' && currentPath.startsWith(href))) {
+                        link.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

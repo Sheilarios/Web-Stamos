@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cambiar Estado de Proyecto · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
-        
+
         :root {
             --yellow: #F5C400;
             --yellow-light: #FFFBE6;
@@ -30,52 +30,194 @@
             --orange-light: #FEF3C7;
             --purple: #7C3AED;
             --purple-light: #EDE9FE;
+            --sidebar-width: 260px;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
+            background: #F8F8F8;
             color: var(--text);
-            padding: 40px 24px;
+            display: flex;
+            min-height: 100vh;
         }
-        
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: var(--card);
-            border-radius: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-            padding: 32px;
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #000000;
+            padding: 32px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            border-right: none;
         }
-        
-        .header {
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .sidebar-brand h2 span {
+            color: #F5C400;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: #8A8A8A;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: #C0C0C0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a:hover {
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
+        }
+
+        .sidebar-menu li a.active {
+            background: #F5C400;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li a.active i {
+            color: #000000;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #222;
+            margin-top: auto;
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #EF4444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(239, 68, 68, 0.10);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+            min-height: 100vh;
+            background: #F8F8F8;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
             margin-bottom: 28px;
         }
-        
-        .header i {
-            font-size: 28px;
-            color: var(--yellow-dark);
-        }
-        
-        .header h1 {
+
+        .page-title {
             font-family: 'Syne', sans-serif;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: var(--text);
+            color: #000000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
-        .header small {
-            font-size: 13px;
-            color: var(--text-3);
+
+        .page-title i {
+            color: #F5C400;
+            font-size: 28px;
+        }
+
+        .page-title small {
+            font-size: 14px;
             font-weight: 400;
+            color: #8A8A8A;
+            font-family: 'DM Sans', sans-serif;
             margin-left: 8px;
         }
-        
+
+        .user-info {
+            background: #FFFFFF;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid #E8E8E8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1A1F2E;
+        }
+
+        .user-info i {
+            color: #F5C400;
+        }
+
+        .form-container {
+            max-width: 700px;
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 32px;
+        }
+
         .alert {
             padding: 12px 16px;
             border-radius: 10px;
@@ -85,49 +227,49 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .alert-danger {
-            background: var(--red-light);
+            background: #FFF0EE;
             border: 1px solid #FECACA;
-            color: var(--red);
+            color: #C0392B;
         }
-        
+
         .alert-success {
-            background: var(--green-light);
+            background: #EBF7F0;
             border: 1px solid #A7F3D0;
-            color: var(--green);
+            color: #1A7040;
         }
-        
+
         .alert-warning {
-            background: var(--yellow-light);
-            border: 1px solid var(--yellow-border);
-            color: var(--yellow-dark);
+            background: #FFFBE6;
+            border: 1px solid #E0C84A;
+            color: #9A7500;
         }
-        
+
         .proyecto-info {
-            background: var(--yellow-light);
-            border: 1px solid var(--yellow-border);
+            background: #FFFBE6;
+            border: 1px solid #E0C84A;
             border-radius: 12px;
             padding: 16px 20px;
             margin-bottom: 24px;
         }
-        
+
         .proyecto-info .info-row {
             display: flex;
             justify-content: space-between;
             padding: 4px 0;
             font-size: 13px;
         }
-        
+
         .proyecto-info .info-row .label {
-            color: var(--text-3);
+            color: #8A8A8A;
         }
-        
+
         .proyecto-info .info-row .value {
             font-weight: 500;
-            color: var(--text);
+            color: #1A1F2E;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -135,14 +277,14 @@
             font-size: 11px;
             font-weight: 600;
         }
-        
-        .status-aprobado { background: var(--blue-light); color: var(--blue); }
-        .status-diseno { background: var(--orange-light); color: var(--orange); }
-        .status-produccion { background: var(--blue-light); color: var(--blue); }
-        .status-instalacion { background: var(--purple-light); color: var(--purple); }
-        .status-entregado { background: var(--green-light); color: var(--green); }
-        .status-anulado { background: var(--red-light); color: var(--red); }
-        
+
+        .status-aprobado { background: #E8F0FE; color: #1A56DB; }
+        .status-diseno { background: #FEF3C7; color: #D97706; }
+        .status-produccion { background: #E8F0FE; color: #1A56DB; }
+        .status-instalacion { background: #EDE9FE; color: #7C3AED; }
+        .status-entregado { background: #EBF7F0; color: #1A7040; }
+        .status-anulado { background: #FFF0EE; color: #C0392B; }
+
         .estado-actual {
             display: inline-block;
             padding: 4px 12px;
@@ -150,73 +292,74 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         label {
             display: block;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.7px;
-            color: var(--text-2);
+            color: #5A6478;
             margin-bottom: 6px;
         }
-        
+
         label .required {
-            color: var(--red);
+            color: #C0392B;
             margin-left: 2px;
         }
-        
+
         .input-wrapper {
             position: relative;
         }
-        
+
         .input-wrapper i {
             position: absolute;
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-3);
+            color: #9BA5B7;
             font-size: 16px;
         }
-        
+
         input, select, textarea {
             width: 100%;
             padding: 12px 12px 12px 42px;
-            border: 1px solid var(--border);
+            border: 1px solid #E2E6EA;
             border-radius: 10px;
             font-size: 14px;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.2s;
             background: white;
             outline: none;
+            color: #1A1F2E;
         }
-        
+
         input:focus, select:focus, textarea:focus {
-            border-color: var(--yellow);
+            border-color: #F5C400;
             box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.15);
         }
-        
+
         textarea {
             padding: 12px;
             resize: vertical;
             min-height: 60px;
         }
-        
+
         .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: 12px;
             margin-top: 28px;
             padding-top: 20px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #E2E6EA;
         }
-        
+
         .btn-primary {
-            background: var(--yellow);
+            background: #F5C400;
             border: none;
             color: #2A1800;
             padding: 10px 24px;
@@ -230,15 +373,15 @@
             gap: 8px;
             transition: background 0.15s;
         }
-        
+
         .btn-primary:hover {
-            background: var(--yellow-mid);
+            background: #FFE566;
         }
-        
+
         .btn-secondary {
             background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-2);
+            border: 1px solid #E2E6EA;
+            color: #5A6478;
             padding: 10px 20px;
             border-radius: 10px;
             font-size: 13px;
@@ -251,155 +394,316 @@
             gap: 8px;
             transition: all 0.15s;
         }
-        
+
         .btn-secondary:hover {
-            border-color: var(--yellow);
-            color: var(--yellow-dark);
+            border-color: #F5C400;
+            color: #9A7500;
         }
-        
+
         .info-box {
-            background: var(--blue-light);
+            background: #E8F0FE;
             border: 1px solid #B8D4FE;
             border-radius: 10px;
             padding: 12px 16px;
             font-size: 13px;
-            color: var(--blue);
+            color: #1A56DB;
             display: flex;
             align-items: flex-start;
             gap: 10px;
             margin-bottom: 16px;
         }
-        
+
         .info-box i {
             font-size: 18px;
             margin-top: 2px;
         }
-        
-        @media (max-width: 640px) {
-            body { padding: 20px; }
-            .container { padding: 20px; }
-            .form-actions { flex-wrap: wrap; }
-            .form-actions .btn { flex: 1; justify-content: center; }
-            .proyecto-info .info-row { flex-direction: column; }
-            .header { flex-wrap: wrap; }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 0;
+            }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-brand h2 {
+                font-size: 20px;
+            }
+            .sidebar-brand small {
+                display: block;
+                font-size: 10px;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu li a span {
+                display: inline;
+                font-size: 11px;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            .form-actions {
+                flex-wrap: wrap;
+            }
+            .form-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            .proyecto-info .info-row {
+                flex-direction: column;
+            }
+            .header {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            .form-actions .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <i class="ti ti-arrow-forward"></i>
-        <h1>Cambiar Estado del Proyecto</h1>
-        <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
-    </div>
-
-    <div th:replace="fragments/mensajes :: mensaje_error"></div>
-    <div th:replace="fragments/mensajes :: mensaje_exito"></div>
-    <div th:if="${warning}" class="alert alert-warning" th:text="${warning}"></div>
-
-    <div class="info-box">
-        <i class="ti ti-info-circle"></i>
-        <div>
-            <strong>Flujo de estados del proyecto</strong><br>
-            Aprobado → En Diseño → En Producción → Instalación/Montaje → Entregado
-            <span style="display:block; font-size:12px; color:var(--text-3); margin-top:4px;">
-                <i class="ti ti-lock"></i> Solo los usuarios con los permisos adecuados pueden cambiar el estado.
-            </span>
-        </div>
-    </div>
-
-    <div class="proyecto-info">
-        <div class="info-row">
-            <span class="label">Proyecto</span>
-            <span class="value" th:text="${proyecto != null ? proyecto.nombreProyecto : '—'}">—</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Código</span>
-            <span class="value" th:text="${proyecto != null ? proyecto.codigoProyecto : '—'}">—</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Cliente</span>
-            <span class="value" th:text="${proyecto != null ? proyecto.nombreCliente : '—'}">—</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Estado Actual</span>
-            <span class="value">
-                <span class="estado-actual" 
-                      th:classappend="${proyecto != null and proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
-                                      (proyecto != null and proyecto.estado == 'En Diseño' ? 'status-diseno' : 
-                                      (proyecto != null and proyecto.estado == 'En Producción' ? 'status-produccion' : 
-                                      (proyecto != null and proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
-                                      (proyecto != null and proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
-                      th:text="${proyecto != null ? proyecto.estado : '—'}">Aprobado</span>
-            </span>
-        </div>
-        <div class="info-row" th:if="${proyecto != null and proyecto.fechaInicio != null}">
-            <span class="label">Fecha de Inicio</span>
-            <span class="value" th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">—</span>
-        </div>
-    </div>
-
-    <form th:action="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" method="post">
-        
-        <input type="hidden" name="idProyecto" th:value="${proyecto != null ? proyecto.idProyecto : ''}">
-
-        <div class="form-group">
-            <label for="idEstadoNuevo">Nuevo Estado <span class="required">*</span></label>
-            <div class="input-wrapper">
-                <i class="ti ti-flag"></i>
-                <select id="idEstadoNuevo" name="idEstadoNuevo" required>
-                    <option value="">Seleccione un estado</option>
-                    <option th:each="e : ${estadosDisponibles}" th:value="${e.idEstado}" 
-                            th:text="${e.nombreEstado}"></option>
-                </select>
-            </div>
-            <div style="font-size:11px; color:var(--text-3); margin-top:4px;">
-                <i class="ti ti-info-circle"></i> 
-                Selecciona el siguiente estado del proyecto según el flujo establecido.
-            </div>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Administración</small>
         </div>
 
-        <div class="form-group">
-            <label for="comentario">Comentario</label>
-            <div class="input-wrapper">
-                <i class="ti ti-notes"></i>
-                <textarea id="comentario" name="comentario" rows="2" 
-                          placeholder="Motivo o detalles del cambio de estado..."></textarea>
-            </div>
-        </div>
+        <ul class="sidebar-menu">
+            <li th:each="item : ${menuItems}">
+                <a th:href="${item.url}" 
+                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
+                    <i th:class="${item.icon}"></i>
+                    <span th:text="${item.label}"></span>
+                </a>
+            </li>
+        </ul>
 
-        <div class="form-group" style="background:var(--bg); padding:12px 16px; border-radius:10px;">
-            <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-2);">
-                <i class="ti ti-user-check"></i>
-                <span>Responsable: <strong th:text="${#authentication.name}">usuario@stamos.com</strong></span>
-            </div>
-            <input type="hidden" name="idUsuarioResponsable" th:value="${usuarioId}">
-        </div>
-
-        <div class="form-actions">
-            <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
-                <i class="ti ti-arrow-left"></i> Cancelar
-            </a>
-            <button type="submit" class="btn-primary">
-                <i class="ti ti-check"></i> Confirmar Cambio
-            </button>
-        </div>
-    </form>
-
-    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
-        <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between; align-items:center;">
-            <div style="font-size:12px; color:var(--text-3);">
-                <i class="ti ti-clock"></i> 
-                <span>El cambio quedará registrado en el historial del proyecto.</span>
-            </div>
-            <a th:href="@{/admin/proyectos}" class="btn-secondary" style="font-size:12px;">
-                <i class="ti ti-arrow-left"></i> Volver a proyectos
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Cerrar Sesión</span>
             </a>
         </div>
-    </div>
+    </aside>
 
-</div>
+    <main class="main-content">
+
+        <div class="header">
+            <div class="page-title">
+                <i class="bi bi-arrow-right"></i>
+                <span>Cambiar Estado del Proyecto</span>
+                <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
+            </div>
+            <div class="user-info">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${username}">Administrador</span>
+                <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+        <div th:if="${warning}" class="alert alert-warning" th:text="${warning}"></div>
+
+        <div class="form-container">
+
+            <div class="info-box">
+                <i class="bi bi-info-circle"></i>
+                <div>
+                    <strong>Flujo de estados del proyecto</strong><br>
+                    Aprobado → En Diseño → En Producción → Instalación/Montaje → Entregado
+                    <span style="display:block; font-size:12px; color:#8A8A8A; margin-top:4px;">
+                        <i class="bi bi-lock"></i> Solo los usuarios con los permisos adecuados pueden cambiar el estado.
+                    </span>
+                </div>
+            </div>
+
+            <div class="proyecto-info">
+                <div class="info-row">
+                    <span class="label">Proyecto</span>
+                    <span class="value" th:text="${proyecto != null ? proyecto.nombreProyecto : '—'}">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Código</span>
+                    <span class="value" th:text="${proyecto != null ? proyecto.codigoProyecto : '—'}">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Cliente</span>
+                    <span class="value" th:text="${proyecto != null ? proyecto.nombreCliente : '—'}">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Estado Actual</span>
+                    <span class="value">
+                        <span class="estado-actual" 
+                              th:classappend="${proyecto != null and proyecto.estado == 'Aprobado'} ? 'status-aprobado' : 
+                                              (proyecto != null and proyecto.estado == 'En Diseño' ? 'status-diseno' : 
+                                              (proyecto != null and proyecto.estado == 'En Producción' ? 'status-produccion' : 
+                                              (proyecto != null and proyecto.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                              (proyecto != null and proyecto.estado == 'Entregado' ? 'status-entregado' : 'status-anulado'))))"
+                              th:text="${proyecto != null ? proyecto.estado : '—'}">Aprobado</span>
+                    </span>
+                </div>
+                <div class="info-row" th:if="${proyecto != null and proyecto.fechaInicio != null}">
+                    <span class="label">Fecha de Inicio</span>
+                    <span class="value" th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">—</span>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" method="post">
+
+                <input type="hidden" name="idProyecto" th:value="${proyecto != null ? proyecto.idProyecto : ''}">
+
+                <div class="form-group">
+                    <label for="idEstadoNuevo">Nuevo Estado <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-flag"></i>
+                        <select id="idEstadoNuevo" name="idEstadoNuevo" required>
+                            <option value="">Seleccione un estado</option>
+                            <option th:each="e : ${estadosDisponibles}" th:value="${e.idEstado}" 
+                                    th:text="${e.nombreEstado}"></option>
+                        </select>
+                    </div>
+                    <div style="font-size:11px; color:#8A8A8A; margin-top:4px;">
+                        <i class="bi bi-info-circle"></i> 
+                        Selecciona el siguiente estado del proyecto según el flujo establecido.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comentario">Comentario</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-sticky"></i>
+                        <textarea id="comentario" name="comentario" rows="2" 
+                                  placeholder="Motivo o detalles del cambio de estado..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group" style="background:#F5F6F8; padding:12px 16px; border-radius:10px;">
+                    <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#5A6478;">
+                        <i class="bi bi-person-check"></i>
+                        <span>Responsable: <strong th:text="${#authentication.name}">usuario@stamos.com</strong></span>
+                    </div>
+                    <input type="hidden" name="idUsuarioResponsable" th:value="${usuarioId}">
+                </div>
+
+                <div class="form-actions">
+                    <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="bi bi-check-lg"></i> Confirmar Cambio
+                    </button>
+                </div>
+            </form>
+
+            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #E8E8E8;">
+                <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between; align-items:center;">
+                    <div style="font-size:12px; color:#8A8A8A;">
+                        <i class="bi bi-clock"></i> 
+                        <span>El cambio quedará registrado en el historial del proyecto.</span>
+                    </div>
+                    <a th:href="@{/admin/proyectos}" class="btn-secondary" style="font-size:12px;">
+                        <i class="bi bi-arrow-left"></i> Volver a proyectos
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="text-align:center;padding:12px;font-size:12px;color:#8A8A8A;border-top:1px solid #E8E8E8;margin-top:12px;">
+            <span th:text="${fechaActual}"></span>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-menu li a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '#') {
+                    link.classList.remove('active');
+                    if (currentPath === href || (href !== '/admin/dashboard' && currentPath.startsWith(href))) {
+                        link.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
