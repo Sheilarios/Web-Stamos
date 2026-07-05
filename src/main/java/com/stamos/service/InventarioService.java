@@ -313,7 +313,7 @@ public class InventarioService {
         return inventarioRepository.findByIdProducto(idProducto, pageable);
     }
 
-    public Page<Inventario> findByEstadoFisico(String estadoFisico) {
+    public Page<Inventario> findByEstadoFisico(String estadoFisico, Pageable unpaged) {
         return inventarioRepository.findByEstadoFisico(estadoFisico, Pageable.unpaged());
     }
 

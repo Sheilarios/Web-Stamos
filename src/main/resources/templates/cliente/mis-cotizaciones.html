@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Cotizaciones · STAMOS Cliente</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F8F8F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #8A8A8A;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+            --sidebar-width: 260px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', 'Segoe UI', Roboto, sans-serif;
+            background: #FFFFFF;
+            color: #1A1F2E;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #000000;
+            padding: 32px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            border-right: none;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .sidebar-brand h2 span { color: #F5C400; }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: #8A8A8A;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .sidebar-menu li { margin-bottom: 2px; }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: #C0C0C0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a:hover {
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
+        }
+
+        .sidebar-menu li a.active {
+            background: #F5C400;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li a.active i { color: #000000; }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #222;
+            margin-top: auto;
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #EF4444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .sidebar-footer a:hover { background: rgba(239, 68, 68, 0.10); }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+            min-height: 100vh;
+            background: #F8F8F8;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title i {
+            color: #F5C400;
+            font-size: 28px;
+        }
+
+        .page-title small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #6B6B6B;
+            font-family: 'DM Sans', sans-serif;
+            margin-left: 8px;
+        }
+
+        .user-info {
+            background: #FFFFFF;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid #E8E8E8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1A1F2E;
+        }
+
+        .user-info i { color: #F5C400; }
+
+        .btn-pdf {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+
+        .btn-pdf:hover {
+            background: #F5C400;
+            color: #000000;
+            border-color: #F5C400;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-pendiente { background: #FFFBE6; color: #9A7500; }
+        .status-aprobada { background: #EBF7F0; color: #1A7040; }
+        .status-anulada { background: #FFF0EE; color: #C0392B; }
+
+        .section {
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #E8E8E8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: #FAFAFA;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i { color: #F5C400; }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            background: #FAFAFA;
+            color: #3A3A3A;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #E8E8E8;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E8E8E8;
+            color: #5A6478;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #FAFAFA; }
+
+        .empty-message {
+            text-align: center;
+            padding: 48px;
+            color: #8A8A8A;
+        }
+
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+            color: #D0D0D0;
+        }
+
+        .empty-message p { font-size: 14px; }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            border: 1px solid;
+        }
+
+        .alert-danger { background: #FFF0EE; border-color: #FFCDCD; color: #C0392B; }
+        .alert-success { background: #EBF7F0; border-color: #A7D8BA; color: #1A7040; }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 72px; padding: 16px 0; }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span { display: none; }
+            .sidebar-menu li a { justify-content: center; padding: 12px; }
+            .sidebar-menu li a i { font-size: 22px; width: auto; }
+            .sidebar-footer a span { display: none; }
+            .sidebar-footer a { justify-content: center; }
+            .main-content { margin-left: 72px; padding: 20px; }
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid #222; flex-wrap: wrap; }
+            .sidebar-brand { padding: 0; border-bottom: none; margin-bottom: 0; flex: 1; }
+            .sidebar-brand h2 { font-size: 20px; }
+            .sidebar-brand small { display: block; font-size: 10px; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; flex: 1; }
+            .sidebar-menu li { margin-bottom: 0; }
+            .sidebar-menu li a { padding: 6px 10px; font-size: 12px; }
+            .sidebar-menu li a i { font-size: 16px; }
+            .sidebar-menu li a span { display: inline; font-size: 11px; }
+            .sidebar-footer { border-top: none; padding: 0; margin: 0; }
+            .main-content { margin-left: 0; padding: 16px; }
+            .header { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-menu li a span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Área del Cliente</small>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="/cliente/dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a href="/cliente/proyectos"><i class="ti ti-folder-open"></i><span>Mis Proyectos</span></a></li>
+            <li><a href="/cliente/cotizaciones" class="active"><i class="ti ti-file-invoice"></i><span>Mis Cotizaciones</span></a></li>
+            <li><a href="/cliente/documentos"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
+            <li><a href="/cliente/pagos"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
+            <li><a href="/cliente/perfil"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="/logout">
+                <i class="ti ti-logout"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="header">
+            <div class="page-title">
+                <i class="ti ti-file-invoice"></i>
+                <span>Mis Cotizaciones</span>
+                <small>Historial de cotizaciones emitidas</small>
+            </div>
+            <div class="user-info">
+                <i class="ti ti-user-circle"></i>
+                <span th:text="${cliente != null ? cliente.nombreRazonSocial : 'Cliente'}">Cliente</span>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-list"></i> Lista de Cotizaciones
+                </div>
+                <span style="font-size:12px; color:#8A8A8A;">
+                    <i class="ti ti-info-circle"></i>
+                    <span th:text="${cotizaciones != null ? cotizaciones.size() : 0} + ' cotizaciones'">0 cotizaciones</span>
+                </span>
+            </div>
+
+            <div th:if="${cotizaciones != null and !#lists.isEmpty(cotizaciones)}">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Fecha Emisión</th>
+                                <th>Validez</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Versión</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${cotizaciones}">
+                                <td>
+                                    <strong th:text="${c.codigoCotizacion}">COT-00000</strong>
+                                </td>
+                                <td th:text="${#temporals.format(c.fechaEmision, 'dd/MM/yyyy HH:mm')}">—</td>
+                                <td th:text="${c.fechaValidez != null ? #temporals.format(c.fechaValidez, 'dd/MM/yyyy') : '-'}">—</td>
+                                <td>
+                                    <strong th:text="${c.totalFormateado}">S/ 0.00</strong>
+                                </td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="${c.estado == 'Pendiente'} ? 'status-pendiente' :
+                                                          (c.estado == 'Aprobada' ? 'status-aprobada' : 'status-anulada')"
+                                          th:text="${c.estado}">Pendiente</span>
+                                </td>
+                                <td th:text="'V' + ${c.versionActual}">V1</td>
+                                <td>
+                                    <a th:href="@{/cliente/cotizacion/{id}/pdf(id=${c.idCotizacion})}"
+                                       class="btn-pdf" target="_blank">
+                                        <i class="ti ti-file-pdf"></i> PDF
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div th:if="${cotizaciones == null or #lists.isEmpty(cotizaciones)}" class="empty-message">
+                <i class="ti ti-file-off"></i>
+                <p>No tienes cotizaciones registradas aún.</p>
+                <p style="font-size:12px; color:#8A8A8A; margin-top:4px;">
+                    Las cotizaciones aparecerán aquí cuando un vendedor las emita para ti.
+                </p>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px;">
+            <a href="/cliente/dashboard" class="btn-secondary" style="background:transparent; border:1px solid #E8E8E8; color:#5A6478; padding:8px 16px; border-radius:10px; font-size:13px; font-weight:500; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition:all 0.15s;">
+                <i class="ti ti-arrow-left"></i> Volver al Dashboard
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>

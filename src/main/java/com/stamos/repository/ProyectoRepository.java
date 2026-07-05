@@ -297,13 +297,9 @@ public interface ProyectoRepository extends JpaRepository<Proyecto, Integer> {
            "WHERE p.idCliente = :idCliente AND p.idEstadoActual IN (SELECT e.idEstado FROM EstadoProyecto e WHERE e.nombreEstado = 'Entregado')")
     boolean hasProyectosEntregados(@Param("idCliente") Integer idCliente);
 
-    @Query("SELECT " +
-           "COUNT(p) as total, " +
-           "SUM(CASE WHEN p.idEstadoActual NOT IN (SELECT e.idEstado FROM EstadoProyecto e WHERE e.nombreEstado IN ('Entregado', 'Anulado')) THEN 1 ELSE 0 END) as activos, " +
-           "SUM(CASE WHEN p.idEstadoActual IN (SELECT e.idEstado FROM EstadoProyecto e WHERE e.nombreEstado = 'Entregado') THEN 1 ELSE 0 END) as entregados, " +
-           "SUM(CASE WHEN p.idEstadoActual IN (SELECT e.idEstado FROM EstadoProyecto e WHERE e.nombreEstado = 'Anulado') THEN 1 ELSE 0 END) as anulados, " +
-           "COALESCE(SUM(p.montoTotal), 0) as montoTotal " +
-           "FROM Proyecto p")
+    @Query(value = "SELECT e.nombre_estado AS estado, COUNT(p.id_proyecto) AS total, COALESCE(SUM(p.monto_total), 0) AS monto " +
+           "FROM EstadoProyecto e LEFT JOIN Proyecto p ON e.id_estado = p.id_estado_actual " +
+           "GROUP BY e.id_estado, e.nombre_estado ORDER BY e.id_estado ASC", nativeQuery = true)
     List<Object[]> getEstadisticasDashboard();
 
     @Query("SELECT " +

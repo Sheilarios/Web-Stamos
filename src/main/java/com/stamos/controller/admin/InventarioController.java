@@ -64,7 +64,7 @@ public class InventarioController extends BaseController {
 
             Page<Inventario> inventarioPage;
             if (estado != null && !estado.isEmpty()) {
-                inventarioPage = inventarioService.findByEstadoFisico(estado);
+                inventarioPage = inventarioService.findByEstadoFisico(estado, Pageable.unpaged());
             } else if (productoId != null) {
                 inventarioPage = inventarioService.findByProducto(productoId, pageable);
             } else if (search != null && !search.isEmpty()) {
@@ -291,7 +291,7 @@ public class InventarioController extends BaseController {
                 }
             }
 
-            Page<Inventario> equiposDisponibles = inventarioService.findByEstadoFisico("Disponible");
+            Page<Inventario> equiposDisponibles = inventarioService.findByEstadoFisico("Disponible", Pageable.unpaged());
 
             model.addAttribute("reserva", reserva);
             model.addAttribute("equipos", equiposDisponibles);

@@ -378,3 +378,4 @@ public class UsuarioService {
         usuario.setEstadoColor(usuario.isActivo() ? "#10B981" : "#EF4444");
     }
 }
+

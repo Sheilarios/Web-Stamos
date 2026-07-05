@@ -23,7 +23,6 @@ public abstract class BaseController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // ===== MÉTODOS DE FORMATEO =====
     protected String formatearFecha(LocalDate fecha) {
         if (fecha == null) return "-";
         return fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -75,13 +74,11 @@ public abstract class BaseController {
         };
     }
 
-    // ===== ATRIBUTOS COMUNES PARA TODAS LAS VISTAS =====
     protected void addCommonAttributes(Model model) {
         model.addAttribute("fechaActual", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         model.addAttribute("anioActual", LocalDateTime.now().getYear());
     }
 
-    // ===== OBTENER ROL DEL USUARIO AUTENTICADO =====
     @ModelAttribute("rolUsuario")
     public String getRolUsuario() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -91,7 +88,6 @@ public abstract class BaseController {
         try {
             Usuario usuario = usuarioService.findByEmail(auth.getName());
             if (usuario != null && usuario.getNombreRol() != null) {
-                // Normalizar: si el rol es "Administrador" (con tilde) lo convertimos a "ADMINISTRADOR"
                 String rol = usuario.getNombreRol().toUpperCase().replace(" ", "_");
                 return rol;
             }
@@ -101,7 +97,6 @@ public abstract class BaseController {
         }
     }
 
-    // ===== MENÚ DINÁMICO SEGÚN ROL =====
     @ModelAttribute("menuItems")
     public List<MenuItem> getMenuItems() {
         String rol = getRolUsuario();
@@ -126,12 +121,12 @@ public abstract class BaseController {
         if ("ADMINISTRADOR".equals(rol)) {
             items.add(new MenuItem("Configuración", "/admin/configuracion", "bi bi-gear"));
             items.add(new MenuItem("Usuarios", "/admin/usuarios", "bi bi-person-gear"));
+            items.add(new MenuItem("Reportes", "/admin/reportes", "bi bi-file-pdf"));
         }
 
         return items;
     }
 
-    // ===== RUTA ACTUAL PARA DESTACAR EL ENLACE =====
     @ModelAttribute("currentPath")
     public String getCurrentPath(HttpServletRequest request) {
         return request.getRequestURI();
