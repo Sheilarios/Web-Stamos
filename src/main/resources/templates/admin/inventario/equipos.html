@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario de Equipos · STAMOS Administración</title>
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -680,18 +679,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}" class="active"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -701,12 +703,12 @@
 
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-box"></i>
+                <i class="ti ti-box"></i>
                 <span>Inventario de Equipos</span>
                 <span class="count" th:text="'(' + ${totalItems} + ')'">(0)</span>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -740,11 +742,11 @@
 
         <form th:action="@{/admin/inventario}" method="get" class="search-bar">
             <div class="search-input">
-                <i class="bi bi-search"></i>
+                <i class="ti ti-search"></i>
                 <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre, serial o ubicación...">
             </div>
             <div class="filter-group">
-                <i class="bi bi-filter"></i>
+                <i class="ti ti-filter"></i>
                 <select name="estado" onchange="this.form.submit()">
                     <option value="">Todos los estados</option>
                     <option value="Disponible" th:selected="${estado == 'Disponible'}">Disponibles</option>
@@ -754,7 +756,7 @@
                 </select>
             </div>
             <div class="filter-group">
-                <i class="bi bi-box"></i>
+                <i class="ti ti-box"></i>
                 <select name="productoId" onchange="this.form.submit()">
                     <option value="">Todos los productos</option>
                     <option th:each="p : ${productos}" th:value="${p.idProducto}" 
@@ -763,19 +765,19 @@
                 </select>
             </div>
             <button type="submit" class="btn-secondary">
-                <i class="bi bi-search"></i> Buscar
+                <i class="ti ti-search"></i> Buscar
             </button>
             <a th:href="@{/admin/inventario}" class="btn-secondary" th:if="${search != null or estado != null or productoId != null}">
-                <i class="bi bi-arrow-repeat"></i> Limpiar
+                <i class="ti ti-refresh"></i> Limpiar
             </a>
             <a th:href="@{/admin/inventario/nuevo}" class="btn-primary">
-                <i class="bi bi-plus-lg"></i> Nuevo Equipo
+                <i class="ti ti-plus"></i> Nuevo Equipo
             </a>
             <a th:href="@{/admin/inventario/disponibilidad}" class="btn-secondary">
-                <i class="bi bi-calendar-event"></i> Disponibilidad
+                <i class="ti ti-calendar-event"></i> Disponibilidad
             </a>
             <a th:href="@{/admin/inventario/reservas}" class="btn-secondary">
-                <i class="bi bi-calendar"></i> Reservas
+                <i class="ti ti-calendar"></i> Reservas
             </a>
         </form>
 
@@ -809,18 +811,18 @@
                                                   (equipo.estadoFisico == 'Mantenimiento' ? 'status-mantenimiento' : 'status-danado'))"
                                   th:text="${equipo.estadoFisico}">—</span>
                             <span style="display:block; font-size:11px; color:#8A8A8A;" 
-                                  th:if="${equipo.estaDisponible}" th:text="'✅ Disponible'">✅ Disponible</span>
+                                  th:if="${equipo.estaDisponible}" th:text="'Disponible'">Disponible</span>
                             <span style="display:block; font-size:11px; color:#8A8A8A;" 
-                                  th:unless="${equipo.estaDisponible}" th:text="'❌ No disponible'">❌ No disponible</span>
+                                  th:unless="${equipo.estaDisponible}" th:text="No disponible'">No disponible</span>
                         </td>
                         <td th:text="${equipo.valorCompraFormateado}">S/ 0.00</td>
                         <td class="action-buttons">
                             <a th:href="@{/admin/inventario/editar/{id}(id=${equipo.idInventario})}" class="btn-icon">
-                                <i class="bi bi-pencil"></i>
+                                <i class="ti ti-pencil"></i>
                             </a>
                             <a th:href="@{/admin/inventario/reservar(equipoId=${equipo.idInventario})}" class="btn-icon verde" 
                                th:if="${equipo.estaDisponible}">
-                                <i class="bi bi-calendar-plus"></i>
+                                <i class="ti ti-calendar-plus"></i>
                             </a>
                             <form th:action="@{/admin/inventario/cambiar-estado/{id}(id=${equipo.idInventario})}" method="post" style="display:inline;">
                                 <select name="estado" onchange="this.form.submit()" style="padding:4px 8px;border-radius:4px;border:1px solid #E2E6EA;font-size:11px;font-family:'DM Sans',sans-serif;background:#FFFFFF;color:#1A1F2E;">
@@ -836,10 +838,10 @@
                     <tr th:if="${inventario == null || inventario.isEmpty()}">
                         <td colspan="7">
                             <div class="empty-message">
-                                <i class="bi bi-box-seam"></i>
+                                <i class="ti ti-box"></i>
                                 <p>No hay equipos registrados en el inventario.</p>
                                 <a th:href="@{/admin/inventario/nuevo}" class="btn-primary" style="margin-top: 16px;">
-                                    <i class="bi bi-plus-lg"></i> Registrar primer equipo
+                                    <i class="ti ti-plus"></i> Registrar primer equipo
                                 </a>
                             </div>
                         </td>
@@ -856,7 +858,7 @@
                 <a th:href="@{/admin/inventario(page=${currentPage - 1}, search=${search}, estado=${estado}, productoId=${productoId})}" 
                    class="page-link" 
                    th:classappend="${currentPage == 0} ? 'disabled' : ''">
-                    <i class="bi bi-chevron-left"></i> Anterior
+                    <i class="ti ti-chevron-left"></i> Anterior
                 </a>
                 <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
                    th:href="@{/admin/inventario(page=${i}, search=${search}, estado=${estado}, productoId=${productoId})}" 
@@ -868,7 +870,7 @@
                 <a th:href="@{/admin/inventario(page=${currentPage + 1}, search=${search}, estado=${estado}, productoId=${productoId})}" 
                    class="page-link" 
                    th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-                    Siguiente <i class="bi bi-chevron-right"></i>
+                    Siguiente <i class="ti ti-chevron-right"></i>
                 </a>
             </div>
         </div>

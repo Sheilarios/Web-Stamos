@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentos del Proyecto · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -629,18 +629,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}" class="active"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -650,12 +653,12 @@
 
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-file-text"></i>
+                <i class="ti ti-file-text"></i>
                 <span>Documentos del Proyecto</span>
                 <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -694,7 +697,7 @@
         <form th:action="@{/admin/documentos}" method="get" class="filters-bar">
             <input type="hidden" name="proyectoId" th:value="${proyecto != null ? proyecto.idProyecto : ''}">
             <div class="filter-group">
-                <i class="bi bi-filter"></i>
+                <i class="ti ti-filter"></i>
                 <select name="tipo">
                     <option value="">Todos los tipos</option>
                     <option value="Render" th:selected="${tipo == 'Render'}">Renders</option>
@@ -705,13 +708,13 @@
                 </select>
             </div>
             <button type="submit" class="btn-secondary">
-                <i class="bi bi-search"></i> Filtrar
+                <i class="ti ti-search"></i> Filtrar
             </button>
             <a th:href="@{/admin/documentos(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary" th:if="${tipo != null}">
-                <i class="bi bi-arrow-repeat"></i> Limpiar
+                <i class="ti ti-refresh"></i> Limpiar
             </a>
             <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary">
-                <i class="bi bi-upload"></i> Subir Documento
+                <i class="ti ti-upload"></i> Subir Documento
             </a>
         </form>
 
@@ -723,11 +726,11 @@
                                          (doc.tipoDocumento == 'Plano' ? 'plano' : 
                                          (doc.tipoDocumento == 'Boceto' ? 'boceto' : 
                                          (doc.tipoDocumento == 'Contrato' ? 'contrato' : 'otro')))">
-                        <i th:if="${doc.tipoDocumento == 'Render'}" class="bi bi-image"></i>
-                        <i th:if="${doc.tipoDocumento == 'Plano'}" class="bi bi-rulers"></i>
-                        <i th:if="${doc.tipoDocumento == 'Boceto'}" class="bi bi-pencil"></i>
-                        <i th:if="${doc.tipoDocumento == 'Contrato'}" class="bi bi-file-contract"></i>
-                        <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="bi bi-file"></i>
+                        <i th:if="${doc.tipoDocumento == 'Render'}" class="ti ti-photo"></i>
+                        <i th:if="${doc.tipoDocumento == 'Plano'}" class="ti ti-ruler"></i>
+                        <i th:if="${doc.tipoDocumento == 'Boceto'}" class="ti ti-pencil"></i>
+                        <i th:if="${doc.tipoDocumento == 'Contrato'}" class="ti ti-file-contract"></i>
+                        <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="ti ti-file"></i>
                     </div>
 
                     <div class="documento-nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
@@ -744,20 +747,20 @@
                     </div>
 
                     <div class="documento-proyecto">
-                        <i class="bi bi-folder"></i>
+                        <i class="ti ti-folder"></i>
                         <span th:text="${doc.nombreProyecto}">Proyecto</span>
                     </div>
 
                     <div class="documento-actions">
                         <a th:href="@{/admin/documentos/ver/{id}(id=${doc.idDocumento})}" class="btn-icon azul" target="_blank">
-                            <i class="bi bi-eye"></i>
+                            <i class="ti ti-eye"></i>
                         </a>
                         <a th:href="@{/admin/documentos/descargar/{id}(id=${doc.idDocumento})}" class="btn-icon" download>
-                            <i class="bi bi-download"></i>
+                            <i class="ti ti-download"></i>
                         </a>
                         <form th:action="@{/admin/documentos/eliminar/{id}(id=${doc.idDocumento})}" method="post" style="display:inline;">
                             <button type="submit" class="btn-icon rojo" onclick="return confirm('¿Eliminar este documento?');">
-                                <i class="bi bi-trash"></i>
+                                <i class="ti ti-trash"></i>
                             </button>
                         </form>
                     </div>
@@ -766,24 +769,24 @@
         </div>
 
         <div th:if="${documentos == null or #lists.isEmpty(documentos)}" class="empty-message">
-            <i class="bi bi-file-earmark-x"></i>
+            <i class="ti ti-file-x"></i>
             <p>No hay documentos disponibles para este proyecto.</p>
             <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary" style="margin-top:16px;">
-                <i class="bi bi-upload"></i> Subir primer documento
+                <i class="ti ti-upload"></i> Subir primer documento
             </a>
         </div>
 
         <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
             <div style="font-size:12px; color:#8A8A8A;">
-                <i class="bi bi-info-circle"></i> 
+                <i class="ti ti-info-circle"></i> 
                 <span th:text="'Total de documentos: ' + ${totalDocumentos != null ? totalDocumentos : 0}">Total de documentos: 0</span>
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Volver al proyecto
+                    <i class="ti ti-arrow-left"></i> Volver al proyecto
                 </a>
                 <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary">
-                    <i class="bi bi-upload"></i> Subir Documento
+                    <i class="ti ti-upload"></i> Subir Documento
                 </a>
             </div>
         </div>

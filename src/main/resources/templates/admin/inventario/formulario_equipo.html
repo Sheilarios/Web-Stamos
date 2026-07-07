@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' · STAMOS Administración'">STAMOS · Equipo</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -490,18 +490,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}" class="active"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -511,14 +514,14 @@
 
         <div class="header">
             <div class="page-title">
-                <i th:if="${accion == 'crear'}" class="bi bi-laptop"></i>
-                <i th:unless="${accion == 'crear'}" class="bi bi-pencil"></i>
+                <i th:if="${accion == 'crear'}" class="ti ti-device-laptop"></i>
+                <i th:unless="${accion == 'crear'}" class="ti ti-pencil"></i>
                 <span th:text="${titulo}">Formulario Equipo</span>
                 <small th:if="${inventario != null and inventario.idInventario != null}" 
                        th:text="'ID: ' + ${inventario.idInventario}">ID: 0</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -530,11 +533,11 @@
         <div class="form-container">
 
             <div class="info-box" th:if="${accion == 'editar'}">
-                <i class="bi bi-info-circle"></i>
+                <i class="ti ti-info-circle"></i>
                 <div>
                     <strong>Código Serial:</strong> <span th:text="${inventario.codigoSerial}">—</span>
                     <span style="display:block; font-size:12px; color:#8A8A8A; margin-top:4px;">
-                        <i class="bi bi-lock"></i> El código serial no se puede modificar después de la creación.
+                        <i class="ti ti-lock"></i> El código serial no se puede modificar después de la creación.
                     </span>
                 </div>
             </div>
@@ -547,7 +550,7 @@
                 <div class="form-group">
                     <label for="idProducto">Producto <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-box"></i>
+                        <i class="ti ti-box"></i>
                         <select id="idProducto" th:field="*{idProducto}" required>
                             <option value="">Seleccione un producto</option>
                             <option th:each="p : ${productos}" th:value="${p.idProducto}" 
@@ -560,13 +563,13 @@
                 <div class="form-group">
                     <label for="codigoSerial">Código Serial <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-upc-scan"></i>
+                        <i class="ti ti-barcode"></i>
                         <input type="text" id="codigoSerial" th:field="*{codigoSerial}" 
                                th:readonly="${accion == 'editar'}" required 
                                placeholder="Ingrese el código serial único">
                     </div>
                     <div style="font-size:11px; color:#8A8A8A; margin-top:4px;">
-                        <i class="bi bi-info-circle"></i> 
+                        <i class="ti ti-info-circle"></i> 
                         <span th:if="${accion == 'crear'}">El código serial debe ser único en el sistema.</span>
                         <span th:unless="${accion == 'crear'}">El código serial no se puede modificar.</span>
                     </div>
@@ -576,7 +579,7 @@
                     <div class="form-group">
                         <label for="ubicacion">Ubicación</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-geo-alt"></i>
+                            <i class="ti ti-map-pin"></i>
                             <input type="text" id="ubicacion" th:field="*{ubicacion}" 
                                    placeholder="Almacén, estante, sección...">
                         </div>
@@ -584,7 +587,7 @@
                     <div class="form-group">
                         <label for="estadoFisico">Estado Físico <span class="required">*</span></label>
                         <div class="input-wrapper">
-                            <i class="bi bi-arrow-left-right"></i>
+                            <i class="ti ti-arrows-split"></i>
                             <select id="estadoFisico" th:field="*{estadoFisico}" required>
                                 <option value="Disponible">Disponible</option>
                                 <option value="En uso">En uso</option>
@@ -599,14 +602,14 @@
                     <div class="form-group">
                         <label for="fechaAdquisicion">Fecha de Adquisición</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-calendar"></i>
+                            <i class="ti ti-calendar"></i>
                             <input type="date" id="fechaAdquisicion" th:field="*{fechaAdquisicion}">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="valorCompra">Valor de Compra (S/)</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-coin"></i>
+                            <i class="ti ti-coin"></i>
                             <input type="number" id="valorCompra" th:field="*{valorCompra}" 
                                    step="0.01" min="0" placeholder="0.00">
                         </div>
@@ -616,7 +619,7 @@
                 <div class="form-group">
                     <label for="observaciones">Observaciones</label>
                     <div class="input-wrapper">
-                        <i class="bi bi-sticky"></i>
+                        <i class="ti ti-notes"></i>
                         <textarea id="observaciones" th:field="*{observaciones}" rows="2" 
                                   placeholder="Observaciones adicionales sobre el equipo..."></textarea>
                     </div>
@@ -624,10 +627,10 @@
 
                 <div class="form-actions">
                     <a th:href="@{/admin/inventario}" class="btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Cancelar
+                        <i class="ti ti-arrow-left"></i> Cancelar
                     </a>
                     <button type="submit" class="btn-primary">
-                        <i class="bi bi-floppy"></i> 
+                        <i class="ti ti-floppy"></i> 
                         <span th:text="${accion == 'crear' ? 'Registrar Equipo' : 'Actualizar Equipo'}">Guardar</span>
                     </button>
                 </div>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Pago · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -540,18 +540,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}" class="active"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -561,12 +564,12 @@
 
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-credit-card-plus"></i>
+                <i class="ti ti-credit-card-plus"></i>
                 <span>Registrar Pago</span>
                 <small>Pendiente de validación</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -579,7 +582,7 @@
         <div class="form-container">
 
             <div class="info-box">
-                <i class="bi bi-info-circle"></i>
+                <i class="ti ti-info-circle"></i>
                 <div>
                     <strong>Registro de pagos</strong><br>
                     Ingresa los datos del pago y adjunta el comprobante para su validación.
@@ -613,7 +616,7 @@
                 <div class="form-group">
                     <label for="idProyecto">Proyecto <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-folder"></i>
+                        <i class="ti ti-folder"></i>
                         <select id="idProyecto" th:field="*{idProyecto}" required>
                             <option value="">Seleccione un proyecto</option>
                             <option th:each="p : ${proyectos}" th:value="${p.idProyecto}" 
@@ -627,7 +630,7 @@
                     <div class="form-group">
                         <label for="monto">Monto (S/) <span class="required">*</span></label>
                         <div class="input-wrapper">
-                            <i class="bi bi-coin"></i>
+                            <i class="ti ti-coin"></i>
                             <input type="number" id="monto" th:field="*{monto}" 
                                    step="0.01" min="0.01" required placeholder="0.00">
                         </div>
@@ -635,7 +638,7 @@
                     <div class="form-group">
                         <label for="metodoPago">Método de Pago <span class="required">*</span></label>
                         <div class="input-wrapper">
-                            <i class="bi bi-wallet"></i>
+                            <i class="ti ti-wallet"></i>
                             <select id="metodoPago" th:field="*{metodoPago}" required>
                                 <option value="">Seleccione un método</option>
                                 <option value="Efectivo">Efectivo</option>
@@ -650,7 +653,7 @@
                 <div class="form-group">
                     <label for="tipoComprobante">Tipo de Comprobante <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-file-earmark"></i>
+                        <i class="ti ti-file"></i>
                         <select id="tipoComprobante" name="tipoComprobante" required>
                             <option value="">Seleccione un tipo</option>
                             <option value="Factura">Factura</option>
@@ -664,7 +667,7 @@
                 <div class="form-group">
                     <label for="numeroComprobante">Número de Comprobante <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-receipt"></i>
+                        <i class="ti ti-receipt"></i>
                         <input type="text" id="numeroComprobante" name="numeroComprobante" 
                                required placeholder="Ej: 001-00012345">
                     </div>
@@ -673,12 +676,12 @@
                 <div class="form-group">
                     <label for="comprobante">Archivo del Comprobante <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-upload"></i>
+                        <i class="ti ti-upload"></i>
                         <input type="file" id="comprobante" name="comprobante" 
                                accept=".jpg,.jpeg,.png,.pdf" required>
                     </div>
                     <div class="file-info">
-                        <i class="bi bi-info-circle"></i> 
+                        <i class="ti ti-info-circle"></i> 
                         Formatos permitidos: JPG, PNG, PDF. Tamaño máximo: 5MB
                     </div>
                 </div>
@@ -686,7 +689,7 @@
                 <div class="form-group">
                     <label for="observaciones">Observaciones</label>
                     <div class="input-wrapper">
-                        <i class="bi bi-sticky"></i>
+                        <i class="ti ti-notes"></i>
                         <textarea id="observaciones" th:field="*{observaciones}" rows="2" 
                                   placeholder="Observaciones adicionales sobre el pago..."></textarea>
                     </div>
@@ -694,10 +697,10 @@
 
                 <div class="form-actions">
                     <a th:href="@{/admin/pagos}" class="btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Cancelar
+                        <i class="ti ti-arrow-left"></i> Cancelar
                     </a>
                     <button type="submit" class="btn-primary">
-                        <i class="bi bi-floppy"></i> Registrar Pago
+                        <i class="ti ti-floppy"></i> Registrar Pago
                     </button>
                 </div>
             </form>

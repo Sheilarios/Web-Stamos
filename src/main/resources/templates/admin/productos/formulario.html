@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' · STAMOS Administración'">STAMOS · Producto</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -520,18 +520,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}" class="active"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -541,14 +544,14 @@
 
         <div class="header">
             <div class="page-title">
-                <i th:if="${accion == 'crear'}" class="bi bi-box"></i>
-                <i th:unless="${accion == 'crear'}" class="bi bi-pencil"></i>
+                <i th:if="${accion == 'crear'}" class="ti ti-package"></i>
+                <i th:unless="${accion == 'crear'}" class="ti ti-pencil"></i>
                 <span th:text="${titulo}">Formulario Producto</span>
                 <small th:if="${producto != null and producto.idProducto != null}" 
                        th:text="'ID: ' + ${producto.idProducto}">ID: 0</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -560,7 +563,7 @@
         <div class="form-container">
 
             <div class="info-box" th:if="${accion == 'editar'}">
-                <i class="bi bi-info-circle"></i>
+                <i class="ti ti-info-circle"></i>
                 <div>
                     <strong>Editando producto</strong><br>
                     Actualiza la información del producto. Los cambios se reflejarán en todas las cotizaciones futuras.
@@ -575,7 +578,7 @@
                 <div class="form-group">
                     <label for="nombreItem">Nombre del Producto <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-tag"></i>
+                        <i class="ti ti-tag"></i>
                         <input type="text" id="nombreItem" th:field="*{nombreItem}" required>
                     </div>
                 </div>
@@ -583,7 +586,7 @@
                 <div class="form-group">
                     <label for="descripcion">Descripción</label>
                     <div class="input-wrapper">
-                        <i class="bi bi-file-text"></i>
+                        <i class="ti ti-file-text"></i>
                         <textarea id="descripcion" th:field="*{descripcion}" rows="2" 
                                   placeholder="Descripción detallada del producto..."></textarea>
                     </div>
@@ -593,7 +596,7 @@
                     <div class="form-group">
                         <label for="idCategoria">Categoría <span class="required">*</span></label>
                         <div class="input-wrapper">
-                            <i class="bi bi-grid"></i>
+                            <i class="ti ti-grid"></i>
                             <select id="idCategoria" th:field="*{idCategoria}" required>
                                 <option value="">Seleccione una categoría</option>
                                 <option th:each="c : ${categorias}" th:value="${c.idCategoria}" 
@@ -605,7 +608,7 @@
                     <div class="form-group">
                         <label for="tipo">Tipo de Producto <span class="required">*</span></label>
                         <div class="input-wrapper">
-                            <i class="bi bi-tags"></i>
+                            <i class="ti ti-tags"></i>
                             <select id="tipo" th:field="*{tipo}" required>
                                 <option value="">Seleccione un tipo</option>
                                 <option value="Alquiler">Alquiler</option>
@@ -614,7 +617,7 @@
                             </select>
                         </div>
                         <div style="font-size:11px; color:#8A8A8A; margin-top:4px;">
-                            <i class="bi bi-info-circle"></i> 
+                            <i class="ti ti-info-circle"></i> 
                             <span th:text="${producto.tipo != null} ? 'Tipo actual: ' + ${producto.tipo} : 'Selecciona el tipo de producto'">Selecciona el tipo de producto</span>
                         </div>
                     </div>
@@ -623,12 +626,12 @@
                 <div class="form-group">
                     <label for="precioBase">Precio Base (S/) <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i class="bi bi-coin"></i>
+                        <i class="ti ti-coin"></i>
                         <input type="number" id="precioBase" th:field="*{precioBase}" 
                                step="0.01" min="0" required placeholder="0.00">
                     </div>
                     <div style="font-size:11px; color:#8A8A8A; margin-top:4px;">
-                        <i class="bi bi-info-circle"></i> 
+                        <i class="ti ti-info-circle"></i> 
                         Precio referencial. Puede ser negociado en las cotizaciones.
                     </div>
                 </div>
@@ -636,11 +639,11 @@
                 <div class="form-group">
                     <label for="imagen">Imagen del Producto</label>
                     <div class="input-wrapper">
-                        <i class="bi bi-image"></i>
+                        <i class="ti ti-photo"></i>
                         <input type="file" id="imagen" name="imagen" accept="image/*">
                     </div>
                     <div class="file-info">
-                        <i class="bi bi-info-circle"></i> 
+                        <i class="ti ti-info-circle"></i> 
                         Formatos permitidos: JPG, PNG, WEBP. Tamaño máximo: 2MB
                     </div>
                     <div class="image-preview" th:if="${producto != null and producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}">
@@ -657,17 +660,17 @@
                         </label>
                     </div>
                     <div style="font-size:11px; color:#8A8A8A; margin-top:4px;">
-                        <i class="bi bi-info-circle"></i> 
+                        <i class="ti ti-info-circle"></i> 
                         Los productos inactivos no aparecerán en las cotizaciones.
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <a th:href="@{/admin/productos}" class="btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Cancelar
+                        <i class="ti ti-arrow-left"></i> Cancelar
                     </a>
                     <button type="submit" class="btn-primary">
-                        <i class="bi bi-floppy"></i> 
+                        <i class="ti ti-floppy"></i> 
                         <span th:text="${accion == 'crear' ? 'Crear Producto' : 'Actualizar Producto'}">Guardar</span>
                     </button>
                 </div>

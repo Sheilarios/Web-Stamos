@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Producto · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -531,18 +531,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}" class="active"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -552,12 +555,12 @@
 
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-box"></i>
+                <i class="ti ti-package"></i>
                 <span>Detalle de Producto</span>
                 <small th:text="'#' + ${producto != null ? producto.idProducto : ''}">#0</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -572,17 +575,17 @@
                     <img th:src="${producto.imagenUrl}" th:alt="${producto.nombreItem}">
                 </div>
                 <div th:unless="${producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}" class="no-image">
-                    <i class="bi bi-image"></i>
+                    <i class="ti ti-photo"></i>
                     <p>Sin imagen</p>
                 </div>
             </div>
             <div class="producto-info">
                 <div class="nombre" th:text="${producto.nombreItem}">—</div>
                 <div class="codigo">
-                    <i class="bi bi-hash"></i> 
+                    <i class="ti ti-hash"></i> 
                     <span th:text="'PROD-' + ${#strings.leftPad(producto.idProducto, 5, '0')}">PROD-00000</span>
                     <span style="margin-left:16px;">
-                        <i class="bi bi-tag"></i> 
+                        <i class="ti ti-tag"></i> 
                         <span th:text="${producto.tipo}">Alquiler</span>
                     </span>
                 </div>
@@ -648,29 +651,29 @@
 
         <div class="action-buttons" th:if="${producto != null}">
             <a th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" class="btn-primary">
-                <i class="bi bi-pencil"></i> Editar Producto
+                <i class="ti ti-pencil"></i> Editar Producto
             </a>
             <form th:action="@{/admin/productos/activar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
                   th:if="${!producto.activo}">
                 <button type="submit" class="btn-primary" style="background:#1A7040; color:white;" 
                         onclick="return confirm('¿Activar este producto?');">
-                    <i class="bi bi-check-lg"></i> Activar
+                    <i class="ti ti-check"></i> Activar
                 </button>
             </form>
             <form th:action="@{/admin/productos/desactivar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;" 
                   th:if="${producto.activo}">
                 <button type="submit" class="btn-secondary" style="border-color:#C0392B; color:#C0392B;" 
                         onclick="return confirm('¿Desactivar este producto?');">
-                    <i class="bi bi-x-lg"></i> Desactivar
+                    <i class="ti ti-x"></i> Desactivar
                 </button>
             </form>
             <form th:action="@{/admin/productos/eliminar/{id}(id=${producto.idProducto})}" method="post" style="display:inline;">
                 <button type="submit" class="btn-danger" onclick="return confirm('¿Eliminar este producto permanentemente?');">
-                    <i class="bi bi-trash"></i> Eliminar
+                    <i class="ti ti-trash"></i> Eliminar
                 </button>
             </form>
             <a th:href="@{/admin/productos}" class="btn-secondary">
-                <i class="bi bi-arrow-left"></i> Volver al listado
+                <i class="ti ti-arrow-left"></i> Volver al listado
             </a>
         </div>
 

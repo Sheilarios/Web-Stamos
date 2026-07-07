@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Proyecto · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -606,7 +606,6 @@
             display: block;
         }
 
-
         .section {
             border: 1px solid #E8E8E8;
             border-radius: 16px;
@@ -727,7 +726,6 @@
         .btn-icon.verde:hover { border-color: #1A7040; color: #1A7040; }
         .btn-icon.rojo:hover { border-color: #C0392B; color: #C0392B; }
 
-        /* Historial vertical (opcional) */
         .timeline-vertical {
             position: relative;
             padding-left: 20px;
@@ -1072,18 +1070,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}" class="active"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -1093,12 +1094,12 @@
 
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-folder"></i>
+                <i class="ti ti-folder"></i>
                 <span>Detalle del Proyecto</span>
                 <small th:text="'#' + ${proyecto != null ? proyecto.idProyecto : ''}">#0</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -1142,18 +1143,10 @@
             </div>
         </div>
 
-
-        <div th:replace="fragments/timeline :: timeline(
-            ${proyectoActivo}, 
-            ${pasosTimeline}, 
-            ${progresoPorcentaje}
-        )"></div>
-
-
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-wallet"></i> Resumen Financiero
+                    <i class="ti ti-wallet"></i> Resumen Financiero
                 </div>
             </div>
             <div class="section-body">
@@ -1186,10 +1179,10 @@
         <div class="section" th:if="${cotizacion != null}">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-file-earmark"></i> Detalles de la Cotización
+                    <i class="ti ti-file"></i> Detalles de la Cotización
                 </div>
                 <span style="font-size:12px; color:#8A8A8A;">
-                    <i class="bi bi-file"></i> 
+                    <i class="ti ti-file"></i> 
                     <span th:text="${cotizacion.codigoCotizacion != null ? cotizacion.codigoCotizacion : 'COT-' + #strings.leftPad(cotizacion.idCotizacion, 5, '0')}">COT-00000</span>
                 </span>
             </div>
@@ -1213,7 +1206,7 @@
         <div class="section" th:if="${detallesCotizacion != null and !#lists.isEmpty(detallesCotizacion)}">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-list"></i> Productos y Servicios
+                    <i class="ti ti-list"></i> Productos y Servicios
                 </div>
             </div>
             <div class="table-wrapper">
@@ -1241,25 +1234,25 @@
         <div class="section" th:if="${documentos != null and !#lists.isEmpty(documentos)}">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-file-text"></i> Documentos del Proyecto
+                    <i class="ti ti-file-text"></i> Documentos del Proyecto
                 </div>
                 <a th:href="@{/admin/documentos(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary" style="font-size:12px;">
-                    Ver todos <i class="bi bi-arrow-right"></i>
+                    Ver todos <i class="ti ti-arrow-right"></i>
                 </a>
             </div>
             <div class="section-body">
                 <div th:each="doc : ${documentos}" class="documento-item" style="margin-bottom: 8px;">
-                    <i th:if="${doc.tipoDocumento == 'Render'}" class="bi bi-image"></i>
-                    <i th:if="${doc.tipoDocumento == 'Plano'}" class="bi bi-rulers"></i>
-                    <i th:if="${doc.tipoDocumento == 'Boceto'}" class="bi bi-pencil"></i>
-                    <i th:if="${doc.tipoDocumento == 'Contrato'}" class="bi bi-file-contract"></i>
-                    <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="bi bi-file"></i>
+                    <i th:if="${doc.tipoDocumento == 'Render'}" class="ti ti-photo"></i>
+                    <i th:if="${doc.tipoDocumento == 'Plano'}" class="ti ti-ruler"></i>
+                    <i th:if="${doc.tipoDocumento == 'Boceto'}" class="ti ti-pencil"></i>
+                    <i th:if="${doc.tipoDocumento == 'Contrato'}" class="ti ti-file-contract"></i>
+                    <i th:unless="${doc.tipoDocumento == 'Render' or doc.tipoDocumento == 'Plano' or doc.tipoDocumento == 'Boceto' or doc.tipoDocumento == 'Contrato'}" class="ti ti-file"></i>
                     <div class="info">
                         <div class="nombre" th:text="${doc.nombreArchivo}">documento.pdf</div>
                         <div class="tipo" th:text="${doc.tipoDocumento} + ' · ' + ${#temporals.format(doc.fechaSubida, 'dd/MM/yyyy')}">Render · 01/01/2024</div>
                     </div>
                     <a th:href="@{/admin/documentos/ver/{id}(id=${doc.idDocumento})}" class="btn-icon azul" target="_blank">
-                        <i class="bi bi-eye"></i>
+                        <i class="ti ti-eye"></i>
                     </a>
                 </div>
             </div>
@@ -1268,10 +1261,10 @@
         <div class="section" th:if="${pagos != null and !#lists.isEmpty(pagos)}">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-credit-card"></i> Pagos Registrados
+                    <i class="ti ti-credit-card"></i> Pagos Registrados
                 </div>
                 <a th:href="@{/admin/pagos}" class="btn-secondary" style="font-size:12px;">
-                    Ver todos <i class="bi bi-arrow-right"></i>
+                    Ver todos <i class="ti ti-arrow-right"></i>
                 </a>
             </div>
             <div class="table-wrapper">
@@ -1304,7 +1297,7 @@
         <div class="section" th:if="${historialEstados != null and !#lists.isEmpty(historialEstados)}">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-clock"></i> Historial de Estados (Detalle)
+                    <i class="ti ti-clock"></i> Historial de Estados (Detalle)
                 </div>
             </div>
             <div class="section-body">
@@ -1322,17 +1315,17 @@
         <div class="action-buttons">
             <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-primary" 
                th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
-                <i class="bi bi-arrow-right"></i> Cambiar Estado
+                <i class="ti ti-arrow-right"></i> Cambiar Estado
             </a>
             <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-success" 
                th:if="${proyecto != null and proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
-                <i class="bi bi-credit-card-plus"></i> Registrar Pago
+                <i class="ti ti-credit-card-plus"></i> Registrar Pago
             </a>
             <a th:href="@{/admin/documentos/subir(proyectoId=${proyecto != null ? proyecto.idProyecto : ''})}" class="btn-secondary">
-                <i class="bi bi-upload"></i> Subir Documento
+                <i class="ti ti-upload"></i> Subir Documento
             </a>
             <a th:href="@{/admin/proyectos}" class="btn-secondary">
-                <i class="bi bi-arrow-left"></i> Volver al listado
+                <i class="ti ti-arrow-left"></i> Volver al listado
             </a>
         </div>
 

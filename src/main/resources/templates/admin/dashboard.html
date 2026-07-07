@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STAMOS · Dashboard Administrativo</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -500,18 +500,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}" class="active"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -520,11 +523,11 @@
     <main class="main-content">
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-speedometer2"></i>
+                <i class="ti ti-speedometer"></i>
                 <span>Dashboard</span>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:var(--text-3);font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -536,35 +539,35 @@
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Clientes registrados</span>
-                    <i class="bi bi-people"></i>
+                    <i class="ti ti-users"></i>
                 </div>
                 <div class="metric-value" th:text="${totalClientes}">0</div>
             </div>
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Cotizaciones pendientes</span>
-                    <i class="bi bi-file-earmark-text"></i>
+                    <i class="ti ti-file-invoice"></i>
                 </div>
                 <div class="metric-value" th:text="${cotizacionesPendientes}">0</div>
             </div>
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Proyectos activos</span>
-                    <i class="bi bi-folder-open"></i>
+                    <i class="ti ti-folder-open"></i>
                 </div>
                 <div class="metric-value" th:text="${proyectosActivos}">0</div>
             </div>
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Equipos en inventario</span>
-                    <i class="bi bi-box"></i>
+                    <i class="ti ti-box"></i>
                 </div>
                 <div class="metric-value" th:text="${totalEquipos}">0</div>
             </div>
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Pagos por validar</span>
-                    <i class="bi bi-credit-card"></i>
+                    <i class="ti ti-credit-card"></i>
                 </div>
                 <div class="metric-value" th:text="${pagosPendientesValidacion}">0</div>
             </div>
@@ -573,7 +576,7 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-file-earmark-text"></i> Últimas cotizaciones
+                    <i class="ti ti-file-text"></i> Últimas cotizaciones
                 </div>
                 <a th:href="@{/admin/cotizaciones}" class="btn-link">Ver todas →</a>
             </div>
@@ -602,7 +605,7 @@
                     </tbody>
                 </table>
                 <div th:if="${ultimasCotizaciones == null || ultimasCotizaciones.isEmpty()}" class="empty-message">
-                    <i class="bi bi-file-earmark-x"></i>
+                    <i class="ti ti-file-x"></i>
                     <p>No hay cotizaciones registradas.</p>
                 </div>
             </div>
@@ -611,7 +614,7 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="bi bi-folder-open"></i> Últimos proyectos
+                    <i class="ti ti-folder"></i> Últimos proyectos
                 </div>
                 <a th:href="@{/admin/proyectos}" class="btn-link">Ver todos →</a>
             </div>
@@ -643,7 +646,7 @@
                     </tbody>
                 </table>
                 <div th:if="${ultimosProyectos == null || ultimosProyectos.isEmpty()}" class="empty-message">
-                    <i class="bi bi-folder-x"></i>
+                    <i class="ti ti-folder-x"></i>
                     <p>No hay proyectos registrados.</p>
                 </div>
             </div>

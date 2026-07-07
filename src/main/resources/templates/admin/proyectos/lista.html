@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Proyectos · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -636,18 +636,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}" class="active"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -657,19 +660,19 @@
 
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-folder-open"></i>
+                <i class="ti ti-folder-open"></i>
                 <span>Gestión de Proyectos</span>
                 <span class="count" th:text="'(' + ${totalItems != null ? totalItems : 0} + ')'">(0)</span>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
         </div>
 
-        <div th:replace="fragments/mensajes :: mensaje_error"></div>
-        <div th:replace="fragments/mensajes :: mensaje_exito"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
 
         <div class="stats-row">
             <div class="stat-card">
@@ -692,7 +695,7 @@
 
         <form th:action="@{/admin/proyectos}" method="get" class="filters-bar">
             <div class="filter-group">
-                <i class="bi bi-funnel"></i>
+                <i class="ti ti-filter"></i>
                 <select name="estado">
                     <option value="">Todos los estados</option>
                     <option value="Aprobado" th:selected="${estado == 'Aprobado'}">Aprobado</option>
@@ -704,7 +707,7 @@
                 </select>
             </div>
             <div class="filter-group">
-                <i class="bi bi-person"></i>
+                <i class="ti ti-user"></i>
                 <select name="clienteId">
                     <option value="">Todos los clientes</option>
                     <option th:each="c : ${clientes}" th:value="${c.idCliente}" 
@@ -713,22 +716,22 @@
                 </select>
             </div>
             <div class="filter-group">
-                <i class="bi bi-search"></i>
+                <i class="ti ti-search"></i>
                 <input type="text" name="search" th:value="${search}" placeholder="Buscar por nombre...">
             </div>
             <div class="filter-group">
-                <i class="bi bi-calendar3"></i>
+                <i class="ti ti-calendar"></i>
                 <input type="date" name="fechaInicio" th:value="${fechaInicio}">
             </div>
             <div class="filter-group">
-                <i class="bi bi-calendar3"></i>
+                <i class="ti ti-calendar"></i>
                 <input type="date" name="fechaFin" th:value="${fechaFin}">
             </div>
             <button type="submit" class="btn-secondary">
-                <i class="bi bi-search"></i> Filtrar
+                <i class="ti ti-search"></i> Filtrar
             </button>
             <a th:href="@{/admin/proyectos}" class="btn-secondary" th:if="${estado != null or clienteId != null or search != null or fechaInicio != null or fechaFin != null}">
-                <i class="bi bi-arrow-repeat"></i> Limpiar
+                <i class="ti ti-refresh"></i> Limpiar
             </a>
         </form>
 
@@ -778,22 +781,22 @@
                         </td>
                         <td class="action-buttons">
                             <a th:href="@{/admin/proyectos/detalle/{id}(id=${proyecto.idProyecto})}" class="btn-icon azul">
-                                <i class="bi bi-eye"></i>
+                                <i class="ti ti-eye"></i>
                             </a>
                             <a th:href="@{/admin/proyectos/cambiar-estado/{id}(id=${proyecto.idProyecto})}" class="btn-icon" 
                                th:if="${proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
-                                <i class="bi bi-arrows-grow"></i>
+                                <i class="ti ti-arrows-split"></i>
                             </a>
                             <a th:href="@{/admin/pagos/registrar(proyectoId=${proyecto.idProyecto})}" class="btn-icon verde" 
                                th:if="${proyecto.estado != 'Entregado' and proyecto.estado != 'Anulado'}">
-                                <i class="bi bi-credit-card"></i>
+                                <i class="ti ti-credit-card"></i>
                             </a>
                         </td>
                     </tr>
                     <tr th:if="${proyectos == null or #lists.isEmpty(proyectos)}">
                         <td colspan="8">
                             <div class="empty-message">
-                                <i class="bi bi-folder-x"></i>
+                                <i class="ti ti-folder-x"></i>
                                 <p>No hay proyectos registrados.</p>
                                 <p style="font-size:12px; color:#8A8A8A; margin-top:8px;">
                                     Los proyectos se generan automáticamente al aprobar una cotización.

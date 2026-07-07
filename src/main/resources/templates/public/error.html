@@ -7,33 +7,124 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: #000000; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+        body { 
+            font-family: 'DM Sans', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; 
+            background: #0D1117; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 24px; 
+        }
 
         .error-container { text-align: center; max-width: 500px; width: 100%; }
 
-        .logo { font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; text-decoration: none; margin-bottom: 48px; display: block; }
+        .logo { 
+            font-family: 'Syne', sans-serif; 
+            font-size: 24px; 
+            font-weight: 800; 
+            color: #FFFFFF; 
+            letter-spacing: 1px; 
+            text-decoration: none; 
+            margin-bottom: 48px; 
+            display: block; 
+        }
         .logo span { color: #F5C400; }
 
-        .icon-wrap { width: 88px; height: 88px; background: rgba(245,196,0,0.10); border: 2px solid rgba(245,196,0,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 28px; }
+        .icon-wrap { 
+            width: 88px; 
+            height: 88px; 
+            background: rgba(245,196,0,0.10); 
+            border: 2px solid rgba(245,196,0,0.25); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 28px; 
+        }
         .icon-wrap i { font-size: 40px; color: #F5C400; }
 
-        .code { font-size: 13px; font-weight: 700; color: #F5C400; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px; }
-        h1 { font-size: 32px; font-weight: 800; color: #FFFFFF; margin-bottom: 14px; }
-        p { font-size: 15px; color: #8A8A8A; line-height: 1.7; margin-bottom: 32px; }
+        .code { 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #F5C400; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            margin-bottom: 12px; 
+        }
+        h1 { 
+            font-family: 'Syne', sans-serif;
+            font-size: 32px; 
+            font-weight: 800; 
+            color: #FFFFFF; 
+            margin-bottom: 14px; 
+        }
+        p { 
+            font-size: 15px; 
+            color: #8A8A8A; 
+            line-height: 1.7; 
+            margin-bottom: 32px; 
+        }
 
-        /* Error detail box (optional, shown when there's a technical message) */
-        .error-detail { background: #111; border: 1px solid #333; border-radius: 10px; padding: 14px 18px; text-align: left; margin-bottom: 28px; }
-        .error-detail .detail-label { font-size: 11px; font-weight: 700; color: #F5C400; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        .error-detail .detail-msg { font-size: 12px; color: #8A8A8A; font-family: 'Courier New', monospace; word-break: break-all; }
+        .error-detail { 
+            background: #1A1F2E; 
+            border: 1px solid #333; 
+            border-radius: 10px; 
+            padding: 14px 18px; 
+            text-align: left; 
+            margin-bottom: 28px; 
+        }
+        .error-detail .detail-label { 
+            font-size: 11px; 
+            font-weight: 700; 
+            color: #F5C400; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-bottom: 6px; 
+        }
+        .error-detail .detail-msg { 
+            font-size: 12px; 
+            color: #8A8A8A; 
+            font-family: 'Courier New', monospace; 
+            word-break: break-all; 
+        }
 
         .actions { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-        .btn-primary { background: #F5C400; color: #000000; padding: 13px 32px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; width: 100%; justify-content: center; }
+        .btn-primary { 
+            background: #F5C400; 
+            color: #000000; 
+            padding: 13px 32px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 14px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: background 0.2s; 
+            width: 100%; 
+            justify-content: center; 
+        }
         .btn-primary:hover { background: #E0B000; }
-        .btn-ghost { color: #8A8A8A; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .btn-ghost { 
+            color: #8A8A8A; 
+            text-decoration: none; 
+            font-size: 13px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            transition: color 0.2s; 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            font-family: inherit; 
+        }
         .btn-ghost:hover { color: #F5C400; }
         .divider { border: none; border-top: 1px solid #222; margin: 32px 0 20px; width: 100%; }
         .help-text { font-size: 12px; color: #555; }
         .help-text a { color: #F5C400; text-decoration: none; }
+        .help-text a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -48,7 +139,6 @@
         <h1>Algo salió mal</h1>
         <p>Ocurrió un error inesperado en el servidor. Nuestro equipo técnico ha sido notificado. Por favor, intenta de nuevo en unos minutos.</p>
 
-        <!-- Detalle técnico (solo visible si hay mensaje de error) -->
         <div th:if="${mensaje}" class="error-detail">
             <div class="detail-label">Detalle técnico</div>
             <div class="detail-msg" th:text="${mensaje}">Descripción del error</div>
@@ -56,7 +146,7 @@
 
         <div class="actions">
             <a th:href="@{/}" class="btn-primary"><i class="ti ti-home"></i> Volver al inicio</a>
-            <button onclick="history.back()" class="btn-ghost" style="background:none; border:none; cursor:pointer; font-family:inherit;">
+            <button onclick="history.back()" class="btn-ghost">
                 <i class="ti ti-arrow-left"></i> Regresar a la página anterior
             </button>
         </div>

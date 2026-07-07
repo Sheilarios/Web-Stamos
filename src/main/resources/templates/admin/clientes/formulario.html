@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' · STAMOS Administración'">STAMOS · Cliente</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -478,18 +478,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}" class="active"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -499,12 +502,12 @@
 
         <div class="header">
             <div class="page-title">
-                <i th:if="${accion == 'crear'}" class="bi bi-person-plus"></i>
-                <i th:unless="${accion == 'crear'}" class="bi bi-person-gear"></i>
+                <i th:if="${accion == 'crear'}" class="ti ti-user-plus"></i>
+                <i th:unless="${accion == 'crear'}" class="ti ti-user-edit"></i>
                 <span th:text="${titulo}">Formulario Cliente</span>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -523,14 +526,14 @@
                     <div class="form-group">
                         <label for="nombreRazonSocial">Razón Social / Nombre *</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-building"></i>
+                            <i class="ti ti-building"></i>
                             <input type="text" id="nombreRazonSocial" th:field="*{nombreRazonSocial}" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="ruc">RUC</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-upc-scan"></i>
+                            <i class="ti ti-barcode"></i>
                             <input type="text" id="ruc" th:field="*{ruc}" maxlength="11" placeholder="20XXXXXXXXX">
                         </div>
                     </div>
@@ -540,14 +543,14 @@
                     <div class="form-group">
                         <label for="email">Correo electrónico *</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-envelope"></i>
+                            <i class="ti ti-mail"></i>
                             <input type="email" id="email" th:field="*{email}" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="telefono">Teléfono *</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-telephone"></i>
+                            <i class="ti ti-phone"></i>
                             <input type="text" id="telefono" th:field="*{telefono}" required>
                         </div>
                     </div>
@@ -556,7 +559,7 @@
                 <div class="form-group">
                     <label for="direccion">Dirección</label>
                     <div class="input-wrapper">
-                        <i class="bi bi-geo-alt"></i>
+                        <i class="ti ti-map-pin"></i>
                         <input type="text" id="direccion" th:field="*{direccion}" placeholder="Calle, número, referencia...">
                     </div>
                 </div>
@@ -565,7 +568,7 @@
                     <div class="form-group">
                         <label for="tipoPersona">Tipo de cliente *</label>
                         <div class="input-wrapper">
-                            <i class="bi bi-people"></i>
+                            <i class="ti ti-people"></i>
                             <select id="tipoPersona" th:field="*{tipoPersona}" required>
                                 <option value="">Seleccionar</option>
                                 <option value="Natural">Persona Natural</option>
@@ -586,7 +589,7 @@
                 <div class="form-group" th:if="${accion == 'crear'}">
                     <label for="password">Contraseña *</label>
                     <div class="input-wrapper">
-                        <i class="bi bi-lock"></i>
+                        <i class="ti ti-lock"></i>
                         <input type="password" id="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres">
                     </div>
                 </div>
@@ -594,17 +597,17 @@
                 <div class="form-group" th:if="${accion == 'crear'}">
                     <label for="confirmPassword">Confirmar contraseña *</label>
                     <div class="input-wrapper">
-                        <i class="bi bi-lock"></i>
+                        <i class="ti ti-lock"></i>
                         <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <a th:href="@{/admin/clientes}" class="btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Cancelar
+                        <i class="ti ti-arrow-left"></i> Cancelar
                     </a>
                     <button type="submit" class="btn-primary">
-                        <i class="bi bi-floppy"></i> 
+                        <i class="ti ti-floppy"></i> 
                         <span th:text="${accion == 'crear' ? 'Guardar' : 'Actualizar'}">Guardar</span>
                     </button>
                 </div>

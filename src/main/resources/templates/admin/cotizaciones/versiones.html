@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de Versiones · STAMOS Administración</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
 
@@ -559,18 +559,21 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li th:each="item : ${menuItems}">
-                <a th:href="${item.url}" 
-                   th:classappend="${#strings.equalsIgnoreCase(currentPath, item.url)} ? 'active' : ''">
-                    <i th:class="${item.icon}"></i>
-                    <span th:text="${item.label}"></span>
-                </a>
-            </li>
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}" class="active"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="ti ti-logout"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
@@ -580,12 +583,12 @@
 
         <div class="header">
             <div class="page-title">
-                <i class="bi bi-clock-history"></i>
+                <i class="ti ti-clock"></i>
                 <span>Historial de Versiones</span>
                 <small th:text="${cotizacion != null && cotizacion.idCotizacion != null ? 'COT-' + #strings.padLeft(cotizacion.idCotizacion, 5, '0') : 'COT-00000'}">COT-00000</small>
             </div>
             <div class="user-info">
-                <i class="bi bi-person-circle"></i>
+                <i class="ti ti-user-circle"></i>
                 <span th:text="${username}">Administrador</span>
                 <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
             </div>
@@ -663,7 +666,7 @@
                         <td>
                             <span th:if="${ver.numeroVersion == cotizacion.versionActual}" 
                                   class="badge-actual">
-                                <i class="bi bi-check-lg"></i> Actual
+                                <i class="ti ti-check"></i> Actual
                             </span>
                             <span th:unless="${ver.numeroVersion == cotizacion.versionActual}" 
                                   class="badge-historical">
@@ -674,7 +677,7 @@
                 </tbody>
             </table>
             <div th:if="${versiones == null || versiones.isEmpty()}" class="empty-message">
-                <i class="bi bi-clock-history"></i>
+                <i class="ti ti-clock"></i>
                 <p>No hay versiones registradas para esta cotización.</p>
                 <p style="font-size:12px; color:#8A8A8A; margin-top:8px;">
                     Las versiones se crean automáticamente al editar una cotización.
@@ -684,17 +687,17 @@
 
         <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
             <div style="font-size:12px; color:#8A8A8A;">
-                <i class="bi bi-info-circle"></i> 
+                <i class="ti ti-info-circle"></i> 
                 <span th:text="'Total de versiones: ' + ${#lists.size(versiones)}">Total de versiones: 0</span>
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Regresar al listado
+                    <i class="ti ti-arrow-left"></i> Regresar al listado
                 </a>
                 <a th:href="@{/admin/cotizaciones/editar/{id}(id=${cotizacion.idCotizacion})}" 
                    class="btn-primary" 
                    th:if="${cotizacion != null && cotizacion.estado == 'Pendiente'}">
-                    <i class="bi bi-file-earmark-plus"></i> Crear nueva versión
+                    <i class="ti ti-file-plus"></i> Crear nueva versión
                 </a>
             </div>
         </div>
