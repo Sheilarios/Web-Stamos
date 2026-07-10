@@ -147,8 +147,8 @@ public class CotizacionController extends BaseController {
             }
             
             if ("Aprobada".equals(cotizacion.getEstado())) {
-                model.addAttribute("error", "No se puede modificar una cotización aprobada. Si deseas cambios, crea una nueva versión.");
-                return "redirect:/admin/cotizaciones/versiones/" + id;
+                model.addAttribute("error", "No se puede modificar una cotización aprobada.");
+                return "redirect:/admin/cotizaciones";
             }
             
             List<CotizacionDetalle> detalles = cotizacionService.getDetallesByCotizacion(id);
@@ -262,7 +262,7 @@ public class CotizacionController extends BaseController {
             }
 
             if ("Aprobada".equals(cotizacionExistente.getEstado())) {
-                model.addAttribute("error", "No se puede modificar una cotización aprobada. Crea una nueva versión desde el historial.");
+                model.addAttribute("error", "No se puede modificar una cotización aprobada.");
                 cargarDatosFormulario(model, cotizacion, "editar", "Editar Cotización");
                 return "admin/cotizaciones/formulario";
             }
@@ -280,14 +280,14 @@ public class CotizacionController extends BaseController {
                 return "admin/cotizaciones/formulario";
             }
 
+            // USAR EL MÉTODO EXISTENTE crearVersion
             cotizacionService.crearVersion(
                 id, cotizacion, productosIds, cantidades, preciosUnitarios, 
                 descuentos, motivoCambio, usuario.getIdUsuario()
             );
 
             redirectAttributes.addFlashAttribute("mensaje", 
-                "Cotización actualizada exitosamente. Nueva versión: " + 
-                (cotizacionExistente.getVersionActual() + 1));
+                "Cotización actualizada exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
             
             return "redirect:/admin/cotizaciones";
@@ -390,51 +390,6 @@ public class CotizacionController extends BaseController {
         }
     }
 
-    @GetMapping("/versiones/{id}")
-    public String verVersiones(@PathVariable Integer id, Model model) {
-        try {
-            Cotizacion cotizacion = cotizacionService.findById(id);
-            if (cotizacion == null) {
-                model.addAttribute("error", "Cotización no encontrada");
-                return "redirect:/admin/cotizaciones";
-            }
-
-            List<CotizacionVersion> versiones = cotizacionService.getVersionesByCotizacion(id);
-            List<CotizacionDetalle> detallesActuales = cotizacionService.getDetallesByCotizacion(id);
-            
-            model.addAttribute("cotizacion", cotizacion);
-            model.addAttribute("versiones", versiones);
-            model.addAttribute("detallesActuales", detallesActuales);
-            addCommonAttributes(model);
-            
-            return "admin/cotizaciones/versiones";
-            
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al cargar las versiones: " + e.getMessage());
-            return "redirect:/admin/cotizaciones";
-        }
-    }
-
-    @GetMapping("/detalle-version/{id}")
-    @ResponseBody
-    public List<CotizacionDetalle> obtenerDetalleVersion(@PathVariable Integer idVersion) {
-        try {
-            return cotizacionService.getDetallesByVersion(idVersion);
-        } catch (Exception e) {
-            return List.of();
-        }
-    }
-
-    @GetMapping("/version/{id}")
-    @ResponseBody
-    public CotizacionVersion obtenerVersion(@PathVariable Integer idVersion) {
-        try {
-            return cotizacionService.findVersionById(idVersion);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     @GetMapping("/detalle/{id}")
     @ResponseBody
     public Cotizacion obtenerDetalleCotizacion(@PathVariable Integer id) {
@@ -461,22 +416,22 @@ public class CotizacionController extends BaseController {
 
     public String getEstadoLegible(String estado) {
         if (estado == null) return "Sin estado";
-        return switch (estado) {
-            case "Pendiente" -> "Pendiente";
-            case "Aprobada" -> "Aprobada";
-            case "Anulada" -> "Anulada";
-            default -> estado;
-        };
+        switch (estado) {
+            case "Pendiente": return "Pendiente";
+            case "Aprobada": return "Aprobada";
+            case "Anulada": return "Anulada";
+            default: return estado;
+        }
     }
 
     public String getEstadoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";
-        return switch (estado) {
-            case "Pendiente" -> "status-pendiente";
-            case "Aprobada" -> "status-validado";
-            case "Anulada" -> "status-rechazado";
-            default -> "status-pendiente";
-        };
+        switch (estado) {
+            case "Pendiente": return "status-pendiente";
+            case "Aprobada": return "status-validado";
+            case "Anulada": return "status-rechazado";
+            default: return "status-pendiente";
+        }
     }
 
     @Override
