@@ -1,60 +1,37 @@
-<ul class="sidebar-menu">
-    <!-- ===== PRINCIPAL ===== -->
-    <li class="menu-label">Principal</li>
-    <li><a href="/admin/dashboard" class="active">
-        <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
-    </a></li>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sidebar</title>
+</head>
+<body>
 
-    <!-- ===== GESTIÓN ===== -->
-    <li class="menu-label">Gestión</li>
+<aside th:fragment="sidebar_admin" class="sidebar">
+    <div class="sidebar-brand">
+        <h2>STAMOS<span>.</span></h2>
+        <small>Administracion</small>
+    </div>
 
-    <!-- Clientes: visible para todos los roles internos -->
-    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Vendedor'}">
-        <a href="/admin/clientes">
-            <i class="ti ti-users"></i><span>Clientes</span>
+    <ul class="sidebar-menu">
+        <li th:each="item : ${menuItems}">
+            <a th:href="${item.url}" 
+               th:classappend="${#strings.startsWith(currentPath, item.url)} ? 'active' : ''">
+                <i th:class="${item.icon}"></i>
+                <span th:text="${item.label}"></span>
+                <span th:if="${item.label == 'Notificaciones' and notificacionesNoLeidas > 0}" 
+                      style="background:#EF4444; color:white; font-size:10px; padding:2px 8px; border-radius:10px; margin-left:auto;"
+                      th:text="${notificacionesNoLeidas}"></span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <a th:href="@{/logout}">
+            <i class="ti ti-logout"></i>
+            <span>Cerrar Sesion</span>
         </a>
-    </li>
+    </div>
+</aside>
 
-    <!-- Cotizaciones: visible para Administrador y Vendedor -->
-    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Vendedor'}">
-        <a href="/admin/cotizaciones">
-            <i class="ti ti-file-invoice"></i><span>Cotizaciones</span>
-        </a>
-    </li>
-
-    <!-- Proyectos: visible para todos los roles internos -->
-    <li th:if="${rolUsuario != 'Cliente'}">
-        <a href="/admin/proyectos">
-            <i class="ti ti-folder-open"></i><span>Proyectos</span>
-        </a>
-    </li>
-
-    <!-- Inventario: visible para Administrador, Producción y Soporte Técnico -->
-    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Producción' or rolUsuario == 'Soporte Técnico'}">
-        <a href="/admin/inventario">
-            <i class="ti ti-box"></i><span>Inventario</span>
-        </a>
-    </li>
-
-    <!-- Pagos: visible para Administrador y Vendedor -->
-    <li th:if="${rolUsuario == 'Administrador' or rolUsuario == 'Vendedor'}">
-        <a href="/admin/pagos">
-            <i class="ti ti-credit-card"></i><span>Pagos</span>
-        </a>
-    </li>
-
-    <!-- ===== CONFIGURACIÓN (SOLO ADMIN) ===== -->
-    <li th:if="${rolUsuario == 'Administrador'}" class="menu-label">Configuración</li>
-
-    <li th:if="${rolUsuario == 'Administrador'}">
-        <a href="/admin/configuracion">
-            <i class="ti ti-settings"></i><span>Configuración</span>
-        </a>
-    </li>
-
-    <li th:if="${rolUsuario == 'Administrador'}">
-        <a href="/admin/usuarios">
-            <i class="ti ti-user-cog"></i><span>Usuarios</span>
-        </a>
-    </li>
-</ul>
+</body>
+</html>

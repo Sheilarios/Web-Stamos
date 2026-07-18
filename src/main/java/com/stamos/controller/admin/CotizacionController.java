@@ -4,6 +4,8 @@ import com.stamos.annotation.Auditable;
 import com.stamos.controller.BaseController;
 import com.stamos.model.*;
 import com.stamos.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,8 @@ import java.util.List;
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
 public class CotizacionController extends BaseController {
 
+    private static final Logger log = LoggerFactory.getLogger(CotizacionController.class);
+
     @Autowired
     private CotizacionService cotizacionService;
 
@@ -41,6 +45,9 @@ public class CotizacionController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @GetMapping
     public String listarCotizaciones(@RequestParam(defaultValue = "0") int page,
@@ -280,7 +287,6 @@ public class CotizacionController extends BaseController {
                 return "admin/cotizaciones/formulario";
             }
 
-            // USAR EL MÉTODO EXISTENTE crearVersion
             cotizacionService.crearVersion(
                 id, cotizacion, productosIds, cantidades, preciosUnitarios, 
                 descuentos, motivoCambio, usuario.getIdUsuario()
@@ -334,7 +340,28 @@ public class CotizacionController extends BaseController {
                 return "redirect:/admin/cotizaciones";
             }
 
+            String codigoCotizacion = cotizacion.getCodigoCotizacion();
+            Integer idCliente = cotizacion.getIdCliente();
+
             Proyecto proyecto = cotizacionService.aprobarCotizacion(id, usuario.getIdUsuario());
+
+            try {
+                Cliente cliente = clienteService.findById(idCliente);
+                if (cliente != null && cliente.getIdUsuario() != null) {
+                    notificacionService.notificarCotizacionAprobada(
+                        cliente.getIdUsuario(),
+                        codigoCotizacion,
+                        cliente.getNombreRazonSocial(),
+                        id
+                    );
+                    log.info("Notificación enviada al cliente: {} - Cotización {} aprobada",
+                        cliente.getEmail(), codigoCotizacion);
+                } else {
+                    log.warn("No se encontró cliente para notificar aprobación de cotización");
+                }
+            } catch (Exception e) {
+                log.error("Error al enviar notificación de cotización aprobada: {}", e.getMessage());
+            }
 
             redirectAttributes.addFlashAttribute("mensaje", 
                 "Cotización aprobada exitosamente. Proyecto generado: " + proyecto.getNombreProyecto());
@@ -343,6 +370,7 @@ public class CotizacionController extends BaseController {
             return "redirect:/admin/cotizaciones";
 
         } catch (Exception e) {
+            log.error("Error al aprobar la cotización: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Error al aprobar la cotización: " + e.getMessage());
             return "redirect:/admin/cotizaciones";
         }
@@ -377,7 +405,30 @@ public class CotizacionController extends BaseController {
                 return "redirect:/admin/cotizaciones";
             }
 
-            cotizacionService.anularCotizacion(id, motivo, usuario.getIdUsuario());
+            String codigoCotizacion = cotizacion.getCodigoCotizacion();
+            Integer idCliente = cotizacion.getIdCliente();
+            String motivoAnulacion = (motivo != null && !motivo.isEmpty()) ? motivo : "Sin motivo especificado";
+
+            cotizacionService.anularCotizacion(id, motivoAnulacion, usuario.getIdUsuario());
+
+            try {
+                Cliente cliente = clienteService.findById(idCliente);
+                if (cliente != null && cliente.getIdUsuario() != null) {
+                    notificacionService.notificarCotizacionAnulada(
+                        cliente.getIdUsuario(),
+                        codigoCotizacion,
+                        cliente.getNombreRazonSocial(),
+                        motivoAnulacion,
+                        id
+                    );
+                    log.info("Notificación de cotización anulada enviada al cliente: {} - Cotización: {} - Motivo: {}",
+                        cliente.getEmail(), codigoCotizacion, motivoAnulacion);
+                } else {
+                    log.warn("No se encontró cliente para notificar anulación de cotización");
+                }
+            } catch (Exception e) {
+                log.error("Error al enviar notificación de cotización anulada: {}", e.getMessage());
+            }
 
             redirectAttributes.addFlashAttribute("mensaje", "Cotización anulada exitosamente.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
@@ -385,6 +436,7 @@ public class CotizacionController extends BaseController {
             return "redirect:/admin/cotizaciones";
 
         } catch (Exception e) {
+            log.error("Error al anular la cotización: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Error al anular la cotización: " + e.getMessage());
             return "redirect:/admin/cotizaciones";
         }

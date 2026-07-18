@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notificaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background: #f5f5f5; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        h1 { color: #1A1F2E; border-bottom: 2px solid #F5C400; padding-bottom: 12px; }
+        .badge-contador { background: #EF4444; color: white; padding: 3px 14px; border-radius: 12px; font-size: 14px; margin-left: 10px; }
+        .notificacion { border-bottom: 1px solid #eee; padding: 14px 0; transition: background 0.3s; }
+        .notificacion .titulo { font-weight: 600; color: #1A1F2E; }
+        .notificacion .mensaje { color: #555; margin: 4px 0; }
+        .notificacion.no-leida { background: #FFFBE6; padding: 14px; border-left: 4px solid #F5C400; border-radius: 4px; }
+        .notificacion.leida { background: white; border-left: 4px solid #10B981; border-radius: 4px; }
+        .badge-nueva { background: #EF4444; color: white; font-size: 10px; padding: 2px 10px; border-radius: 10px; margin-left: 6px; }
+        .btn-marcar { background: transparent; border: 1px solid #ddd; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
+        .btn-marcar:hover { border-color: #F5C400; background: #FFFBE6; }
+        .meta { color: #999; font-size: 12px; margin-top: 4px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .empty { text-align: center; padding: 50px 20px; color: #999; }
+        .empty i { font-size: 48px; display: block; margin-bottom: 12px; opacity: 0.5; }
+        .volver { color: #555; text-decoration: none; }
+        .volver:hover { color: #F5C400; }
+        .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; align-items: center; }
+        .search-box { display: flex; align-items: center; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 4px 12px; flex: 1; min-width: 200px; }
+        .search-box input { border: none; padding: 8px 10px; width: 100%; outline: none; }
+        .pagination { display: flex; gap: 6px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .pagination a, .pagination span { padding: 6px 14px; border-radius: 6px; text-decoration: none; color: #555; background: #f5f6f8; border: 1px solid #ddd; }
+        .pagination .active { background: #F5C400; color: #000; font-weight: 600; }
+        .footer { text-align: center; padding: 16px 0 0; font-size: 12px; color: #999; border-top: 1px solid #eee; margin-top: 16px; }
+        .error { color: #C0392B; background: #FFF0EE; padding: 12px 16px; border-radius: 8px; border: 1px solid #FECACA; margin-bottom: 16px; }
+        .user-info { background: #f8f9fa; padding: 8px 16px; border-radius: 8px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <a href="/admin/dashboard" class="volver">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+
+        <h1 class="mt-3">
+            <i class="bi bi-bell-fill" style="color:#F5C400;"></i>
+            Notificaciones
+            <span class="badge-contador" id="badgeContador" 
+                  th:if="${notificacionesNoLeidas != null and notificacionesNoLeidas > 0}" 
+                  th:text="${notificacionesNoLeidas} + ' no leidas'"></span>
+        </h1>
+
+        <div class="user-info mt-2">
+            <i class="bi bi-person-circle"></i>
+            <strong>Usuario:</strong> <span th:text="${username}">-</span>
+            <span class="mx-2">|</span>
+            <strong>Rol:</strong> <span th:text="${rol}">-</span>
+        </div>
+
+        <div th:if="${error}" class="error">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Buscar..." id="searchInput" th:value="${search}">
+            </div>
+            <button class="btn btn-outline-secondary btn-sm" id="btnBuscar">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+            <a href="/notificaciones" class="btn btn-outline-secondary btn-sm" th:if="${search != null}">
+                <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+            </a>
+            <button class="btn btn-success btn-sm" id="btnMarcarTodas" 
+                    th:if="${notificacionesNoLeidas != null and notificacionesNoLeidas > 0}">
+                <i class="bi bi-check-all"></i> Marcar todas
+            </button>
+        </div>
+
+        <p class="mb-3">
+            <strong>Total:</strong> <span id="totalItems" th:text="${totalItems != null ? totalItems : 0}">0</span> notificaciones
+        </p>
+
+        <div id="listaNotificaciones">
+            <div th:each="n : ${notificaciones != null ? notificaciones.content : null}" 
+                 class="notificacion" 
+                 th:classappend="${!n.leido} ? 'no-leida' : 'leida'"
+                 th:data-id="${n.idNotificacion}"
+                 th:data-leido="${n.leido}">
+                <div class="titulo">
+                    <span th:text="${n.asunto}"></span>
+                    <span th:if="${!n.leido}" class="badge-nueva">NUEVA</span>
+                    <span th:if="${n.leido}" style="color:#10B981; font-size:12px;">
+                        <i class="bi bi-check-circle-fill"></i> LEIDA
+                    </span>
+                </div>
+                <div class="mensaje" th:text="${n.mensaje}"></div>
+                <div class="meta">
+                    <span class="badge bg-light text-dark" th:text="${n.tipoEventoLegible}"></span>
+                    <span th:text="${n.fechaEnvioFormateada}"></span>
+                    <span class="estado-texto" th:text="${n.leido} ? 'Leida' : 'No leida'"></span>
+                    <span class="badge" th:classappend="${n.estadoEnvio == 'Error'} ? 'bg-danger' : 'bg-secondary'" 
+                          th:text="${n.estadoEnvio}"></span>
+                    <button class="btn-marcar" th:if="${!n.leido}" 
+                            th:data-id="${n.idNotificacion}">
+                        <i class="bi bi-check-circle"></i> Marcar leida
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${notificaciones == null or notificaciones.empty}" class="empty">
+            <i class="bi bi-bell-slash"></i>
+            <p>No tienes notificaciones</p>
+            <p style="font-size:12px;color:#bbb;">Las notificaciones apareceran aqui cuando ocurran eventos importantes.</p>
+        </div>
+
+        <div class="pagination" th:if="${notificaciones != null and notificaciones.totalPages != null and notificaciones.totalPages > 1}">
+            <a th:if="${notificaciones.hasPrevious()}" th:href="@{/notificaciones(page=${currentPage - 1}, search=${search})}">
+                <i class="bi bi-chevron-left"></i> Anterior
+            </a>
+            <span th:each="i : ${#numbers.sequence(0, notificaciones.totalPages - 1)}">
+                <a th:if="${i != currentPage}" th:href="@{/notificaciones(page=${i}, search=${search})}" th:text="${i + 1}">1</a>
+                <span th:if="${i == currentPage}" class="active" th:text="${i + 1}">1</span>
+            </span>
+            <a th:if="${notificaciones.hasNext()}" th:href="@{/notificaciones(page=${currentPage + 1}, search=${search})}">
+                Siguiente <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+
+        <div class="footer">
+            <span th:text="${fechaActual}"></span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        var btnBuscar = document.getElementById('btnBuscar');
+        var searchInput = document.getElementById('searchInput');
+
+        if (btnBuscar) {
+            btnBuscar.addEventListener('click', function() {
+                if (searchInput) {
+                    window.location.href = '/notificaciones?search=' + encodeURIComponent(searchInput.value);
+                }
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    window.location.href = '/notificaciones?search=' + encodeURIComponent(this.value);
+                }
+            });
+        }
+
+        function marcarLeida(id, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+            fetch('/notificaciones/marcar-leida/' + id, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(function(response) {
+                console.log('Status:', response.status);
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('Respuesta:', data);
+                if (data.success) {
+                    var item = btn.closest('.notificacion');
+                    if (item) {
+                        item.classList.remove('no-leida');
+                        item.classList.add('leida');
+                        btn.style.display = 'none';
+                        
+                        var titulo = item.querySelector('.titulo');
+                        if (titulo) {
+                            var badgeNueva = titulo.querySelector('.badge-nueva');
+                            if (badgeNueva) badgeNueva.remove();
+                            var leidaSpan = titulo.querySelector('span[style*="#10B981"]');
+                            if (!leidaSpan) {
+                                var span = document.createElement('span');
+                                span.style.cssText = 'color:#10B981; font-size:12px;';
+                                span.innerHTML = '<i class="bi bi-check-circle-fill"></i> LEIDA';
+                                titulo.appendChild(span);
+                            }
+                        }
+                        
+                        var estadoTexto = item.querySelector('.estado-texto');
+                        if (estadoTexto) {
+                            estadoTexto.textContent = 'Leida';
+                            estadoTexto.style.color = '#10B981';
+                        }
+                        
+                        actualizarContador();
+                    }
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> Marcar leida';
+                    alert('Error: ' + (data.message || 'Error al marcar la notificacion'));
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Marcar leida';
+                alert('Error de conexion: ' + error.message);
+            });
+        }
+
+        document.getElementById('listaNotificaciones').addEventListener('click', function(e) {
+            var btn = e.target.closest('.btn-marcar');
+            if (btn) {
+                var id = btn.getAttribute('data-id');
+                if (id) {
+                    marcarLeida(id, btn);
+                }
+            }
+        });
+
+        var btnMarcarTodas = document.getElementById('btnMarcarTodas');
+        if (btnMarcarTodas) {
+            btnMarcarTodas.addEventListener('click', function(e) {
+                e.preventDefault();
+                var btn = this;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+                fetch('/notificaciones/marcar-todas-leidas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-all"></i> Marcar todas';
+                        alert('Error: ' + (data.message || 'Error al marcar todas'));
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-all"></i> Marcar todas';
+                    alert('Error de conexion: ' + error.message);
+                });
+            });
+        }
+
+        function actualizarContador() {
+            fetch('/notificaciones/contador')
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var badge = document.getElementById('badgeContador');
+                    var num = parseInt(data.count || 0);
+                    if (badge) {
+                        if (num > 0) {
+                            badge.style.display = 'inline';
+                            badge.textContent = num + ' no leidas';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+
+                    var btnMarcarTodas = document.getElementById('btnMarcarTodas');
+                    if (btnMarcarTodas) {
+                        if (num > 0) {
+                            btnMarcarTodas.style.display = 'inline-block';
+                        } else {
+                            btnMarcarTodas.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(function() {});
+        }
+
+        actualizarContador();
+        setInterval(actualizarContador, 30000);
+
+    });
+
+})();
+</script>
+
+</body>
+</html>

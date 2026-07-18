@@ -391,6 +391,39 @@
             color: #1A7040;
         }
 
+        .badge-notificacion {
+            background: #EF4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        .notificacion-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #F0F0F0;
+            font-size: 13px;
+        }
+
+        .notificacion-mini:last-child {
+            border-bottom: none;
+        }
+
+        .notificacion-mini i {
+            font-size: 16px;
+            color: #F5C400;
+        }
+
+        .notificacion-mini .fecha {
+            font-size: 11px;
+            color: #9BA5B7;
+            margin-left: auto;
+        }
+
         @media (max-width: 1024px) {
             .sidebar {
                 width: 72px;
@@ -493,32 +526,37 @@
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <h2>STAMOS<span>.</span></h2>
-            <small>Administración</small>
-        </div>
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <h2>STAMOS<span>.</span></h2>
+        <small>Administracion</small>
+    </div>
 
-        <ul class="sidebar-menu">
-            <li><a th:href="@{/admin/dashboard}" class="active"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
-            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
-            <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
-            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
-            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
-            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
-            <li><a th:href="@{/admin/productos}"><i class="ti ti-package"></i><span>Productos</span></a></li>
-            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
-            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
-            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
-        </ul>
+    <ul class="sidebar-menu">
+        <li><a th:href="@{/admin/dashboard}" class="active"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+        <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+        <li><a th:href="@{/admin/cotizaciones}"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+        <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+        <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+        <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+        <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuracion</span></a></li>
+        <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+        <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
+        <li><a th:href="@{/notificaciones}">
+            <i class="ti ti-bell"></i>
+            <span>Notificaciones</span>
+            <span id="sidebarBadge" th:if="${notificacionesNoLeidas > 0}" 
+                  class="badge-notificacion" th:text="${notificacionesNoLeidas}"></span>
+        </a></li>
+    </ul>
 
-        <div class="sidebar-footer">
-            <a th:href="@{/logout}">
-                <i class="ti ti-logout"></i>
-                <span>Cerrar Sesión</span>
-            </a>
-        </div>
-    </aside>
+    <div class="sidebar-footer">
+        <a th:href="@{/logout}">
+            <i class="ti ti-logout"></i>
+            <span>Cerrar Sesion</span>
+        </a>
+    </div>
+</aside>
 
     <main class="main-content">
         <div class="header">
@@ -534,6 +572,7 @@
         </div>
 
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
 
         <div class="metrics-grid">
             <div class="metric-card">
@@ -576,7 +615,7 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="ti ti-file-text"></i> Últimas cotizaciones
+                    <i class="ti ti-file-text"></i> Ultimas cotizaciones
                 </div>
                 <a th:href="@{/admin/cotizaciones}" class="btn-link">Ver todas →</a>
             </div>
@@ -614,7 +653,7 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
-                    <i class="ti ti-folder"></i> Últimos proyectos
+                    <i class="ti ti-folder"></i> Ultimos proyectos
                 </div>
                 <a th:href="@{/admin/proyectos}" class="btn-link">Ver todos →</a>
             </div>
@@ -638,7 +677,7 @@
                                       th:classappend="${p.estado == 'Aprobado'} ? 'status-aprobado' : 
                                                       (p.estado == 'En Diseño' ? 'status-diseno' : 
                                                       (p.estado == 'En Producción' ? 'status-produccion' : 
-                                                      (p.estado == 'Instalación/Montaje' ? 'status-instalacion' : 
+                                                      (p.estado == 'Instalacion/Montaje' ? 'status-instalacion' : 
                                                       (p.estado == 'Entregado' ? 'status-verificado' : 'status-anulado'))))"
                                       th:text="${p.estado}">—</span>
                             </td>
@@ -652,6 +691,23 @@
             </div>
         </div>
 
+        <div class="section" th:if="${ultimasNotificaciones != null && !ultimasNotificaciones.isEmpty()}">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="ti ti-bell"></i> Notificaciones recientes
+                </div>
+                <a th:href="@{/notificaciones}" class="btn-link">Ver todas →</a>
+            </div>
+            <div style="padding:16px 24px;">
+                <div th:each="n : ${ultimasNotificaciones}" class="notificacion-mini">
+                    <i th:class="${n.icono}"></i>
+                    <span th:text="${n.mensajeTruncado(60)}"></span>
+                    <span class="fecha" th:text="${n.fechaEnvioFormateada}"></span>
+                    <span th:if="${!n.leido}" style="background:#EF4444; color:white; font-size:9px; padding:1px 8px; border-radius:10px;">Nueva</span>
+                </div>
+            </div>
+        </div>
+
         <div style="text-align:center;padding:12px;font-size:12px;color:#8A8A8A;border-top:1px solid #E8E8E8;margin-top:12px;">
             <span th:text="${fechaActual}"></span>
         </div>
@@ -659,9 +715,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = window.location.pathname;
-            document.querySelectorAll('.sidebar-menu li a').forEach(link => {
-                const href = link.getAttribute('href');
+            var currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-menu li a').forEach(function(link) {
+                var href = link.getAttribute('href');
                 if (href && href !== '#') {
                     link.classList.remove('active');
                     if (currentPath === href || (href !== '/admin/dashboard' && currentPath.startsWith(href))) {
@@ -669,6 +725,25 @@
                     }
                 }
             });
+
+            function actualizarContador() {
+                fetch('/notificaciones/contador')
+                    .then(function(response) { return response.text(); })
+                    .then(function(count) {
+                        var sidebarBadge = document.getElementById('sidebarBadge');
+                        if (sidebarBadge) {
+                            if (parseInt(count) > 0) {
+                                sidebarBadge.textContent = count;
+                            } else {
+                                sidebarBadge.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(function() {});
+            }
+
+            actualizarContador();
+            setInterval(actualizarContador, 30000);
         });
     </script>
 

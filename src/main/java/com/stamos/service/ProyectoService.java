@@ -111,8 +111,12 @@ public class ProyectoService {
         }
 
         Usuario usuario = usuarioRepository.findById(idUsuarioResponsable)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuarioResponsable));
-
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuarioResponsable));
+if (!"Administrador".equals(usuario.getNombreRol())) {
+    if (!transicionEstadoService.esTransicionValidaConOrden(proyecto, idEstadoNuevo, idUsuarioResponsable)) {
+        throw new RuntimeException("No tienes permiso para realizar esta transición de estado o la transición no es válida");
+    }
+}
         Integer idEstadoAnterior = proyecto.getIdEstadoActual();
         proyecto.setIdEstadoActual(idEstadoNuevo);
         proyecto.setFechaActualizacion(LocalDateTime.now());

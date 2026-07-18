@@ -308,6 +308,31 @@ public class ClienteService {
         return usuario != null ? usuario.getUltimoAcceso() : null;
     }
 
+    public List<Usuario> findUsuariosByRol(String nombreRol) {
+        return usuarioRepository.findByNombreRol(nombreRol);
+    }
+
+    public List<Usuario> findUsuariosActivosByRol(String nombreRol) {
+        return usuarioRepository.findByNombreRolAndActivo(nombreRol, true);
+    }
+
+
+    public String getEmailCliente(Integer idCliente) {
+        Cliente cliente = findById(idCliente);
+        return cliente != null ? cliente.getEmail() : null;
+    }
+
+
+    public String getNombreCliente(Integer idCliente) {
+        Cliente cliente = findById(idCliente);
+        return cliente != null ? cliente.getNombreRazonSocial() : "Cliente no encontrado";
+    }
+
+    public Integer getIdUsuarioByCliente(Integer idCliente) {
+        Cliente cliente = findById(idCliente);
+        return cliente != null ? cliente.getIdUsuario() : null;
+    }
+
     public long count() {
         return clienteRepository.count();
     }
@@ -351,11 +376,6 @@ public class ClienteService {
     public boolean hasUsuario(Integer idCliente) {
         Cliente cliente = findById(idCliente);
         return cliente != null && cliente.getIdUsuario() != null;
-    }
-
-    public String getNombreCliente(Integer idCliente) {
-        Cliente cliente = findById(idCliente);
-        return cliente != null ? cliente.getNombreRazonSocial() : "Cliente no encontrado";
     }
 
     public String getResumenCliente(Integer idCliente) {

@@ -3,6 +3,8 @@ package com.stamos.controller.cliente;
 import com.stamos.controller.BaseController;
 import com.stamos.model.*;
 import com.stamos.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,8 @@ import java.util.Map;
 @RequestMapping("/cliente")
 public class ClienteProyectoController extends BaseController {
 
+    private static final Logger log = LoggerFactory.getLogger(ClienteProyectoController.class);
+
     @Autowired
     private ClienteService clienteService;
 
@@ -44,6 +48,9 @@ public class ClienteProyectoController extends BaseController {
 
     @Autowired
     private CambioEstadoProyectoService cambioEstadoProyectoService;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @GetMapping("/proyectos")
     public String listarProyectos(Model model, Authentication auth) {
@@ -136,6 +143,24 @@ public class ClienteProyectoController extends BaseController {
                 throw new AccessDeniedException("No tienes acceso a este proyecto");
             }
 
+            try {
+                Integer idVendedor = obtenerVendedorPorProyecto(proyecto);
+                if (idVendedor != null) {
+                    notificacionService.notificarConsultaCliente(
+                        idVendedor,
+                        cliente.getNombreRazonSocial(),
+                        proyecto.getNombreProyecto(),
+                        proyecto.getIdProyecto()
+                    );
+                    log.info("Notificación de consulta enviada al vendedor: {} - Proyecto: {} - Cliente: {}", 
+                        idVendedor, proyecto.getNombreProyecto(), cliente.getNombreRazonSocial());
+                } else {
+                    log.debug("ℹ️ No se encontró vendedor asociado al proyecto para notificar consulta");
+                }
+            } catch (Exception e) {
+                log.error("Error al notificar consulta del cliente: {}", e.getMessage());
+            }
+
             Cotizacion cotizacion = cotizacionService.findById(proyecto.getIdCotizacion());
             if (cotizacion == null) {
                 throw new RuntimeException("Cotización no encontrada para el proyecto");
@@ -202,6 +227,23 @@ public class ClienteProyectoController extends BaseController {
             addCommonAttributes(model);
             return "cliente/proyectos";
         }
+    }
+
+    private Integer obtenerVendedorPorProyecto(Proyecto proyecto) {
+        try {
+            if (proyecto == null || proyecto.getIdCotizacion() == null) {
+                return null;
+            }
+            
+            Cotizacion cotizacion = cotizacionService.findById(proyecto.getIdCotizacion());
+            if (cotizacion != null) {
+                return cotizacion.getIdUsuarioVendedor();
+            }
+        } catch (Exception e) {
+            log.error("Error al obtener vendedor del proyecto {}: {}", 
+                proyecto != null ? proyecto.getIdProyecto() : "null", e.getMessage());
+        }
+        return null;
     }
 
     @GetMapping("/proyectos/json")

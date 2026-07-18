@@ -6,6 +6,8 @@ import com.stamos.dto.TimelinePasoDTO;
 import com.stamos.model.*;
 import com.stamos.repository.EstadoProyectoRepository;
 import com.stamos.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,8 @@ import java.util.*;
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'DISEÑADOR', 'PRODUCCION', 'SOPORTE_TECNICO')")
 public class ProyectoController extends BaseController {
 
+    private static final Logger log = LoggerFactory.getLogger(ProyectoController.class);
+
     @Autowired
     private ProyectoService proyectoService;
 
@@ -48,6 +52,12 @@ public class ProyectoController extends BaseController {
 
     @Autowired
     private EstadoProyectoRepository estadoProyectoRepository;
+
+    @Autowired
+    private NotificacionService notificacionService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping
     public String listarProyectos(@RequestParam(defaultValue = "0") int page,
@@ -240,54 +250,6 @@ public class ProyectoController extends BaseController {
         }
     }
 
-    @PostMapping("/cambiar-estado/{id}")
-    @Auditable
-    public String cambiarEstado(@PathVariable Integer id,
-                                @RequestParam Integer idEstadoNuevo,
-                                @RequestParam(required = false) String comentario,
-                                Authentication auth,
-                                RedirectAttributes redirectAttributes) {
-        try {
-            Proyecto proyecto = proyectoService.findById(id);
-            if (proyecto == null) {
-                redirectAttributes.addFlashAttribute("error", "Proyecto no encontrado.");
-                return "redirect:/admin/proyectos";
-            }
-
-            if (proyecto.getIdEstadoActual().equals(idEstadoNuevo)) {
-                redirectAttributes.addFlashAttribute("error", "El proyecto ya se encuentra en ese estado.");
-                return "redirect:/admin/proyectos/detalle/" + id;
-            }
-
-            String estadoActual = proyecto.getEstado();
-            if (estadoActual == null || estadoActual.equals("Entregado") || estadoActual.equals("Anulado")) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "No se puede cambiar el estado de un proyecto " + (estadoActual != null ? estadoActual.toLowerCase() : "finalizado") + ".");
-                return "redirect:/admin/proyectos/detalle/" + id;
-            }
-
-            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
-            if (usuario == null) {
-                redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
-                return "redirect:/admin/proyectos/detalle/" + id;
-            }
-
-            Proyecto proyectoActualizado = proyectoService.cambiarEstado(
-                id, idEstadoNuevo, usuario.getIdUsuario(), comentario
-            );
-
-            redirectAttributes.addFlashAttribute("mensaje", 
-                "Estado del proyecto cambiado exitosamente de '" + estadoActual + 
-                "' a '" + proyectoActualizado.getEstado() + "'.");
-            redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
-            
-            return "redirect:/admin/proyectos/detalle/" + id;
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al cambiar el estado: " + e.getMessage());
-            return "redirect:/admin/proyectos/detalle/" + id;
-        }
-    }
-
     @GetMapping("/cambiar-estado/{id}")
     public String mostrarFormularioCambiarEstado(@PathVariable Integer id, Model model) {
         try {
@@ -306,6 +268,160 @@ public class ProyectoController extends BaseController {
         } catch (Exception e) {
             model.addAttribute("error", "Error al cargar el formulario: " + e.getMessage());
             return "redirect:/admin/proyectos";
+        }
+    }
+
+    @PostMapping("/cambiar-estado")
+    @Auditable
+    public String procesarCambiarEstado(@RequestParam Integer idProyecto,
+                                        @RequestParam Integer idEstadoNuevo,
+                                        @RequestParam(required = false) String comentario,
+                                        Authentication auth,
+                                        RedirectAttributes redirectAttributes) {
+        try {
+            Proyecto proyecto = proyectoService.findById(idProyecto);
+            if (proyecto == null) {
+                redirectAttributes.addFlashAttribute("error", "Proyecto no encontrado.");
+                return "redirect:/admin/proyectos";
+            }
+
+            if (proyecto.getIdEstadoActual().equals(idEstadoNuevo)) {
+                redirectAttributes.addFlashAttribute("error", "El proyecto ya se encuentra en ese estado.");
+                return "redirect:/admin/proyectos/detalle/" + idProyecto;
+            }
+
+            String estadoActualNombre = proyecto.getEstado();
+            if (estadoActualNombre == null) {
+                estadoActualNombre = getEstadoNombrePorId(proyecto.getIdEstadoActual());
+            }
+            
+            if (estadoActualNombre == null || estadoActualNombre.equals("Entregado") || estadoActualNombre.equals("Anulado")) {
+                redirectAttributes.addFlashAttribute("error", 
+                    "No se puede cambiar el estado de un proyecto " + (estadoActualNombre != null ? estadoActualNombre.toLowerCase() : "finalizado") + ".");
+                return "redirect:/admin/proyectos/detalle/" + idProyecto;
+            }
+
+            Usuario usuario = clienteService.findUsuarioByEmail(auth.getName());
+            if (usuario == null) {
+                redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
+                return "redirect:/admin/proyectos/detalle/" + idProyecto;
+            }
+
+            Integer idCliente = proyecto.getIdCliente();
+            String nombreProyecto = proyecto.getNombreProyecto();
+
+            Proyecto proyectoActualizado = proyectoService.cambiarEstado(
+                idProyecto, idEstadoNuevo, usuario.getIdUsuario(), comentario
+            );
+
+            try {
+                String estadoNuevoNombre = proyectoActualizado.getEstado();
+                if (estadoNuevoNombre == null) {
+                    estadoNuevoNombre = getEstadoNombrePorId(proyectoActualizado.getIdEstadoActual());
+                }
+
+                if (estadoActualNombre != null && !estadoActualNombre.equals(estadoNuevoNombre)) {
+                    
+                    Cliente cliente = clienteService.findById(idCliente);
+                    if (cliente != null && cliente.getIdUsuario() != null) {
+                        notificacionService.notificarCambioEstadoProyecto(
+                            cliente.getIdUsuario(),
+                            nombreProyecto,
+                            estadoActualNombre,
+                            estadoNuevoNombre,
+                            proyecto.getIdProyecto()
+                        );
+                        log.info("Notificación enviada al cliente: {} - Cambio: {} → {} - Proyecto: {}",
+                            cliente.getEmail(), estadoActualNombre, estadoNuevoNombre, nombreProyecto);
+                    } else {
+                        log.warn("No se encontró cliente para notificar cambio de estado");
+                    }
+
+                    if ("En Diseño".equals(estadoNuevoNombre)) {
+                        List<Usuario> disenadores = usuarioService.findByNombreRol("Diseñador");
+                        for (Usuario disenador : disenadores) {
+                            notificacionService.notificarCambioEstadoProyectoAUsuario(
+                                disenador.getIdUsuario(),
+                                nombreProyecto,
+                                estadoActualNombre,
+                                estadoNuevoNombre,
+                                proyecto.getIdProyecto()
+                            );
+                        }
+                        log.info("Notificaciones enviadas a {} diseñadores para el proyecto: {}", 
+                            disenadores.size(), nombreProyecto);
+                    }
+
+                    if ("En Producción".equals(estadoNuevoNombre)) {
+                        List<Usuario> produccion = usuarioService.findByNombreRol("Producción");
+                        for (Usuario prod : produccion) {
+                            notificacionService.notificarCambioEstadoProyectoAUsuario(
+                                prod.getIdUsuario(),
+                                nombreProyecto,
+                                estadoActualNombre,
+                                estadoNuevoNombre,
+                                proyecto.getIdProyecto()
+                            );
+                        }
+                        log.info("Notificaciones enviadas a {} usuarios de producción para el proyecto: {}", 
+                            produccion.size(), nombreProyecto);
+                    }
+
+                    if ("Instalación/Montaje".equals(estadoNuevoNombre)) {
+                        List<Usuario> soporte = usuarioService.findByNombreRol("Soporte Técnico");
+                        for (Usuario st : soporte) {
+                            notificacionService.notificarCambioEstadoProyectoAUsuario(
+                                st.getIdUsuario(),
+                                nombreProyecto,
+                                estadoActualNombre,
+                                estadoNuevoNombre,
+                                proyecto.getIdProyecto()
+                            );
+                        }
+                        log.info("✅ Notificaciones enviadas a {} usuarios de soporte técnico para el proyecto: {}", 
+                            soporte.size(), nombreProyecto);
+                    }
+
+                    if ("Entregado".equals(estadoNuevoNombre)) {
+                        if (cliente != null && cliente.getIdUsuario() != null) {
+                            notificacionService.notificarProyectoEntregado(
+                                cliente.getIdUsuario(),
+                                nombreProyecto,
+                                proyecto.getIdProyecto()
+                            );
+                            log.info("✅ Notificación de entrega enviada al cliente: {} - Proyecto: {}",
+                                cliente.getEmail(), nombreProyecto);
+                        }
+                    }
+
+                    if ("Anulado".equals(estadoNuevoNombre)) {
+                        List<Usuario> admins = usuarioService.findByNombreRol("Administrador");
+                        for (Usuario admin : admins) {
+                            notificacionService.notificarProyectoAnulado(
+                                admin.getIdUsuario(),
+                                nombreProyecto,
+                                comentario != null ? comentario : "Sin motivo especificado",
+                                proyecto.getIdProyecto()
+                            );
+                        }
+                        log.info("Notificación de anulación enviada a {} administradores - Proyecto: {}",
+                            admins.size(), nombreProyecto);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error al enviar notificaciones de cambio de estado: {}", e.getMessage());
+            }
+            redirectAttributes.addFlashAttribute("mensaje", 
+                "Estado del proyecto cambiado exitosamente de '" + estadoActualNombre + 
+                "' a '" + proyectoActualizado.getEstado() + "'.");
+            redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
+            
+            return "redirect:/admin/proyectos/detalle/" + idProyecto;
+
+        } catch (Exception e) {
+            log.error("Error al cambiar el estado: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error al cambiar el estado: " + e.getMessage());
+            return "redirect:/admin/proyectos/detalle/" + idProyecto;
         }
     }
 
@@ -383,15 +499,15 @@ public class ProyectoController extends BaseController {
 
     public String getEstadoNombrePorId(Integer idEstado) {
         if (idEstado == null) return "Sin estado";
-        switch (idEstado) {
-            case 1: return "Aprobado";
-            case 2: return "En Diseño";
-            case 3: return "En Producción";
-            case 4: return "Instalación/Montaje";
-            case 5: return "Entregado";
-            case 6: return "Anulado";
-            default: return "Desconocido";
-        }
+        return switch (idEstado) {
+            case 1 -> "Aprobado";
+            case 2 -> "En Diseño";
+            case 3 -> "En Producción";
+            case 4 -> "Instalación/Montaje";
+            case 5 -> "Entregado";
+            case 6 -> "Anulado";
+            default -> "Desconocido";
+        };
     }
 
     public String getEstadoLegible(String estado) {

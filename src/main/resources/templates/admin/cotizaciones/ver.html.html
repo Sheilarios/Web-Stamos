@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' · STAMOS Administración'">STAMOS · Ver Cotización</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+
+        :root {
+            --yellow: #F5C400;
+            --yellow-light: #FFFBE6;
+            --yellow-mid: #FFE566;
+            --yellow-dark: #9A7500;
+            --yellow-border: #E0C84A;
+            --border: #E2E6EA;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #1A1F2E;
+            --text-2: #5A6478;
+            --text-3: #9BA5B7;
+            --red: #C0392B;
+            --red-light: #FFF0EE;
+            --green: #1A7040;
+            --green-light: #EBF7F0;
+            --blue: #1A56DB;
+            --blue-light: #E8F0FE;
+            --sidebar-width: 260px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #F8F8F8;
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #000000;
+            padding: 32px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            border-right: none;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #F5C400; border-radius: 4px; }
+
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .sidebar-brand h2 span {
+            color: #F5C400;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            color: #8A8A8A;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: #C0C0C0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a:hover {
+            background: rgba(245, 196, 0, 0.10);
+            color: #FFFFFF;
+        }
+
+        .sidebar-menu li a.active {
+            background: #F5C400;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li a.active i {
+            color: #000000;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #222;
+            margin-top: auto;
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #EF4444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(239, 68, 68, 0.10);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+            min-height: 100vh;
+            background: #F8F8F8;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title i {
+            color: #F5C400;
+            font-size: 28px;
+        }
+
+        .page-title small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #8A8A8A;
+            font-family: 'DM Sans', sans-serif;
+            margin-left: 8px;
+        }
+
+        .user-info {
+            background: #FFFFFF;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid #E8E8E8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1A1F2E;
+        }
+
+        .user-info i {
+            color: #F5C400;
+        }
+
+        .form-container {
+            max-width: 1000px;
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: #5A6478;
+            margin-bottom: 6px;
+        }
+        label .required { color: #C0392B; margin-left: 2px; }
+
+        .input-wrapper { position: relative; }
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9BA5B7;
+            font-size: 16px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            border: 1px solid #E2E6EA;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            background: white;
+            outline: none;
+            color: #1A1F2E;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #F5C400;
+            box-shadow: 0 0 0 3px rgba(245,196,0,0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            padding: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-danger {
+            background: #FFF0EE;
+            border: 1px solid #FECACA;
+            color: #C0392B;
+        }
+        .alert-success {
+            background: #EBF7F0;
+            border: 1px solid #A7F3D0;
+            color: #1A7040;
+        }
+        .alert-warning {
+            background: #FFFBE6;
+            border: 1px solid #E0C84A;
+            color: #9A7500;
+        }
+
+        .items-section {
+            margin-top: 24px;
+            border: 1px solid #E8E8E8;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .items-header {
+            background: #FFFBE6;
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0C84A;
+            font-weight: 600;
+            font-size: 13px;
+            color: #9A7500;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+            gap: 12px;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+            gap: 12px;
+            align-items: center;
+            padding: 10px 16px;
+            border-bottom: 1px solid #E8E8E8;
+        }
+        .item-row:last-child { border-bottom: none; }
+        .item-row input, .item-row select {
+            padding: 8px 10px;
+            margin: 0;
+            border: 1px solid #E2E6EA;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            width: 100%;
+        }
+        .item-row input:focus, .item-row select:focus {
+            border-color: #F5C400;
+            box-shadow: 0 0 0 3px rgba(245,196,0,0.15);
+        }
+        .item-row .item-subtotal {
+            font-weight: 600;
+            color: #1A1F2E;
+            text-align: right;
+        }
+        .item-row .btn-remove {
+            background: transparent;
+            border: 1px solid #E2E6EA;
+            border-radius: 6px;
+            padding: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #C0392B;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .item-row .btn-remove:hover {
+            border-color: #C0392B;
+            background: #FFF0EE;
+        }
+
+        .btn-add-item {
+            margin: 12px 16px;
+            background: transparent;
+            border: 1px dashed #F5C400;
+            color: #9A7500;
+            padding: 10px;
+            border-radius: 10px;
+            width: calc(100% - 32px);
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            font-size: 13px;
+        }
+        .btn-add-item:hover {
+            background: #FFFBE6;
+            border-color: #F5C400;
+        }
+
+        .totals {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: #FFFBE6;
+            border: 1px solid #E0C84A;
+            border-radius: 12px;
+            text-align: right;
+        }
+        .totals p { margin: 4px 0; font-size: 14px; color: #5A6478; }
+        .totals .total {
+            font-size: 20px;
+            font-weight: 700;
+            color: #9A7500;
+        }
+        .totals .total span { font-size: 24px; }
+        .totals .igv-label { font-size: 12px; color: #8A8A8A; }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #E2E6EA;
+        }
+
+        .btn-primary {
+            background: #F5C400;
+            border: none;
+            color: #2A1800;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        .btn-primary:hover { background: #FFE566; }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #E2E6EA;
+            color: #5A6478;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        .btn-secondary:hover {
+            border-color: #F5C400;
+            color: #9A7500;
+        }
+
+        .btn-success {
+            background: #1A7040;
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        .btn-success:hover { background: #155D34; }
+
+        .info-box {
+            background: #E8F0FE;
+            border: 1px solid #B8D4FE;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #1A56DB;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .info-box i { font-size: 18px; margin-top: 2px; }
+
+        /* ===== ESTILOS PARA MODO SOLO LECTURA ===== */
+        input:disabled, select:disabled, textarea:disabled {
+            background: #F5F6F8;
+            cursor: not-allowed;
+            opacity: 0.8;
+            color: #5A6478;
+        }
+        .item-row input:disabled, .item-row select:disabled {
+            background: #F5F6F8;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .btn-remove:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .btn-add-item:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 0;
+            }
+            .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span {
+                display: none;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 22px;
+                width: auto;
+            }
+            .sidebar-footer a span {
+                display: none;
+            }
+            .sidebar-footer a {
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 72px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+                flex-wrap: wrap;
+            }
+            .sidebar-brand {
+                padding: 0;
+                border-bottom: none;
+                margin-bottom: 0;
+                flex: 1;
+            }
+            .sidebar-brand h2 {
+                font-size: 20px;
+            }
+            .sidebar-brand small {
+                display: block;
+                font-size: 10px;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+                flex: 1;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .sidebar-menu li a i {
+                font-size: 16px;
+            }
+            .sidebar-menu li a span {
+                display: inline;
+                font-size: 11px;
+            }
+            .sidebar-footer {
+                border-top: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .items-header {
+                display: none;
+            }
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 12px 16px;
+                border-bottom: 2px solid #E8E8E8;
+            }
+            .item-row .item-subtotal {
+                text-align: left;
+            }
+            .item-row .btn-remove {
+                justify-self: start;
+            }
+            .totals {
+                text-align: left;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>STAMOS<span>.</span></h2>
+            <small>Administración</small>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a th:href="@{/admin/dashboard}"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a></li>
+            <li><a th:href="@{/admin/clientes}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            <li><a th:href="@{/admin/cotizaciones}" class="active"><i class="ti ti-file-invoice"></i><span>Cotizaciones</span></a></li>
+            <li><a th:href="@{/admin/pagos}"><i class="ti ti-credit-card"></i><span>Pagos</span></a></li>
+            <li><a th:href="@{/admin/inventario}"><i class="ti ti-box"></i><span>Inventario</span></a></li>
+            <li><a th:href="@{/admin/proyectos}"><i class="ti ti-folder-open"></i><span>Proyectos</span></a></li>
+            <li><a th:href="@{/admin/configuracion}"><i class="ti ti-settings"></i><span>Configuración</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="ti ti-user-cog"></i><span>Usuarios</span></a></li>
+            <li><a th:href="@{/admin/reportes}"><i class="ti ti-file-pdf"></i><span>Reportes</span></a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}">
+                <i class="ti ti-logout"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+        <div class="header">
+            <div class="page-title">
+                <i class="ti ti-eye"></i>
+                <span th:text="${titulo}">Ver Cotización</span>
+                <small th:if="${cotizacion != null and cotizacion.idCotizacion != null}" 
+                       th:text="'ID: COT-' + ${#strings.padLeft(cotizacion.idCotizacion, 5, '0')}">ID: COT-00000</small>
+            </div>
+            <div class="user-info">
+                <i class="ti ti-user-circle"></i>
+                <span th:text="${username}">Administrador</span>
+                <span style="color:#8A8A8A;font-size:11px;" th:text="${rol}">Admin</span>
+            </div>
+        </div>
+
+        <div class="form-container">
+
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- ===== ALERTA DE ESTADO ===== -->
+            <div class="info-box" th:if="${cotizacion.estado == 'Aprobada'}">
+                <i class="ti ti-check-circle" style="color: #1A7040;"></i>
+                <div>
+                    <strong style="color: #1A7040;">Cotización Aprobada</strong><br>
+                    Esta cotización fue aprobada el <span th:text="${#temporals.format(cotizacion.fechaAprobacion, 'dd/MM/yyyy HH:mm')}"></span>.
+                    No se pueden realizar modificaciones.
+                </div>
+            </div>
+
+            <div class="info-box" th:if="${cotizacion.estado == 'Anulada'}">
+                <i class="ti ti-x-circle" style="color: #C0392B;"></i>
+                <div>
+                    <strong style="color: #C0392B;">Cotización Anulada</strong><br>
+                    Esta cotización fue anulada el <span th:text="${#temporals.format(cotizacion.fechaAnulacion, 'dd/MM/yyyy HH:mm')}"></span>.
+                    No se pueden realizar modificaciones.
+                </div>
+            </div>
+
+            <!-- ===== INFORMACIÓN ADICIONAL ===== -->
+            <div class="info-box" style="background: #FFFBE6; border-color: #E0C84A; color: #9A7500;">
+                <i class="ti ti-info-circle"></i>
+                <div>
+                    <strong>Vista de solo lectura</strong><br>
+                    Esta cotización se encuentra en estado <strong th:text="${cotizacion.estado}">Pendiente</strong>.
+                    Los campos están deshabilitados para evitar modificaciones.
+                </div>
+            </div>
+
+            <!-- ===== FORMULARIO (TODOS LOS CAMPOS DESHABILITADOS) ===== -->
+            <form>
+                <input type="hidden" th:field="*{idCotizacion}">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="idCliente">Cliente</label>
+                        <div class="input-wrapper">
+                            <i class="ti ti-user"></i>
+                            <select id="idCliente" th:field="*{idCliente}" disabled>
+                                <option th:each="c : ${clientes}" th:value="${c.idCliente}" 
+                                        th:text="${c.nombreRazonSocial + ' (' + c.tipoPersona + ')'}" 
+                                        th:selected="${cotizacion.idCliente == c.idCliente}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaValidez">Fecha de validez</label>
+                        <div class="input-wrapper">
+                            <i class="ti ti-calendar"></i>
+                            <input type="date" id="fechaValidez" th:field="*{fechaValidez}" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <div class="input-wrapper">
+                        <i class="ti ti-notes"></i>
+                        <textarea id="observaciones" th:field="*{observaciones}" rows="2" disabled
+                                  placeholder="Observaciones generales de la cotización..."></textarea>
+                    </div>
+                </div>
+
+                <!-- ===== ITEMS SECTION (DESHABILITADOS) ===== -->
+                <div class="items-section">
+                    <div class="items-header">
+                        <span>Descripción del Servicio/Producto</span>
+                        <span>Cant.</span>
+                        <span>Precio Unit.</span>
+                        <span>Subtotal</span>
+                        <span></span>
+                    </div>
+                    <div id="itemsContainer">
+                        <div th:each="detalle, iterStat : ${detalles}" class="item-row" data-index="${iterStat.index}">
+                            <input type="text" class="item-nombre" th:value="${detalle.nombreProducto}" 
+                                   placeholder="Ej: Stand personalizado 6x4, Diseño 3D..." disabled>
+                            
+                            <input type="number" class="item-cantidad" th:value="${detalle.cantidad}" 
+                                   step="1" min="1" disabled>
+                            
+                            <input type="number" class="item-precio" th:value="${detalle.precioUnitario}" 
+                                   step="0.01" min="0" disabled placeholder="0.00">
+                            
+                            <span class="item-subtotal" th:text="'S/ ' + ${detalle.subtotalLinea != null ? #numbers.formatDecimal(detalle.subtotalLinea, 0, 2) : '0.00'}">S/ 0.00</span>
+                            
+                            <button type="button" class="btn-remove" disabled>
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== TOTALS ===== -->
+                <div class="totals">
+                    <p>Subtotal: <strong id="subtotal">S/ 0.00</strong></p>
+                    <p class="igv-label">IGV (<span id="tasaIgv" th:text="${tasaIgv}">18</span>%): <strong id="igv">S/ 0.00</strong></p>
+                    <p class="total">Total: <span id="total">S/ 0.00</span></p>
+                </div>
+
+                <!-- ===== BOTONES ===== -->
+                <div class="form-actions">
+                    <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
+                        <i class="ti ti-arrow-left"></i> Volver al listado
+                    </a>
+                    
+                    <a th:href="@{/admin/cotizaciones}" class="btn-secondary">
+                        <i class="ti ti-file-text"></i> Ver todas
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div style="text-align:center;padding:12px;font-size:12px;color:#8A8A8A;border-top:1px solid #E8E8E8;margin-top:12px;">
+            <span th:text="${fechaActual}"></span>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-menu li a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '#') {
+                    link.classList.remove('active');
+                    if (currentPath === href || (href !== '/admin/dashboard' && currentPath.startsWith(href))) {
+                        link.classList.add('active');
+                    }
+                }
+            });
+
+            // Calcular totals para la vista
+            function recalculateTotals() {
+                var subtotal = 0;
+                var rows = document.querySelectorAll('#itemsContainer .item-row');
+                var tasa = parseFloat(document.getElementById('tasaIgv').textContent) || 18;
+
+                rows.forEach(function(row) {
+                    var qty = parseFloat(row.querySelector('.item-cantidad').value) || 0;
+                    var price = parseFloat(row.querySelector('.item-precio').value) || 0;
+                    var subtotalRow = qty * price;
+                    var subtotalSpan = row.querySelector('.item-subtotal');
+                    if (subtotalSpan) {
+                        subtotalSpan.textContent = 'S/ ' + subtotalRow.toFixed(2);
+                    }
+                    subtotal += subtotalRow;
+                });
+
+                var igv = subtotal * (tasa / 100);
+                var total = subtotal + igv;
+                document.getElementById('subtotal').textContent = 'S/ ' + subtotal.toFixed(2);
+                document.getElementById('igv').textContent = 'S/ ' + igv.toFixed(2);
+                document.getElementById('total').textContent = 'S/ ' + total.toFixed(2);
+            }
+
+            recalculateTotals();
+        });
+    </script>
+
+</body>
+</html>

@@ -7,9 +7,13 @@ import com.stamos.model.ComprobantePago;
 import com.stamos.model.Pago;
 import com.stamos.model.Proyecto;
 import com.stamos.model.Usuario;
+import com.stamos.model.Cliente;
 import com.stamos.service.ClienteService;
+import com.stamos.service.NotificacionService;
 import com.stamos.service.PagoService;
 import com.stamos.service.ProyectoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -52,6 +56,8 @@ import java.util.UUID;
 @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
 public class PagoController extends BaseController {
 
+    private static final Logger log = LoggerFactory.getLogger(PagoController.class);
+
     @Autowired
     private PagoService pagoService;
 
@@ -60,6 +66,9 @@ public class PagoController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @Value("${app.upload.comprobantes.dir:./uploads/comprobantes/}")
     private String uploadDir;
@@ -256,6 +265,12 @@ public class PagoController extends BaseController {
             
             pagoService.registrarPago(pago, comprobantePago, usuario.getIdUsuario());
 
+            try {
+                notificarNuevoPago(proyecto, pago, usuario);
+            } catch (Exception e) {
+                log.error("Error al enviar notificación de pago registrado: {}", e.getMessage());
+            }
+
             redirectAttributes.addFlashAttribute("mensaje", 
                 "Pago registrado exitosamente. Pendiente de validación.");
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
@@ -295,7 +310,32 @@ public class PagoController extends BaseController {
                 return "redirect:/admin/pagos";
             }
             
+            Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
+            String proyectoNombre = proyecto != null ? proyecto.getNombreProyecto() : "Proyecto";
+            BigDecimal monto = pago.getMonto();
+            String montoFormateado = formatearMoneda(monto);
+            
             pagoService.validarPago(id, usuario.getIdUsuario());
+
+            try {
+                if (proyecto != null) {
+                    Cliente cliente = clienteService.findById(proyecto.getIdCliente());
+                    if (cliente != null && cliente.getIdUsuario() != null) {
+                        notificacionService.notificarPagoValidado(
+                            cliente.getIdUsuario(),
+                            proyectoNombre,
+                            montoFormateado,
+                            id
+                        );
+                        log.info("✅ Notificación enviada al cliente: {} - Pago validado: S/{} - Proyecto: {}",
+                            cliente.getEmail(), monto, proyectoNombre);
+                    } else {
+                        log.warn("⚠️ No se encontró cliente para notificar pago validado");
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error al enviar notificación de pago validado: {}", e.getMessage());
+            }
 
             redirectAttributes.addFlashAttribute("mensaje", 
                 "Pago validado exitosamente.");
@@ -303,6 +343,7 @@ public class PagoController extends BaseController {
             
             return "redirect:/admin/pagos";
         } catch (Exception e) {
+            log.error("Error al validar el pago: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Error al validar el pago: " + e.getMessage());
             return "redirect:/admin/pagos";
         }
@@ -334,7 +375,34 @@ public class PagoController extends BaseController {
                 return "redirect:/admin/pagos";
             }
             
-            pagoService.rechazarPago(id, motivo, usuario.getIdUsuario());
+            Proyecto proyecto = proyectoService.findById(pago.getIdProyecto());
+            String proyectoNombre = proyecto != null ? proyecto.getNombreProyecto() : "Proyecto";
+            BigDecimal monto = pago.getMonto();
+            String montoFormateado = formatearMoneda(monto);
+            String motivoRechazo = (motivo != null && !motivo.isEmpty()) ? motivo : "Sin motivo especificado";
+            
+            pagoService.rechazarPago(id, motivoRechazo, usuario.getIdUsuario());
+
+            try {
+                if (proyecto != null) {
+                    Cliente cliente = clienteService.findById(proyecto.getIdCliente());
+                    if (cliente != null && cliente.getIdUsuario() != null) {
+                        notificacionService.notificarPagoRechazado(
+                            cliente.getIdUsuario(),
+                            proyectoNombre,
+                            montoFormateado,
+                            motivoRechazo,
+                            id
+                        );
+                        log.info("✅ Notificación enviada al cliente: {} - Pago rechazado: S/{} - Proyecto: {} - Motivo: {}",
+                            cliente.getEmail(), monto, proyectoNombre, motivoRechazo);
+                    } else {
+                        log.warn("⚠️ No se encontró cliente para notificar pago rechazado");
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error al enviar notificación de pago rechazado: {}", e.getMessage());
+            }
 
             redirectAttributes.addFlashAttribute("mensaje", 
                 "Pago rechazado exitosamente.");
@@ -342,6 +410,7 @@ public class PagoController extends BaseController {
             
             return "redirect:/admin/pagos";
         } catch (Exception e) {
+            log.error("Error al rechazar el pago: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Error al rechazar el pago: " + e.getMessage());
             return "redirect:/admin/pagos";
         }
@@ -447,6 +516,33 @@ public class PagoController extends BaseController {
         }
     }
 
+    private void notificarNuevoPago(Proyecto proyecto, Pago pago, Usuario usuario) {
+        try {
+            List<Usuario> administradores = clienteService.findUsuariosByRol("Administrador");
+            if (administradores.isEmpty()) {
+                log.warn("⚠️ No se encontró ningún administrador para notificar el nuevo pago");
+                return;
+            }
+
+            String montoFormateado = formatearMoneda(pago.getMonto());
+            String comprobanteInfo = pago.getMetodoPago() + " - " + montoFormateado;
+
+            for (Usuario admin : administradores) {
+                notificacionService.notificarPagoRegistrado(
+                    admin.getIdUsuario(),
+                    proyecto.getNombreProyecto(),
+                    montoFormateado,
+                    comprobanteInfo,
+                    pago.getIdPago()
+                );
+                log.info("✅ Notificación enviada al administrador: {} - Proyecto: {}, Monto: S/{}",
+                    admin.getEmail(), proyecto.getNombreProyecto(), pago.getMonto());
+            }
+        } catch (Exception e) {
+            log.error("Error al enviar notificación de pago registrado: {}", e.getMessage());
+        }
+    }
+
     private String guardarComprobante(MultipartFile archivo) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
@@ -502,6 +598,7 @@ public class PagoController extends BaseController {
         };
     }
 
+    @Override
     public String getEstadoBadgeClass(String estado) {
         if (estado == null) return "status-pendiente";
         return switch (estado) {
@@ -523,6 +620,7 @@ public class PagoController extends BaseController {
         };
     }
 
+    @Override
     public String formatearMoneda(BigDecimal monto) {
         if (monto == null) return "S/ 0.00";
         return "S/ " + monto.setScale(2, RoundingMode.HALF_UP).toString();

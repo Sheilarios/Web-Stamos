@@ -557,6 +557,15 @@
         .footer-bar span { margin-left: 16px; }
         .footer-bar .clock-icon { margin-right: 4px; }
 
+        .badge-notificacion {
+            background: #EF4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
         @media (max-width: 1024px) {
             .sidebar { width: 72px; padding: 16px 0; }
             .sidebar-brand h2, .sidebar-brand small, .sidebar-menu li a span { display: none; }
@@ -632,7 +641,7 @@
     <aside class="sidebar">
         <div class="sidebar-brand">
             <h2>STAMOS<span>.</span></h2>
-            <small>Área del Cliente</small>
+            <small>Area del Cliente</small>
         </div>
 
         <ul class="sidebar-menu">
@@ -641,12 +650,18 @@
             <li><a th:href="@{/cliente/documentos}"><i class="ti ti-file-text"></i><span>Documentos</span></a></li>
             <li><a th:href="@{/cliente/pagos}"><i class="ti ti-credit-card"></i><span>Historial de Pagos</span></a></li>
             <li><a th:href="@{/cliente/perfil}"><i class="ti ti-user-circle"></i><span>Mi Perfil</span></a></li>
+            <li><a th:href="@{/notificaciones}">
+                <i class="ti ti-bell"></i>
+                <span>Notificaciones</span>
+                <span id="sidebarBadge" th:if="${notificacionesNoLeidas > 0}" 
+                      class="badge-notificacion" th:text="${notificacionesNoLeidas}"></span>
+            </a></li>
         </ul>
 
         <div class="sidebar-footer">
             <a th:href="@{/logout}">
                 <i class="ti ti-logout"></i>
-                <span>Cerrar Sesión</span>
+                <span>Cerrar Sesion</span>
             </a>
         </div>
     </aside>
@@ -666,7 +681,6 @@
             </div>
         </div>
 
-        <!-- Alertas -->
         <div th:if="${error}" class="alert alert-danger">
             <i class="ti ti-alert-circle"></i>
             <span th:text="${error}"></span>
@@ -680,15 +694,6 @@
             <span th:text="${advertencia}"></span>
         </div>
 
-        <!-- ===== BOTÓN PARA GENERAR PDF ===== -->
-        <div style="margin-bottom: 24px; text-align: right;">
-            <a th:href="@{/cliente/reporte/proyectos-pdf}" class="btn btn-primary" target="_blank"
-               style="background: #F5C400; color: #000000; padding: 10px 24px; border-radius: 10px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer; transition: background 0.2s;">
-                <i class="ti ti-file-pdf"></i> Descargar reporte PDF
-            </a>
-        </div>
-
-        <!-- ===== TIMELINE DE PROYECTOS ACTIVOS ===== -->
         <div th:if="${proyectosConTimeline != null and !#lists.isEmpty(proyectosConTimeline)}">
             <div th:each="item : ${proyectosConTimeline}" class="timeline-section">
                 <div class="timeline-header">
@@ -740,7 +745,7 @@
 
                 <div th:if="${item.pasos == null or #lists.isEmpty(item.pasos)}" class="timeline-empty">
                     <i class="ti ti-clock-off"></i>
-                    <p>No hay información de progreso disponible para este proyecto.</p>
+                    <p>No hay informacion de progreso disponible para este proyecto.</p>
                 </div>
             </div>
         </div>
@@ -748,10 +753,9 @@
         <div th:if="${proyectosConTimeline == null or #lists.isEmpty(proyectosConTimeline)}" class="timeline-empty" style="background:#FFFFFF; border:1px solid #E8E8E8; border-radius:16px; padding:32px; margin-bottom:28px;">
             <i class="ti ti-folder-off"></i>
             <p style="font-size:14px;">No tienes proyectos activos en este momento.</p>
-            <p class="sub">Cuando tengas un proyecto en curso, verás su progreso aquí.</p>
+            <p class="sub">Cuando tengas un proyecto en curso, veras su progreso aqui.</p>
         </div>
 
-        <!-- ===== MÉTRICAS ===== -->
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-header">
@@ -783,7 +787,6 @@
             </div>
         </div>
 
-        <!-- ===== LISTA DE PROYECTOS RECIENTES ===== -->
         <div class="section">
             <div class="section-header">
                 <div class="section-title">
@@ -813,7 +816,7 @@
                                       th:class="${p.estado == 'Aprobado'} ? 'status-aprobado' :
                                                 (${p.estado == 'En Diseño'} ? 'status-diseno' :
                                                 (${p.estado == 'En Producción'} ? 'status-produccion' :
-                                                (${p.estado == 'Instalación/Montaje'} ? 'status-instalacion' :
+                                                (${p.estado == 'Instalacion/Montaje'} ? 'status-instalacion' :
                                                 (${p.estado == 'Entregado'} ? 'status-entregado' : 'status-anulado'))))"
                                       th:text="${p.estado}">—</span>
                             </td>
@@ -828,158 +831,42 @@
                 </table>
                 <div th:if="${proyectos == null or #lists.isEmpty(proyectos)}" class="empty-message">
                     <i class="ti ti-folder-off"></i>
-                    <p>No tienes proyectos registrados aún.</p>
-                    <p class="sub">Tus proyectos aparecerán aquí cuando un vendedor los cree desde una cotización aprobada.</p>
+                    <p>No tienes proyectos registrados aun.</p>
+                    <p class="sub">Tus proyectos apareceran aqui cuando un vendedor los cree desde una cotizacion aprobada.</p>
                 </div>
             </div>
         </div>
 
-        <!-- ===== SECCIÓN DE DOCUMENTOS ELIMINADA POR COMPLETO ===== -->
-        <!-- El controlador no envía 'ultimosDocumentos', así que se ha quitado -->
-
-        <!-- ===== FOOTER ===== -->
         <div class="footer-bar">
             <span th:text="${fechaActual != null ? fechaActual : #temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
             <span th:if="${ultimoAcceso != null}">
-                <i class="ti ti-clock clock-icon"></i> Último acceso: <span th:text="${#temporals.format(ultimoAcceso, 'dd/MM/yyyy HH:mm')}"></span>
+                <i class="ti ti-clock clock-icon"></i> Ultimo acceso: <span th:text="${#temporals.format(ultimoAcceso, 'dd/MM/yyyy HH:mm')}"></span>
             </span>
         </div>
 
     </main>
 
-    <!-- ===== SCRIPTS ===== -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script th:inline="javascript">
-        const APP_CONFIG = {
-            baseUrl: /*[[@{/}]]*/ '/',
-            clienteId: /*[[${cliente != null ? cliente.idCliente : null}]]*/ null,
-            usuarioId: /*[[${usuario != null ? usuario.idUsuario : null}]]*/ null
-        };
-
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const errorMsg = /*[[${error}]]*/ null;
-            const successMsg = /*[[${mensaje}]]*/ null;
-            const warningMsg = /*[[${advertencia}]]*/ null;
-
-            if (errorMsg) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: errorMsg,
-                    confirmButtonColor: '#C0392B',
-                    confirmButtonText: 'Entendido'
-                });
+            function actualizarContador() {
+                fetch('/notificaciones/contador')
+                    .then(function(response) { return response.text(); })
+                    .then(function(count) {
+                        var sidebarBadge = document.getElementById('sidebarBadge');
+                        if (sidebarBadge) {
+                            if (parseInt(count) > 0) {
+                                sidebarBadge.textContent = count;
+                            } else {
+                                sidebarBadge.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(function() {});
             }
 
-            if (successMsg) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: successMsg,
-                    confirmButtonColor: '#F5C400',
-                    confirmButtonText: 'Perfecto',
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-            }
-
-            if (warningMsg) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Atención',
-                    text: warningMsg,
-                    confirmButtonColor: '#F5C400',
-                    confirmButtonText: 'Entendido'
-                });
-            }
-
-            window.confirmarAccion = function(titulo, texto, icono = 'warning', callback) {
-                Swal.fire({
-                    title: titulo,
-                    text: texto,
-                    icon: icono,
-                    showCancelButton: true,
-                    confirmButtonColor: '#F5C400',
-                    cancelButtonColor: '#C0392B',
-                    confirmButtonText: 'Sí, continuar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed && callback) {
-                        callback();
-                    }
-                });
-            };
-
-            window.mostrarNotificacion = function(titulo, mensaje, icono = 'info', tiempo = 3000) {
-                Swal.fire({
-                    icon: icono,
-                    title: titulo,
-                    text: mensaje,
-                    timer: tiempo,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                    toast: true,
-                    position: 'top-end'
-                });
-            };
+            actualizarContador();
+            setInterval(actualizarContador, 30000);
         });
-
-        function formatearMoneda(monto) {
-            if (!monto) return 'S/ 0.00';
-            return 'S/ ' + parseFloat(monto).toFixed(2);
-        }
-
-        function formatearFecha(fecha) {
-            if (!fecha) return '-';
-            const d = new Date(fecha);
-            return d.toLocaleDateString('es-PE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        }
-
-        function formatearFechaHora(fecha) {
-            if (!fecha) return '-';
-            const d = new Date(fecha);
-            return d.toLocaleDateString('es-PE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        const ESTADOS = {
-            APROBADO: { label: 'Aprobado', clase: 'status-aprobado' },
-            EN_DISENO: { label: 'En Diseño', clase: 'status-diseno' },
-            EN_PRODUCCION: { label: 'En Producción', clase: 'status-produccion' },
-            INSTALACION_MONTAJE: { label: 'Instalación/Montaje', clase: 'status-instalacion' },
-            ENTREGADO: { label: 'Entregado', clase: 'status-entregado' },
-            ANULADO: { label: 'Anulado', clase: 'status-anulado' }
-        };
-
-        function getEstadoInfo(estado) {
-            const key = estado?.toUpperCase().replace(/\s+/g, '_').replace('Ó', 'O');
-            return ESTADOS[key] || { label: estado || 'Desconocido', clase: 'status-pendiente' };
-        }
-
-        window.formatearMoneda = formatearMoneda;
-        window.formatearFecha = formatearFecha;
-        window.formatearFechaHora = formatearFechaHora;
-        window.getEstadoInfo = getEstadoInfo;
-        window.ESTADOS = ESTADOS;
-
-        console.log('Dashboard Cliente cargado correctamente');
-        console.log('Cliente:', APP_CONFIG.clienteId);
-        console.log('Base URL:', APP_CONFIG.baseUrl);
     </script>
 </body>
 </html>

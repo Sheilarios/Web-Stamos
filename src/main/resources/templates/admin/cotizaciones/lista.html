@@ -760,15 +760,7 @@
                                   th:text="${cotizacion.estado}">—</span>
                         </td>
                         <td class="action-buttons">
-                            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                                <!-- Editar (solo si está pendiente) -->
-                                <a th:if="${cotizacion.estado == 'Pendiente'}"
-                                   th:href="@{/admin/cotizaciones/editar/{id}(id=${cotizacion.idCotizacion})}" 
-                                   class="btn-icon azul" 
-                                   title="Editar cotización">
-                                    <i class="ti ti-pencil"></i>
-                                </a>
-                                
+                                                               
                                 <!-- Aprobar (solo si está pendiente) -->
                                 <form th:if="${cotizacion.estado == 'Pendiente'}"
                                       th:action="@{/admin/cotizaciones/aprobar/{id}(id=${cotizacion.idCotizacion})}" 

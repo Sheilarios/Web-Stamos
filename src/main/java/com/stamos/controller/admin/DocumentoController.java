@@ -5,9 +5,13 @@ import com.stamos.controller.BaseController;
 import com.stamos.model.DocumentoProyecto;
 import com.stamos.model.Proyecto;
 import com.stamos.model.Usuario;
+import com.stamos.model.Cliente;
 import com.stamos.service.ClienteService;
 import com.stamos.service.DocumentoService;
+import com.stamos.service.NotificacionService;
 import com.stamos.service.ProyectoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -38,6 +42,8 @@ import java.util.UUID;
 @PreAuthorize("hasAnyRole('ADMIN', 'DISEÑADOR')")
 public class DocumentoController extends BaseController {
 
+    private static final Logger log = LoggerFactory.getLogger(DocumentoController.class);
+
     @Autowired
     private DocumentoService documentoService;
 
@@ -46,6 +52,9 @@ public class DocumentoController extends BaseController {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @Value("${app.upload.documentos.dir:./uploads/documentos/}")
     private String uploadDir;
@@ -193,6 +202,24 @@ public class DocumentoController extends BaseController {
             
             documentoService.save(documento);
 
+            try {
+                Cliente cliente = clienteService.findById(proyecto.getIdCliente());
+                if (cliente != null && cliente.getIdUsuario() != null) {
+                    notificacionService.notificarNuevoDocumento(
+                        cliente.getIdUsuario(),
+                        proyecto.getNombreProyecto(),
+                        documento.getTipoDocumento(),
+                        documento.getIdDocumento()
+                    );
+                    log.info("Notificación enviada al cliente: {} - Nuevo documento: {} - Proyecto: {}",
+                        cliente.getEmail(), documento.getTipoDocumento(), proyecto.getNombreProyecto());
+                } else {
+                    log.warn("No se encontró cliente para notificar nuevo documento");
+                }
+            } catch (Exception e) {
+                log.error("Error al enviar notificación de nuevo documento: {}", e.getMessage());
+            }
+
             redirectAttributes.addFlashAttribute("mensaje", 
                 "Documento subido exitosamente: " + nombreOriginal);
             redirectAttributes.addFlashAttribute("mensajeClass", "alert-success");
@@ -333,7 +360,7 @@ public class DocumentoController extends BaseController {
                 try {
                     Files.deleteIfExists(filePath);
                 } catch (IOException e) {
-                    System.err.println("Error al eliminar archivo físico: " + e.getMessage());
+                    log.warn("Error al eliminar archivo físico: {}", e.getMessage());
                 }
             }
             

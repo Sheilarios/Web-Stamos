@@ -48,9 +48,6 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return (request, response, authentication) -> {
-            System.out.println("=== AUTENTICACION EXITOSA ===");
-            System.out.println("Usuario: " + authentication.getName());
-            System.out.println("Authorities: " + authentication.getAuthorities());
             response.sendRedirect("/login-success");
         };
     }
@@ -58,8 +55,6 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return (request, response, exception) -> {
-            System.out.println("=== AUTENTICACION FALLIDA ===");
-            System.out.println("Error: " + exception.getMessage());
             String errorMessage = "Usuario o contrasena incorrectos";
             if (exception.getMessage() != null && exception.getMessage().contains("deshabilitado")) {
                 errorMessage = "Tu cuenta esta deshabilitada. Contacta con soporte.";
@@ -72,15 +67,12 @@ public class WebSecurityConfig {
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
         return (request, response, authentication) -> {
-            System.out.println("=== CERRANDO SESION ===");
-            System.out.println("Usuario: " + (authentication != null ? authentication.getName() : "desconocido"));
             response.sendRedirect("/login?logout=true");
         };
     }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        // 🔧 CORREGIDO: Removido el método .and() que estaba deprecated
         AuthenticationManagerBuilder authManagerBuilder = 
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authManagerBuilder.userDetailsService(customUserDetailsService)
